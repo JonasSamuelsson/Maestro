@@ -43,11 +43,27 @@
     <None Include="Maestro.snk" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActivationException.cs" />
     <Compile Include="Container.cs" />
+    <Compile Include="ContainerConfiguration.cs" />
+    <Compile Include="Fluent\IPipelineSelector.cs" />
+    <Compile Include="Fluent\ITypePipelineBuilder.cs" />
+    <Compile Include="Fluent\PipelineSelector.cs" />
+    <Compile Include="Fluent\TypePipelineBuilder.cs" />
     <Compile Include="IContainer.cs" />
+    <Compile Include="IContainerConfiguration.cs" />
+    <Compile Include="IPipeline.cs" />
+    <Compile Include="IPlugin.cs" />
+    <Compile Include="IPluginDictionary.cs" />
+    <Compile Include="IProvider.cs" />
+    <Compile Include="Pipeline.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="PluginDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
+    <Compile Include="TypeProvider.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -48,8 +48,9 @@
     <Compile Include="..\Maestro.Core\Properties\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="DefaultContainer.cs" />
+    <Compile Include="DefaultContainerInstance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeInstance.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Maestro.Core\Maestro.Core.csproj">
