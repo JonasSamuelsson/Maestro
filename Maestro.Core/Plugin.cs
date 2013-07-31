@@ -15,5 +15,10 @@ namespace Maestro
 		{
 			return _dictionary[name];
 		}
+
+		public bool TryGet(string name, out IPipeline pipeline)
+		{
+			return _dictionary.TryGetValue(name, out pipeline);
+		}
 	}
 }

@@ -13,12 +13,12 @@ namespace Maestro.Fluent
 			_plugin = plugin;
 		}
 
-		public ITypePipelineBuilder Type(Type type)
+		public ITypeInstancePipelineBuilder Type(Type type)
 		{
-			var provider = new TypeProvider(type);
+			var provider = new TypeInstanceProvider(type);
 			var pipeline = new Pipeline(provider);
 			_plugin.Add(_name, pipeline);
-			return new TypePipelineBuilder(provider, pipeline);
+			return new TypeInstancePipelineBuilder(provider, pipeline);
 		}
 	}
 }

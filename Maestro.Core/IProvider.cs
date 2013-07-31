@@ -2,6 +2,7 @@
 {
 	internal interface IProvider
 	{
-		object Get();
+		bool CanGet(IContext context);
+		object Get(IContext context);
 	}
 }

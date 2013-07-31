@@ -9,9 +9,14 @@
 			_provider = provider;
 		}
 
-		public object Get()
+		public bool CanGet(IContext context)
 		{
-			return _provider.Get();
+			return _provider.CanGet(context);
+		}
+
+		public object Get(IContext context)
+		{
+			return _provider.Get(context);
 		}
 	}
 }

@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Maestro.Tests
 {
-	public class TypeInstance
+	public class type_instance_without_dependencies
 	{
 		[Fact]
 		public void instantiate_type_instance()

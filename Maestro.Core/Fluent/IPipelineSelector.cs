@@ -4,6 +4,6 @@ namespace Maestro.Fluent
 {
 	public interface IPipelineSelector
 	{
-		ITypePipelineBuilder Type(Type type);
+		ITypeInstancePipelineBuilder Type(Type type);
 	}
 }
