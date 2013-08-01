@@ -3,15 +3,15 @@ using Xunit;
 
 namespace Maestro.Tests
 {
-	public class type_instance_with_configured_dependencies
+	public class default_type_instance_with_configured_dependencies
 	{
 		[Fact]
 		public void should_get_instance_with_single_ctor_dependency()
 		{
 			var container = new Container(x =>
 			{
-				x.Default(typeof (TypeWithDefaultCtor)).Type(typeof (TypeWithDefaultCtor));
-				x.Default(typeof (TypeWithCtorDependency)).Type(typeof (TypeWithCtorDependency));
+				x.Default(typeof(TypeWithDefaultCtor)).Type(typeof(TypeWithDefaultCtor));
+				x.Default(typeof(TypeWithCtorDependency)).Type(typeof(TypeWithCtorDependency));
 			});
 
 			var o = container.Get<TypeWithCtorDependency>();

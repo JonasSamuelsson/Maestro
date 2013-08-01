@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Maestro
@@ -53,27 +55,44 @@ namespace Maestro
 		bool IDependencyContainer.CanGet(Type type, IContext context)
 		{
 			IPlugin plugin;
-			if (!_plugins.TryGet(type, out plugin))
-				return false;
+			if (_plugins.TryGet(type, out plugin))
+			{
+				IPipeline pipeline;
+				if (plugin.TryGet(context.Name, out pipeline))
+					if (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipeline))
+						return true;
+			}
 
-			IPipeline pipeline;
-			if (!plugin.TryGet(context.Name, out pipeline))
-				return false;
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+				return true;
 
-			return true;
+			return false;
 		}
 
 		object IDependencyContainer.Get(Type type, IContext context)
 		{
 			IPlugin plugin;
+			if (_plugins.TryGet(type, out plugin))
+			{
+				IPipeline pipeline;
+				if (plugin.TryGet(context.Name, out pipeline))
+					if (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipeline))
+						return pipeline.Get(context);
+			}
+
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+				return ((IDependencyContainer)this).GetAll(type.GetGenericArguments().Single(), context);
+
+			throw new ActivationException();
+		}
+
+		IEnumerable<object> IDependencyContainer.GetAll(Type type, IContext context)
+		{
+			IPlugin plugin;
 			if (!_plugins.TryGet(type, out plugin))
-				throw new ActivationException();
+				return (IEnumerable<object>)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
 
-			IPipeline pipeline;
-			if (!plugin.TryGet(context.Name, out pipeline))
-				throw new ActivationException();
-
-			return pipeline.Get(context);
+			return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToList();
 		}
 	}
 }

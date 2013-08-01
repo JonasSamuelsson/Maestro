@@ -20,5 +20,10 @@ namespace Maestro
 		{
 			return _dictionary.TryGetValue(name, out pipeline);
 		}
+
+		public IEnumerable<string> GetNames()
+		{
+			return _dictionary.Keys;
+		}
 	}
 }

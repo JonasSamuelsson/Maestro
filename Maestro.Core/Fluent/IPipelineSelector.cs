@@ -6,4 +6,9 @@ namespace Maestro.Fluent
 	{
 		ITypeInstancePipelineBuilder Type(Type type);
 	}
+
+	public interface IPipelineSelector<TPlugin>
+	{
+		ITypeInstancePipelineBuilder<TInstance> Type<TInstance>() where TInstance : TPlugin;
+	}
 }
