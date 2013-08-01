@@ -1,0 +1,23 @@
+Default instance
+Named instances
+Type instance
+Dependency resolution
+	Named > default
+		IEnumerable <T>
+		Array
+ConstantInstanceProvider
+FuncInstanceProvider
+PluginInstanceProvider
+ConditionalInstanceProvider
+Scoping
+	Singleton
+	Context
+	Custom
+Interception
+	Property injection
+Open generic types
+Instantiate unregistered classes
+CommonServiceLocator
+Performance
+	TypeInstanceProvider
+	PropertyInjection
