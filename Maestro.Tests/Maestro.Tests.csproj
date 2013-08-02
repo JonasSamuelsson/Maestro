@@ -60,7 +60,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="default_type_instance_without_dependencies.cs" />
     <Compile Include="default_type_instance_with_configured_dependencies.cs" />
-    <Compile Include="type_instance_with_configured_IEnumerable_dependency.cs" />
+    <Compile Include="type_instance_with_Enumerable_dependency.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Maestro.Core\Maestro.Core.csproj">

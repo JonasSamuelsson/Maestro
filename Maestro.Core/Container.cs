@@ -27,7 +27,7 @@ namespace Maestro
 			get { return _default ?? (_default = new Container()); }
 		}
 
-		internal static string DefaultName { get { return string.Empty; } }
+		internal static string DefaultName { get { return "default"; } }
 
 		public void Configure(Action<IContainerConfiguration> action)
 		{
@@ -36,15 +36,27 @@ namespace Maestro
 
 		public object Get(Type type, string name = null)
 		{
-			IPlugin plugin;
-			if (!_plugins.TryGet(type, out plugin))
-				throw new ActivationException();
+			try
+			{
+				IPlugin plugin;
+				if (_plugins.TryGet(type, out plugin))
+				{
+					name = name ?? DefaultName;
+					IPipeline pipeline;
+					if (plugin.TryGet(name, out pipeline))
+					{
+						var requestId = Interlocked.Increment(ref _requestId);
+						var context = new Context(requestId, name, this);
+						return pipeline.Get(context);
+					}
+				}
+			}
+			catch (Exception exception)
+			{
+				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName), exception);
+			}
 
-			name = name ?? DefaultName;
-			var pipeline = plugin.Get(name);
-			var requestId = Interlocked.Increment(ref _requestId);
-			var context = new Context(requestId, name, this);
-			return pipeline.Get(context);
+			throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
 		}
 
 		public T Get<T>(string name = null)
@@ -59,7 +71,7 @@ namespace Maestro
 			{
 				IPipeline pipeline;
 				if (plugin.TryGet(context.Name, out pipeline))
-					if (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipeline))
+					if (pipeline != null || (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipeline)))
 						return true;
 			}
 
@@ -71,28 +83,42 @@ namespace Maestro
 
 		object IDependencyContainer.Get(Type type, IContext context)
 		{
-			IPlugin plugin;
-			if (_plugins.TryGet(type, out plugin))
+			try
 			{
-				IPipeline pipeline;
-				if (plugin.TryGet(context.Name, out pipeline))
-					if (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipeline))
-						return pipeline.Get(context);
+				IPlugin plugin;
+				if (_plugins.TryGet(type, out plugin))
+				{
+					IPipeline pipeline;
+					if (plugin.TryGet(context.Name, out pipeline))
+						if (pipeline != null || (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipeline)))
+							return pipeline.Get(context);
+				}
+
+				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+					return ((IDependencyContainer)this).GetAll(type.GetGenericArguments().Single(), context);
+			}
+			catch (Exception exception)
+			{
+				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName), exception);
 			}
 
-			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-				return ((IDependencyContainer)this).GetAll(type.GetGenericArguments().Single(), context);
-
-			throw new ActivationException();
+			throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 		}
 
 		IEnumerable<object> IDependencyContainer.GetAll(Type type, IContext context)
 		{
-			IPlugin plugin;
-			if (!_plugins.TryGet(type, out plugin))
-				return (IEnumerable<object>)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
+			try
+			{
+				IPlugin plugin;
+				if (!_plugins.TryGet(type, out plugin))
+					return (IEnumerable<object>)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
 
-			return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToList();
+				return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToList();
+			}
+			catch (Exception exception)
+			{
+				throw new ActivationException(string.Format("Can't get all dependencies {0}-{1}.", context.Name, type.FullName), exception);
+			}
 		}
 	}
 }

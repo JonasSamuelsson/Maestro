@@ -23,7 +23,7 @@ namespace Maestro
 		{
 			ConstructorInfo constructor;
 			if (!TryGetConstructor(_type, context, out constructor))
-				throw new ActivationException();
+				throw new ActivationException(string.Format("Can't find constructor for {0}.", _type.FullName));
 			var ctorArgs = constructor.GetParameters().Select(x => context.Get(x.ParameterType)).ToArray();
 			return Activator.CreateInstance(_type, ctorArgs);
 		}
