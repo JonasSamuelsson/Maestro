@@ -2,7 +2,7 @@
 
 namespace Maestro
 {
-	internal interface IContext
+	public interface IContext
 	{
 		long RequestId { get; }
 		string Name { get; }
