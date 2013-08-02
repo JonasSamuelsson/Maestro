@@ -70,11 +70,15 @@ namespace Maestro
 
 		bool IDependencyContainer.CanGet(Type type, IContext context)
 		{
+			if (type.IsValueType)
+				return false;
+
 			IPipeline pipeline;
 			if (TryGetDependencyPipeline(_plugins, type, context, out pipeline))
 				return true;
 
-			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+			Type enumerableType;
+			if (TryGetEnumerableDependencyType(type, out enumerableType))
 				return true;
 
 			return false;
@@ -84,12 +88,16 @@ namespace Maestro
 		{
 			try
 			{
+				if (type.IsValueType)
+					throw new NotSupportedException();
+
 				IPipeline pipeline;
 				if (TryGetDependencyPipeline(_plugins, type, context, out pipeline))
 					return pipeline.Get(context);
 
-				if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-					return ((IDependencyContainer)this).GetAll(type.GetGenericArguments().Single(), context);
+				Type enumerableType;
+				if (TryGetEnumerableDependencyType(type, out enumerableType))
+					return ((IDependencyContainer)this).GetAll(enumerableType, context);
 			}
 			catch (ActivationException)
 			{
@@ -121,15 +129,38 @@ namespace Maestro
 			return false;
 		}
 
+		private static bool TryGetEnumerableDependencyType(Type type, out Type enumerableType)
+		{
+			enumerableType = null;
+
+			if (type.IsArray)
+			{
+				var elementType = type.GetElementType();
+				if (!elementType.IsValueType)
+				{
+					enumerableType = elementType;
+					return true;
+				}
+			}
+
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+			{
+				enumerableType = type.GetGenericArguments().Single();
+				return true;
+			}
+
+			return false;
+		}
+
 		IEnumerable<object> IDependencyContainer.GetAll(Type type, IContext context)
 		{
 			try
 			{
 				IPlugin plugin;
 				if (!_plugins.TryGet(type, out plugin))
-					return (IEnumerable<object>)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
+					return (IEnumerable<object>)Activator.CreateInstance(type.MakeArrayType(), 0);
 
-				return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToList();
+				return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToArray();
 			}
 			catch (ActivationException)
 			{

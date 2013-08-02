@@ -60,7 +60,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="default_type_instance_without_dependencies.cs" />
     <Compile Include="default_type_instance_with_configured_dependencies.cs" />
+    <Compile Include="resolve_array_dependencies.cs" />
     <Compile Include="resolve_dependencies.cs" />
+    <Compile Include="resolve_enumerable_dependencies.cs" />
     <Compile Include="type_instance_with_Enumerable_dependency.cs" />
   </ItemGroup>
   <ItemGroup>

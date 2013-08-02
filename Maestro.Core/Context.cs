@@ -34,7 +34,9 @@ namespace Maestro
 		{
 			if (_getHistory.Contains(type)) throw new ActivationException(string.Format("Cyclic dependency {0}-{1}.", Name, type));
 			_getHistory.Add(type);
-			return _container.Get(type, this);
+			var instance = _container.Get(type, this);
+			_getHistory.Remove(type);
+			return instance;
 		}
 	}
 }
