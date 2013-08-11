@@ -13,6 +13,34 @@ namespace Maestro.Fluent
 			_plugin = plugin;
 		}
 
+		IFuncInstancePipelineBuilder IDefaultPipelineSelector.Is(Func<object> func)
+		{
+			return Func(_ => func());
+		}
+
+		IFuncInstancePipelineBuilder IDefaultPipelineSelector.Is(Func<IContext, object> func)
+		{
+			return Func(func);
+		}
+
+		IFuncInstancePipelineBuilder IPipelineSelector.As(Func<object> func)
+		{
+			return Func(_ => func());
+		}
+
+		IFuncInstancePipelineBuilder IPipelineSelector.As(Func<IContext, object> func)
+		{
+			return Func(func);
+		}
+
+		private IFuncInstancePipelineBuilder Func(Func<IContext, object> func)
+		{
+			var provider = new FuncInstanceProvider(func);
+			var pipeline = new Pipeline(provider);
+			_plugin.Add(_name, pipeline);
+			return new FuncInstancePipelineBuilder(provider, pipeline);
+		}
+
 		ITypeInstancePipelineBuilder IDefaultPipelineSelector.Is(Type type)
 		{
 			return Type(type);
@@ -41,6 +69,34 @@ namespace Maestro.Fluent
 		{
 			_name = name;
 			_plugin = plugin;
+		}
+
+		IFuncInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>(Func<TInstance> func)
+		{
+			return Func(_ => func());
+		}
+
+		IFuncInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>(Func<IContext, TInstance> func)
+		{
+			return Func(func);
+		}
+
+		IFuncInstancePipelineBuilder<TInstance> IPipelineSelector<TPlugin>.As<TInstance>(Func<TInstance> func)
+		{
+			return Func(_ => func());
+		}
+
+		IFuncInstancePipelineBuilder<TInstance> IPipelineSelector<TPlugin>.As<TInstance>(Func<IContext, TInstance> func)
+		{
+			return Func(func);
+		}
+
+		private IFuncInstancePipelineBuilder<TInstance> Func<TInstance>(Func<IContext, TInstance> func)
+		{
+			var provider = new FuncInstanceProvider(context => func(context));
+			var pipeline = new Pipeline(provider);
+			_plugin.Add(_name, pipeline);
+			return new FuncInstancePipelineBuilder<TInstance>(provider, pipeline);
 		}
 
 		ITypeInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>()

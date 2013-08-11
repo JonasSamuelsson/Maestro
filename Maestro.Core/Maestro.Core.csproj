@@ -48,11 +48,14 @@
     <Compile Include="Container.cs" />
     <Compile Include="ContainerConfiguration.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="Fluent\FuncInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IDefaultPipelineSelector.cs" />
+    <Compile Include="Fluent\IFuncInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IPipelineSelector.cs" />
     <Compile Include="Fluent\ITypeInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\PipelineSelector.cs" />
     <Compile Include="Fluent\TypeInstancePipelineBuilder.cs" />
+    <Compile Include="FuncInstanceProvider.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="IContainerConfiguration.cs" />
     <Compile Include="IContext.cs" />

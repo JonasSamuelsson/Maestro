@@ -4,7 +4,7 @@
 	{
 	}
 
-	public interface ITypeInstancePipelineBuilder<TPlugin>
+	public interface ITypeInstancePipelineBuilder<T>
 	{
 	}
 }
