@@ -44,11 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
+    <Compile Include="ConstantInstanceProvider.cs" />
     <Compile Include="ConstructorResolver.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="ContainerConfiguration.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="Fluent\ConstantInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\FuncInstancePipelineBuilder.cs" />
+    <Compile Include="Fluent\IConstantInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IDefaultPipelineSelector.cs" />
     <Compile Include="Fluent\IFuncInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IPipelineSelector.cs" />

@@ -54,6 +54,7 @@
     <Compile Include="..\Maestro.Core\Properties\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="constant_instance.cs" />
     <Compile Include="DefaultContainerInstance.cs" />
     <Compile Include="func_instance.cs" />
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />

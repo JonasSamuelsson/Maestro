@@ -13,6 +13,24 @@ namespace Maestro.Fluent
 			_plugin = plugin;
 		}
 
+		public IConstantInstancePipelineBuilder Is(object instance)
+		{
+			return Contant(instance);
+		}
+
+		public IConstantInstancePipelineBuilder As(object instance)
+		{
+			return Contant(instance);
+		}
+
+		private IConstantInstancePipelineBuilder Contant(object instance)
+		{
+			var provider = new ConstantInstanceProvider(instance);
+			var pipeline = new Pipeline(provider);
+			_plugin.Add(_name, pipeline);
+			return new ConstantInstancePipelineBuilder(provider, pipeline);
+		}
+
 		IFuncInstancePipelineBuilder IDefaultPipelineSelector.Is(Func<object> func)
 		{
 			return Func(_ => func());
@@ -69,6 +87,24 @@ namespace Maestro.Fluent
 		{
 			_name = name;
 			_plugin = plugin;
+		}
+
+		IConstantInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>(TInstance instance)
+		{
+			return Constant(instance);
+		}
+
+		IConstantInstancePipelineBuilder<TInstance> IPipelineSelector<TPlugin>.As<TInstance>(TInstance instance)
+		{
+			return Constant(instance);
+		}
+
+		private IConstantInstancePipelineBuilder<TInstance> Constant<TInstance>(TInstance instance)
+		{
+			var provider = new ConstantInstanceProvider(instance);
+			var pipeline = new Pipeline(provider);
+			_plugin.Add(_name, pipeline);
+			return new ConstantInstancePipelineBuilder<TInstance>(provider, pipeline);
 		}
 
 		IFuncInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>(Func<TInstance> func)
