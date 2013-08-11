@@ -48,6 +48,7 @@
     <Compile Include="Container.cs" />
     <Compile Include="ContainerConfiguration.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="Fluent\IDefaultPipelineSelector.cs" />
     <Compile Include="Fluent\IPipelineSelector.cs" />
     <Compile Include="Fluent\ITypeInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\PipelineSelector.cs" />

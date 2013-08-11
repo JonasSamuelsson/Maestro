@@ -10,8 +10,8 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 			{
-				x.Default(typeof(TypeWithDefaultCtor)).Type(typeof(TypeWithDefaultCtor));
-				x.Default(typeof(TypeWithCtorDependency)).Type(typeof(TypeWithCtorDependency));
+				x.Default(typeof(TypeWithDefaultCtor)).Is(typeof(TypeWithDefaultCtor));
+				x.Default(typeof(TypeWithCtorDependency)).Is(typeof(TypeWithCtorDependency));
 			});
 
 			var o = container.Get<TypeWithCtorDependency>();

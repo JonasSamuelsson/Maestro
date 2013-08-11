@@ -2,7 +2,7 @@
 
 namespace Maestro.Fluent
 {
-	internal class PipelineSelector : IPipelineSelector
+	internal class PipelineSelector : IDefaultPipelineSelector, IPipelineSelector
 	{
 		private readonly string _name;
 		private readonly IPlugin _plugin;
@@ -13,7 +13,17 @@ namespace Maestro.Fluent
 			_plugin = plugin;
 		}
 
-		public ITypeInstancePipelineBuilder Type(Type type)
+		ITypeInstancePipelineBuilder IDefaultPipelineSelector.Is(Type type)
+		{
+			return Type(type);
+		}
+
+		ITypeInstancePipelineBuilder IPipelineSelector.As(Type type)
+		{
+			return Type(type);
+		}
+
+		private ITypeInstancePipelineBuilder Type(Type type)
 		{
 			var provider = new TypeInstanceProvider(type);
 			var pipeline = new Pipeline(provider);
@@ -22,7 +32,7 @@ namespace Maestro.Fluent
 		}
 	}
 
-	internal class PipelineSelector<TPlugin> : IPipelineSelector<TPlugin>
+	internal class PipelineSelector<TPlugin> : IDefaultPipelineSelector<TPlugin>, IPipelineSelector<TPlugin>
 	{
 		private readonly string _name;
 		private readonly IPlugin _plugin;
@@ -33,7 +43,17 @@ namespace Maestro.Fluent
 			_plugin = plugin;
 		}
 
-		public ITypeInstancePipelineBuilder<TInstance> Type<TInstance>() where TInstance : TPlugin
+		ITypeInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>()
+		{
+			return Type<TInstance>();
+		}
+
+		ITypeInstancePipelineBuilder<TInstance> IPipelineSelector<TPlugin>.As<TInstance>()
+		{
+			return Type<TInstance>();
+		}
+
+		private ITypeInstancePipelineBuilder<TInstance> Type<TInstance>() where TInstance : TPlugin
 		{
 			var provider = new TypeInstanceProvider(typeof(TInstance));
 			var pipeline = new Pipeline(provider);

@@ -4,11 +4,11 @@ namespace Maestro.Fluent
 {
 	public interface IPipelineSelector
 	{
-		ITypeInstancePipelineBuilder Type(Type type);
+		ITypeInstancePipelineBuilder As(Type type);
 	}
 
 	public interface IPipelineSelector<TPlugin>
 	{
-		ITypeInstancePipelineBuilder<TInstance> Type<TInstance>() where TInstance : TPlugin;
+		ITypeInstancePipelineBuilder<TInstance> As<TInstance>() where TInstance : TPlugin;
 	}
 }

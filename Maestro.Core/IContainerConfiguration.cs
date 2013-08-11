@@ -5,8 +5,9 @@ namespace Maestro
 {
 	public interface IContainerConfiguration
 	{
-		IPipelineSelector Default(Type type);
-		IPipelineSelector<TPlugin> Default<TPlugin>();
+		IDefaultPipelineSelector Default(Type type);
+		IDefaultPipelineSelector<TPlugin> Default<TPlugin>();
+		IPipelineSelector Add(Type type, string name = null);
 		IPipelineSelector<TPlugin> Add<TPlugin>(string name = null);
 	}
 }

@@ -11,11 +11,11 @@ namespace Maestro.Tests
 			var name = "1";
 			var container = new Container(x =>
 			{
-				x.Default<IRoot>().Type<Root>();
-				x.Default<IFoo>().Type<Foo>();
-				x.Default<IBar>().Type<Bar>();
-				x.Add<IRoot>(name).Type<Root1>();
-				x.Add<IBar>(name).Type<Bar1>();
+				x.Default<IRoot>().Is<Root>();
+				x.Default<IFoo>().Is<Foo>();
+				x.Default<IBar>().Is<Bar>();
+				x.Add<IRoot>(name).As<Root1>();
+				x.Add<IBar>(name).As<Bar1>();
 			});
 
 			var root = container.Get<IRoot>();
@@ -31,11 +31,11 @@ namespace Maestro.Tests
 			var name = "1";
 			var container = new Container(x =>
 			{
-				x.Default<IRoot>().Type<Root>();
-				x.Default<IFoo>().Type<Foo>();
-				x.Default<IBar>().Type<Bar>();
-				x.Add<IRoot>(name).Type<Root1>();
-				x.Add<IBar>(name).Type<Bar1>();
+				x.Default<IRoot>().Is<Root>();
+				x.Default<IFoo>().Is<Foo>();
+				x.Default<IBar>().Is<Bar>();
+				x.Add<IRoot>(name).As<Root1>();
+				x.Add<IBar>(name).As<Bar1>();
 			});
 
 			var root = container.Get<IRoot>(name);
@@ -51,11 +51,11 @@ namespace Maestro.Tests
 			var name = "1";
 			var container = new Container(x =>
 			{
-				x.Default<IRoot>().Type<Root>();
-				x.Default<IFoo>().Type<Foo>();
-				x.Default<IBar>().Type<Bar>();
-				x.Add<IRoot>(name).Type<Root1>();
-				x.Add<IBar>(name).Type<Bar1>();
+				x.Default<IRoot>().Is<Root>();
+				x.Default<IFoo>().Is<Foo>();
+				x.Default<IBar>().Is<Bar>();
+				x.Add<IRoot>(name).As<Root1>();
+				x.Add<IBar>(name).As<Bar1>();
 			});
 
 			var defaultRoot = container.Get<IRoot>();
