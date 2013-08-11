@@ -12,9 +12,9 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 			{
-				x.Default<Foobar>().Is<Foobar>();
-				x.Add<object>().As<EventArgs>();
-				x.Add<object>().As<Exception>();
+				x.For<Foobar>().Use<Foobar>();
+				x.Add<object>().Use<EventArgs>();
+				x.Add<object>().Use<Exception>();
 			});
 
 			var foobar = container.Get<Foobar>();
@@ -27,7 +27,7 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_use_empty_enumerable_if_enumerated_type_is_not_registered()
 		{
-			var container = new Container(x => x.Default<Foobar>().Is<Foobar>());
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>());
 
 			var foobar = container.Get<Foobar>();
 

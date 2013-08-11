@@ -23,11 +23,11 @@ namespace Maestro.Tests
 			var name = "yada yada";
 			var container = new Container(x =>
 			{
-				x.Add<Foo>().As<Foo>();
-				x.Add<Foo>(name).As<Foo>();
+				x.Add<Foo>().Use<Foo>();
+				x.Add<Foo>(name).Use<Foo>();
 
-				x.Default<object>().Is(@defaultDependency);
-				x.Add<object>(name).As(namedDependency);
+				x.For<object>().Use(@defaultDependency);
+				x.Add<object>(name).Use(namedDependency);
 			});
 
 			var foos = container.GetAll<Foo>().ToList();

@@ -4,17 +4,17 @@ namespace Maestro.Fluent
 {
 	public interface IPipelineSelector
 	{
-		IConstantInstancePipelineBuilder As(object instance);
-		IFuncInstancePipelineBuilder As(Func<object> func);
-		IFuncInstancePipelineBuilder As(Func<IContext, object> func);
-		ITypeInstancePipelineBuilder As(Type type);
+		IConstantInstancePipelineBuilder Use(object instance);
+		IFuncInstancePipelineBuilder Use(Func<object> func);
+		IFuncInstancePipelineBuilder Use(Func<IContext, object> func);
+		ITypeInstancePipelineBuilder Use(Type type);
 	}
 
 	public interface IPipelineSelector<TPlugin>
 	{
-		IConstantInstancePipelineBuilder<TInstance> As<TInstance>(TInstance instance) where TInstance : TPlugin;
-		IFuncInstancePipelineBuilder<TInstance> As<TInstance>(Func<TInstance> func) where TInstance : TPlugin;
-		IFuncInstancePipelineBuilder<TInstance> As<TInstance>(Func<IContext, TInstance> func) where TInstance : TPlugin;
-		ITypeInstancePipelineBuilder<TInstance> As<TInstance>() where TInstance : TPlugin;
+		IConstantInstancePipelineBuilder<TInstance> Use<TInstance>(TInstance instance) where TInstance : TPlugin;
+		IFuncInstancePipelineBuilder<TInstance> Use<TInstance>(Func<TInstance> func) where TInstance : TPlugin;
+		IFuncInstancePipelineBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> func) where TInstance : TPlugin;
+		ITypeInstancePipelineBuilder<TInstance> Use<TInstance>() where TInstance : TPlugin;
 	}
 }

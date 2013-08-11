@@ -12,8 +12,8 @@ namespace Maestro.Tests
 			var name = "foo";
 			var container = new Container(x =>
 			{
-				x.Default<object>().Is(() => new EventArgs());
-				x.Add<object>(name).As(_ => new Exception());
+				x.For<object>().Use(() => new EventArgs());
+				x.Add<object>(name).Use(_ => new Exception());
 			});
 
 			var @default = container.Get<object>();

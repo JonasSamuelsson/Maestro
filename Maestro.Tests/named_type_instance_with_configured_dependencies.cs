@@ -12,8 +12,8 @@ namespace Maestro.Tests
 			var name = "foo";
 			var container = new Container(x =>
 			{
-				x.Add<ClassWithDependency>(name).As<ClassWithDependency>();
-				x.Add<object>(name).As<Exception>();
+				x.Add<ClassWithDependency>(name).Use<ClassWithDependency>();
+				x.Add<object>(name).Use<Exception>();
 			});
 
 			var o = container.Get<ClassWithDependency>(name);
@@ -27,8 +27,8 @@ namespace Maestro.Tests
 			var name = "bar";
 			var container = new Container(x =>
 			{
-				x.Add<ClassWithDependency>(name).As<ClassWithDependency>();
-				x.Default<object>().Is<EventArgs>();
+				x.Add<ClassWithDependency>(name).Use<ClassWithDependency>();
+				x.For<object>().Use<EventArgs>();
 			});
 
 			var o = container.Get<ClassWithDependency>(name);

@@ -12,13 +12,13 @@ namespace Maestro
 			_plugins = plugins;
 		}
 
-		public IDefaultPipelineSelector Default(Type type)
+		public IPipelineSelector For(Type type)
 		{
 			var plugin = _plugins.GetOrAdd(type);
 			return new PipelineSelector(Container.DefaultName, plugin);
 		}
 
-		public IDefaultPipelineSelector<TPlugin> Default<TPlugin>()
+		public IPipelineSelector<TPlugin> For<TPlugin>()
 		{
 			var plugin = _plugins.GetOrAdd(typeof(TPlugin));
 			return new PipelineSelector<TPlugin>(Container.DefaultName, plugin);

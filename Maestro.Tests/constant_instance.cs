@@ -9,7 +9,7 @@ namespace Maestro.Tests
 		public void should_use_provided_instance()
 		{
 			var instance = "default object";
-			var container = new Container(x => x.Default<object>().Is(instance));
+			var container = new Container(x => x.For<object>().Use(instance));
 
 			var o = container.Get<object>();
 

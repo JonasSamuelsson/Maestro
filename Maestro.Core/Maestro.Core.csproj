@@ -52,7 +52,6 @@
     <Compile Include="Fluent\ConstantInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\FuncInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IConstantInstancePipelineBuilder.cs" />
-    <Compile Include="Fluent\IDefaultPipelineSelector.cs" />
     <Compile Include="Fluent\IFuncInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IPipelineSelector.cs" />
     <Compile Include="Fluent\ITypeInstancePipelineBuilder.cs" />

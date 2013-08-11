@@ -2,7 +2,7 @@
 
 namespace Maestro.Fluent
 {
-	internal class PipelineSelector : IDefaultPipelineSelector, IPipelineSelector
+	internal class PipelineSelector : IPipelineSelector
 	{
 		private readonly string _name;
 		private readonly IPlugin _plugin;
@@ -13,17 +13,7 @@ namespace Maestro.Fluent
 			_plugin = plugin;
 		}
 
-		public IConstantInstancePipelineBuilder Is(object instance)
-		{
-			return Contant(instance);
-		}
-
-		public IConstantInstancePipelineBuilder As(object instance)
-		{
-			return Contant(instance);
-		}
-
-		private IConstantInstancePipelineBuilder Contant(object instance)
+		public IConstantInstancePipelineBuilder Use(object instance)
 		{
 			var provider = new ConstantInstanceProvider(instance);
 			var pipeline = new Pipeline(provider);
@@ -31,27 +21,12 @@ namespace Maestro.Fluent
 			return new ConstantInstancePipelineBuilder(provider, pipeline);
 		}
 
-		IFuncInstancePipelineBuilder IDefaultPipelineSelector.Is(Func<object> func)
+		public IFuncInstancePipelineBuilder Use(Func<object> func)
 		{
-			return Func(_ => func());
+			return Use(_ => func());
 		}
 
-		IFuncInstancePipelineBuilder IDefaultPipelineSelector.Is(Func<IContext, object> func)
-		{
-			return Func(func);
-		}
-
-		IFuncInstancePipelineBuilder IPipelineSelector.As(Func<object> func)
-		{
-			return Func(_ => func());
-		}
-
-		IFuncInstancePipelineBuilder IPipelineSelector.As(Func<IContext, object> func)
-		{
-			return Func(func);
-		}
-
-		private IFuncInstancePipelineBuilder Func(Func<IContext, object> func)
+		public IFuncInstancePipelineBuilder Use(Func<IContext, object> func)
 		{
 			var provider = new FuncInstanceProvider(func);
 			var pipeline = new Pipeline(provider);
@@ -59,17 +34,7 @@ namespace Maestro.Fluent
 			return new FuncInstancePipelineBuilder(provider, pipeline);
 		}
 
-		ITypeInstancePipelineBuilder IDefaultPipelineSelector.Is(Type type)
-		{
-			return Type(type);
-		}
-
-		ITypeInstancePipelineBuilder IPipelineSelector.As(Type type)
-		{
-			return Type(type);
-		}
-
-		private ITypeInstancePipelineBuilder Type(Type type)
+		public ITypeInstancePipelineBuilder Use(Type type)
 		{
 			var provider = new TypeInstanceProvider(type);
 			var pipeline = new Pipeline(provider);
@@ -78,7 +43,7 @@ namespace Maestro.Fluent
 		}
 	}
 
-	internal class PipelineSelector<TPlugin> : IDefaultPipelineSelector<TPlugin>, IPipelineSelector<TPlugin>
+	internal class PipelineSelector<TPlugin> : IPipelineSelector<TPlugin>
 	{
 		private readonly string _name;
 		private readonly IPlugin _plugin;
@@ -89,17 +54,7 @@ namespace Maestro.Fluent
 			_plugin = plugin;
 		}
 
-		IConstantInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>(TInstance instance)
-		{
-			return Constant(instance);
-		}
-
-		IConstantInstancePipelineBuilder<TInstance> IPipelineSelector<TPlugin>.As<TInstance>(TInstance instance)
-		{
-			return Constant(instance);
-		}
-
-		private IConstantInstancePipelineBuilder<TInstance> Constant<TInstance>(TInstance instance)
+		public IConstantInstancePipelineBuilder<TInstance> Use<TInstance>(TInstance instance) where TInstance : TPlugin
 		{
 			var provider = new ConstantInstanceProvider(instance);
 			var pipeline = new Pipeline(provider);
@@ -107,27 +62,12 @@ namespace Maestro.Fluent
 			return new ConstantInstancePipelineBuilder<TInstance>(provider, pipeline);
 		}
 
-		IFuncInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>(Func<TInstance> func)
+		public IFuncInstancePipelineBuilder<TInstance> Use<TInstance>(Func<TInstance> func) where TInstance : TPlugin
 		{
-			return Func(_ => func());
+			return Use(_ => func());
 		}
 
-		IFuncInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>(Func<IContext, TInstance> func)
-		{
-			return Func(func);
-		}
-
-		IFuncInstancePipelineBuilder<TInstance> IPipelineSelector<TPlugin>.As<TInstance>(Func<TInstance> func)
-		{
-			return Func(_ => func());
-		}
-
-		IFuncInstancePipelineBuilder<TInstance> IPipelineSelector<TPlugin>.As<TInstance>(Func<IContext, TInstance> func)
-		{
-			return Func(func);
-		}
-
-		private IFuncInstancePipelineBuilder<TInstance> Func<TInstance>(Func<IContext, TInstance> func)
+		public IFuncInstancePipelineBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> func) where TInstance : TPlugin
 		{
 			var provider = new FuncInstanceProvider(context => func(context));
 			var pipeline = new Pipeline(provider);
@@ -135,17 +75,7 @@ namespace Maestro.Fluent
 			return new FuncInstancePipelineBuilder<TInstance>(provider, pipeline);
 		}
 
-		ITypeInstancePipelineBuilder<TInstance> IDefaultPipelineSelector<TPlugin>.Is<TInstance>()
-		{
-			return Type<TInstance>();
-		}
-
-		ITypeInstancePipelineBuilder<TInstance> IPipelineSelector<TPlugin>.As<TInstance>()
-		{
-			return Type<TInstance>();
-		}
-
-		private ITypeInstancePipelineBuilder<TInstance> Type<TInstance>() where TInstance : TPlugin
+		public ITypeInstancePipelineBuilder<TInstance> Use<TInstance>() where TInstance : TPlugin
 		{
 			var provider = new TypeInstanceProvider(typeof(TInstance));
 			var pipeline = new Pipeline(provider);
