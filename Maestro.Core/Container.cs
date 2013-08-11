@@ -38,6 +38,8 @@ namespace Maestro
 		{
 			try
 			{
+				TypeHelper.AssertTypeIsSupported(type);
+
 				name = name ?? DefaultName;
 				var requestId = Interlocked.Increment(ref _requestId);
 				var context = new Context(requestId, name, this);
@@ -67,9 +69,11 @@ namespace Maestro
 		{
 			try
 			{
+				TypeHelper.AssertTypeIsSupported(type);
+
 				IPlugin plugin;
 				if (!_plugins.TryGet(type, out plugin))
-					return (IEnumerable<object>)Activator.CreateInstance(type.MakeArrayType(), 0);
+					return GetEmptyEnumerableOf(type);
 
 				var requestId = Interlocked.Increment(ref _requestId);
 				var context = new Context(requestId, DefaultName, this);
@@ -123,8 +127,7 @@ namespace Maestro
 		{
 			try
 			{
-				if (type.IsValueType)
-					throw new NotSupportedException();
+				TypeHelper.AssertTypeIsSupported(type);
 
 				IPipeline pipeline;
 				if (TryGetPipeline(_plugins, type, context, out pipeline))
@@ -192,10 +195,9 @@ namespace Maestro
 			try
 			{
 				IPlugin plugin;
-				if (!_plugins.TryGet(type, out plugin))
-					return (IEnumerable<object>)Activator.CreateInstance(type.MakeArrayType(), 0);
-
-				return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToArray();
+				return !_plugins.TryGet(type, out plugin)
+					? GetEmptyEnumerableOf(type)
+					: plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToArray();
 			}
 			catch (ActivationException)
 			{
@@ -205,6 +207,11 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get all dependencies {0}-{1}.", context.Name, type.FullName), exception);
 			}
+		}
+
+		private static IEnumerable<object> GetEmptyEnumerableOf(Type type)
+		{
+			return (IEnumerable<object>)Activator.CreateInstance(type.MakeArrayType(), 0);
 		}
 	}
 }
