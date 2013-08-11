@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Maestro
 {
@@ -8,5 +9,7 @@ namespace Maestro
 
 		object Get(Type type, string name = null);
 		T Get<T>(string name = null);
+		IEnumerable<object> GetAll(Type type);
+		IEnumerable<T> GetAll<T>();
 	}
 }

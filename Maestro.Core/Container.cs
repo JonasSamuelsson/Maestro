@@ -63,6 +63,46 @@ namespace Maestro
 			return (T)Get(typeof(T), name);
 		}
 
+		public IEnumerable<object> GetAll(Type type)
+		{
+			try
+			{
+				IPlugin plugin;
+				if (!_plugins.TryGet(type, out plugin))
+					return (IEnumerable<object>)Activator.CreateInstance(type.MakeArrayType(), 0);
+
+				var requestId = Interlocked.Increment(ref _requestId);
+				var context = new Context(requestId, DefaultName, this);
+
+				var names = plugin.GetNames().ToList();
+				var list = new List<object>(names.Count());
+
+				foreach (var name in names)
+				{
+					context.Name = name;
+					var instance = plugin.Get(name).Get(context);
+					list.Add(instance);
+				}
+
+				return list;
+			}
+			catch (ActivationException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				throw new ActivationException(string.Format("Can't get all {0}.", type.FullName), exception);
+			}
+
+			throw new ActivationException(string.Format("Can't get all {0}.", type.FullName));
+		}
+
+		public IEnumerable<T> GetAll<T>()
+		{
+			return GetAll(typeof(T)).Cast<T>().ToList();
+		}
+
 		bool IDependencyContainer.CanGet(Type type, IContext context)
 		{
 			if (type.IsValueType)

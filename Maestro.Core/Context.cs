@@ -18,7 +18,7 @@ namespace Maestro
 			_getHistory = new List<Type>();
 		}
 
-		public string Name { get; private set; }
+		public string Name { get; internal set; }
 		public long RequestId { get; private set; }
 
 		public bool CanGet(Type type)
