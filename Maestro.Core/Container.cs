@@ -38,18 +38,13 @@ namespace Maestro
 		{
 			try
 			{
-				IPlugin plugin;
-				if (_plugins.TryGet(type, out plugin))
-				{
-					name = name ?? DefaultName;
-					IPipeline pipeline;
-					if (plugin.TryGet(name, out pipeline))
-					{
-						var requestId = Interlocked.Increment(ref _requestId);
-						var context = new Context(requestId, name, this);
-						return pipeline.Get(context);
-					}
-				}
+				name = name ?? DefaultName;
+				var requestId = Interlocked.Increment(ref _requestId);
+				var context = new Context(requestId, name, this);
+
+				IPipeline pipeline;
+				if (TryGetPipeline(_plugins, type, context, out pipeline))
+					return pipeline.Get(context);
 			}
 			catch (ActivationException)
 			{
@@ -74,11 +69,11 @@ namespace Maestro
 				return false;
 
 			IPipeline pipeline;
-			if (TryGetDependencyPipeline(_plugins, type, context, out pipeline))
+			if (TryGetPipeline(_plugins, type, context, out pipeline))
 				return true;
 
 			Type enumerableType;
-			if (TryGetEnumerableDependencyType(type, out enumerableType))
+			if (TryGetEnumerableType(type, out enumerableType))
 				return true;
 
 			return false;
@@ -92,11 +87,11 @@ namespace Maestro
 					throw new NotSupportedException();
 
 				IPipeline pipeline;
-				if (TryGetDependencyPipeline(_plugins, type, context, out pipeline))
+				if (TryGetPipeline(_plugins, type, context, out pipeline))
 					return pipeline.Get(context);
 
 				Type enumerableType;
-				if (TryGetEnumerableDependencyType(type, out enumerableType))
+				if (TryGetEnumerableType(type, out enumerableType))
 					return ((IDependencyContainer)this).GetAll(enumerableType, context);
 			}
 			catch (ActivationException)
@@ -111,7 +106,7 @@ namespace Maestro
 			throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 		}
 
-		private static bool TryGetDependencyPipeline(IPluginDictionary plugins, Type type, IContext context,
+		private static bool TryGetPipeline(IPluginDictionary plugins, Type type, IContext context,
 			out IPipeline pipeline)
 		{
 			pipeline = null;
@@ -129,7 +124,7 @@ namespace Maestro
 			return false;
 		}
 
-		private static bool TryGetEnumerableDependencyType(Type type, out Type enumerableType)
+		private static bool TryGetEnumerableType(Type type, out Type enumerableType)
 		{
 			enumerableType = null;
 
