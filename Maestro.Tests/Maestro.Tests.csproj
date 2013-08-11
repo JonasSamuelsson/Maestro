@@ -63,6 +63,7 @@
     <Compile Include="resolve_array_dependencies.cs" />
     <Compile Include="resolve_dependencies.cs" />
     <Compile Include="resolve_enumerable_dependencies.cs" />
+    <Compile Include="resolve_type_with_cyclic_dependencies.cs" />
     <Compile Include="type_instance_with_Enumerable_dependency.cs" />
   </ItemGroup>
   <ItemGroup>
