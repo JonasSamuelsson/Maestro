@@ -6,6 +6,7 @@ namespace Maestro
 	{
 		long RequestId { get; }
 		string Name { get; }
+		int ConfigId { get; }
 
 		bool CanGet(Type type);
 		object Get(Type type);

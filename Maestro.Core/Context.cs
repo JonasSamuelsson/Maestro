@@ -9,9 +9,10 @@ namespace Maestro
 		private readonly List<Type> _canGetHistory;
 		private readonly List<Type> _getHistory;
 
-		public Context(long requestId, string name, IDependencyContainer container)
+		public Context(long requestId, string name, IDependencyContainer container, int configId)
 		{
 			Name = name;
+			ConfigId = configId;
 			RequestId = requestId;
 			_container = container;
 			_canGetHistory = new List<Type>();
@@ -20,6 +21,7 @@ namespace Maestro
 
 		public string Name { get; internal set; }
 		public long RequestId { get; private set; }
+		public int ConfigId { get; private set; }
 
 		public bool CanGet(Type type)
 		{

@@ -66,6 +66,7 @@
     <Compile Include="resolve_enumerable.cs" />
     <Compile Include="resolve_enumerable_dependencies.cs" />
     <Compile Include="resolve_type_with_cyclic_dependencies.cs" />
+    <Compile Include="type_instance.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Maestro.Core\Maestro.Core.csproj">

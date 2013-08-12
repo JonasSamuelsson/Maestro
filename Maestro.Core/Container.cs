@@ -10,6 +10,7 @@ namespace Maestro
 		private static IContainer _default;
 		private readonly IPluginDictionary _plugins;
 		private long _requestId;
+		private int _configId;
 
 		public Container()
 		{
@@ -32,6 +33,7 @@ namespace Maestro
 		public void Configure(Action<IContainerConfiguration> action)
 		{
 			action(new ContainerConfiguration(_plugins));
+			Interlocked.Increment(ref _configId);
 		}
 
 		public object Get(Type type, string name = null)
@@ -42,11 +44,13 @@ namespace Maestro
 
 				name = name ?? DefaultName;
 				var requestId = Interlocked.Increment(ref _requestId);
-				var context = new Context(requestId, name, this);
+				var context = new Context(requestId, name, this, _configId);
 
 				IPipeline pipeline;
 				if (TryGetPipeline(_plugins, type, context, out pipeline))
 					return pipeline.Get(context);
+
+				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
 			}
 			catch (ActivationException)
 			{
@@ -56,8 +60,6 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName), exception);
 			}
-
-			throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
 		}
 
 		public T Get<T>(string name = null)
@@ -76,7 +78,7 @@ namespace Maestro
 					return GetEmptyEnumerableOf(type);
 
 				var requestId = Interlocked.Increment(ref _requestId);
-				var context = new Context(requestId, DefaultName, this);
+				var context = new Context(requestId, DefaultName, this, _configId);
 
 				var names = plugin.GetNames().ToList();
 				var list = new List<object>(names.Count());
@@ -98,8 +100,6 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get all {0}.", type.FullName), exception);
 			}
-
-			throw new ActivationException(string.Format("Can't get all {0}.", type.FullName));
 		}
 
 		public IEnumerable<T> GetAll<T>()
