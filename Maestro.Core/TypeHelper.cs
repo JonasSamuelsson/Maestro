@@ -12,7 +12,12 @@ namespace Maestro
 
 		public static bool IsTypeSupported(Type type)
 		{
-			return !type.IsValueType;
+			return !type.IsValueType && type != typeof(string);
+		}
+
+		public static bool IsConcreteClosedClass(Type type)
+		{
+			return type.IsClass && type != typeof(string) && !type.IsAbstract && !type.IsGenericTypeDefinition;
 		}
 	}
 }

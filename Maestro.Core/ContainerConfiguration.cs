@@ -5,9 +5,9 @@ namespace Maestro
 {
 	internal class ContainerConfiguration : IContainerConfiguration
 	{
-		private readonly IPluginDictionary _plugins;
+		private readonly ICustomDictionary<IPlugin> _plugins;
 
-		public ContainerConfiguration(IPluginDictionary plugins)
+		public ContainerConfiguration(ICustomDictionary<IPlugin> plugins)
 		{
 			_plugins = plugins;
 		}

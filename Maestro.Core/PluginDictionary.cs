@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Maestro
 {
-	internal class PluginDictionary : IPluginDictionary
+	internal class PluginDictionary : ICustomDictionary<IPlugin>
 	{
 		private readonly Dictionary<Type, IPlugin> _dictionary = new Dictionary<Type, IPlugin>();
 
@@ -23,6 +23,11 @@ namespace Maestro
 		public bool TryGet(Type type, out IPlugin plugin)
 		{
 			return _dictionary.TryGetValue(type, out plugin);
+		}
+
+		public void Clear()
+		{
+			_dictionary.Clear();
 		}
 	}
 }

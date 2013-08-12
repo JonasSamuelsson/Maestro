@@ -8,13 +8,15 @@ namespace Maestro
 	public class Container : IContainer, IDependencyContainer
 	{
 		private static IContainer _default;
-		private readonly IPluginDictionary _plugins;
+		private readonly ICustomDictionary<IPlugin> _plugins;
+		private readonly ICustomDictionary<IPipeline> _fallbackPipelines;
 		private long _requestId;
 		private int _configId;
 
 		public Container()
 		{
 			_plugins = new PluginDictionary();
+			_fallbackPipelines = new FallbackPipelineDictionary();
 		}
 
 		public Container(Action<IContainerConfiguration> action)
@@ -33,6 +35,7 @@ namespace Maestro
 		public void Configure(Action<IContainerConfiguration> action)
 		{
 			action(new ContainerConfiguration(_plugins));
+			_fallbackPipelines.Clear();
 			Interlocked.Increment(ref _configId);
 		}
 
@@ -50,6 +53,10 @@ namespace Maestro
 				if (TryGetPipeline(_plugins, type, context, out pipeline))
 					return pipeline.Get(context);
 
+				IPipeline fallbackPipeline;
+				if (TryGetFallbackPipeline(_fallbackPipelines, type, out fallbackPipeline))
+					return fallbackPipeline.Get(context);
+
 				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
 			}
 			catch (ActivationException)
@@ -60,6 +67,17 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName), exception);
 			}
+		}
+
+		private static bool TryGetFallbackPipeline(ICustomDictionary<IPipeline> fallbackPipelines, Type type, out IPipeline pipeline)
+		{
+			pipeline = null;
+
+			if (!TypeHelper.IsConcreteClosedClass(type))
+				return false;
+
+			pipeline = fallbackPipelines.GetOrAdd(type);
+			return true;
 		}
 
 		public T Get<T>(string name = null)
@@ -114,11 +132,14 @@ namespace Maestro
 
 			IPipeline pipeline;
 			if (TryGetPipeline(_plugins, type, context, out pipeline))
-				return true;
+				return pipeline.CanGet(context);
 
 			Type enumerableType;
 			if (TryGetEnumerableType(type, out enumerableType))
 				return true;
+
+			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipeline))
+				return pipeline.CanGet(context);
 
 			return false;
 		}
@@ -136,6 +157,11 @@ namespace Maestro
 				Type enumerableType;
 				if (TryGetEnumerableType(type, out enumerableType))
 					return ((IDependencyContainer)this).GetAll(enumerableType, context);
+
+				if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipeline))
+					return pipeline.Get(context);
+
+				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 			}
 			catch (ActivationException)
 			{
@@ -145,11 +171,9 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName), exception);
 			}
-
-			throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 		}
 
-		private static bool TryGetPipeline(IPluginDictionary plugins, Type type, IContext context,
+		private static bool TryGetPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context,
 			out IPipeline pipeline)
 		{
 			pipeline = null;

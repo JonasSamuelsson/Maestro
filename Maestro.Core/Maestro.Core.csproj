@@ -49,6 +49,7 @@
     <Compile Include="Container.cs" />
     <Compile Include="ContainerConfiguration.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="FallbackPipelineDictionary.cs" />
     <Compile Include="Fluent\ConstantInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\FuncInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IConstantInstancePipelineBuilder.cs" />
@@ -61,10 +62,10 @@
     <Compile Include="IContainer.cs" />
     <Compile Include="IContainerConfiguration.cs" />
     <Compile Include="IContext.cs" />
+    <Compile Include="ICustomDictionary.cs" />
     <Compile Include="IDependencyContainer.cs" />
     <Compile Include="IPipeline.cs" />
     <Compile Include="IPlugin.cs" />
-    <Compile Include="IPluginDictionary.cs" />
     <Compile Include="IProvider.cs" />
     <Compile Include="Pipeline.cs" />
     <Compile Include="Plugin.cs" />
