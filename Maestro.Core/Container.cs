@@ -47,15 +47,17 @@ namespace Maestro
 
 				name = name ?? DefaultName;
 				var requestId = Interlocked.Increment(ref _requestId);
-				var context = new Context(requestId, name, this, _configId);
+				var context = new Context(_configId, requestId, name, this);
+				using (((TypeStack)context.TypeStack).Push(type))
+				{
+					IPipeline pipeline;
+					if (TryGetPipeline(_plugins, type, context, out pipeline))
+						return pipeline.Get(context);
 
-				IPipeline pipeline;
-				if (TryGetPipeline(_plugins, type, context, out pipeline))
-					return pipeline.Get(context);
-
-				IPipeline fallbackPipeline;
-				if (TryGetFallbackPipeline(_fallbackPipelines, type, out fallbackPipeline))
-					return fallbackPipeline.Get(context);
+					IPipeline fallbackPipeline;
+					if (TryGetFallbackPipeline(_fallbackPipelines, type, out fallbackPipeline))
+						return fallbackPipeline.Get(context);
+				}
 
 				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
 			}
@@ -96,7 +98,7 @@ namespace Maestro
 					return GetEmptyEnumerableOf(type);
 
 				var requestId = Interlocked.Increment(ref _requestId);
-				var context = new Context(requestId, DefaultName, this, _configId);
+				var context = new Context(_configId, requestId, DefaultName, this);
 
 				var names = plugin.GetNames().ToList();
 				var list = new List<object>(names.Count());
@@ -132,14 +134,16 @@ namespace Maestro
 
 			IPipeline pipeline;
 			if (TryGetPipeline(_plugins, type, context, out pipeline))
-				return pipeline.CanGet(context);
+				using (((TypeStack)context.TypeStack).Push(type))
+					return pipeline.CanGet(context);
 
 			Type enumerableType;
 			if (TryGetEnumerableType(type, out enumerableType))
 				return true;
 
 			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipeline))
-				return pipeline.CanGet(context);
+				using (((TypeStack)context.TypeStack).Push(type))
+					return pipeline.CanGet(context);
 
 			return false;
 		}
@@ -152,14 +156,16 @@ namespace Maestro
 
 				IPipeline pipeline;
 				if (TryGetPipeline(_plugins, type, context, out pipeline))
-					return pipeline.Get(context);
+					using (((TypeStack)context.TypeStack).Push(type))
+						return pipeline.Get(context);
 
 				Type enumerableType;
 				if (TryGetEnumerableType(type, out enumerableType))
 					return ((IDependencyContainer)this).GetAll(enumerableType, context);
 
 				if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipeline))
-					return pipeline.Get(context);
+					using (((TypeStack)context.TypeStack).Push(type))
+						return pipeline.Get(context);
 
 				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 			}
@@ -219,9 +225,11 @@ namespace Maestro
 			try
 			{
 				IPlugin plugin;
-				return !_plugins.TryGet(type, out plugin)
-					? GetEmptyEnumerableOf(type)
-					: plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToArray();
+				if (!_plugins.TryGet(type, out plugin))
+					return GetEmptyEnumerableOf(type);
+
+				using (((TypeStack)context.TypeStack).Push(type))
+					return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToArray();
 			}
 			catch (ActivationException)
 			{

@@ -67,6 +67,7 @@
     <Compile Include="IPipeline.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="IProvider.cs" />
+    <Compile Include="ITypeStack.cs" />
     <Compile Include="Pipeline.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginDictionary.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="TypeHelper.cs" />
     <Compile Include="TypeInstanceProvider.cs" />
+    <Compile Include="TypeStack.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

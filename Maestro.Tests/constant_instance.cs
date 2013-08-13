@@ -14,6 +14,6 @@ namespace Maestro.Tests
 			var o = container.Get<object>();
 
 			o.Should().Be(instance);
-		} 
+		}
 	}
 }
