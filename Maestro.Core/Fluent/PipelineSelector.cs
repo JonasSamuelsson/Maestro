@@ -45,20 +45,18 @@ namespace Maestro.Fluent
 
 	internal class PipelineSelector<TPlugin> : IPipelineSelector<TPlugin>
 	{
-		private readonly string _name;
-		private readonly IPlugin _plugin;
+		private readonly Action<IPipeline> _registerPipeline;
 
-		public PipelineSelector(string name, IPlugin plugin)
+		public PipelineSelector(Action<IPipeline> registerPipeline)
 		{
-			_name = name;
-			_plugin = plugin;
+			_registerPipeline = registerPipeline;
 		}
 
 		public IConstantInstancePipelineBuilder<TInstance> Use<TInstance>(TInstance instance) where TInstance : TPlugin
 		{
 			var provider = new ConstantInstanceProvider(instance);
 			var pipeline = new Pipeline(provider);
-			_plugin.Add(_name, pipeline);
+			_registerPipeline(pipeline);
 			return new ConstantInstancePipelineBuilder<TInstance>(provider, pipeline);
 		}
 
@@ -71,7 +69,7 @@ namespace Maestro.Fluent
 		{
 			var provider = new FuncInstanceProvider(context => func(context));
 			var pipeline = new Pipeline(provider);
-			_plugin.Add(_name, pipeline);
+			_registerPipeline(pipeline);
 			return new FuncInstancePipelineBuilder<TInstance>(provider, pipeline);
 		}
 
@@ -79,8 +77,15 @@ namespace Maestro.Fluent
 		{
 			var provider = new TypeInstanceProvider(typeof(TInstance));
 			var pipeline = new Pipeline(provider);
-			_plugin.Add(_name, pipeline);
+			_registerPipeline(pipeline);
 			return new TypeInstancePipelineBuilder<TInstance>(provider, pipeline);
+		}
+
+		public void UseConditional(Action<IConditionalInstancePipelineBuilder<TPlugin>> action)
+		{
+			var provider = new ConditionalInstanceProvider<TPlugin>(action);
+			var pipeline = new Pipeline(provider);
+			_registerPipeline(pipeline);
 		}
 	}
 }

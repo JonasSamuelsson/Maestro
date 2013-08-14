@@ -5,7 +5,7 @@ namespace Maestro
 {
 	public interface ITypeStack : IEnumerable<Type>
 	{
-		Type RootType { get; }
-		Type CurrentType { get; }
+		Type Root { get; }
+		Type Current { get; }
 	}
 }

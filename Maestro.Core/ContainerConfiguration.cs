@@ -21,7 +21,7 @@ namespace Maestro
 		public IPipelineSelector<TPlugin> For<TPlugin>()
 		{
 			var plugin = _plugins.GetOrAdd(typeof(TPlugin));
-			return new PipelineSelector<TPlugin>(Container.DefaultName, plugin);
+			return new PipelineSelector<TPlugin>(x => plugin.Add(Container.DefaultName, x));
 		}
 
 		public IPipelineSelector Add(Type type, string name = null)
@@ -35,7 +35,7 @@ namespace Maestro
 		{
 			name = name ?? Guid.NewGuid().ToString();
 			var plugin = _plugins.GetOrAdd(typeof(TPlugin));
-			return new PipelineSelector<TPlugin>(name, plugin);
+			return new PipelineSelector<TPlugin>(x => plugin.Add(name, x));
 		}
 	}
 }

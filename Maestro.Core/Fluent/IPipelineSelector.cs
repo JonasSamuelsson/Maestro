@@ -16,5 +16,6 @@ namespace Maestro.Fluent
 		IFuncInstancePipelineBuilder<TInstance> Use<TInstance>(Func<TInstance> func) where TInstance : TPlugin;
 		IFuncInstancePipelineBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> func) where TInstance : TPlugin;
 		ITypeInstancePipelineBuilder<TInstance> Use<TInstance>() where TInstance : TPlugin;
+		void UseConditional(Action<IConditionalInstancePipelineBuilder<TPlugin>> action);
 	}
 }

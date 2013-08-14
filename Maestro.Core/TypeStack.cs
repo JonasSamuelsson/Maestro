@@ -19,12 +19,12 @@ namespace Maestro
 			return GetEnumerator();
 		}
 
-		public Type RootType
+		public Type Root
 		{
 			get { return types.Last(); }
 		}
 
-		public Type CurrentType
+		public Type Current
 		{
 			get { return types.First(); }
 		}
