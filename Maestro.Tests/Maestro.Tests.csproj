@@ -57,7 +57,7 @@
     <Compile Include="conditional_instance.cs" />
     <Compile Include="constant_instance.cs" />
     <Compile Include="DefaultContainerInstance.cs" />
-    <Compile Include="func_instance.cs" />
+    <Compile Include="lambda_instance.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

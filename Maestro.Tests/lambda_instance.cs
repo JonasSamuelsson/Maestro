@@ -1,13 +1,13 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
+using System;
 using Xunit;
 
 namespace Maestro.Tests
 {
-	public class func_instance
+	public class lambda_instance
 	{
 		[Fact]
-		public void should_delegate_instantiation_to_provided_func()
+		public void should_delegate_instantiation_to_provided_lambda()
 		{
 			var name = "foo";
 			var container = new Container(x =>
