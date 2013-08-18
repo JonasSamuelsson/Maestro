@@ -6,36 +6,34 @@ namespace Maestro.Tests
 	public class type_instance
 	{
 		[Fact]
-		public void selected_ctor_should_be_reevaluated_when_config_changes()
+		public void should_reevaluate_selected_ctor_when_config_changes()
 		{
-			var name = "qwerty";
-			var dependency = "dependency";
+			var container = new Container(x => x.For<Foo>().Use<Foo>());
 
-			var container = new Container(x =>
-			{
-				x.For<Foo>().Use<Foo>();
-				x.For<object>().Use<object>();
-			});
-			var foo = container.Get<Foo>(name);
+			var foo = container.Get<Foo>();
 
-			foo.Object.Should().BeOfType<object>();
+			foo.Bar.Should().BeNull();
 
-			container.Configure(x => x.Add<object>(name).Use(dependency));
+			container.Configure(x => x.For<IBar>().Use<Bar>());
 
-			foo = container.Get<Foo>(name);
+			foo = container.Get<Foo>();
 
-			foo.Object.Should().Be(dependency);
+			foo.Bar.Should().NotBeNull();
 		}
 
 		private class Foo
 		{
-			public Foo(object o)
+			public Foo() : this(null) { }
+			public Foo(IBar bar)
 			{
-				Object = o;
+				Bar = bar;
 			}
 
-			public object Object { get; private set; }
+			public IBar Bar { get; private set; }
 		}
+
+		private interface IBar { }
+		private class Bar : IBar { }
 
 		[Fact]
 		public void should_instantiate_open_generic_type()
@@ -47,7 +45,7 @@ namespace Maestro.Tests
 			foobar.Should().BeOfType<Foobar<int>>();
 		}
 
-		private interface IFoobar<T>{}
-		private class Foobar<T>:IFoobar<T>{}
+		private interface IFoobar<T> { }
+		private class Foobar<T> : IFoobar<T> { }
 	}
 }

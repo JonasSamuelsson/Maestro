@@ -18,14 +18,21 @@ namespace Maestro
 
 		public bool CanGet(IContext context)
 		{
-			if (!_canGet.HasValue || _configId != context.ConfigId)
+			if (ShouldReevaluateSelectedCtor(context))
 				FindCtor(context);
 
 			return _canGet.HasValue;
 		}
 
+		private bool ShouldReevaluateSelectedCtor(IContext context)
+		{
+			return !_canGet.HasValue || _configId != context.ConfigId;
+		}
+
 		private void FindCtor(IContext context)
 		{
+			_configId = context.ConfigId;
+
 			ConstructorInfo constructor;
 			if (!ConstructorResolver.TryGetConstructor(_type, context, out constructor))
 			{
@@ -40,7 +47,7 @@ namespace Maestro
 
 		public object Get(IContext context)
 		{
-			if (!_canGet.HasValue || _configId != context.ConfigId)
+			if (ShouldReevaluateSelectedCtor(context))
 				FindCtor(context);
 
 			if (!_canGet.Value)
