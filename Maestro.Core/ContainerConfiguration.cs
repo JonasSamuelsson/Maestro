@@ -37,5 +37,10 @@ namespace Maestro
 			var plugin = _plugins.GetOrAdd(typeof(TPlugin));
 			return new PipelineSelector<TPlugin>(x => plugin.Add(name, x));
 		}
+
+		public IConventionalRegistrationSource Scan
+		{
+			get { return new ConventionalRegistration(this); }
+		}
 	}
 }

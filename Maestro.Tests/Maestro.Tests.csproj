@@ -56,6 +56,7 @@
     </Compile>
     <Compile Include="conditional_instance.cs" />
     <Compile Include="constant_instance.cs" />
+    <Compile Include="conventional_registration.cs" />
     <Compile Include="DefaultContainerInstance.cs" />
     <Compile Include="lambda_instance.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
