@@ -30,6 +30,11 @@ namespace Maestro
 			throw new InvalidOperationException();
 		}
 
+		public IProvider MakeGenericProvider(Type[] types)
+		{
+			throw new NotImplementedException();
+		}
+
 		private bool TryGetPipeline(IContext context, out IPipeline pipeline)
 		{
 			foreach (var predicatedPipeline in _predicatedPipelines.Where(x => x.Predicate(context)))

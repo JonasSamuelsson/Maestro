@@ -20,5 +20,10 @@ namespace Maestro
 		{
 			return _lambda(context);
 		}
+
+		public IProvider MakeGenericProvider(Type[] types)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

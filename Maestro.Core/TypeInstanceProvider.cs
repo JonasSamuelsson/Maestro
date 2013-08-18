@@ -49,5 +49,11 @@ namespace Maestro
 			var ctorArgs = _ctorParameterTypes.Select(context.Get).ToArray();
 			return Activator.CreateInstance(_type, ctorArgs);
 		}
+
+		public IProvider MakeGenericProvider(Type[] types)
+		{
+			var genericType = _type.MakeGenericType(types);
+			return new TypeInstanceProvider(genericType);
+		}
 	}
 }

@@ -36,5 +36,18 @@ namespace Maestro.Tests
 
 			public object Object { get; private set; }
 		}
+
+		[Fact]
+		public void should_instantiate_open_generic_type()
+		{
+			var container = new Container(x => x.For(typeof(IFoobar<>)).Use(typeof(Foobar<>)));
+
+			var foobar = container.Get<IFoobar<int>>();
+
+			foobar.Should().BeOfType<Foobar<int>>();
+		}
+
+		private interface IFoobar<T>{}
+		private class Foobar<T>:IFoobar<T>{}
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace Maestro
+﻿using System;
+
+namespace Maestro
 {
 	internal class ConstantInstanceProvider : IProvider
 	{
@@ -17,6 +19,11 @@
 		public object Get(IContext context)
 		{
 			return _instance;
+		}
+
+		public IProvider MakeGenericProvider(Type[] types)
+		{
+			throw new NotSupportedException();
 		}
 	}
 }

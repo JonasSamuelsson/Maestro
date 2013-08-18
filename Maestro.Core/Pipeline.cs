@@ -1,4 +1,6 @@
-﻿namespace Maestro
+﻿using System;
+
+namespace Maestro
 {
 	internal class Pipeline : IPipeline
 	{
@@ -17,6 +19,11 @@
 		public object Get(IContext context)
 		{
 			return _provider.Get(context);
+		}
+
+		public IPipeline MakeGenericPipeline(Type[] types)
+		{
+			return new Pipeline(_provider.MakeGenericProvider(types));
 		}
 	}
 }

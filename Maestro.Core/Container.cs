@@ -186,7 +186,7 @@ namespace Maestro
 
 			IPlugin plugin;
 			if (!plugins.TryGet(type, out plugin))
-				return false;
+				return type.IsGenericType && TryGetGenericPipeline(plugins, type, context, out pipeline);
 
 			if (plugin.TryGet(context.Name, out pipeline))
 				return true;
@@ -195,6 +195,30 @@ namespace Maestro
 				return true;
 
 			return false;
+		}
+
+		private static bool TryGetGenericPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context, out IPipeline pipeline)
+		{
+			pipeline = null;
+
+			lock (plugins)
+			{
+				IPlugin plugin;
+				if (plugins.TryGet(type, out plugin))
+					return TryGetPipeline(plugins, type, context, out pipeline);
+
+				var typeDefinition = type.GetGenericTypeDefinition();
+				if (!plugins.TryGet(typeDefinition, out plugin))
+					return false;
+
+				var genericArguments = type.GetGenericArguments();
+				var names = plugin.GetNames().ToList();
+				var genericPlugin = plugins.GetOrAdd(type);
+				foreach (var name in names)
+					genericPlugin.Add(name, plugin.Get(name).MakeGenericPipeline(genericArguments));
+			}
+
+			return TryGetPipeline(plugins, type, context, out pipeline);
 		}
 
 		private static bool TryGetEnumerableType(Type type, out Type enumerableType)
