@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace Maestro
 {
-	internal static class TypeHelper
+	internal static class TypeExtensions
 	{
-		public static IEnumerable<Type> GetClasses(this Type @class)
+		internal static IEnumerable<Type> GetClasses(this Type @class)
 		{
 			if (!@class.IsClass)
 				throw new InvalidOperationException();
