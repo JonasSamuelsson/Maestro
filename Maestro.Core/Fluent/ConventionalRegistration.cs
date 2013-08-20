@@ -69,7 +69,7 @@ namespace Maestro.Fluent
 			throw new NotImplementedException();
 		}
 
-		public IConventionalRegistration Matching(Func<Type, bool> predicate)
+		public IConventionalRegistration Where(Func<Type, bool> predicate)
 		{
 			return Matching(new LambdaFilter(predicate));
 		}
@@ -82,10 +82,10 @@ namespace Maestro.Fluent
 
 		public void UseDefaultImplementations()
 		{
-			throw new NotImplementedException();
+			Using(new DefaultImplementationConvention());
 		}
 
-		public void Using(IConventionalRegistrator registrator)
+		public void Using(IConvention registrator)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
 			registrator.Process(types, _containerConfiguration);
@@ -103,6 +103,26 @@ namespace Maestro.Fluent
 			public bool IsMatch(Type type)
 			{
 				return _predicate(type);
+			}
+		}
+	}
+
+	internal class DefaultImplementationConvention : IConvention
+	{
+		public void Process(IEnumerable<Type> types, IContainerConfiguration containerConfiguration)
+		{
+			types = types as IList<Type> ?? types.ToList();
+
+			var interfaces = types.Where(x => x.IsInterface);
+			var classes = types.Where(x => x.IsConcreteClosedClass()).GroupBy(x => x.Namespace ?? string.Empty).ToDictionary(x => x.Key, x => x.ToList());
+
+			foreach (var @interface in interfaces)
+			{
+				List<Type> list;
+				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
+				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
+				if (@class == null) continue;
+				containerConfiguration.For(@interface).Use(@class);
 			}
 		}
 	}

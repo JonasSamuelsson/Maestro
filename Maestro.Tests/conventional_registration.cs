@@ -13,7 +13,7 @@ namespace Maestro.Tests
 		public void should_use_provided_registrator()
 		{
 			var types = new[] { typeof(object) };
-			var registrator = new ConventionalRegistrator();
+			var registrator = new Convention();
 			var container = new Container();
 
 			container.Configure(x => x.Scan.Types(types).Using(registrator));
@@ -24,10 +24,10 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_filter_types_using_provided_lambda()
 		{
-			var registrator = new ConventionalRegistrator();
+			var registrator = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan.Types(new[] { typeof(object), typeof(int) }).Matching(t => t.IsClass).Using(registrator));
+			container.Configure(x => x.Scan.Types(new[] { typeof(object), typeof(int) }).Where(t => t.IsClass).Using(registrator));
 
 			registrator.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
 		}
@@ -35,7 +35,7 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_filter_types_using_provided_filter()
 		{
-			var registrator = new ConventionalRegistrator();
+			var registrator = new Convention();
 			var container = new Container();
 
 			container.Configure(x => x.Scan.Types(new[] { typeof(object), typeof(int) }).Matching(new IsClassFilter()).Using(registrator));
@@ -46,13 +46,13 @@ namespace Maestro.Tests
 		[Fact]
 		public void type_should_match_all_filters_to_get_processed()
 		{
-			var registrator = new ConventionalRegistrator();
+			var registrator = new Convention();
 			var container = new Container();
 
 			container.Configure(x => x.Scan
 				.Types(new[] { typeof(object), typeof(int), typeof(string) })
-				.Matching(t => t.IsClass)
-				.Matching(t => t.Name.Contains("n"))
+				.Where(t => t.IsClass)
+				.Where(t => t.Name.Contains("n"))
 				.Using(registrator));
 
 			registrator.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(string) });
@@ -75,9 +75,9 @@ namespace Maestro.Tests
 		private class Implementation1 : IBaseType { }
 		private class Implementation2 : IBaseType { }
 
-		private class ConventionalRegistrator : IConventionalRegistrator
+		private class Convention : IConvention
 		{
-			public ConventionalRegistrator()
+			public Convention()
 			{
 				ProcessedTypes = Enumerable.Empty<Type>();
 			}

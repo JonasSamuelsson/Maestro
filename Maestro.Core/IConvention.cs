@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Maestro
 {
-	public interface IConventionalRegistrator
+	public interface IConvention
 	{
 		void Process(IEnumerable<Type> types, IContainerConfiguration containerConfiguration);
 	}

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Maestro.Fluent
 {
-	internal class ConcreteSubClassRegistrator : IConventionalRegistrator
+	internal class ConcreteSubClassRegistrator : IConvention
 	{
 		private readonly Type _baseType;
 

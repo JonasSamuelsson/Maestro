@@ -75,6 +75,7 @@
     <Compile Include="resolve_type_with_cyclic_dependencies.cs" />
     <Compile Include="TypeHelper_IsConcreteSubClassOf.cs" />
     <Compile Include="type_instance.cs" />
+    <Compile Include="use_default_implementation_convention.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Maestro.Core\Maestro.Core.csproj">
