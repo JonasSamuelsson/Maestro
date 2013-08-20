@@ -6,12 +6,6 @@ namespace Maestro
 {
 	internal static class TypeHelper
 	{
-		public static void AssertTypeIsSupported(Type type)
-		{
-			if (!IsTypeSupported(type))
-				throw new NotSupportedException(string.Format("Type '{0}' is not supported.", type.FullName));
-		}
-
 		public static IEnumerable<Type> GetClasses(this Type @class)
 		{
 			if (!@class.IsClass)
@@ -22,11 +16,6 @@ namespace Maestro
 				yield return @class;
 				@class = @class.BaseType;
 			} while (@class != null);
-		}
-
-		public static bool IsTypeSupported(Type type)
-		{
-			return !type.IsValueType && type != typeof(string);
 		}
 
 		public static bool IsConcreteClosedClass(this Type type)

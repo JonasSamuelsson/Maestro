@@ -43,8 +43,6 @@ namespace Maestro
 		{
 			try
 			{
-				TypeHelper.AssertTypeIsSupported(type);
-
 				name = name ?? DefaultName;
 				var requestId = Interlocked.Increment(ref _requestId);
 				var context = new Context(_configId, requestId, name, this);
@@ -91,8 +89,6 @@ namespace Maestro
 		{
 			try
 			{
-				TypeHelper.AssertTypeIsSupported(type);
-
 				IPlugin plugin;
 				if (!_plugins.TryGet(type, out plugin))
 					return GetEmptyEnumerableOf(type);
@@ -152,8 +148,6 @@ namespace Maestro
 		{
 			try
 			{
-				TypeHelper.AssertTypeIsSupported(type);
-
 				IPipeline pipeline;
 				if (TryGetPipeline(_plugins, type, context, out pipeline))
 					using (((TypeStack)context.TypeStack).Push(type))
