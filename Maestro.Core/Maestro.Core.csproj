@@ -63,6 +63,7 @@
     <Compile Include="Fluent\IPipelineSelector.cs" />
     <Compile Include="Fluent\ITypeInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\PipelineSelector.cs" />
+    <Compile Include="Fluent\ConcreteSubClassRegistrator.cs" />
     <Compile Include="Fluent\TypeInstancePipelineBuilder.cs" />
     <Compile Include="IConventionalRegistrationFilter.cs" />
     <Compile Include="IConventionalRegistrator.cs" />

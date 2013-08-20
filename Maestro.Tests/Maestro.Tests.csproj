@@ -49,6 +49,9 @@
     <Reference Include="xunit">
       <HintPath>..\packages\xunit.1.9.1\lib\net20\xunit.dll</HintPath>
     </Reference>
+    <Reference Include="xunit.extensions">
+      <HintPath>..\packages\xunit.extensions.1.9.1\lib\net20\xunit.extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Maestro.Core\Properties\CommonAssemblyInfo.cs">
@@ -58,6 +61,7 @@
     <Compile Include="constant_instance.cs" />
     <Compile Include="conventional_registration.cs" />
     <Compile Include="DefaultContainerInstance.cs" />
+    <Compile Include="FluentAssertionsExtensions.cs" />
     <Compile Include="lambda_instance.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />
@@ -69,6 +73,7 @@
     <Compile Include="resolve_enumerable.cs" />
     <Compile Include="resolve_enumerable_dependencies.cs" />
     <Compile Include="resolve_type_with_cyclic_dependencies.cs" />
+    <Compile Include="TypeHelper_IsConcreteSubClassOf.cs" />
     <Compile Include="type_instance.cs" />
   </ItemGroup>
   <ItemGroup>

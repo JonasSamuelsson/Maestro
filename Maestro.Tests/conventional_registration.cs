@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Xunit;
 
 namespace Maestro.Tests
@@ -37,25 +38,42 @@ namespace Maestro.Tests
 			var registrator = new ConventionalRegistrator();
 			var container = new Container();
 
-			container.Configure(x => x.Scan.Types(new[] { typeof(object), typeof(int) }).Matching(new ClassFilter()).Using(registrator));
+			container.Configure(x => x.Scan.Types(new[] { typeof(object), typeof(int) }).Matching(new IsClassFilter()).Using(registrator));
 
 			registrator.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
 		}
 
 		[Fact]
-		public void should_match_all_filters()
+		public void type_should_match_all_filters_to_get_processed()
 		{
 			var registrator = new ConventionalRegistrator();
 			var container = new Container();
 
 			container.Configure(x => x.Scan
-				.Types(new[] { typeof(object), typeof(int),typeof(string) })
+				.Types(new[] { typeof(object), typeof(int), typeof(string) })
 				.Matching(t => t.IsClass)
 				.Matching(t => t.Name.Contains("n"))
 				.Using(registrator));
 
 			registrator.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(string) });
 		}
+
+		[Fact]
+		public void should_register_concrete_sub_classes_of_provided_type()
+		{
+			var types = GetType().GetNestedTypes(BindingFlags.NonPublic);
+			var container = new Container(x => x.Scan.Types(types).AddConcreteSubClassesOf<IBaseType>());
+
+			var instances = container.GetAll<IBaseType>().ToList();
+
+			instances.Should().HaveCount(2);
+			instances.Should().Contain(x => x.IsOfType<Implementation1>());
+			instances.Should().Contain(x => x.IsOfType<Implementation2>());
+		}
+
+		private interface IBaseType { }
+		private class Implementation1 : IBaseType { }
+		private class Implementation2 : IBaseType { }
 
 		private class ConventionalRegistrator : IConventionalRegistrator
 		{
@@ -72,7 +90,7 @@ namespace Maestro.Tests
 			}
 		}
 
-		public class ClassFilter : IConventionalRegistrationFilter
+		public class IsClassFilter : IConventionalRegistrationFilter
 		{
 			public bool IsMatch(Type type)
 			{

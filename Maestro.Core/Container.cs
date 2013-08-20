@@ -75,7 +75,7 @@ namespace Maestro
 		{
 			pipeline = null;
 
-			if (!TypeHelper.IsConcreteClosedClass(type))
+			if (!type.IsConcreteClosedClass())
 				return false;
 
 			pipeline = fallbackPipelines.GetOrAdd(type);

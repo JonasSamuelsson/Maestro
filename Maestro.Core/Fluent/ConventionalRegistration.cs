@@ -54,17 +54,17 @@ namespace Maestro.Fluent
 			return this;
 		}
 
-		public ITypeInstancePipelineBuilder<T> AddSubTypesOf<T>()
+		public void AddConcreteSubClassesOf<T>()
 		{
-			throw new NotImplementedException();
+			AddConcreteSubClassesOf(typeof(T));
 		}
 
-		public ITypeInstancePipelineBuilder<object> AddSubTypesOf(Type type)
+		public void AddConcreteSubClassesOf(Type type)
 		{
-			throw new NotImplementedException();
+			Using(new ConcreteSubClassRegistrator(type));
 		}
 
-		public ITypeInstancePipelineBuilder<object> AddTypesClosing(Type genericTypeDefinition)
+		public void AddTypesClosing(Type genericTypeDefinition)
 		{
 			throw new NotImplementedException();
 		}
