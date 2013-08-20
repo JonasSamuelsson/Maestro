@@ -64,7 +64,7 @@ namespace Maestro.Fluent
 			Using(new ConcreteSubClassRegistrator(type));
 		}
 
-		public void AddTypesClosing(Type genericTypeDefinition)
+		public void AddConcreteClassesClosing(Type genericTypeDefinition)
 		{
 			throw new NotImplementedException();
 		}
@@ -78,6 +78,11 @@ namespace Maestro.Fluent
 		{
 			_filters.Add(filter);
 			return this;
+		}
+
+		public void UseDefaultImplementations()
+		{
+			throw new NotImplementedException();
 		}
 
 		public void Using(IConventionalRegistrator registrator)
