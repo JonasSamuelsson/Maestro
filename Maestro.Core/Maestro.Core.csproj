@@ -53,10 +53,9 @@
     <Compile Include="Context.cs" />
     <Compile Include="FallbackPipelineDictionary.cs" />
     <Compile Include="Fluent\ConstantInstancePipelineBuilder.cs" />
-    <Compile Include="Fluent\ConventionalRegistration.cs" />
+    <Compile Include="Fluent\ConventionExpression.cs" />
     <Compile Include="Fluent\UseDefaultImplementationConvention.cs" />
-    <Compile Include="Fluent\IConventionalRegistration.cs" />
-    <Compile Include="Fluent\IConventionalRegistrationSource.cs" />
+    <Compile Include="Fluent\IConventionExpression.cs" />
     <Compile Include="Fluent\LambdaInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IConditionalInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IConstantInstancePipelineBuilder.cs" />
@@ -83,7 +82,7 @@
     <Compile Include="PluginDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
-    <Compile Include="TypeHelper.cs" />
+    <Compile Include="TypeExtensions.cs" />
     <Compile Include="TypeInstanceProvider.cs" />
     <Compile Include="TypeStack.cs" />
   </ItemGroup>

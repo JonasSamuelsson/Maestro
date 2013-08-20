@@ -38,9 +38,9 @@ namespace Maestro
 			return new PipelineSelector<TPlugin>(x => plugin.Add(name, x));
 		}
 
-		public IConventionalRegistrationSource Scan
+		public IConventionExpression Scan
 		{
-			get { return new ConventionalRegistration(this); }
+			get { return new ConventionExpression(this); }
 		}
 	}
 }

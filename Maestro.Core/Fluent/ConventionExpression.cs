@@ -5,52 +5,63 @@ using System.Reflection;
 
 namespace Maestro.Fluent
 {
-	internal class ConventionalRegistration : IConventionalRegistration
+	internal class ConventionExpression : IConventionExpression
 	{
 		private readonly IContainerConfiguration _containerConfiguration;
 		private readonly List<Type> _types;
 		private readonly List<IConventionalRegistrationFilter> _filters;
 
-		public ConventionalRegistration(IContainerConfiguration containerConfiguration)
+		public ConventionExpression(IContainerConfiguration containerConfiguration)
 		{
 			_containerConfiguration = containerConfiguration;
 			_types = new List<Type>();
 			_filters = new List<IConventionalRegistrationFilter>();
 		}
 
-		public IConventionalRegistration Assemblies(params Assembly[] assemblies)
+		public IConventionExpression Assemblies(params Assembly[] assemblies)
 		{
 			return Types(assemblies.SelectMany(x => x.GetTypes()));
 		}
 
-		public IConventionalRegistration Assemblies(IEnumerable<Assembly> assemblies)
+		public IConventionExpression Assemblies(IEnumerable<Assembly> assemblies)
 		{
 			return Assemblies(assemblies.ToArray());
 		}
 
-		public IConventionalRegistration Assembly(Assembly assembly)
+		public IConventionExpression Assembly(Assembly assembly)
 		{
 			return Assemblies(new[] { assembly });
 		}
 
-		public IConventionalRegistration AssemblyContaining<T>()
+		public IConventionExpression AssemblyContaining<T>()
 		{
 			return AssemblyContaining(typeof(T));
 		}
 
-		public IConventionalRegistration AssemblyContaining(Type type)
+		public IConventionExpression AssemblyContaining(Type type)
 		{
 			return Assembly(type.Assembly);
 		}
 
-		public IConventionalRegistration AssemblyContainingTypeOf(object o)
+		public IConventionExpression AssemblyContainingTypeOf(object o)
 		{
 			return AssemblyContaining(o.GetType());
 		}
 
-		public IConventionalRegistration Types(IEnumerable<Type> types)
+		public IConventionExpression Types(IEnumerable<Type> types)
 		{
 			_types.AddRange(types);
+			return this;
+		}
+
+		public IConventionExpression Where(Func<Type, bool> predicate)
+		{
+			return Matching(new LambdaFilter(predicate));
+		}
+
+		public IConventionExpression Matching(IConventionalRegistrationFilter filter)
+		{
+			_filters.Add(filter);
 			return this;
 		}
 
@@ -67,17 +78,6 @@ namespace Maestro.Fluent
 		public void AddConcreteClassesClosing(Type genericTypeDefinition)
 		{
 			throw new NotImplementedException();
-		}
-
-		public IConventionalRegistration Where(Func<Type, bool> predicate)
-		{
-			return Matching(new LambdaFilter(predicate));
-		}
-
-		public IConventionalRegistration Matching(IConventionalRegistrationFilter filter)
-		{
-			_filters.Add(filter);
-			return this;
 		}
 
 		public void UseDefaultImplementations()

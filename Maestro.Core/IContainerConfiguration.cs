@@ -9,6 +9,6 @@ namespace Maestro
 		IPipelineSelector<TPlugin> For<TPlugin>();
 		IPipelineSelector Add(Type type, string name = null);
 		IPipelineSelector<TPlugin> Add<TPlugin>(string name = null);
-		IConventionalRegistrationSource Scan { get; }
+		IConventionExpression Scan { get; }
 	}
 }
