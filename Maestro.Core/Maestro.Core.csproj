@@ -54,6 +54,7 @@
     <Compile Include="FallbackPipelineDictionary.cs" />
     <Compile Include="Fluent\ConstantInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\ConventionalRegistration.cs" />
+    <Compile Include="Fluent\UseDefaultImplementationConvention.cs" />
     <Compile Include="Fluent\IConventionalRegistration.cs" />
     <Compile Include="Fluent\IConventionalRegistrationSource.cs" />
     <Compile Include="Fluent\LambdaInstancePipelineBuilder.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="Fluent\IPipelineSelector.cs" />
     <Compile Include="Fluent\ITypeInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\PipelineSelector.cs" />
-    <Compile Include="Fluent\ConcreteSubClassRegistrator.cs" />
+    <Compile Include="Fluent\AddConcreteSubClassesConvention.cs" />
     <Compile Include="Fluent\TypeInstancePipelineBuilder.cs" />
     <Compile Include="IConventionalRegistrationFilter.cs" />
     <Compile Include="IConvention.cs" />

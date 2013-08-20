@@ -31,7 +31,12 @@ namespace Maestro
 
 		public static bool IsConcreteClosedClass(this Type type)
 		{
-			return type.IsClass && type != typeof(string) && !type.IsAbstract && !type.IsGenericTypeDefinition;
+			return type.IsConcreteClass() && !type.IsGenericTypeDefinition;
+		}
+
+		public static bool IsConcreteClass(this Type type)
+		{
+			return type.IsClass && type != typeof(string) && !type.IsAbstract;
 		}
 
 		public static bool IsConcreteSubClassOf<T>(this Type type)

@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace Maestro.Fluent
 {
-	internal class ConcreteSubClassRegistrator : IConvention
+	internal class AddConcreteSubClassesConvention : IConvention
 	{
 		private readonly Type _baseType;
 
-		public ConcreteSubClassRegistrator(Type baseType)
+		public AddConcreteSubClassesConvention(Type baseType)
 		{
 			_baseType = baseType;
 		}
