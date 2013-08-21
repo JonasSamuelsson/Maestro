@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Maestro.Fluent
+namespace Maestro
 {
 	internal class DefaultImplementationConvention : IConvention
 	{

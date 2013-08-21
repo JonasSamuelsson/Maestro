@@ -45,16 +45,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
+    <Compile Include="AddConcreteSubClassesConvention.cs" />
     <Compile Include="ConditionalInstanceProvider.cs" />
     <Compile Include="ConstantInstanceProvider.cs" />
     <Compile Include="ConstructorResolver.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="ContainerConfiguration.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="DefaultImplementationConvention.cs" />
     <Compile Include="FallbackPipelineDictionary.cs" />
     <Compile Include="Fluent\ConstantInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\ConventionExpression.cs" />
-    <Compile Include="Fluent\DefaultImplementationConvention.cs" />
     <Compile Include="Fluent\IConventionExpression.cs" />
     <Compile Include="Fluent\ILifecycleExpression.cs" />
     <Compile Include="Fluent\ILifecycleSelector.cs" />
@@ -66,7 +67,6 @@
     <Compile Include="Fluent\ITypeInstanceBuilder.cs" />
     <Compile Include="Fluent\LifecycleSelector.cs" />
     <Compile Include="Fluent\PipelineSelector.cs" />
-    <Compile Include="Fluent\AddConcreteSubClassesConvention.cs" />
     <Compile Include="Fluent\ProviderSelector.cs" />
     <Compile Include="Fluent\TypeInstanceBuilder.cs" />
     <Compile Include="Fluent\TypeInstancePipelineBuilder.cs" />
