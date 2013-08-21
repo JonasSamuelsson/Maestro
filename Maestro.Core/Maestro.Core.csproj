@@ -59,10 +59,10 @@
     <Compile Include="Fluent\IConventionExpression.cs" />
     <Compile Include="Fluent\ILifecycleExpression.cs" />
     <Compile Include="Fluent\ILifecycleSelector.cs" />
-    <Compile Include="Fluent\LambdaInstancePipelineBuilder.cs" />
+    <Compile Include="Fluent\LambdaInstanceBuilder.cs" />
     <Compile Include="Fluent\IConditionalInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IConstantInstancePipelineBuilder.cs" />
-    <Compile Include="Fluent\ILambdaInstancePipelineBuilder.cs" />
+    <Compile Include="Fluent\ILambdaInstanceBuilder.cs" />
     <Compile Include="Fluent\IProviderSelector.cs" />
     <Compile Include="Fluent\ITypeInstanceBuilder.cs" />
     <Compile Include="Fluent\LifecycleSelector.cs" />

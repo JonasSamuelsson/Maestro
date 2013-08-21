@@ -21,17 +21,17 @@ namespace Maestro.Fluent
 			return new ConstantInstancePipelineBuilder(provider, pipeline);
 		}
 
-		public ILambdaInstancePipelineBuilder Use(Func<object> func)
+		public ILambdaInstanceBuilder<object> Use(Func<object> func)
 		{
 			return Use(_ => func());
 		}
 
-		public ILambdaInstancePipelineBuilder Use(Func<IContext, object> func)
+		public ILambdaInstanceBuilder<object> Use(Func<IContext, object> func)
 		{
 			var provider = new LambdaInstanceProvider(func);
 			var pipeline = new PipelineEngine(provider);
 			_plugin.Add(_name, pipeline);
-			return new LambdaInstancePipelineBuilder(provider, pipeline);
+			return new LambdaInstanceBuilder<object>(pipeline);
 		}
 
 		public ITypeInstanceBuilder<object> Use(Type type)
@@ -60,17 +60,17 @@ namespace Maestro.Fluent
 			return new ConstantInstancePipelineBuilder<TInstance>(provider, pipeline);
 		}
 
-		public ILambdaInstancePipelineBuilder<TInstance> Use<TInstance>(Func<TInstance> func) where TInstance : TPlugin
+		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<TInstance> func) where TInstance : TPlugin
 		{
 			return Use(_ => func());
 		}
 
-		public ILambdaInstancePipelineBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> func) where TInstance : TPlugin
+		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> func) where TInstance : TPlugin
 		{
 			var provider = new LambdaInstanceProvider(context => func(context));
 			var pipeline = new PipelineEngine(provider);
 			_registerPipeline(pipeline);
-			return new LambdaInstancePipelineBuilder<TInstance>(provider, pipeline);
+			return new LambdaInstanceBuilder<TInstance>(pipeline);
 		}
 
 		public ITypeInstanceBuilder<TInstance> Use<TInstance>() where TInstance : TPlugin
