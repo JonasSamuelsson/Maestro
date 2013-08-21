@@ -15,7 +15,7 @@ namespace Maestro
 		public IProviderSelector For(Type type)
 		{
 			var plugin = _plugins.GetOrAdd(type);
-			return new PipelineSelector(Container.DefaultName, plugin);
+			return new ProviderSelector(Container.DefaultName, plugin);
 		}
 
 		public IProviderSelector<TPlugin> For<TPlugin>()
@@ -28,7 +28,7 @@ namespace Maestro
 		{
 			name = name ?? Guid.NewGuid().ToString();
 			var plugin = _plugins.GetOrAdd(type);
-			return new PipelineSelector(name, plugin);
+			return new ProviderSelector(name, plugin);
 		}
 
 		public IProviderSelector<TPlugin> Add<TPlugin>(string name = null)

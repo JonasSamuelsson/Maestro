@@ -7,7 +7,7 @@ namespace Maestro.Fluent
 		IConstantInstancePipelineBuilder Use(object instance);
 		ILambdaInstancePipelineBuilder Use(Func<object> func);
 		ILambdaInstancePipelineBuilder Use(Func<IContext, object> func);
-		ITypeInstanceBuilder Use(Type type);
+		ITypeInstanceBuilder<object> Use(Type type);
 	}
 
 	public interface IProviderSelector<TPlugin>

@@ -15,7 +15,7 @@ namespace Maestro
 
 		public void Process(IEnumerable<Type> types, IContainerConfiguration containerConfiguration)
 		{
-			foreach (var type in types.Where(x => TypeExtensions.IsConcreteSubClassOf(x, _baseType)))
+			foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
 				containerConfiguration.Add(_baseType).Use(type);
 		}
 	}

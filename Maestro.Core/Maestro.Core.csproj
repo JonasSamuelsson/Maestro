@@ -66,10 +66,8 @@
     <Compile Include="Fluent\IProviderSelector.cs" />
     <Compile Include="Fluent\ITypeInstanceBuilder.cs" />
     <Compile Include="Fluent\LifecycleSelector.cs" />
-    <Compile Include="Fluent\PipelineSelector.cs" />
     <Compile Include="Fluent\ProviderSelector.cs" />
     <Compile Include="Fluent\TypeInstanceBuilder.cs" />
-    <Compile Include="Fluent\TypeInstancePipelineBuilder.cs" />
     <Compile Include="IConventionFilter.cs" />
     <Compile Include="IConvention.cs" />
     <Compile Include="ILifecycle.cs" />
