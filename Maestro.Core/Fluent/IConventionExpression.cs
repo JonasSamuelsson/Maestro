@@ -15,7 +15,7 @@ namespace Maestro.Fluent
 		IConventionExpression Types(IEnumerable<Type> types);
 
 		IConventionExpression Where(Func<Type, bool> predicate);
-		IConventionExpression Matching(IConventionalRegistrationFilter filter);
+		IConventionExpression Matching(IConventionFilter filter);
 
 		void AddConcreteSubClassesOf<T>();
 		void AddConcreteSubClassesOf(Type type);

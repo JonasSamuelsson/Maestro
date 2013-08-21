@@ -2,7 +2,7 @@
 
 namespace Maestro
 {
-	public interface IConventionalRegistrationFilter
+	public interface IConventionFilter
 	{
 		bool IsMatch(Type type);
 	}

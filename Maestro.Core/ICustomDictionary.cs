@@ -5,7 +5,7 @@ namespace Maestro
 	internal interface ICustomDictionary<T>
 	{
 		T GetOrAdd(Type type);
-		bool TryGet(Type type, out T value);
+		bool TryGet(Type type, out T pipelineEngine);
 		void Clear();
 	}
 }

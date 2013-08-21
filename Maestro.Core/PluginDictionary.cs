@@ -20,9 +20,9 @@ namespace Maestro
 			return plugin;
 		}
 
-		public bool TryGet(Type type, out IPlugin plugin)
+		public bool TryGet(Type type, out IPlugin pipelineEngine)
 		{
-			return _dictionary.TryGetValue(type, out plugin);
+			return _dictionary.TryGetValue(type, out pipelineEngine);
 		}
 
 		public void Clear()

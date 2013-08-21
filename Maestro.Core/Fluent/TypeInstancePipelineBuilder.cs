@@ -1,26 +1,14 @@
 ﻿namespace Maestro.Fluent
 {
-	internal class TypeInstancePipelineBuilder : ITypeInstancePipelineBuilder
+	internal class TypeInstancePipelineBuilder : ITypeInstanceBuilder
 	{
 		private readonly IProvider _provider;
-		private readonly IPipeline _pipeline;
+		private readonly IPipelineEngine _pipelineEngine;
 
-		public TypeInstancePipelineBuilder(IProvider provider, IPipeline pipeline)
+		public TypeInstancePipelineBuilder(IProvider provider, IPipelineEngine pipelineEngine)
 		{
 			_provider = provider;
-			_pipeline = pipeline;
-		}
-	}
-
-	internal class TypeInstancePipelineBuilder<TInstance> : ITypeInstancePipelineBuilder<TInstance>
-	{
-		private readonly IProvider _provider;
-		private readonly IPipeline _pipeline;
-
-		public TypeInstancePipelineBuilder(IProvider provider, IPipeline pipeline)
-		{
-			_provider = provider;
-			_pipeline = pipeline;
+			_pipelineEngine = pipelineEngine;
 		}
 	}
 }

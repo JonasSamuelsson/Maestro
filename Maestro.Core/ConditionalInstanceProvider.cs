@@ -8,7 +8,7 @@ namespace Maestro
 	internal class ConditionalInstanceProvider<T> : IProvider, IConditionalInstancePipelineBuilder<T>
 	{
 		private readonly List<PredicatedPipeline> _predicatedPipelines = new List<PredicatedPipeline>();
-		private IPipeline _defaultPipeline;
+		private IPipelineEngine _defaultPipelineEngine;
 
 		public ConditionalInstanceProvider(Action<IConditionalInstancePipelineBuilder<T>> action)
 		{
@@ -17,15 +17,15 @@ namespace Maestro
 
 		bool IProvider.CanGet(IContext context)
 		{
-			IPipeline pipeline;
-			return TryGetPipeline(context, out pipeline) && pipeline.CanGet(context);
+			IPipelineEngine pipelineEngine;
+			return TryGetPipeline(context, out pipelineEngine) && pipelineEngine.CanGet(context);
 		}
 
 		object IProvider.Get(IContext context)
 		{
-			IPipeline pipeline;
-			if (TryGetPipeline(context, out pipeline))
-				return pipeline.Get(context);
+			IPipelineEngine pipelineEngine;
+			if (TryGetPipeline(context, out pipelineEngine))
+				return pipelineEngine.Get(context);
 
 			throw new InvalidOperationException();
 		}
@@ -35,39 +35,39 @@ namespace Maestro
 			throw new NotImplementedException();
 		}
 
-		private bool TryGetPipeline(IContext context, out IPipeline pipeline)
+		private bool TryGetPipeline(IContext context, out IPipelineEngine pipelineEngine)
 		{
 			foreach (var predicatedPipeline in _predicatedPipelines.Where(x => x.Predicate(context)))
 			{
-				pipeline = predicatedPipeline.Pipeline;
+				pipelineEngine = predicatedPipeline.PipelineEngine;
 				return true;
 			}
 
-			pipeline = _defaultPipeline;
-			return pipeline != null;
+			pipelineEngine = _defaultPipelineEngine;
+			return pipelineEngine != null;
 		}
 
 		private struct PredicatedPipeline
 		{
-			public PredicatedPipeline(Func<IContext, bool> predicate, IPipeline pipeline)
+			public PredicatedPipeline(Func<IContext, bool> predicate, IPipelineEngine pipelineEngine)
 				: this()
 			{
 				Predicate = predicate;
-				Pipeline = pipeline;
+				PipelineEngine = pipelineEngine;
 			}
 
 			public Func<IContext, bool> Predicate { get; private set; }
-			public IPipeline Pipeline { get; private set; }
+			public IPipelineEngine PipelineEngine { get; private set; }
 		}
 
-		public IPipelineSelector<T> If(Func<IContext, bool> predicate)
+		public IProviderSelector<T> If(Func<IContext, bool> predicate)
 		{
-			return new PipelineSelector<T>(x => _predicatedPipelines.Add(new PredicatedPipeline(predicate, x)));
+			return new ProviderSelector<T>(x => _predicatedPipelines.Add(new PredicatedPipeline(predicate, x)));
 		}
 
-		public IPipelineSelector<T> Default
+		public IProviderSelector<T> Default
 		{
-			get { return new PipelineSelector<T>(x => _defaultPipeline = x); }
+			get { return new ProviderSelector<T>(x => _defaultPipelineEngine = x); }
 		}
 	}
 }

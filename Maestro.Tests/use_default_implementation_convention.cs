@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Maestro.Tests.UseDefaultImplementationConvention;
+using Maestro.Tests.DefaultImplementationConvention;
 using Xunit;
 
 namespace Maestro.Tests
@@ -21,7 +21,7 @@ namespace Maestro.Tests
 	}
 }
 
-namespace Maestro.Tests.UseDefaultImplementationConvention
+namespace Maestro.Tests.DefaultImplementationConvention
 {
 	internal interface IFoobar1 { }
 	internal interface IFoobar2 { }

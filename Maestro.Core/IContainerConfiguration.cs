@@ -5,10 +5,10 @@ namespace Maestro
 {
 	public interface IContainerConfiguration
 	{
-		IPipelineSelector For(Type type);
-		IPipelineSelector<TPlugin> For<TPlugin>();
-		IPipelineSelector Add(Type type, string name = null);
-		IPipelineSelector<TPlugin> Add<TPlugin>(string name = null);
+		IProviderSelector For(Type type);
+		IProviderSelector<TPlugin> For<TPlugin>();
+		IProviderSelector Add(Type type, string name = null);
+		IProviderSelector<TPlugin> Add<TPlugin>(string name = null);
 		IConventionExpression Scan { get; }
 	}
 }

@@ -90,7 +90,7 @@ namespace Maestro.Tests
 			}
 		}
 
-		public class IsClassFilter : IConventionalRegistrationFilter
+		public class IsClassFilter : IConventionFilter
 		{
 			public bool IsMatch(Type type)
 			{

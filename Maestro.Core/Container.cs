@@ -9,7 +9,7 @@ namespace Maestro
 	{
 		private static IContainer _default;
 		private readonly ICustomDictionary<IPlugin> _plugins;
-		private readonly ICustomDictionary<IPipeline> _fallbackPipelines;
+		private readonly ICustomDictionary<IPipelineEngine> _fallbackPipelines;
 		private long _requestId;
 		private int _configId;
 
@@ -48,13 +48,13 @@ namespace Maestro
 				var context = new Context(_configId, requestId, name, this);
 				using (((TypeStack)context.TypeStack).Push(type))
 				{
-					IPipeline pipeline;
-					if (TryGetPipeline(_plugins, type, context, out pipeline))
-						return pipeline.Get(context);
+					IPipelineEngine pipelineEngine;
+					if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
+						return pipelineEngine.Get(context);
 
-					IPipeline fallbackPipeline;
-					if (TryGetFallbackPipeline(_fallbackPipelines, type, out fallbackPipeline))
-						return fallbackPipeline.Get(context);
+					IPipelineEngine fallbackPipelineEngine;
+					if (TryGetFallbackPipeline(_fallbackPipelines, type, out fallbackPipelineEngine))
+						return fallbackPipelineEngine.Get(context);
 				}
 
 				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
@@ -69,14 +69,14 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetFallbackPipeline(ICustomDictionary<IPipeline> fallbackPipelines, Type type, out IPipeline pipeline)
+		private static bool TryGetFallbackPipeline(ICustomDictionary<IPipelineEngine> fallbackPipelines, Type type, out IPipelineEngine pipelineEngine)
 		{
-			pipeline = null;
+			pipelineEngine = null;
 
 			if (!type.IsConcreteClosedClass())
 				return false;
 
-			pipeline = fallbackPipelines.GetOrAdd(type);
+			pipelineEngine = fallbackPipelines.GetOrAdd(type);
 			return true;
 		}
 
@@ -128,18 +128,18 @@ namespace Maestro
 			if (type.IsValueType)
 				return false;
 
-			IPipeline pipeline;
-			if (TryGetPipeline(_plugins, type, context, out pipeline))
+			IPipelineEngine pipelineEngine;
+			if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
 				using (((TypeStack)context.TypeStack).Push(type))
-					return pipeline.CanGet(context);
+					return pipelineEngine.CanGet(context);
 
 			Type enumerableType;
 			if (TryGetEnumerableType(type, out enumerableType))
 				return true;
 
-			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipeline))
+			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
 				using (((TypeStack)context.TypeStack).Push(type))
-					return pipeline.CanGet(context);
+					return pipelineEngine.CanGet(context);
 
 			return false;
 		}
@@ -148,18 +148,18 @@ namespace Maestro
 		{
 			try
 			{
-				IPipeline pipeline;
-				if (TryGetPipeline(_plugins, type, context, out pipeline))
+				IPipelineEngine pipelineEngine;
+				if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
 					using (((TypeStack)context.TypeStack).Push(type))
-						return pipeline.Get(context);
+						return pipelineEngine.Get(context);
 
 				Type enumerableType;
 				if (TryGetEnumerableType(type, out enumerableType))
 					return ((IDependencyContainer)this).GetAll(enumerableType, context);
 
-				if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipeline))
+				if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
 					using (((TypeStack)context.TypeStack).Push(type))
-						return pipeline.Get(context);
+						return pipelineEngine.Get(context);
 
 				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 			}
@@ -174,32 +174,32 @@ namespace Maestro
 		}
 
 		private static bool TryGetPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context,
-			out IPipeline pipeline)
+			out IPipelineEngine pipelineEngine)
 		{
-			pipeline = null;
+			pipelineEngine = null;
 
 			IPlugin plugin;
 			if (!plugins.TryGet(type, out plugin))
-				return type.IsGenericType && TryGetGenericPipeline(plugins, type, context, out pipeline);
+				return type.IsGenericType && TryGetGenericPipeline(plugins, type, context, out pipelineEngine);
 
-			if (plugin.TryGet(context.Name, out pipeline))
+			if (plugin.TryGet(context.Name, out pipelineEngine))
 				return true;
 
-			if (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipeline))
+			if (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipelineEngine))
 				return true;
 
 			return false;
 		}
 
-		private static bool TryGetGenericPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context, out IPipeline pipeline)
+		private static bool TryGetGenericPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context, out IPipelineEngine pipelineEngine)
 		{
-			pipeline = null;
+			pipelineEngine = null;
 
 			lock (plugins)
 			{
 				IPlugin plugin;
 				if (plugins.TryGet(type, out plugin))
-					return TryGetPipeline(plugins, type, context, out pipeline);
+					return TryGetPipeline(plugins, type, context, out pipelineEngine);
 
 				var typeDefinition = type.GetGenericTypeDefinition();
 				if (!plugins.TryGet(typeDefinition, out plugin))
@@ -209,10 +209,10 @@ namespace Maestro
 				var names = plugin.GetNames().ToList();
 				var genericPlugin = plugins.GetOrAdd(type);
 				foreach (var name in names)
-					genericPlugin.Add(name, plugin.Get(name).MakeGenericPipeline(genericArguments));
+					genericPlugin.Add(name, plugin.Get(name).MakeGenericPipelineEngine(genericArguments));
 			}
 
-			return TryGetPipeline(plugins, type, context, out pipeline);
+			return TryGetPipeline(plugins, type, context, out pipelineEngine);
 		}
 
 		private static bool TryGetEnumerableType(Type type, out Type enumerableType)

@@ -1,11 +1,7 @@
-﻿using System;
-
-namespace Maestro
+﻿namespace Maestro
 {
-	internal interface IPipeline
+	public interface IPipeline
 	{
-		bool CanGet(IContext context);
-		object Get(IContext context);
-		IPipeline MakeGenericPipeline(Type[] types);
+		object Execute();
 	}
 }

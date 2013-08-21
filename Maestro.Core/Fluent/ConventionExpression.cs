@@ -9,13 +9,13 @@ namespace Maestro.Fluent
 	{
 		private readonly IContainerConfiguration _containerConfiguration;
 		private readonly List<Type> _types;
-		private readonly List<IConventionalRegistrationFilter> _filters;
+		private readonly List<IConventionFilter> _filters;
 
 		public ConventionExpression(IContainerConfiguration containerConfiguration)
 		{
 			_containerConfiguration = containerConfiguration;
 			_types = new List<Type>();
-			_filters = new List<IConventionalRegistrationFilter>();
+			_filters = new List<IConventionFilter>();
 		}
 
 		public IConventionExpression Assemblies(params Assembly[] assemblies)
@@ -59,7 +59,7 @@ namespace Maestro.Fluent
 			return Matching(new LambdaFilter(predicate));
 		}
 
-		public IConventionExpression Matching(IConventionalRegistrationFilter filter)
+		public IConventionExpression Matching(IConventionFilter filter)
 		{
 			_filters.Add(filter);
 			return this;
@@ -91,7 +91,7 @@ namespace Maestro.Fluent
 			registrator.Process(types, _containerConfiguration);
 		}
 
-		internal class LambdaFilter : IConventionalRegistrationFilter
+		internal class LambdaFilter : IConventionFilter
 		{
 			private readonly Func<Type, bool> _predicate;
 

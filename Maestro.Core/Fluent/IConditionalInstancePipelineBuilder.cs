@@ -4,7 +4,7 @@ namespace Maestro.Fluent
 {
 	public interface IConditionalInstancePipelineBuilder<TPlugin>
 	{
-		IPipelineSelector<TPlugin> If(Func<IContext, bool> predicate);
-		IPipelineSelector<TPlugin> Default { get; }
+		IProviderSelector<TPlugin> If(Func<IContext, bool> predicate);
+		IProviderSelector<TPlugin> Default { get; }
 	}
 }

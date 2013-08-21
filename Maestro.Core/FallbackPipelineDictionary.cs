@@ -3,26 +3,26 @@ using System.Collections.Generic;
 
 namespace Maestro
 {
-	internal class FallbackPipelineDictionary : ICustomDictionary<IPipeline>
+	internal class FallbackPipelineDictionary : ICustomDictionary<IPipelineEngine>
 	{
-		private readonly Dictionary<Type, IPipeline> _dictionary = new Dictionary<Type, IPipeline>();
+		private readonly Dictionary<Type, IPipelineEngine> _dictionary = new Dictionary<Type, IPipelineEngine>();
 
-		public IPipeline GetOrAdd(Type type)
+		public IPipelineEngine GetOrAdd(Type type)
 		{
-			IPipeline pipeline;
-			if (!_dictionary.TryGetValue(type, out pipeline))
+			IPipelineEngine pipelineEngine;
+			if (!_dictionary.TryGetValue(type, out pipelineEngine))
 				lock (_dictionary)
-					if (!_dictionary.TryGetValue(type, out pipeline))
+					if (!_dictionary.TryGetValue(type, out pipelineEngine))
 					{
-						pipeline = new Pipeline(new TypeInstanceProvider(type));
-						_dictionary.Add(type, pipeline);
+						pipelineEngine = new PipelineEngine(new TypeInstanceProvider(type));
+						_dictionary.Add(type, pipelineEngine);
 					}
-			return pipeline;
+			return pipelineEngine;
 		}
 
-		public bool TryGet(Type type, out IPipeline pipeline)
+		public bool TryGet(Type type, out IPipelineEngine pipelineEngine)
 		{
-			return _dictionary.TryGetValue(type, out pipeline);
+			return _dictionary.TryGetValue(type, out pipelineEngine);
 		}
 
 		public void Clear()

@@ -3,24 +3,24 @@
 	internal class LambdaInstancePipelineBuilder : ILambdaInstancePipelineBuilder
 	{
 		private readonly LambdaInstanceProvider _provider;
-		private readonly IPipeline _pipeline;
+		private readonly IPipelineEngine _pipelineEngine;
 
-		public LambdaInstancePipelineBuilder(LambdaInstanceProvider provider, IPipeline pipeline)
+		public LambdaInstancePipelineBuilder(LambdaInstanceProvider provider, IPipelineEngine pipelineEngine)
 		{
 			_provider = provider;
-			_pipeline = pipeline;
+			_pipelineEngine = pipelineEngine;
 		}
 	}
 
 	internal class LambdaInstancePipelineBuilder<TInstance> : ILambdaInstancePipelineBuilder<TInstance>
 	{
 		private readonly LambdaInstanceProvider _provider;
-		private readonly IPipeline _pipeline;
+		private readonly IPipelineEngine _pipelineEngine;
 
-		public LambdaInstancePipelineBuilder(LambdaInstanceProvider provider, IPipeline pipeline)
+		public LambdaInstancePipelineBuilder(LambdaInstanceProvider provider, IPipelineEngine pipelineEngine)
 		{
 			_provider = provider;
-			_pipeline = pipeline;
+			_pipelineEngine = pipelineEngine;
 		}
 	}
 }
