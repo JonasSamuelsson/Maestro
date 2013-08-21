@@ -54,14 +54,14 @@
     <Compile Include="Context.cs" />
     <Compile Include="DefaultImplementationConvention.cs" />
     <Compile Include="FallbackPipelineDictionary.cs" />
-    <Compile Include="Fluent\ConstantInstancePipelineBuilder.cs" />
+    <Compile Include="Fluent\ConstantInstanceBuilder.cs" />
     <Compile Include="Fluent\ConventionExpression.cs" />
     <Compile Include="Fluent\IConventionExpression.cs" />
     <Compile Include="Fluent\ILifecycleExpression.cs" />
     <Compile Include="Fluent\ILifecycleSelector.cs" />
     <Compile Include="Fluent\LambdaInstanceBuilder.cs" />
     <Compile Include="Fluent\IConditionalInstancePipelineBuilder.cs" />
-    <Compile Include="Fluent\IConstantInstancePipelineBuilder.cs" />
+    <Compile Include="Fluent\IConstantInstanceBuilder.cs" />
     <Compile Include="Fluent\ILambdaInstanceBuilder.cs" />
     <Compile Include="Fluent\IProviderSelector.cs" />
     <Compile Include="Fluent\ITypeInstanceBuilder.cs" />

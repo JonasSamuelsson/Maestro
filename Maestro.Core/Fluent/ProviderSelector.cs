@@ -13,12 +13,12 @@ namespace Maestro.Fluent
 			_plugin = plugin;
 		}
 
-		public IConstantInstancePipelineBuilder Use(object instance)
+		public IConstantInstanceBuilder<object> Use(object instance)
 		{
 			var provider = new ConstantInstanceProvider(instance);
 			var pipeline = new PipelineEngine(provider);
 			_plugin.Add(_name, pipeline);
-			return new ConstantInstancePipelineBuilder(provider, pipeline);
+			return new ConstantInstanceBuilder<object>(pipeline);
 		}
 
 		public ILambdaInstanceBuilder<object> Use(Func<object> func)
@@ -52,12 +52,12 @@ namespace Maestro.Fluent
 			_registerPipeline = registerPipeline;
 		}
 
-		public IConstantInstancePipelineBuilder<TInstance> Use<TInstance>(TInstance instance) where TInstance : TPlugin
+		public IConstantInstanceBuilder<TInstance> Use<TInstance>(TInstance instance) where TInstance : TPlugin
 		{
 			var provider = new ConstantInstanceProvider(instance);
 			var pipeline = new PipelineEngine(provider);
 			_registerPipeline(pipeline);
-			return new ConstantInstancePipelineBuilder<TInstance>(provider, pipeline);
+			return new ConstantInstanceBuilder<TInstance>(pipeline);
 		}
 
 		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<TInstance> func) where TInstance : TPlugin
