@@ -9,9 +9,9 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_register_default_implementations()
 		{
-			var ns = "Maestro.Tests.UseDefaultImplementationConvention";
+			var ns = "Maestro.Tests.DefaultImplementationConvention";
 
-			var container = new Container(x => x.Scan.AssemblyContainingTypeOf(this).Where(y => y.Namespace != null && y.Namespace.StartsWith(ns)).UseDefaultImplementations());
+			var container = new Container(x => x.Scan.AssemblyContainingTypeOf(this).Where(y => y.Namespace != null && y.Namespace.StartsWith(ns)).ForDefaultImplementations());
 
 			container.Invoking(x => x.Get<IFoobar1>()).ShouldNotThrow();
 			container.Invoking(x => x.Get<IFoobar2>()).ShouldNotThrow();

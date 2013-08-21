@@ -20,7 +20,7 @@ namespace Maestro.Fluent
 		void AddConcreteSubClassesOf<T>();
 		void AddConcreteSubClassesOf(Type type);
 		void AddConcreteClassesClosing(Type genericTypeDefinition);
-		void UseDefaultImplementations();
+		void ForDefaultImplementations();
 		void Using(IConvention registrator);
 	}
 }

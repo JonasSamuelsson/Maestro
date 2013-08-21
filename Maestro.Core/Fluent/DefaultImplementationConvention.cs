@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Maestro.Fluent
 {
-	internal class UseDefaultImplementationConvention : IConvention
+	internal class DefaultImplementationConvention : IConvention
 	{
 		public void Process(IEnumerable<Type> types, IContainerConfiguration containerConfiguration)
 		{

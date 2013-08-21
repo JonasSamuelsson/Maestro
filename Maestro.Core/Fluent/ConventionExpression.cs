@@ -80,9 +80,9 @@ namespace Maestro.Fluent
 			throw new NotImplementedException();
 		}
 
-		public void UseDefaultImplementations()
+		public void ForDefaultImplementations()
 		{
-			Using(new UseDefaultImplementationConvention());
+			Using(new DefaultImplementationConvention());
 		}
 
 		public void Using(IConvention registrator)

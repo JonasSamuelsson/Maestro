@@ -54,7 +54,7 @@
     <Compile Include="FallbackPipelineDictionary.cs" />
     <Compile Include="Fluent\ConstantInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\ConventionExpression.cs" />
-    <Compile Include="Fluent\UseDefaultImplementationConvention.cs" />
+    <Compile Include="Fluent\DefaultImplementationConvention.cs" />
     <Compile Include="Fluent\IConventionExpression.cs" />
     <Compile Include="Fluent\LambdaInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IConditionalInstancePipelineBuilder.cs" />
