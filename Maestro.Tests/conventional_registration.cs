@@ -71,9 +71,21 @@ namespace Maestro.Tests
 			instances.Should().Contain(x => x.IsOfType<Implementation2>());
 		}
 
+		[Fact]
+		public void should_register_type_closing_provided_generic_type_definition()
+		{
+			var types = new[] { typeof(List<int>) };
+			var container = new Container(x => x.Scan.Types(types).ForConcreteClassesClosing(typeof(IList<>)));
+
+			container.Invoking(x => x.Get<IList<int>>()).ShouldNotThrow();
+			container.Invoking(x => x.Get<IList<string>>()).ShouldThrow<ActivationException>();
+		}
+
 		private interface IBaseType { }
 		private class Implementation1 : IBaseType { }
 		private class Implementation2 : IBaseType { }
+
+		private class ListOfInt : List<int> { }
 
 		private class Convention : IConvention
 		{

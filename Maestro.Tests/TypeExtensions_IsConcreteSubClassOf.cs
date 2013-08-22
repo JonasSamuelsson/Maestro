@@ -7,13 +7,13 @@ using Xunit.Extensions;
 
 namespace Maestro.Tests
 {
-	public class TypeHelper_IsConcreteSubClassOf
+	public class TypeExtensions_IsConcreteSubClassOf
 	{
 		[Theory, ClassData(typeof(TestData))]
-		public void should_determine_if_type_is_concrete_sub_class_of_basetype(Type @from, Type to, bool expected)
+		public void should_determine_if_type_is_concrete_sub_class_of_basetype(Type type, Type basetype, bool expected)
 		{
-			var reason = string.Format("{0} {1} cast to {2}", GetName(@from), expected ? "can" : "can not", GetName(to));
-			@from.IsConcreteSubClassOf(to).Should().Be(expected, reason);
+			var reason = string.Format("{0} {1} concrete sub class {2}", GetName(type), expected ? "is" : "is not", GetName(basetype));
+			type.IsConcreteSubClassOf(basetype).Should().Be(expected, reason);
 		}
 
 		static string GetName(Type type)

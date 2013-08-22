@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Maestro.Conventions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -75,9 +76,9 @@ namespace Maestro.Fluent
 			Using(new AddConcreteSubClassesConvention(type));
 		}
 
-		public void AddConcreteClassesClosing(Type genericTypeDefinition)
+		public void ForConcreteClassesClosing(Type genericTypeDefinition)
 		{
-			throw new NotImplementedException();
+			Using(new ConcreteClassesClosingConvention(genericTypeDefinition));
 		}
 
 		public void ForDefaultImplementations()
@@ -91,7 +92,7 @@ namespace Maestro.Fluent
 			registrator.Process(types, _containerConfiguration);
 		}
 
-		internal class LambdaFilter : IConventionFilter
+		private class LambdaFilter : IConventionFilter
 		{
 			private readonly Func<Type, bool> _predicate;
 
