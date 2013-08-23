@@ -21,7 +21,7 @@ namespace Maestro
 			if (ShouldReevaluateSelectedCtor(context))
 				FindCtor(context);
 
-			return _canGet.HasValue;
+			return _canGet.Value;
 		}
 
 		private bool ShouldReevaluateSelectedCtor(IContext context)
@@ -34,7 +34,7 @@ namespace Maestro
 			_configId = context.ConfigId;
 
 			ConstructorInfo constructor;
-			if (!ConstructorResolver.TryGetConstructor(_type, context, out constructor))
+			if (!TryGetConstructor(context, out constructor))
 			{
 				_canGet = false;
 				_ctorParameterTypes = null;
@@ -43,6 +43,19 @@ namespace Maestro
 
 			_ctorParameterTypes = constructor.GetParameters().Select(x => x.ParameterType).ToArray();
 			_canGet = true;
+		}
+
+		private bool TryGetConstructor(IContext context, out ConstructorInfo constructor)
+		{
+			constructor = null;
+			foreach (var ctor in _type.GetConstructors().OrderByDescending(x => x.GetParameters().Length))
+			{
+				var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
+				if (parameterTypes.Any() && !parameterTypes.All(context.CanGet)) continue;
+				constructor = ctor;
+				return true;
+			}
+			return false;
 		}
 
 		public object Get(IContext context)

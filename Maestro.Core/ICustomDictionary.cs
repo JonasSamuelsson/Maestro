@@ -7,5 +7,6 @@ namespace Maestro
 		T GetOrAdd(Type type);
 		bool TryGet(Type type, out T pipelineEngine);
 		void Clear();
+		bool Contains(Type type);
 	}
 }

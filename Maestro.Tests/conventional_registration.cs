@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Xunit;
 
 namespace Maestro.Tests
@@ -57,35 +56,6 @@ namespace Maestro.Tests
 
 			registrator.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(string) });
 		}
-
-		[Fact]
-		public void should_register_concrete_sub_classes_of_provided_type()
-		{
-			var types = GetType().GetNestedTypes(BindingFlags.NonPublic);
-			var container = new Container(x => x.Scan.Types(types).AddConcreteSubClassesOf<IBaseType>());
-
-			var instances = container.GetAll<IBaseType>().ToList();
-
-			instances.Should().HaveCount(2);
-			instances.Should().Contain(x => x.IsOfType<Implementation1>());
-			instances.Should().Contain(x => x.IsOfType<Implementation2>());
-		}
-
-		[Fact]
-		public void should_register_type_closing_provided_generic_type_definition()
-		{
-			var types = new[] { typeof(List<int>) };
-			var container = new Container(x => x.Scan.Types(types).ForConcreteClassesClosing(typeof(IList<>)));
-
-			container.Invoking(x => x.Get<IList<int>>()).ShouldNotThrow();
-			container.Invoking(x => x.Get<IList<string>>()).ShouldThrow<ActivationException>();
-		}
-
-		private interface IBaseType { }
-		private class Implementation1 : IBaseType { }
-		private class Implementation2 : IBaseType { }
-
-		private class ListOfInt : List<int> { }
 
 		private class Convention : IConvention
 		{

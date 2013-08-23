@@ -125,16 +125,13 @@ namespace Maestro
 
 		bool IDependencyContainer.CanGet(Type type, IContext context)
 		{
-			if (type.IsValueType)
-				return false;
-
 			IPipelineEngine pipelineEngine;
 			if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
 				using (((TypeStack)context.TypeStack).Push(type))
 					return pipelineEngine.CanGet(context);
 
 			Type enumerableType;
-			if (TryGetEnumerableType(type, out enumerableType))
+			if (TryGetEnumerableType(_plugins, type, out enumerableType))
 				return true;
 
 			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
@@ -148,20 +145,18 @@ namespace Maestro
 		{
 			try
 			{
-				IPipelineEngine pipelineEngine;
-				if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
-					using (((TypeStack)context.TypeStack).Push(type))
-						return pipelineEngine.Get(context);
+				var instance = GetDependency(type, context);
 
-				Type enumerableType;
-				if (TryGetEnumerableType(type, out enumerableType))
-					return ((IDependencyContainer)this).GetAll(enumerableType, context);
+				if (!type.IsArray || instance.GetType().IsArray)
+					return instance;
 
-				if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
-					using (((TypeStack)context.TypeStack).Push(type))
-						return pipelineEngine.Get(context);
+				var elementType = type.GetElementType();
+				var objects = ((IEnumerable<object>)instance).ToList();
+				var array = Array.CreateInstance(elementType, objects.Count);
+				for (var i = 0; i < objects.Count; i++)
+					array.SetValue(objects[i], i);
 
-				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
+				return array;
 			}
 			catch (ActivationException)
 			{
@@ -171,6 +166,24 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName), exception);
 			}
+		}
+
+		private object GetDependency(Type type, IContext context)
+		{
+			IPipelineEngine pipelineEngine;
+			if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
+				using (((TypeStack)context.TypeStack).Push(type))
+					return pipelineEngine.Get(context);
+
+			Type enumerableType;
+			if (TryGetEnumerableType(_plugins, type, out enumerableType))
+				return ((IDependencyContainer)this).GetAll(enumerableType, context);
+
+			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
+				using (((TypeStack)context.TypeStack).Push(type))
+					return pipelineEngine.Get(context);
+
+			throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 		}
 
 		private static bool TryGetPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context,
@@ -215,14 +228,14 @@ namespace Maestro
 			return TryGetPipeline(plugins, type, context, out pipelineEngine);
 		}
 
-		private static bool TryGetEnumerableType(Type type, out Type enumerableType)
+		private static bool TryGetEnumerableType(ICustomDictionary<IPlugin> plugins, Type type, out Type enumerableType)
 		{
 			enumerableType = null;
 
 			if (type.IsArray)
 			{
 				var elementType = type.GetElementType();
-				if (!elementType.IsValueType)
+				if (!elementType.IsValueType || plugins.Contains(elementType))
 				{
 					enumerableType = elementType;
 					return true;
@@ -231,7 +244,9 @@ namespace Maestro
 
 			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
 			{
-				enumerableType = type.GetGenericArguments().Single();
+				var genericArgument = type.GetGenericArguments().Single();
+				if (!genericArgument.IsValueType || plugins.Contains(genericArgument))
+					enumerableType = genericArgument;
 				return true;
 			}
 
@@ -247,7 +262,7 @@ namespace Maestro
 					return GetEmptyEnumerableOf(type);
 
 				using (((TypeStack)context.TypeStack).Push(type))
-					return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToArray();
+					return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToList();
 			}
 			catch (ActivationException)
 			{
@@ -261,7 +276,7 @@ namespace Maestro
 
 		private static IEnumerable<object> GetEmptyEnumerableOf(Type type)
 		{
-			return (IEnumerable<object>)Activator.CreateInstance(type.MakeArrayType(), 0);
+			return (IEnumerable<object>)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
 		}
 	}
 }

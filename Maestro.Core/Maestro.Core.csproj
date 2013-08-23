@@ -49,7 +49,6 @@
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />
     <Compile Include="ConditionalInstanceProvider.cs" />
     <Compile Include="ConstantInstanceProvider.cs" />
-    <Compile Include="ConstructorResolver.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="ContainerConfiguration.cs" />
     <Compile Include="Context.cs" />

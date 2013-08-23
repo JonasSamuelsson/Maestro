@@ -29,5 +29,10 @@ namespace Maestro
 		{
 			_dictionary.Clear();
 		}
+
+		public bool Contains(Type type)
+		{
+			return _dictionary.ContainsKey(type);
+		}
 	}
 }
