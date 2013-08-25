@@ -8,5 +8,11 @@
 		{
 			_pipelineEngine = pipelineEngine;
 		}
+
+		public IConstantInstanceBuilder<TInstance> InterceptUsing(IInterceptor interceptor)
+		{
+			_pipelineEngine.AddOnActivateInterceptor(interceptor);
+			return this;
+		}
 	}
 }

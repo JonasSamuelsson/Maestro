@@ -4,7 +4,7 @@
 	{
 		private object _instance;
 
-		public override object Process(IContext context, IPipeline pipeline)
+		public override object Execute(IContext context, IPipeline pipeline)
 		{
 			if (_instance == null)
 				lock (this)

@@ -1,4 +1,5 @@
 ﻿namespace Maestro.Fluent
 {
-	public interface IConstantInstanceBuilder<TInstance> { }
+	public interface IConstantInstanceBuilder<TInstance> : IInterceptExpression<IConstantInstanceBuilder<TInstance>>
+	{ }
 }

@@ -57,8 +57,12 @@
     <Compile Include="Fluent\ConstantInstanceBuilder.cs" />
     <Compile Include="Fluent\ConventionExpression.cs" />
     <Compile Include="Fluent\IConventionExpression.cs" />
+    <Compile Include="Fluent\IInterceptExpression.cs" />
     <Compile Include="Fluent\ILifecycleExpression.cs" />
     <Compile Include="Fluent\ILifecycleSelector.cs" />
+    <Compile Include="Fluent\InterceptExpression.cs" />
+    <Compile Include="Fluent\IOnActivateExpression.cs" />
+    <Compile Include="Fluent\IOnCreateExpression.cs" />
     <Compile Include="Fluent\LambdaInstanceBuilder.cs" />
     <Compile Include="Fluent\IConditionalInstancePipelineBuilder.cs" />
     <Compile Include="Fluent\IConstantInstanceBuilder.cs" />
@@ -70,7 +74,9 @@
     <Compile Include="Fluent\TypeInstanceBuilder.cs" />
     <Compile Include="IConventionFilter.cs" />
     <Compile Include="IConvention.cs" />
+    <Compile Include="IInterceptor.cs" />
     <Compile Include="ILifecycle.cs" />
+    <Compile Include="InterceptorBase.cs" />
     <Compile Include="IPipeline.cs" />
     <Compile Include="IPipelineItem.cs" />
     <Compile Include="LambdaInstanceProvider.cs" />
@@ -87,6 +93,7 @@
     <Compile Include="Lifecycles\RequestLifecycle.cs" />
     <Compile Include="Lifecycles\SingletonLifecycle.cs" />
     <Compile Include="Lifecycles\TransientLifecycle.cs" />
+    <Compile Include="ConfigureInterceptionExtensions.cs" />
     <Compile Include="PipelineEngine.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginDictionary.cs" />

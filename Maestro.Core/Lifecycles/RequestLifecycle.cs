@@ -14,7 +14,7 @@ namespace Maestro.Lifecycles
 			return new RequestLifecycle();
 		}
 
-		public override object Process(IContext context, IPipeline pipeline)
+		public override object Execute(IContext context, IPipeline pipeline)
 		{
 			lock (_dictionary)
 			{

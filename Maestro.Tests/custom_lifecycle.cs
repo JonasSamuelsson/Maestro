@@ -20,7 +20,7 @@ namespace Maestro.Tests
 		{
 			public bool Executed { get; private set; }
 
-			public override object Process(IContext context, IPipeline pipeline)
+			public override object Execute(IContext context, IPipeline pipeline)
 			{
 				Executed = true;
 				return pipeline.Execute();

@@ -1,17 +1,23 @@
 ﻿using Maestro.Lifecycles;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro
 {
 	internal class PipelineEngine : IPipelineEngine
 	{
-		private readonly IProvider _provider;
+		private readonly List<IInterceptor> _onActivateInterceptors;
 		private ILifecycle _lifecycle;
+		private readonly List<IInterceptor> _onCreteInterceptors;
+		private readonly IProvider _provider;
 
 		public PipelineEngine(IProvider provider)
 		{
-			_provider = provider;
+			_onActivateInterceptors = new List<IInterceptor>();
 			_lifecycle = TransientLifecycle.Instance;
+			_onCreteInterceptors = new List<IInterceptor>();
+			_provider = provider;
 		}
 
 		public bool CanGet(IContext context)
@@ -21,7 +27,11 @@ namespace Maestro
 
 		public object Get(IContext context)
 		{
-			return _lifecycle.Process(context, new Pipeline(_provider, context));
+			var pipeline = new Pipeline(_onCreteInterceptors, _provider, context);
+			var instance = _lifecycle.Execute(context, pipeline);
+			return _onActivateInterceptors.Count == 0
+				? instance
+				: _onActivateInterceptors.Aggregate(instance, (current, interceptor) => interceptor.Execute(current, context));
 		}
 
 		public IPipelineEngine MakeGenericPipelineEngine(Type[] types)
@@ -32,25 +42,40 @@ namespace Maestro
 			};
 		}
 
+		public void AddOnCreateInterceptor(IInterceptor interceptor)
+		{
+			_onCreteInterceptors.Add(interceptor);
+		}
+
 		public void SetLifecycle(ILifecycle lifecycle)
 		{
 			_lifecycle = lifecycle;
 		}
 
+		public void AddOnActivateInterceptor(IInterceptor interceptor)
+		{
+			_onActivateInterceptors.Add(interceptor);
+		}
+
 		private class Pipeline : IPipeline
 		{
-			private readonly IContext _context;
+			private readonly List<IInterceptor> _interceptors;
 			private readonly IProvider _provider;
+			private readonly IContext _context;
 
-			public Pipeline(IProvider provider, IContext context)
+			public Pipeline(List<IInterceptor> interceptors, IProvider provider, IContext context)
 			{
-				_context = context;
+				_interceptors = interceptors;
 				_provider = provider;
+				_context = context;
 			}
 
 			public object Execute()
 			{
-				return _provider.Get(_context);
+				var instance = _provider.Get(_context);
+				return _interceptors.Count == 0
+					? instance
+					: _interceptors.Aggregate(instance, (current, interceptor) => interceptor.Execute(current, _context));
 			}
 		}
 	}

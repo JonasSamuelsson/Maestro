@@ -65,6 +65,7 @@
     <Compile Include="DefaultContainerInstance.cs" />
     <Compile Include="FluentAssertionsExtensions.cs" />
     <Compile Include="custom_lifecycle.cs" />
+    <Compile Include="intercept_instance.cs" />
     <Compile Include="lambda_instance.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />

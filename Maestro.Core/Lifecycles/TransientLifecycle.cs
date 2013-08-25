@@ -16,7 +16,7 @@
 			return Instance;
 		}
 
-		public override object Process(IContext context, IPipeline pipeline)
+		public override object Execute(IContext context, IPipeline pipeline)
 		{
 			return pipeline.Execute();
 		}

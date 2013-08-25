@@ -9,9 +9,19 @@
 			_pipelineEngine = pipelineEngine;
 		}
 
+		public IInterceptExpression<ILambdaInstanceBuilder<TInstance>> OnCreate
+		{
+			get { return new InterceptExpression<ILambdaInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnCreateInterceptor); }
+		}
+
 		public ILifecycleSelector<ILambdaInstanceBuilder<TInstance>> Lifecycle
 		{
 			get { return new LifecycleSelector<ILambdaInstanceBuilder<TInstance>>(this, _pipelineEngine.SetLifecycle); }
+		}
+
+		public IInterceptExpression<ILambdaInstanceBuilder<TInstance>> OnActivate
+		{
+			get { return new InterceptExpression<ILambdaInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnActivateInterceptor); }
 		}
 	}
 }

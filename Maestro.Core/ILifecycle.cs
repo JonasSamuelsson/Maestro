@@ -2,6 +2,6 @@
 {
 	public interface ILifecycle : IPipelineItem<ILifecycle>
 	{
-		object Process(IContext context, IPipeline pipeline);
+		object Execute(IContext context, IPipeline pipeline);
 	}
 }

@@ -12,6 +12,6 @@ namespace Maestro
 				: (ILifecycle)defaultCtor.Invoke(null);
 		}
 
-		public abstract object Process(IContext context, IPipeline pipeline);
+		public abstract object Execute(IContext context, IPipeline pipeline);
 	}
 }
