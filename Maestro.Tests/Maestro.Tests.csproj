@@ -72,6 +72,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="default_type_instance_without_dependencies.cs" />
     <Compile Include="default_type_instance_with_configured_dependencies.cs" />
+    <Compile Include="property_injection.cs" />
     <Compile Include="request_lifecycle.cs" />
     <Compile Include="resolve_array_dependencies.cs" />
     <Compile Include="resolve_dependencies.cs" />

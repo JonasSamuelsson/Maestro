@@ -1,8 +1,8 @@
 ﻿namespace Maestro.Fluent
 {
-	public interface ITypeInstanceBuilder<T> : IOnCreateExpression<ITypeInstanceBuilder<T>>,
-		ILifecycleExpression<ITypeInstanceBuilder<T>>,
-		IOnActivateExpression<ITypeInstanceBuilder<T>>
+	public interface ITypeInstanceBuilder<TBuilder> : IOnCreateExpression<ITypeInstanceBuilder<TBuilder>>,
+		ILifecycleExpression<ITypeInstanceBuilder<TBuilder>>,
+		IOnActivateExpression<ITypeInstanceBuilder<TBuilder>>
 	{
 	}
 }

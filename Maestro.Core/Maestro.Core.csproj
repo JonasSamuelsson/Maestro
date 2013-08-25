@@ -75,6 +75,7 @@
     <Compile Include="Conventions\IConventionFilter.cs" />
     <Compile Include="Conventions\IConvention.cs" />
     <Compile Include="Interceptors\IInterceptor.cs" />
+    <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
     <Compile Include="Lifecycles\ILifecycle.cs" />
     <Compile Include="Interceptors\InterceptorBase.cs" />
     <Compile Include="IPipeline.cs" />
@@ -92,7 +93,7 @@
     <Compile Include="Lifecycles\RequestLifecycle.cs" />
     <Compile Include="Lifecycles\SingletonLifecycle.cs" />
     <Compile Include="Lifecycles\TransientLifecycle.cs" />
-    <Compile Include="ConfigureInterceptionExtensions.cs" />
+    <Compile Include="InterceptionConfigurationExtensions.cs" />
     <Compile Include="PipelineEngine.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginDictionary.cs" />

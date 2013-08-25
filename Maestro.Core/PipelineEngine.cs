@@ -10,14 +10,14 @@ namespace Maestro
 	{
 		private readonly List<IInterceptor> _onActivateInterceptors;
 		private ILifecycle _lifecycle;
-		private readonly List<IInterceptor> _onCreteInterceptors;
+		private readonly List<IInterceptor> _onCreateInterceptors;
 		private readonly IProvider _provider;
 
 		public PipelineEngine(IProvider provider)
 		{
 			_onActivateInterceptors = new List<IInterceptor>();
 			_lifecycle = TransientLifecycle.Instance;
-			_onCreteInterceptors = new List<IInterceptor>();
+			_onCreateInterceptors = new List<IInterceptor>();
 			_provider = provider;
 		}
 
@@ -28,7 +28,7 @@ namespace Maestro
 
 		public object Get(IContext context)
 		{
-			var pipeline = new Pipeline(_onCreteInterceptors, _provider, context);
+			var pipeline = new Pipeline(_onCreateInterceptors, _provider, context);
 			var instance = _lifecycle.Execute(context, pipeline);
 			return _onActivateInterceptors.Count == 0
 				? instance
@@ -45,7 +45,7 @@ namespace Maestro
 
 		public void AddOnCreateInterceptor(IInterceptor interceptor)
 		{
-			_onCreteInterceptors.Add(interceptor);
+			_onCreateInterceptors.Add(interceptor);
 		}
 
 		public void SetLifecycle(ILifecycle lifecycle)
