@@ -16,12 +16,12 @@ namespace Maestro.Fluent
 
 		public TParent Transient()
 		{
-			throw new System.NotImplementedException();
+			return Custom(TransientLifecycle.Instance);
 		}
 
 		public TParent Request()
 		{
-			throw new System.NotImplementedException();
+			return Custom<RequestLifecycle>();
 		}
 
 		public TParent Singleton()

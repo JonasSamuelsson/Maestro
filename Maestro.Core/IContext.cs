@@ -11,5 +11,7 @@ namespace Maestro
 
 		bool CanGet(Type type);
 		object Get(Type type);
+
+		event Action Disposed;
 	}
 }

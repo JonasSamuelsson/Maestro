@@ -45,7 +45,7 @@ namespace Maestro
 			{
 				name = name ?? DefaultName;
 				var requestId = Interlocked.Increment(ref _requestId);
-				var context = new Context(_configId, requestId, name, this);
+				using (var context = new Context(_configId, requestId, name, this))
 				using (((TypeStack)context.TypeStack).Push(type))
 				{
 					IPipelineEngine pipelineEngine;
@@ -94,19 +94,20 @@ namespace Maestro
 					return GetEmptyEnumerableOf(type);
 
 				var requestId = Interlocked.Increment(ref _requestId);
-				var context = new Context(_configId, requestId, DefaultName, this);
-
-				var names = plugin.GetNames().ToList();
-				var list = new List<object>(names.Count());
-
-				foreach (var name in names)
+				using (var context = new Context(_configId, requestId, DefaultName, this))
 				{
-					context.Name = name;
-					var instance = plugin.Get(name).Get(context);
-					list.Add(instance);
-				}
+					var names = plugin.GetNames().ToList();
+					var list = new List<object>(names.Count());
 
-				return list;
+					foreach (var name in names)
+					{
+						context.Name = name;
+						var instance = plugin.Get(name).Get(context);
+						list.Add(instance);
+					}
+
+					return list;
+				}
 			}
 			catch (ActivationException)
 			{

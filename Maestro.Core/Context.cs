@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Maestro
 {
-	internal class Context : IContext
+	internal class Context : IContext, IDisposable
 	{
 		private readonly IDependencyContainer _container;
-		
+
 		public Context(int configId, long requestId, string name, IDependencyContainer container)
 		{
 			ConfigId = configId;
@@ -30,6 +29,15 @@ namespace Maestro
 		public object Get(Type type)
 		{
 			return _container.Get(type, this);
+		}
+
+		public event Action Disposed;
+
+		public void Dispose()
+		{
+			var action = Disposed;
+			if (action == null) return;
+			action();
 		}
 	}
 }
