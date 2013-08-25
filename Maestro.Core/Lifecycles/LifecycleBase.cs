@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Maestro
+namespace Maestro.Lifecycles
 {
 	public abstract class LifecycleBase : ILifecycle
 	{

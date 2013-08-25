@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Maestro
+namespace Maestro.Interceptors
 {
 	public abstract class InterceptorBase : IInterceptor
 	{

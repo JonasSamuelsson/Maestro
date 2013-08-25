@@ -1,4 +1,5 @@
 ﻿using System;
+using Maestro.Interceptors;
 
 namespace Maestro.Fluent
 {

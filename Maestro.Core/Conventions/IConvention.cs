@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Maestro
+namespace Maestro.Conventions
 {
 	public interface IConvention
 	{

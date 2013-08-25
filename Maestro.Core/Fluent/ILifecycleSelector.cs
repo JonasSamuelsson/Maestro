@@ -1,4 +1,6 @@
-﻿namespace Maestro.Fluent
+﻿using Maestro.Lifecycles;
+
+namespace Maestro.Fluent
 {
 	public interface ILifecycleSelector<T>
 	{

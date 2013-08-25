@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Maestro.Lifecycles;
 using Xunit;
 
 namespace Maestro.Tests

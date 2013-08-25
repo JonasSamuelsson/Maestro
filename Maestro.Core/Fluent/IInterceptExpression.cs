@@ -1,4 +1,6 @@
-﻿namespace Maestro.Fluent
+﻿using Maestro.Interceptors;
+
+namespace Maestro.Fluent
 {
 	public interface IInterceptExpression<TParent>
 	{
