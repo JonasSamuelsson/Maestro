@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Maestro.Lifecycles;
+using System;
 
 namespace Maestro.Fluent
 {
@@ -25,7 +26,7 @@ namespace Maestro.Fluent
 
 		public TParent Singleton()
 		{
-			throw new System.NotImplementedException();
+			return Custom<SingletonLifecycle>();
 		}
 
 		public TParent Custom<TLifecycle>() where TLifecycle : ILifecycle, new()

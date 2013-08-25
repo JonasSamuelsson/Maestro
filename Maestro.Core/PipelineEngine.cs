@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Maestro.Lifecycles;
+using System;
 
 namespace Maestro
 {
 	internal class PipelineEngine : IPipelineEngine
 	{
 		private readonly IProvider _provider;
-		private readonly List<IPipelineItem> _pipelineItems;
+		private ILifecycle _lifecycle;
 
 		public PipelineEngine(IProvider provider)
 		{
 			_provider = provider;
-			_pipelineItems = new List<IPipelineItem>();
+			_lifecycle = TransientLifecycle.Instance;
 		}
 
 		public bool CanGet(IContext context)
@@ -21,37 +21,36 @@ namespace Maestro
 
 		public object Get(IContext context)
 		{
-			return new Pipeline(context, _pipelineItems, _provider).Execute();
+			return _lifecycle.Process(context, new Pipeline(_provider, context));
 		}
 
 		public IPipelineEngine MakeGenericPipelineEngine(Type[] types)
 		{
-			return new PipelineEngine(_provider.MakeGenericProvider(types));
+			return new PipelineEngine(_provider.MakeGenericProvider(types))
+			{
+				_lifecycle = _lifecycle.Clone()
+			};
 		}
 
 		public void SetLifecycle(ILifecycle lifecycle)
 		{
-			_pipelineItems.Add(lifecycle);
+			_lifecycle = lifecycle;
 		}
 
 		private class Pipeline : IPipeline
 		{
 			private readonly IContext _context;
-			private readonly Queue<IPipelineItem> _pipelineItems;
 			private readonly IProvider _provider;
 
-			public Pipeline(IContext context, IEnumerable<IPipelineItem> pipelineItems, IProvider provider)
+			public Pipeline(IProvider provider, IContext context)
 			{
 				_context = context;
-				_pipelineItems = new Queue<IPipelineItem>(pipelineItems);
 				_provider = provider;
 			}
 
 			public object Execute()
 			{
-				return _pipelineItems.Count != 0
-					? _pipelineItems.Dequeue().Process(_context, this)
-					: _provider.Get(_context);
+				return _provider.Get(_context);
 			}
 		}
 	}

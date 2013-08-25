@@ -1,7 +1,7 @@
 ﻿namespace Maestro
 {
-	public interface IPipelineItem
+	public interface IPipelineItem<T>
 	{
-		object Process(IContext context, IPipeline pipeline);
+		T Clone();
 	}
 }

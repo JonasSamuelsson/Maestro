@@ -64,7 +64,7 @@
     <Compile Include="conventional_registration.cs" />
     <Compile Include="DefaultContainerInstance.cs" />
     <Compile Include="FluentAssertionsExtensions.cs" />
-    <Compile Include="instance_lifestyle.cs" />
+    <Compile Include="instance_lifecycle.cs" />
     <Compile Include="lambda_instance.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />

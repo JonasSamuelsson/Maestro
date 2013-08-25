@@ -83,6 +83,9 @@
     <Compile Include="IPlugin.cs" />
     <Compile Include="IProvider.cs" />
     <Compile Include="ITypeStack.cs" />
+    <Compile Include="LifecycleBase.cs" />
+    <Compile Include="Lifecycles\SingletonLifecycle.cs" />
+    <Compile Include="Lifecycles\TransientLifecycle.cs" />
     <Compile Include="PipelineEngine.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="PluginDictionary.cs" />
