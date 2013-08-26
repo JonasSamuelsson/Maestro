@@ -76,6 +76,7 @@
     <Compile Include="Conventions\IConvention.cs" />
     <Compile Include="Interceptors\IInterceptor.cs" />
     <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
+    <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
     <Compile Include="Lifecycles\ILifecycle.cs" />
     <Compile Include="Interceptors\InterceptorBase.cs" />
     <Compile Include="IPipeline.cs" />

@@ -19,7 +19,7 @@
 			var property = instance.GetType().GetProperty(_property);
 			var value = context.Get(property.PropertyType);
 			property.SetValue(instance, value, null);
-			 return instance;
+			return instance;
 		}
 	}
 }

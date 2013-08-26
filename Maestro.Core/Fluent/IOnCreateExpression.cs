@@ -1,7 +1,7 @@
 ﻿namespace Maestro.Fluent
 {
-	public interface IOnCreateExpression<TParent>
+	public interface IOnCreateExpression<TInstance, TParent>
 	{
-		IInterceptExpression<TParent> OnCreate { get; }
+		IInterceptExpression<TInstance, TParent> OnCreate { get; }
 	}
 }

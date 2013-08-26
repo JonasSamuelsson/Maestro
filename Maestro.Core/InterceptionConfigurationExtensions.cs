@@ -1,35 +1,32 @@
-﻿using Maestro.Fluent;
-using Maestro.Interceptors;
-using System;
+﻿using System;
 using System.Linq.Expressions;
+using Maestro.Fluent;
+using Maestro.Interceptors;
 
 namespace Maestro
 {
 	public static class InterceptionConfigurationExtensions
 	{
-		public static TParent OnCreate<TParent>(this TParent expression, Action<IInterceptExpression<TParent>> action)
-			where TParent : IOnCreateExpression<TParent>
-		{
-			action(expression.OnCreate);
-			return expression;
-		}
-
-		public static TParent OnActivate<TParent>(this TParent expression, Action<IInterceptExpression<TParent>> action)
-			where TParent : IOnActivateExpression<TParent>
-		{
-			action(expression.OnActivate);
-			return expression;
-		}
-
-		public static TParent SetProperty<TParent>(this IInterceptExpression<TParent> parent, string property)
+		public static TParent SetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property)
 		{
 			return parent.InterceptUsing(new SetPropertyInterceptor(property));
 		}
 
-		//public static TParent SetProperty<TParent>(this IInterceptExpression<TParent> parent, Expression<Func<object>> property)
-		//{
-		//	var name = ((MemberExpression)property.Body).Member.Name;
-		//	return parent.InterceptUsing(new SetPropertyInterceptor(name));
-		//}
+		public static TParent SetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, object>> property)
+		{
+			var name = ((MemberExpression)property.Body).Member.Name;
+			return parent.SetProperty(name);
+		}
+
+		public static TParent TrySetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property)
+		{
+			return parent.InterceptUsing(new TrySetPropertyInterceptor(property));
+		}
+
+		public static TParent TrySetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, object>> property)
+		{
+			var name = ((MemberExpression)property.Body).Member.Name;
+			return parent.TrySetProperty(name);
+		}
 	}
 }

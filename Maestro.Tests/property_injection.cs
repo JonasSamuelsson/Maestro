@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using System;
+﻿using System;
+using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests
@@ -7,50 +7,50 @@ namespace Maestro.Tests
 	public class property_injection
 	{
 		[Fact]
-		public void set_ok()
+		public void set_property_with_resolvable_type_should_work()
 		{
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty("Object"));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty("ResolvableDependency"));
 			var instance = container.Get<Foobar>();
 
-			instance.Object.Should().NotBeNull();
+			instance.ResolvableDependency.Should().NotBeNull();
 		}
 
 		[Fact]
-		public void set_nok_1()
+		public void set_missing_property_should_throw()
 		{
 			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty("missing property"));
 
 			container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		}
 
-		//[Fact]
-		//public void set_nok_2()
-		//{
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty(y => y.Disposable));
+		[Fact]
+		public void set_property_with_unresolvable_type_should_throw()
+		{
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty(y => y.UnresolvableDependency));
 
-		//	container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
-		//}
-
-		//[Fact]
-		//public void try_set_ok()
-		//{
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty(y => y.Disposable));
-
-		//	container.Invoking(x => x.Get<Foobar>()).ShouldNotThrow();
-		//}
+			container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
+		}
 
 		[Fact]
-		public void try_set_nok()
+		public void try_set_property_with_unresolvable_type_should_work()
 		{
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty("missing property"));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.TrySetProperty(y => y.UnresolvableDependency));
+
+			container.Invoking(x => x.Get<Foobar>()).ShouldNotThrow();
+		}
+
+		[Fact]
+		public void try_set_missing_property_should_throw()
+		{
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.TrySetProperty("missing property"));
 
 			container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		}
 
 		private class Foobar
 		{
-			public object Object { get; set; }
-			public IDisposable Disposable { get; set; }
+			public object ResolvableDependency { get; set; }
+			public IDisposable UnresolvableDependency { get; set; }
 		}
 	}
 }

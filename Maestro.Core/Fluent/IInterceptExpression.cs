@@ -2,7 +2,7 @@
 
 namespace Maestro.Fluent
 {
-	public interface IInterceptExpression<TParent>
+	public interface IInterceptExpression<TInstance, TParent>
 	{
 		TParent InterceptUsing(IInterceptor interceptor);
 	}

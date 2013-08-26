@@ -47,16 +47,10 @@ namespace Maestro.Tests
 			var list = new List<string>();
 
 			new Container(x => x.For<object>().Use<object>()
-				.OnCreate(y =>
-			{
-				y.InterceptUsing(new Interceptor(() => list.Add("create1")));
-				y.InterceptUsing(new Interceptor(() => list.Add("create2")));
-			})
-				.OnActivate(y =>
-			{
-				y.InterceptUsing(new Interceptor(() => list.Add("activate1")));
-				y.InterceptUsing(new Interceptor(() => list.Add("activate2")));
-			}))
+				.OnCreate.InterceptUsing(new Interceptor(() => list.Add("create1")))
+				.OnCreate.InterceptUsing(new Interceptor(() => list.Add("create2")))
+				.OnActivate.InterceptUsing(new Interceptor(() => list.Add("activate1")))
+				.OnActivate.InterceptUsing(new Interceptor(() => list.Add("activate2"))))
 			.Get<object>();
 
 			list.Should().ContainInOrder(new[] { "create1", "create2", "activate1", "activate2" });

@@ -1,8 +1,8 @@
 ﻿namespace Maestro.Fluent
 {
-	public interface ILambdaInstanceBuilder<TInstance> : IOnCreateExpression<ILambdaInstanceBuilder<TInstance>>,
+	public interface ILambdaInstanceBuilder<TInstance> : IOnCreateExpression<TInstance, ILambdaInstanceBuilder<TInstance>>,
 		ILifecycleExpression<ILambdaInstanceBuilder<TInstance>>,
-		IOnActivateExpression<ILambdaInstanceBuilder<TInstance>>
+		IOnActivateExpression<TInstance, ILambdaInstanceBuilder<TInstance>>
 	{
 	}
 }

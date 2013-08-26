@@ -9,9 +9,9 @@
 			_pipelineEngine = pipelineEngine;
 		}
 
-		public IInterceptExpression<ITypeInstanceBuilder<TInstance>> OnCreate
+		public IInterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>> OnCreate
 		{
-			get { return new InterceptExpression<ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnCreateInterceptor); }
+			get { return new InterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnCreateInterceptor); }
 		}
 
 		public ILifecycleSelector<ITypeInstanceBuilder<TInstance>> Lifecycle
@@ -19,9 +19,9 @@
 			get { return new LifecycleSelector<ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.SetLifecycle); }
 		}
 
-		public IInterceptExpression<ITypeInstanceBuilder<TInstance>> OnActivate
+		public IInterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>> OnActivate
 		{
-			get { return new InterceptExpression<ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnActivateInterceptor); }
+			get { return new InterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnActivateInterceptor); }
 		}
 	}
 }

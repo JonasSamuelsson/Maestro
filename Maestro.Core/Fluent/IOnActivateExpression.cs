@@ -1,7 +1,7 @@
 ﻿namespace Maestro.Fluent
 {
-	public interface IOnActivateExpression<TParent>
+	public interface IOnActivateExpression<TInstance, TParent>
 	{
-		IInterceptExpression<TParent> OnActivate { get; }
+		IInterceptExpression<TInstance, TParent> OnActivate { get; }
 	}
 }

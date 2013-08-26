@@ -3,7 +3,7 @@ using Maestro.Interceptors;
 
 namespace Maestro.Fluent
 {
-	internal class InterceptExpression<TParent> : IInterceptExpression<TParent>
+	internal class InterceptExpression<TInstance, TParent> : IInterceptExpression<TInstance, TParent>
 	{
 		private readonly TParent _parent;
 		private readonly Action<IInterceptor> _action;
