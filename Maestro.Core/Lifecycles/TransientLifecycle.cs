@@ -1,6 +1,6 @@
 ﻿namespace Maestro.Lifecycles
 {
-	internal class TransientLifecycle : LifecycleBase
+	internal class TransientLifecycle : ILifecycle
 	{
 		static TransientLifecycle()
 		{
@@ -11,12 +11,12 @@
 
 		public static ILifecycle Instance { get; private set; }
 
-		public override ILifecycle Clone()
+		public ILifecycle Clone()
 		{
 			return Instance;
 		}
 
-		public override object Execute(IContext context, IPipeline pipeline)
+		public object Execute(IContext context, IPipeline pipeline)
 		{
 			return pipeline.Execute();
 		}

@@ -1,8 +1,8 @@
-﻿using Maestro.Interceptors;
-using Maestro.Lifecycles;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.Interceptors;
+using Maestro.Lifecycles;
 
 namespace Maestro
 {
@@ -37,10 +37,11 @@ namespace Maestro
 
 		public IPipelineEngine MakeGenericPipelineEngine(Type[] types)
 		{
-			return new PipelineEngine(_provider.MakeGenericProvider(types))
-			{
-				_lifecycle = _lifecycle.Clone()
-			};
+			var engine = new PipelineEngine(_provider.MakeGenericProvider(types));
+			engine._onCreateInterceptors.AddRange(_onCreateInterceptors.Select(x => x.Clone()));
+			engine._lifecycle = _lifecycle.Clone();
+			engine._onActivateInterceptors.AddRange(_onActivateInterceptors.Select(x => x.Clone()));
+			return engine;
 		}
 
 		public void AddOnCreateInterceptor(IInterceptor interceptor)

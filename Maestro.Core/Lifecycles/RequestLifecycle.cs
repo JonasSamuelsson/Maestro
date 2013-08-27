@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 namespace Maestro.Lifecycles
 {
-	public class RequestLifecycle : LifecycleBase
+	public class RequestLifecycle : ILifecycle
 	{
 		private readonly string _lockKey = Guid.NewGuid().ToString();
 		private readonly Dictionary<long, object> _dictionary = new Dictionary<long, object>();
 
-		public override ILifecycle Clone()
+		public ILifecycle Clone()
 		{
 			return new RequestLifecycle();
 		}
 
-		public override object Execute(IContext context, IPipeline pipeline)
+		public object Execute(IContext context, IPipeline pipeline)
 		{
 			lock (_dictionary)
 			{

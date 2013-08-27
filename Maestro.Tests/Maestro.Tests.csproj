@@ -73,6 +73,7 @@
     <Compile Include="lambda_instance.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />
+    <Compile Include="open_generic_type.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="default_type_instance_without_dependencies.cs" />
     <Compile Include="default_type_instance_with_configured_dependencies.cs" />

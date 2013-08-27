@@ -1,10 +1,15 @@
 ﻿namespace Maestro.Lifecycles
 {
-	public class SingletonLifecycle : LifecycleBase
+	public class SingletonLifecycle : ILifecycle
 	{
 		private object _instance;
 
-		public override object Execute(IContext context, IPipeline pipeline)
+		public ILifecycle Clone()
+		{
+			return new SingletonLifecycle();
+		}
+
+		public object Execute(IContext context, IPipeline pipeline)
 		{
 			if (_instance == null)
 				lock (this)

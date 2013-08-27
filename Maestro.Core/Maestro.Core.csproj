@@ -89,7 +89,6 @@
     <Compile Include="IPlugin.cs" />
     <Compile Include="IProvider.cs" />
     <Compile Include="ITypeStack.cs" />
-    <Compile Include="Lifecycles\LifecycleBase.cs" />
     <Compile Include="Lifecycles\RequestLifecycle.cs" />
     <Compile Include="Lifecycles\SingletonLifecycle.cs" />
     <Compile Include="Lifecycles\TransientLifecycle.cs" />

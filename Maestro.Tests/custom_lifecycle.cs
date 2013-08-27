@@ -17,11 +17,16 @@ namespace Maestro.Tests
 			lifecycle.Executed.Should().BeTrue();
 		}
 
-		private class Lifecycle : LifecycleBase
+		private class Lifecycle : ILifecycle
 		{
 			public bool Executed { get; private set; }
 
-			public override object Execute(IContext context, IPipeline pipeline)
+			public ILifecycle Clone()
+			{
+				throw new System.NotImplementedException();
+			}
+
+			public object Execute(IContext context, IPipeline pipeline)
 			{
 				Executed = true;
 				return pipeline.Execute();

@@ -247,8 +247,10 @@ namespace Maestro
 			{
 				var genericArgument = type.GetGenericArguments().Single();
 				if (!genericArgument.IsValueType || plugins.Contains(genericArgument))
+				{
 					enumerableType = genericArgument;
-				return true;
+					return true;
+				}
 			}
 
 			return false;
