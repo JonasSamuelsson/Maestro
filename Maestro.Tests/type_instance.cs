@@ -6,6 +6,16 @@ namespace Maestro.Tests
 	public class type_instance
 	{
 		[Fact]
+		public void should_resolve_type_with_constructor_dependencies()
+		{
+			var container = new Container(x =>x.For<IBar>().Use<Bar>());
+
+			var foo = container.Get<Foo>();
+
+			foo.Bar.Should().NotBeNull();
+		}
+
+		[Fact]
 		public void should_reevaluate_selected_ctor_when_config_changes()
 		{
 			var container = new Container(x => x.For<Foo>().Use<Foo>());

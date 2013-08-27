@@ -9,6 +9,7 @@ namespace Maestro
 		private readonly Type _type;
 		private int _configId;
 		private bool? _canGet;
+		private Func<object[], object> _ctor;
 		private Type[] _ctorParameterTypes;
 
 		public TypeInstanceProvider(Type type)
@@ -41,6 +42,7 @@ namespace Maestro
 				return;
 			}
 
+			_ctor = Reflector.GetInstantiator(constructor);
 			_ctorParameterTypes = constructor.GetParameters().Select(x => x.ParameterType).ToArray();
 			_canGet = true;
 		}
@@ -67,7 +69,7 @@ namespace Maestro
 				throw new InvalidOperationException(string.Format("Can't find appropriate constructor to invoke {0}.", _type.FullName));
 
 			var ctorArgs = _ctorParameterTypes.Select(context.Get).ToArray();
-			return Activator.CreateInstance(_type, ctorArgs);
+			return _ctor(ctorArgs);
 		}
 
 		public IProvider MakeGenericProvider(Type[] types)

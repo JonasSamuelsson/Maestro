@@ -14,9 +14,24 @@ namespace Maestro
 			return compile != null;
 		}
 
-		public static Func<object> GetInstantiator(ConstructorInfo ctor)
+		public static Func<object[], object> GetInstantiator(ConstructorInfo ctor)
 		{
-			throw new NotImplementedException();
+			MethodInfo compiler;
+			if (!TryGetExpressionCompiler(typeof(Expression<Func<object[], object>>), out compiler))
+				return new ReflectionInstantiator(ctor).Instantiate;
+
+			var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
+			var args = Expression.Parameter(typeof(object[]), "args");
+			var typedArgs = new Expression[parameterTypes.Count];
+			for (var i = 0; i < parameterTypes.Count; i++)
+			{
+				var parameterType = parameterTypes[i];
+				var arg = Expression.ArrayIndex(args, Expression.Constant(i));
+				typedArgs[i] = Expression.Convert(arg, parameterType);
+			}
+			var @new = Expression.New(ctor, typedArgs);
+			var lambda = Expression.Lambda<Func<object[], object>>(@new, args);
+			return (Func<object[], object>)compiler.Invoke(lambda, null);
 		}
 
 		public static Action<object, object> GetPropertySetter(Type instanceType, string propertyName)
@@ -34,6 +49,21 @@ namespace Maestro
 			var call = Expression.Call(typedInstance, setMethod, typedValue);
 			var lambda = Expression.Lambda<Action<object, object>>(call, new[] { instance, value });
 			return (Action<object, object>)compiler.Invoke(lambda, null);
+		}
+
+		private class ReflectionInstantiator
+		{
+			private readonly ConstructorInfo _ctor;
+
+			public ReflectionInstantiator(ConstructorInfo ctor)
+			{
+				_ctor = ctor;
+			}
+
+			public object Instantiate(object[] args)
+			{
+				return _ctor.Invoke(args);
+			}
 		}
 
 		private class ReflectionPropertySetter
