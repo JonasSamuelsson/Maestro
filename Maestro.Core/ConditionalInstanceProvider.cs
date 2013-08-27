@@ -1,17 +1,19 @@
-﻿using Maestro.Fluent;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.Fluent;
 
 namespace Maestro
 {
 	internal class ConditionalInstanceProvider<T> : IProvider, IConditionalInstancePipelineBuilder<T>
 	{
+		private readonly DefaultSettings _defaultSettings;
 		private readonly List<PredicatedPipeline> _predicatedPipelines = new List<PredicatedPipeline>();
 		private IPipelineEngine _defaultPipelineEngine;
 
-		public ConditionalInstanceProvider(Action<IConditionalInstancePipelineBuilder<T>> action)
+		public ConditionalInstanceProvider(DefaultSettings defaultSettings, Action<IConditionalInstancePipelineBuilder<T>> action)
 		{
+			_defaultSettings = defaultSettings;
 			action(this);
 		}
 
@@ -62,12 +64,12 @@ namespace Maestro
 
 		public IProviderSelector<T> If(Func<IContext, bool> predicate)
 		{
-			return new ProviderSelector<T>(x => _predicatedPipelines.Add(new PredicatedPipeline(predicate, x)));
+			return new ProviderSelector<T>(x => _predicatedPipelines.Add(new PredicatedPipeline(predicate, x)), _defaultSettings);
 		}
 
 		public IProviderSelector<T> Default
 		{
-			get { return new ProviderSelector<T>(x => _defaultPipelineEngine = x); }
+			get { return new ProviderSelector<T>(x => _defaultPipelineEngine = x, _defaultSettings); }
 		}
 	}
 }

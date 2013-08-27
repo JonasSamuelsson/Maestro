@@ -7,9 +7,10 @@ namespace Maestro
 {
 	public class Container : IContainer, IDependencyResolver
 	{
-		private static IContainer _default;
+		private static IContainer _defaultContainer;
 		private readonly ICustomDictionary<IPlugin> _plugins;
 		private readonly ICustomDictionary<IPipelineEngine> _fallbackPipelines;
+		private readonly DefaultSettings _defaultSettings;
 		private long _requestId;
 		private int _configId;
 
@@ -17,6 +18,7 @@ namespace Maestro
 		{
 			_plugins = new PluginDictionary();
 			_fallbackPipelines = new FallbackPipelineDictionary();
+			_defaultSettings = new DefaultSettings();
 		}
 
 		public Container(Action<IContainerConfiguration> action)
@@ -27,14 +29,14 @@ namespace Maestro
 
 		public static IContainer Default
 		{
-			get { return _default ?? (_default = new Container()); }
+			get { return _defaultContainer ?? (_defaultContainer = new Container()); }
 		}
 
 		internal static string DefaultName { get { return "default"; } }
 
 		public void Configure(Action<IContainerConfiguration> action)
 		{
-			action(new ContainerConfiguration(_plugins));
+			action(new ContainerConfiguration(_plugins, _defaultSettings));
 			_fallbackPipelines.Clear();
 			Interlocked.Increment(ref _configId);
 		}

@@ -46,10 +46,12 @@ namespace Maestro.Fluent
 	internal class ProviderSelector<TPlugin> : IProviderSelector<TPlugin>
 	{
 		private readonly Action<IPipelineEngine> _registerPipeline;
+		private readonly DefaultSettings _defaultSettings;
 
-		public ProviderSelector(Action<IPipelineEngine> registerPipeline)
+		public ProviderSelector(Action<IPipelineEngine> registerPipeline, DefaultSettings defaultSettings)
 		{
 			_registerPipeline = registerPipeline;
+			_defaultSettings = defaultSettings;
 		}
 
 		public IConstantInstanceBuilder<TInstance> Use<TInstance>(TInstance instance) where TInstance : TPlugin
@@ -69,6 +71,7 @@ namespace Maestro.Fluent
 		{
 			var provider = new LambdaInstanceProvider(context => func(context));
 			var pipeline = new PipelineEngine(provider);
+			pipeline.SetLifecycle(_defaultSettings.GetLifecycle());
 			_registerPipeline(pipeline);
 			return new LambdaInstanceBuilder<TInstance>(pipeline);
 		}
@@ -77,13 +80,14 @@ namespace Maestro.Fluent
 		{
 			var provider = new TypeInstanceProvider(typeof(TInstance));
 			var pipeline = new PipelineEngine(provider);
+			pipeline.SetLifecycle(_defaultSettings.GetLifecycle());
 			_registerPipeline(pipeline);
 			return new TypeInstanceBuilder<TInstance>(pipeline);
 		}
 
 		public void UseConditional(Action<IConditionalInstancePipelineBuilder<TPlugin>> action)
 		{
-			var provider = new ConditionalInstanceProvider<TPlugin>(action);
+			var provider = new ConditionalInstanceProvider<TPlugin>(_defaultSettings, action);
 			var pipeline = new PipelineEngine(provider);
 			_registerPipeline(pipeline);
 		}

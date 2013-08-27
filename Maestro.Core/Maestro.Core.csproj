@@ -57,6 +57,7 @@
     <Compile Include="Fluent\ConstantInstanceBuilder.cs" />
     <Compile Include="Fluent\ConventionExpression.cs" />
     <Compile Include="Fluent\IConventionExpression.cs" />
+    <Compile Include="Fluent\IDefaultsExpression.cs" />
     <Compile Include="Fluent\IInterceptExpression.cs" />
     <Compile Include="Fluent\ILifecycleExpression.cs" />
     <Compile Include="Fluent\ILifecycleSelector.cs" />
