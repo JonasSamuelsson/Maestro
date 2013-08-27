@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using Maestro.Interceptors;
 using Xunit;
 
@@ -82,7 +82,7 @@ namespace Maestro.Tests
 			interceptor.ExecuteCount.Should().Be(2);
 		}
 
-		private class Interceptor : InterceptorBase
+		private class Interceptor : IInterceptor
 		{
 			private readonly Action _action;
 
@@ -99,7 +99,12 @@ namespace Maestro.Tests
 				get { return ExecuteCount != 0; }
 			}
 
-			public override object Execute(object instance, IContext context)
+			public IInterceptor Clone()
+			{
+				throw new NotImplementedException();
+			}
+
+			public object Execute(object instance, IContext context)
 			{
 				_action();
 				ExecuteCount++;

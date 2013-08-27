@@ -1,24 +1,32 @@
-﻿namespace Maestro.Interceptors
+﻿using System;
+
+namespace Maestro.Interceptors
 {
-	public class SetPropertyInterceptor : InterceptorBase
+	internal class SetPropertyInterceptor : IInterceptor
 	{
-		private readonly string _property;
+		private readonly string _propertyName;
+		private Action<object, object> _setter;
 
-		public SetPropertyInterceptor(string property)
+		public SetPropertyInterceptor(string propertyName)
 		{
-			_property = property;
+			_propertyName = propertyName;
 		}
 
-		public override IInterceptor Clone()
+		public IInterceptor Clone()
 		{
-			return new SetPropertyInterceptor(_property);
+			return new SetPropertyInterceptor(_propertyName);
 		}
 
-		public override object Execute(object instance, IContext context)
+		public object Execute(object instance, IContext context)
 		{
-			var property = instance.GetType().GetProperty(_property);
-			var value = context.Get(property.PropertyType);
-			property.SetValue(instance, value, null);
+			var instanceType = instance.GetType();
+			var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
+
+			if (_setter == null)
+				_setter = Reflector.GetPropertySetter(instanceType, _propertyName);
+
+			var value = context.Get(propertyType);
+			_setter(instance, value);
 			return instance;
 		}
 	}
