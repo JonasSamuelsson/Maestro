@@ -4,14 +4,14 @@ namespace Maestro
 {
 	internal class Context : IContext, IDisposable
 	{
-		private readonly IDependencyContainer _container;
+		private readonly IDependencyResolver _dependencyResolver;
 
-		public Context(int configId, long requestId, string name, IDependencyContainer container)
+		public Context(int configId, long requestId, string name, IDependencyResolver dependencyResolver)
 		{
 			ConfigId = configId;
 			RequestId = requestId;
 			Name = name;
-			_container = container;
+			_dependencyResolver = dependencyResolver;
 
 			TypeStack = new TypeStack();
 		}
@@ -23,12 +23,12 @@ namespace Maestro
 
 		public bool CanGet(Type type)
 		{
-			return _container.CanGet(type, this);
+			return _dependencyResolver.CanGet(type, this);
 		}
 
 		public object Get(Type type)
 		{
-			return _container.Get(type, this);
+			return _dependencyResolver.Get(type, this);
 		}
 
 		public event Action Disposed;

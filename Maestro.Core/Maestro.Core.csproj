@@ -84,7 +84,7 @@
     <Compile Include="IContainerConfiguration.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="ICustomDictionary.cs" />
-    <Compile Include="IDependencyContainer.cs" />
+    <Compile Include="IDependencyResolver.cs" />
     <Compile Include="IPipelineEngine.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="IProvider.cs" />

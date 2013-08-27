@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Maestro
 {
-	public class Container : IContainer, IDependencyContainer
+	public class Container : IContainer, IDependencyResolver
 	{
 		private static IContainer _default;
 		private readonly ICustomDictionary<IPlugin> _plugins;
@@ -124,7 +124,7 @@ namespace Maestro
 			return GetAll(typeof(T)).Cast<T>().ToList();
 		}
 
-		bool IDependencyContainer.CanGet(Type type, IContext context)
+		bool IDependencyResolver.CanGet(Type type, IContext context)
 		{
 			IPipelineEngine pipelineEngine;
 			if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
@@ -142,7 +142,7 @@ namespace Maestro
 			return false;
 		}
 
-		object IDependencyContainer.Get(Type type, IContext context)
+		object IDependencyResolver.Get(Type type, IContext context)
 		{
 			try
 			{
@@ -178,7 +178,7 @@ namespace Maestro
 
 			Type enumerableType;
 			if (TryGetEnumerableType(_plugins, type, out enumerableType))
-				return ((IDependencyContainer)this).GetAll(enumerableType, context);
+				return ((IDependencyResolver)this).GetAll(enumerableType, context);
 
 			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
 				using (((TypeStack)context.TypeStack).Push(type))
@@ -254,7 +254,7 @@ namespace Maestro
 			return false;
 		}
 
-		IEnumerable<object> IDependencyContainer.GetAll(Type type, IContext context)
+		IEnumerable<object> IDependencyResolver.GetAll(Type type, IContext context)
 		{
 			try
 			{
