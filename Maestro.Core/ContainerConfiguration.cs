@@ -1,6 +1,5 @@
 ﻿using System;
 using Maestro.Fluent;
-using Maestro.Lifecycles;
 
 namespace Maestro
 {
@@ -43,27 +42,12 @@ namespace Maestro
 
 		public IConventionExpression Scan
 		{
-			get { return new ConventionExpression(this); }
+			get { return new ConventionExpression(this, _defaultSettings); }
 		}
 
-		public IDefaultsExpression Default
+		public IDefaultSettingsExpression Default
 		{
 			get { return _defaultSettings; }
-		}
-	}
-
-	internal class DefaultSettings : IDefaultsExpression
-	{
-		private ILifecycle _lifecycle = TransientLifecycle.Instance;
-
-		ILifecycleSelector<IDefaultsExpression> IDefaultsExpression.Lifecycle
-		{
-			get { return new LifecycleSelector<IDefaultsExpression>(this, x => _lifecycle = x); }
-		}
-
-		public ILifecycle GetLifecycle()
-		{
-			return _lifecycle.Clone();
 		}
 	}
 }

@@ -10,6 +10,6 @@ namespace Maestro
 		IProviderSelector Add(Type type, string name = null);
 		IProviderSelector<TPlugin> Add<TPlugin>(string name = null);
 		IConventionExpression Scan { get; }
-		IDefaultsExpression Default { get; }
+		IDefaultSettingsExpression Default { get; }
 	}
 }

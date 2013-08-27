@@ -67,7 +67,7 @@
     <Compile Include="constant_instance.cs" />
     <Compile Include="conventional_registration.cs" />
     <Compile Include="DefaultContainerInstance.cs" />
-    <Compile Include="default_lifecycle.cs" />
+    <Compile Include="default_settings.cs" />
     <Compile Include="FluentAssertionsExtensions.cs" />
     <Compile Include="custom_lifecycle.cs" />
     <Compile Include="intercept_instance.cs" />

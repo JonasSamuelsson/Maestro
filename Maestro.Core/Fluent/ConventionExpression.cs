@@ -1,8 +1,8 @@
-﻿using Maestro.Conventions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Maestro.Conventions;
 
 namespace Maestro.Fluent
 {
@@ -12,11 +12,11 @@ namespace Maestro.Fluent
 		private readonly List<Type> _types;
 		private readonly List<IConventionFilter> _filters;
 
-		public ConventionExpression(IContainerConfiguration containerConfiguration)
+		public ConventionExpression(IContainerConfiguration containerConfiguration, DefaultSettings defaultSettings)
 		{
 			_containerConfiguration = containerConfiguration;
 			_types = new List<Type>();
-			_filters = new List<IConventionFilter>();
+			_filters = new List<IConventionFilter>(defaultSettings.GetFilters());
 		}
 
 		public IConventionExpression Assemblies(params Assembly[] assemblies)
@@ -86,25 +86,10 @@ namespace Maestro.Fluent
 			Using(new DefaultImplementationConvention());
 		}
 
-		public void Using(IConvention registrator)
+		public void Using(IConvention convention)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
-			registrator.Process(types, _containerConfiguration);
-		}
-
-		private class LambdaFilter : IConventionFilter
-		{
-			private readonly Func<Type, bool> _predicate;
-
-			public LambdaFilter(Func<Type, bool> predicate)
-			{
-				_predicate = predicate;
-			}
-
-			public bool IsMatch(Type type)
-			{
-				return _predicate(type);
-			}
+			convention.Process(types, _containerConfiguration);
 		}
 	}
 }
