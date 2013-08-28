@@ -2,47 +2,6 @@
 
 namespace Maestro.Fluent
 {
-	internal class ProviderSelector : IProviderSelector
-	{
-		private readonly string _name;
-		private readonly IPlugin _plugin;
-
-		public ProviderSelector(string name, IPlugin plugin)
-		{
-			_name = name;
-			_plugin = plugin;
-		}
-
-		public IConstantInstanceBuilder<object> Use(object instance)
-		{
-			var provider = new ConstantInstanceProvider(instance);
-			var pipeline = new PipelineEngine(provider);
-			_plugin.Add(_name, pipeline);
-			return new ConstantInstanceBuilder<object>(pipeline);
-		}
-
-		public ILambdaInstanceBuilder<object> Use(Func<object> func)
-		{
-			return Use(_ => func());
-		}
-
-		public ILambdaInstanceBuilder<object> Use(Func<IContext, object> func)
-		{
-			var provider = new LambdaInstanceProvider(func);
-			var pipeline = new PipelineEngine(provider);
-			_plugin.Add(_name, pipeline);
-			return new LambdaInstanceBuilder<object>(pipeline);
-		}
-
-		public ITypeInstanceBuilder<object> Use(Type type)
-		{
-			var provider = new TypeInstanceProvider(type);
-			var pipeline = new PipelineEngine(provider);
-			_plugin.Add(_name, pipeline);
-			return new TypeInstanceBuilder<object>(pipeline);
-		}
-	}
-
 	internal class ProviderSelector<TPlugin> : IProviderSelector<TPlugin>
 	{
 		private readonly Action<IPipelineEngine> _registerPipeline;
@@ -78,11 +37,21 @@ namespace Maestro.Fluent
 
 		public ITypeInstanceBuilder<TInstance> Use<TInstance>() where TInstance : TPlugin
 		{
-			var provider = new TypeInstanceProvider(typeof(TInstance));
+			return UseType<TInstance>(typeof(TInstance));
+		}
+
+		public ITypeInstanceBuilder<TPlugin> Use(Type type)
+		{
+			return UseType<TPlugin>(type);
+		}
+
+		private ITypeInstanceBuilder<T> UseType<T>(Type type)
+		{
+			var provider = new TypeInstanceProvider(type);
 			var pipeline = new PipelineEngine(provider);
 			pipeline.SetLifecycle(_defaultSettings.GetLifecycle());
 			_registerPipeline(pipeline);
-			return new TypeInstanceBuilder<TInstance>(pipeline);
+			return new TypeInstanceBuilder<T>(pipeline);
 		}
 
 		public void UseConditional(Action<IConditionalInstancePipelineBuilder<TPlugin>> action)

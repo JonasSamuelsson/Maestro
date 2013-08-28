@@ -14,10 +14,10 @@ namespace Maestro
 			_defaultSettings = defaultSettings;
 		}
 
-		public IProviderSelector For(Type type)
+		public IProviderSelector<object> For(Type type)
 		{
 			var plugin = _plugins.GetOrAdd(type);
-			return new ProviderSelector(Container.DefaultName, plugin);
+			return new ProviderSelector<object>(x => plugin.Add(Container.DefaultName, x), _defaultSettings);
 		}
 
 		public IProviderSelector<TPlugin> For<TPlugin>()
@@ -26,11 +26,11 @@ namespace Maestro
 			return new ProviderSelector<TPlugin>(x => plugin.Add(Container.DefaultName, x), _defaultSettings);
 		}
 
-		public IProviderSelector Add(Type type, string name = null)
+		public IProviderSelector<object> Add(Type type, string name = null)
 		{
 			name = name ?? Guid.NewGuid().ToString();
 			var plugin = _plugins.GetOrAdd(type);
-			return new ProviderSelector(name, plugin);
+			return new ProviderSelector<object>(x => plugin.Add(name, x), _defaultSettings);
 		}
 
 		public IProviderSelector<TPlugin> Add<TPlugin>(string name = null)
