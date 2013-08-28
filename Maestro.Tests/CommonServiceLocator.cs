@@ -11,7 +11,7 @@ namespace Maestro.Tests
 		public void should_get_instance_via_common_service_locator_interface()
 		{
 			var container = new Container(x => x.For<IFoo>().Use<Foo>());
-			IServiceLocator locator = new MaestroAdapter(container);
+			IServiceLocator locator = new MaestroServiceLocator(container);
 			var instance = locator.GetInstance<IFoo>();
 			instance.Should().NotBeNull();
 		}
@@ -21,7 +21,7 @@ namespace Maestro.Tests
 		{
 			var foo = new Foo();
 			var container = new Container(x => x.For<IFoo>().Use(foo));
-			IServiceLocator locator = new MaestroAdapter(container);
+			IServiceLocator locator = new MaestroServiceLocator(container);
 			var instances = locator.GetAllInstances<IFoo>();
 			instances.Should().BeEquivalentTo(new[] { foo });
 		}

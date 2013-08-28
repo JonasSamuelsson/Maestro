@@ -46,7 +46,7 @@
     <Compile Include="..\Maestro.Core\Properties\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="MaestroAdapter.cs" />
+    <Compile Include="MaestroServiceLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

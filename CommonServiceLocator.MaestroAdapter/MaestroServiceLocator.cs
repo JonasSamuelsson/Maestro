@@ -5,11 +5,11 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace CommonServiceLocator.MaestroAdapter
 {
-	public class MaestroAdapter : ServiceLocatorImplBase
+	public class MaestroServiceLocator : ServiceLocatorImplBase
 	{
 		private readonly IContainer _container;
 
-		public MaestroAdapter(IContainer container)
+		public MaestroServiceLocator(IContainer container)
 		{
 			_container = container;
 		}
