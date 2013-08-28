@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Maestro
 {
@@ -10,7 +11,11 @@ namespace Maestro
 		ITypeStack TypeStack { get; }
 
 		bool CanGet(Type type);
+		bool CanGet<T>();
 		object Get(Type type);
+		T Get<T>();
+		IEnumerable<object> GetAll(Type type);
+		IEnumerable<T> GetAll<T>(); 
 
 		event Action Disposed;
 	}

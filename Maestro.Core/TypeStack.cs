@@ -11,7 +11,7 @@ namespace Maestro
 
 		public IEnumerator<Type> GetEnumerator()
 		{
-			return types.GetEnumerator();
+			return Enumerable.Reverse(types).GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
@@ -21,21 +21,22 @@ namespace Maestro
 
 		public Type Root
 		{
-			get { return types.Last(); }
+			get { return types[0]; }
 		}
 
 		public Type Current
 		{
-			get { return types.First(); }
+			get { return types[types.Count - 1]; }
 		}
 
 		public IDisposable Push(Type type)
 		{
 			if (types.Contains(type))
 				throw new InvalidOperationException("Cyclic dependency.");
-
-			types.Insert(0, type);
-			return new Disposable(() => types.RemoveAt(0));
+			
+			var index = types.Count;
+			types.Add(type);
+			return new Disposable(() => types.RemoveAt(index));
 		}
 
 		private struct Disposable : IDisposable

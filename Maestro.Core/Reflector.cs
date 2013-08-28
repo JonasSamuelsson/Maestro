@@ -7,11 +7,11 @@ namespace Maestro
 {
 	internal static class Reflector
 	{
-		private static bool TryGetExpressionCompiler(Type expressionType, out MethodInfo compile)
+		private static bool TryGetExpressionCompiler(Type expressionType, out MethodInfo compiler)
 		{
 			var methods = expressionType.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
-			compile = methods.SingleOrDefault(x => x.Name == "Compile" && x.GetParameters().Length == 0);
-			return compile != null;
+			compiler = methods.SingleOrDefault(x => x.Name == "Compile" && x.GetParameters().Length == 0);
+			return compiler != null;
 		}
 
 		public static Func<object[], object> GetInstantiator(ConstructorInfo ctor)

@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests
@@ -8,7 +8,7 @@ namespace Maestro.Tests
 	public class resolve_array_dependencies
 	{
 		[Fact]
-		public void should_use_all_registered_instences_of_the_enumerated_type()
+		public void should_use_all_registered_instances_of_the_enumerated_type()
 		{
 			var container = new Container(x =>
 			{
@@ -41,35 +41,18 @@ namespace Maestro.Tests
 		}
 
 		[Fact]
-		public void should_resolve_value_type_arrays_if_the_array_is_registered()
+		public void should_not_resolve_value_type_arrays_unless_the_array_type_is_registered()
 		{
-			var dependency = new[] { 5 };
-			var container = new Container(x => x.For<int[]>().Use(dependency));
-
-			var instance = container.Get<TypeWithArrayOfValueTypeDependency>();
-
-			instance.Ints.Should().BeEquivalentTo(dependency);
-		}
-
-		[Fact]
-		public void should_resolve_value_type_arrays_if_the_element_type_is_registered()
-		{
-			var elementValue = 9;
-			var container = new Container(x => x.For<int>().Use(elementValue));
-
-			var instance = container.Get<TypeWithArrayOfValueTypeDependency>();
-
-			instance.Ints.Should().BeEquivalentTo(new[] { elementValue });
-		}
-
-		[Fact]
-		public void should_not_resolve_value_type_arays_if_array_type_and_element_type_is_unregistered()
-		{
+			var array = new[] { 1, 2, 3 };
 			var container = new Container();
 
-			var instance = container.Get<TypeWithArrayOfValueTypeDependency>();
+			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
 
-			instance.Ints.Should().BeNull();
+			container.Configure(x => x.Add<int>().Use(0));
+			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
+
+			container.Configure(x => x.For<int[]>().Use(array));
+			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeEquivalentTo(array);
 		}
 
 		private class TypeWithArrayOfValueTypeDependency

@@ -1,6 +1,5 @@
-﻿using FluentAssertions;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests
@@ -8,36 +7,43 @@ namespace Maestro.Tests
 	public class resolve_enumerable_dependencies
 	{
 		[Fact]
-		public void should_use_all_registered_instences_of_the_enumerated_type()
+		public void should_use_all_registered_instances_of_the_enumerated_type()
 		{
 			var container = new Container(x =>
 			{
-				x.For<Foobar>().Use<Foobar>();
-				x.Add<object>().Use<EventArgs>();
-				x.Add<object>().Use<Exception>();
+				x.For<Parent>().Use<Parent>();
+				x.Add<IChild>().Use<Child1>();
+				x.Add<IChild>().Use<Child2>();
+				x.Add<IChild>().Use<Child3>();
 			});
 
-			var foobar = container.Get<Foobar>();
+			var parent = container.Get<Parent>();
 
-			foobar.Objects.Should().HaveCount(2);
-			foobar.Objects.Should().Contain(x => x.GetType() == typeof(EventArgs));
-			foobar.Objects.Should().Contain(x => x.GetType() == typeof(Exception));
+			parent.Children.Should().HaveCount(3);
+			parent.Children.Should().Contain(x => x.GetType() == typeof(Child1));
+			parent.Children.Should().Contain(x => x.GetType() == typeof(Child2));
+			parent.Children.Should().Contain(x => x.GetType() == typeof(Child3));
 		}
 
 		[Fact]
 		public void should_use_empty_enumerable_if_enumerated_type_is_not_registered()
 		{
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>());
+			var container = new Container();
 
-			var foobar = container.Get<Foobar>();
+			var foobar = container.Get<Parent>();
 
-			foobar.Objects.Should().HaveCount(0);
+			foobar.Children.Should().NotBeNull();
+			foobar.Children.Should().HaveCount(0);
 		}
 
-		private class Foobar
+		private class Parent
 		{
-			public Foobar(IEnumerable<object> objects) { Objects = objects; }
-			public IEnumerable<object> Objects { get; private set; }
+			public Parent(IEnumerable<IChild> children) { Children = children; }
+			public IEnumerable<object> Children { get; private set; }
 		}
+		private interface IChild { }
+		private class Child1 : IChild { }
+		private class Child2 : IChild { }
+		private class Child3 : IChild { }
 	}
 }

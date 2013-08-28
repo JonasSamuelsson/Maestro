@@ -13,8 +13,8 @@ namespace Maestro.Tests
 			var types = new[] { typeof(List<IDisposable>), typeof(ListOfObjects) };
 			var container = new Container(x => x.Scan.Types(types).ForConcreteClassesClosing(typeof(IList<>)));
 
-			container.Invoking(x => x.Get<IList<IDisposable>>()).ShouldNotThrow();
-			container.Invoking(x => x.Get<IList<object>>()).ShouldNotThrow();
+			container.Invoking(x => x.Get<IList<IDisposable>>()).ShouldNotThrow("IList<IDisposable>");
+			container.Invoking(x => x.Get<IList<object>>()).ShouldNotThrow("IList<object>");
 			container.Invoking(x => x.Get<IList<string>>()).ShouldThrow<ActivationException>();
 		}
 

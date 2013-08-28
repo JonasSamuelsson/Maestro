@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro
 {
@@ -26,9 +28,29 @@ namespace Maestro
 			return _dependencyResolver.CanGet(type, this);
 		}
 
+		public bool CanGet<T>()
+		{
+			return CanGet(typeof(T));
+		}
+
 		public object Get(Type type)
 		{
 			return _dependencyResolver.Get(type, this);
+		}
+
+		public T Get<T>()
+		{
+			return (T)Get(typeof(T));
+		}
+
+		public IEnumerable<object> GetAll(Type type)
+		{
+			return _dependencyResolver.GetAll(type, this);
+		}
+
+		public IEnumerable<T> GetAll<T>()
+		{
+			return GetAll(typeof(T)).Cast<T>().ToList();
 		}
 
 		public event Action Disposed;

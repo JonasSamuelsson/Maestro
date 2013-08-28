@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using System.Linq;
+﻿using System.Linq;
+using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests
@@ -9,9 +9,31 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_get_empty_enumerable_if_type_is_not_registered()
 		{
-			var enumerable = new Container().GetAll<object>();
+			var container = new Container();
 
-			enumerable.Should().BeEmpty();
+			var ints = container.GetAll<int>();
+			var strings = container.GetAll<string>();
+
+			ints.Should().BeEmpty();
+			strings.Should().BeEmpty();
+		}
+
+		[Fact]
+		public void should_get_enumerable_containing_registered_instances()
+		{
+			var @int = 8;
+			var @string = "foobar";
+			var container = new Container(x =>
+													{
+														x.For<int>().Use(@int);
+														x.For<string>().Use(@string);
+													});
+
+			var ints = container.GetAll<int>();
+			var strings = container.GetAll<string>();
+
+			ints.Should().BeEquivalentTo(new[] { @int });
+			strings.Should().BeEquivalentTo(new[] { @string });
 		}
 
 		[Fact]

@@ -93,23 +93,18 @@ namespace Maestro
 			{
 				IPlugin plugin;
 				if (!_plugins.TryGet(type, out plugin))
-					return GetEmptyEnumerableOf(type);
+					return Enumerable.Empty<object>();
 
 				var requestId = Interlocked.Increment(ref _requestId);
 				using (var context = new Context(_configId, requestId, DefaultName, this))
-				{
-					var names = plugin.GetNames().ToList();
-					var list = new List<object>(names.Count());
-
-					foreach (var name in names)
-					{
-						context.Name = name;
-						var instance = plugin.Get(name).Get(context);
-						list.Add(instance);
-					}
-
-					return list;
-				}
+					return plugin.GetNames().ToList()
+						.Select(name => new { name, engine = plugin.Get(name) })
+						.Select(x =>
+								  {
+									  context.Name = x.name;
+									  return x.engine.Get(context);
+								  })
+						.ToList();
 			}
 			catch (ActivationException)
 			{
@@ -264,10 +259,12 @@ namespace Maestro
 			{
 				IPlugin plugin;
 				if (!_plugins.TryGet(type, out plugin))
-					return GetEmptyEnumerableOf(type);
+					return Enumerable.Empty<object>();
 
 				using (((TypeStack)context.TypeStack).Push(type))
-					return plugin.GetNames().Select(x => plugin.Get(x).Get(context)).ToList();
+					return plugin.GetNames().ToList()
+						.Select(name => plugin.Get(name))
+						.Select(engine => engine.Get(context));
 			}
 			catch (ActivationException)
 			{
@@ -277,11 +274,6 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get all dependencies {0}-{1}.", context.Name, type.FullName), exception);
 			}
-		}
-
-		private static IEnumerable<object> GetEmptyEnumerableOf(Type type)
-		{
-			return (IEnumerable<object>)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
 		}
 	}
 }
