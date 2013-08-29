@@ -2,7 +2,7 @@
 using Maestro.Lifetimes;
 using Xunit;
 
-namespace Maestro.Tests
+namespace Maestro.Tests.Lifetimes
 {
 	public class custom_lifetime
 	{

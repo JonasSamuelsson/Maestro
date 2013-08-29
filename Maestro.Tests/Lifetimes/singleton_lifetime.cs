@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Xunit;
 
-namespace Maestro.Tests
+namespace Maestro.Tests.Lifetimes
 {
 	public class singleton_lifetime
 	{
