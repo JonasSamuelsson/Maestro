@@ -63,8 +63,8 @@
     <Compile Include="Fluent\IDefaultFilterExpression.cs" />
     <Compile Include="Fluent\IDefaultSettingsExpression.cs" />
     <Compile Include="Fluent\IInterceptExpression.cs" />
-    <Compile Include="Fluent\ILifecycleExpression.cs" />
-    <Compile Include="Fluent\ILifecycleSelector.cs" />
+    <Compile Include="Fluent\ILifetimeExpression.cs" />
+    <Compile Include="Fluent\ILifetimeSelector.cs" />
     <Compile Include="Fluent\InterceptExpression.cs" />
     <Compile Include="Fluent\IOnActivateExpression.cs" />
     <Compile Include="Fluent\IOnCreateExpression.cs" />
@@ -74,7 +74,7 @@
     <Compile Include="Fluent\ILambdaInstanceBuilder.cs" />
     <Compile Include="Fluent\IProviderSelector.cs" />
     <Compile Include="Fluent\ITypeInstanceBuilder.cs" />
-    <Compile Include="Fluent\LifecycleSelector.cs" />
+    <Compile Include="Fluent\LifetimeSelector.cs" />
     <Compile Include="Fluent\ProviderSelector.cs" />
     <Compile Include="Fluent\TypeInstanceBuilder.cs" />
     <Compile Include="Conventions\IConventionFilter.cs" />
@@ -82,7 +82,7 @@
     <Compile Include="Interceptors\IInterceptor.cs" />
     <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
     <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
-    <Compile Include="Lifecycles\ILifecycle.cs" />
+    <Compile Include="Lifetimes\ILifetime.cs" />
     <Compile Include="IPipeline.cs" />
     <Compile Include="LambdaInstanceProvider.cs" />
     <Compile Include="IContainer.cs" />
@@ -94,9 +94,9 @@
     <Compile Include="IPlugin.cs" />
     <Compile Include="IProvider.cs" />
     <Compile Include="ITypeStack.cs" />
-    <Compile Include="Lifecycles\RequestLifecycle.cs" />
-    <Compile Include="Lifecycles\SingletonLifecycle.cs" />
-    <Compile Include="Lifecycles\TransientLifecycle.cs" />
+    <Compile Include="Lifetimes\RequestLifetime.cs" />
+    <Compile Include="Lifetimes\SingletonLifetime.cs" />
+    <Compile Include="Lifetimes\TransientLifetime.cs" />
     <Compile Include="InterceptionConfigurationExtensions.cs" />
     <Compile Include="PipelineEngine.cs" />
     <Compile Include="Plugin.cs" />

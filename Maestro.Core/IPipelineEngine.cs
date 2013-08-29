@@ -1,6 +1,6 @@
 ﻿using System;
 using Maestro.Interceptors;
-using Maestro.Lifecycles;
+using Maestro.Lifetimes;
 
 namespace Maestro
 {
@@ -10,7 +10,7 @@ namespace Maestro
 		object Get(IContext context);
 		IPipelineEngine MakeGenericPipelineEngine(Type[] types);
 		void AddOnCreateInterceptor(IInterceptor interceptor);
-		void SetLifecycle(ILifecycle lifecycle);
+		void SetLifetime(ILifetime lifetime);
 		void AddOnActivateInterceptor(IInterceptor interceptor);
 	}
 }

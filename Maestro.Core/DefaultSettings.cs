@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using Maestro.Conventions;
 using Maestro.Fluent;
-using Maestro.Lifecycles;
+using Maestro.Lifetimes;
 
 namespace Maestro
 {
 	internal class DefaultSettings : IDefaultSettingsExpression
 	{
-		private ILifecycle _lifecycle = TransientLifecycle.Instance;
+		private ILifetime _lifetime = TransientLifetime.Instance;
 		private readonly IList<IConventionFilter> _filters = new List<IConventionFilter>();
 
-		ILifecycleSelector<IDefaultSettingsExpression> IDefaultSettingsExpression.Lifecycle
+		ILifetimeSelector<IDefaultSettingsExpression> IDefaultSettingsExpression.Lifetime
 		{
-			get { return new LifecycleSelector<IDefaultSettingsExpression>(this, x => _lifecycle = x); }
+			get { return new LifetimeSelector<IDefaultSettingsExpression>(this, x => _lifetime = x); }
 		}
 
 		IDefaultFilterExpression IDefaultSettingsExpression.Filters
@@ -20,9 +20,9 @@ namespace Maestro
 			get { return new DefaultFilterExpression(_filters, this); }
 		}
 
-		public ILifecycle GetLifecycle()
+		public ILifetime GetLifetime()
 		{
-			return _lifecycle.Clone();
+			return _lifetime.Clone();
 		}
 
 		public IEnumerable<IConventionFilter> GetFilters()

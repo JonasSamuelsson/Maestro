@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using Maestro.Interceptors;
-using Maestro.Lifecycles;
+using Maestro.Lifetimes;
 
 namespace Maestro
 {
 	internal class PipelineEngine : IPipelineEngine
 	{
 		private readonly List<IInterceptor> _onActivateInterceptors;
-		private ILifecycle _lifecycle;
+		private ILifetime _lifetime;
 		private readonly List<IInterceptor> _onCreateInterceptors;
 		private readonly IProvider _provider;
 
 		public PipelineEngine(IProvider provider)
 		{
 			_onActivateInterceptors = new List<IInterceptor>();
-			_lifecycle = TransientLifecycle.Instance;
+			_lifetime = TransientLifetime.Instance;
 			_onCreateInterceptors = new List<IInterceptor>();
 			_provider = provider;
 		}
@@ -29,7 +29,7 @@ namespace Maestro
 		public object Get(IContext context)
 		{
 			var pipeline = new Pipeline(_onCreateInterceptors, _provider, context);
-			var instance = _lifecycle.Execute(context, pipeline);
+			var instance = _lifetime.Execute(context, pipeline);
 			return _onActivateInterceptors.Count == 0
 				? instance
 				: _onActivateInterceptors.Aggregate(instance, (current, interceptor) => interceptor.Execute(current, context));
@@ -39,7 +39,7 @@ namespace Maestro
 		{
 			var engine = new PipelineEngine(_provider.MakeGenericProvider(types));
 			engine._onCreateInterceptors.AddRange(_onCreateInterceptors.Select(x => x.Clone()));
-			engine._lifecycle = _lifecycle.Clone();
+			engine._lifetime = _lifetime.Clone();
 			engine._onActivateInterceptors.AddRange(_onActivateInterceptors.Select(x => x.Clone()));
 			return engine;
 		}
@@ -49,9 +49,9 @@ namespace Maestro
 			_onCreateInterceptors.Add(interceptor);
 		}
 
-		public void SetLifecycle(ILifecycle lifecycle)
+		public void SetLifetime(ILifetime lifetime)
 		{
-			_lifecycle = lifecycle;
+			_lifetime = lifetime;
 		}
 
 		public void AddOnActivateInterceptor(IInterceptor interceptor)

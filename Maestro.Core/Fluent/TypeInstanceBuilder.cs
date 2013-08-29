@@ -14,9 +14,9 @@
 			get { return new InterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnCreateInterceptor); }
 		}
 
-		public ILifecycleSelector<ITypeInstanceBuilder<TInstance>> Lifecycle
+		public ILifetimeSelector<ITypeInstanceBuilder<TInstance>> Lifetime
 		{
-			get { return new LifecycleSelector<ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.SetLifecycle); }
+			get { return new LifetimeSelector<ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.SetLifetime); }
 		}
 
 		public IInterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>> OnActivate

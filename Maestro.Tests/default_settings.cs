@@ -10,11 +10,11 @@ namespace Maestro.Tests
 	public class default_settings
 	{
 		[Fact]
-		public void lifecycle_should_be_applied_to_all_instances()
+		public void lifetime_should_be_applied_to_all_instances()
 		{
 			var container = new Container(x =>
 													{
-														x.Default.Lifecycle.Singleton();
+														x.Default.Lifetime.Singleton();
 														x.For<object>().Use<object>();
 													});
 			var instance1 = container.Get<object>();

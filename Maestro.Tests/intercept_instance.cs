@@ -63,7 +63,7 @@ namespace Maestro.Tests
 
 			new Container(x => x.For<object>().Use<object>()
 				.OnActivate.InterceptUsing(interceptor)
-				.Lifecycle.Singleton()).Get<object>();
+				.Lifetime.Singleton()).Get<object>();
 
 			interceptor.ExecuteCount.Should().Be(1);
 		}
@@ -75,7 +75,7 @@ namespace Maestro.Tests
 
 			var container = new Container(x => x.For<object>().Use<object>()
 				.OnActivate.InterceptUsing(interceptor)
-				.Lifecycle.Singleton());
+				.Lifetime.Singleton());
 			container.Get<object>();
 			container.Get<object>();
 

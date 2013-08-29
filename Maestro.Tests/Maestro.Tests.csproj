@@ -69,7 +69,7 @@
     <Compile Include="DefaultContainerInstance.cs" />
     <Compile Include="default_settings.cs" />
     <Compile Include="FluentAssertionsExtensions.cs" />
-    <Compile Include="custom_lifecycle.cs" />
+    <Compile Include="custom_lifetime.cs" />
     <Compile Include="intercept_instance.cs" />
     <Compile Include="lambda_instance.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
@@ -79,13 +79,13 @@
     <Compile Include="default_type_instance_without_dependencies.cs" />
     <Compile Include="default_type_instance_with_configured_dependencies.cs" />
     <Compile Include="property_injection.cs" />
-    <Compile Include="request_lifecycle.cs" />
+    <Compile Include="request_lifetime.cs" />
     <Compile Include="resolve_array_dependencies.cs" />
     <Compile Include="resolve_dependencies.cs" />
     <Compile Include="resolve_enumerable.cs" />
     <Compile Include="resolve_enumerable_dependencies.cs" />
     <Compile Include="resolve_type_with_cyclic_dependencies.cs" />
-    <Compile Include="singleton_lifecycle.cs" />
+    <Compile Include="singleton_lifetime.cs" />
     <Compile Include="TypeExtensions_IsConcreteClassClosing.cs" />
     <Compile Include="TypeExtensions_IsConcreteSubClassOf.cs" />
     <Compile Include="type_instance.cs" />

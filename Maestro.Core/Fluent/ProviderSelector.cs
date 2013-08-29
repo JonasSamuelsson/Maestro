@@ -30,7 +30,7 @@ namespace Maestro.Fluent
 		{
 			var provider = new LambdaInstanceProvider(context => func(context));
 			var pipeline = new PipelineEngine(provider);
-			pipeline.SetLifecycle(_defaultSettings.GetLifecycle());
+			pipeline.SetLifetime(_defaultSettings.GetLifetime());
 			_registerPipeline(pipeline);
 			return new LambdaInstanceBuilder<TInstance>(pipeline);
 		}
@@ -49,7 +49,7 @@ namespace Maestro.Fluent
 		{
 			var provider = new TypeInstanceProvider(type);
 			var pipeline = new PipelineEngine(provider);
-			pipeline.SetLifecycle(_defaultSettings.GetLifecycle());
+			pipeline.SetLifetime(_defaultSettings.GetLifetime());
 			_registerPipeline(pipeline);
 			return new TypeInstanceBuilder<T>(pipeline);
 		}

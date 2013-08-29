@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
 using Maestro.Interceptors;
-using Maestro.Lifecycles;
+using Maestro.Lifetimes;
 using Xunit;
 
 namespace Maestro.Tests
@@ -9,15 +9,15 @@ namespace Maestro.Tests
 	public class open_generic_type
 	{
 		[Fact]
-		public void configured_interceptors_and_lifecycles_should_be_cloned_and_clone_should_be_executed()
+		public void configured_interceptors_and_lifetimes_should_be_cloned_and_clone_should_be_executed()
 		{
 			var createInterceptor = new Interceptor();
-			var lifecycle = new Lifecycle();
+			var lifetime = new Lifetime();
 			var activateInterceptor = new Interceptor();
 
 			new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>))
 				.OnCreate.InterceptUsing(createInterceptor)
-				.Lifecycle.Custom(lifecycle)
+				.Lifetime.Custom(lifetime)
 				.OnActivate.InterceptUsing(activateInterceptor))
 				.Get<IList<int>>();
 
@@ -26,10 +26,10 @@ namespace Maestro.Tests
 			createInterceptor.Clone.Cloned.Should().BeFalse();
 			createInterceptor.Clone.Executed.Should().BeTrue();
 
-			lifecycle.Cloned.Should().BeTrue();
-			lifecycle.Executed.Should().BeFalse();
-			lifecycle.Clone.Cloned.Should().BeFalse();
-			lifecycle.Clone.Executed.Should().BeTrue();
+			lifetime.Cloned.Should().BeTrue();
+			lifetime.Executed.Should().BeFalse();
+			lifetime.Clone.Cloned.Should().BeFalse();
+			lifetime.Clone.Executed.Should().BeTrue();
 
 			activateInterceptor.Cloned.Should().BeTrue();
 			activateInterceptor.Executed.Should().BeFalse();
@@ -60,9 +60,9 @@ namespace Maestro.Tests
 			}
 		}
 
-		private class Lifecycle : ILifecycle
+		private class Lifetime : ILifetime
 		{
-			public Lifecycle Clone { get; private set; }
+			public Lifetime Clone { get; private set; }
 			public bool Executed { get; private set; }
 
 			public bool Cloned
@@ -70,9 +70,9 @@ namespace Maestro.Tests
 				get { return Clone != null; }
 			}
 
-			ILifecycle ILifecycle.Clone()
+			ILifetime ILifetime.Clone()
 			{
-				Clone = new Lifecycle();
+				Clone = new Lifetime();
 				return Clone;
 			}
 
