@@ -1,10 +1,108 @@
 ﻿using FluentAssertions;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests
 {
 	public class resolve_dependencies
 	{
+		[Fact]
+		public void should_get_instances_with_same_name_as_requested_instance_and_fall_back_to_default_instance()
+		{
+			var @default = "default";
+			var name1 = "name1";
+			var name2 = "name2";
+			var defaultGrandChild = new GrandChild();
+			var namedGrandChild = new GrandChild();
+			var container = new Container(x =>
+			{
+				x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Name, @default);
+				x.Add<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Name, name1);
+				x.For<Child>().Use<Child>().OnCreate.SetProperty(y => y.Name, @default);
+				x.Add<Child>(name2).Use<Child>().OnCreate.SetProperty(y => y.Name, name2);
+				x.For<GrandChild>().Use(defaultGrandChild);
+				x.Add<GrandChild>(name1).Use(namedGrandChild);
+			});
+
+			var defaultParent = container.Get<ParentWithSingleChild>();
+			defaultParent.Name.Should().Be(@default);
+			defaultParent.Child.Name.Should().Be(@default);
+			defaultParent.Child.GrandChild.Should().Be(defaultGrandChild);
+
+			var parent1 = container.Get<ParentWithSingleChild>(name1);
+			parent1.Name.Should().Be(name1);
+			parent1.Child.Name.Should().Be(@default);
+			parent1.Child.GrandChild.Should().Be(namedGrandChild);
+
+			var parent2 = container.Get<ParentWithSingleChild>(name2);
+			parent2.Name.Should().Be(@default);
+			parent2.Child.Name.Should().Be(name2);
+			parent2.Child.GrandChild.Should().Be(@defaultGrandChild);
+
+			//container.Get<ParentWithMultipleChildren>().Children.Should().OnlyContain(x => x.GrandChild == defaultGrandChild);
+			//container.Get<ParentWithMultipleChildren>(name1).Children.Should().OnlyContain(x => x.GrandChild == namedGrandChild);
+			//container.Get<ParentWithMultipleChildren>(name2).Children.Should().OnlyContain(x => x.GrandChild == defaultGrandChild);
+		}
+
+		[Fact]
+		public void should_get_dependencies_with_same_name_as_top_instance_and_fall_back_to_default_instance()
+		{
+			var name1 = "abc";
+			var name2 = "xyz";
+			var defaultGrandChild = new GrandChild();
+			var namedGrandChild = new GrandChild();
+			var container = new Container(x =>
+			{
+				x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>();
+				x.Add<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>();
+				x.Add<ParentWithSingleChild>(name2).Use<ParentWithSingleChild>();
+				x.For<GrandChild>().Use(defaultGrandChild);
+				x.Add<GrandChild>(name1).Use(namedGrandChild);
+			});
+
+			container.GetAll<ParentWithSingleChild>().Select(x => x.Child.GrandChild).Should().OnlyContain(x => x == defaultGrandChild);
+
+			container.Get<ParentWithMultipleChildren>().Children.Should().Contain(x => x.GrandChild == defaultGrandChild);
+			container.Get<ParentWithMultipleChildren>(name1).Children.Should().Contain(x => x.GrandChild == namedGrandChild);
+			container.Get<ParentWithMultipleChildren>(name2).Children.Should().Contain(x => x.GrandChild == defaultGrandChild);
+		}
+
+		private class ParentWithSingleChild
+		{
+			public ParentWithSingleChild(Child child)
+			{
+				Child = child;
+			}
+
+			public Child Child { get; private set; }
+			public string Name { get; set; }
+		}
+
+		private class ParentWithMultipleChildren
+		{
+			public ParentWithMultipleChildren(IEnumerable<Child> children)
+			{
+				Children = children;
+			}
+
+			public IEnumerable<Child> Children { get; private set; }
+			public string Name { get; set; }
+		}
+
+		private class Child
+		{
+			public Child(GrandChild grandChild)
+			{
+				GrandChild = grandChild;
+			}
+
+			public GrandChild GrandChild { get; private set; }
+			public string Name { get; set; }
+		}
+
+		private class GrandChild { }
+
 		[Fact]
 		public void get_default_should_use_default_instance_for_dependencies()
 		{
