@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests.Providers
@@ -9,18 +8,32 @@ namespace Maestro.Tests.Providers
 		[Fact]
 		public void should_delegate_instantiation_to_provided_lambda()
 		{
-			var name = "foo";
-			var container = new Container(x =>
+			var o = new object();
+			var instantiator = new Instantiator(o);
+
+			var container = new Container(x => x.For<object>().Use(instantiator.Get));
+			var instance = container.Get<object>();
+
+			instance.Should().NotBeNull();
+			instantiator.Executed.Should().BeTrue();
+		}
+
+		private class Instantiator
+		{
+			private readonly object _o;
+
+			public Instantiator(object o)
 			{
-				x.For<object>().Use(() => new EventArgs());
-				x.Add<object>(name).Use(_ => new Exception());
-			});
+				_o = o;
+			}
 
-			var @default = container.Get<object>();
-			var named = container.Get<object>(name);
+			public bool Executed { get; private set; }
 
-			@default.Should().BeOfType<EventArgs>();
-			named.Should().BeOfType<Exception>();
+			public object Get()
+			{
+				Executed = true;
+				return _o;
+			}
 		}
 	}
 }
