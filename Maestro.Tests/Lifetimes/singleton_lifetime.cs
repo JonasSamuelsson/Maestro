@@ -15,6 +15,5 @@ namespace Maestro.Tests.Lifetimes
 
 			o1.Should().Be(o2);
 		}
-
 	}
 }

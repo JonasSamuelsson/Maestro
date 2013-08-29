@@ -10,11 +10,9 @@ namespace Maestro.Tests.Lifetimes
 		{
 			var container = new Container(x => x.For<object>().Use<object>().Lifetime.Request());
 
-			var foo1 = container.Get<Foo>();
-			var foo2 = container.Get<Foo>();
+			var foo = container.Get<Foo>();
 
-			foo1.Object.Should().Be(foo1.Bar.Object);
-			foo1.Object.Should().NotBe(foo2.Object);
+			foo.Object.Should().Be(foo.Bar.Object);
 		}
 
 		private class Foo

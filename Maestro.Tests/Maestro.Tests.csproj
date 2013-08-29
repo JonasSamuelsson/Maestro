@@ -63,6 +63,7 @@
     <Compile Include="Conventions\add_concrete_sub_classes_convention.cs" />
     <Compile Include="CommonServiceLocator.cs" />
     <Compile Include="Conventions\concrete_classes_closing_convention.cs" />
+    <Compile Include="Lifetimes\transient_lifetime.cs" />
     <Compile Include="Providers\conditional_instance_provider.cs" />
     <Compile Include="Providers\constant_instance_provider.cs" />
     <Compile Include="Conventions\conventional_registration.cs" />
