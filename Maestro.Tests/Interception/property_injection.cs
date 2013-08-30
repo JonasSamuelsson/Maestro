@@ -7,6 +7,28 @@ namespace Maestro.Tests.Interception
 	public class property_injection
 	{
 		[Fact]
+		public void set_property_with_provided_value()
+		{
+			var dependency = new object();
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty(y => y.ResolvableDependency, dependency));
+
+			var instance = container.Get<Foobar>();
+
+			instance.ResolvableDependency.Should().Be(dependency);
+		}
+
+		[Fact]
+		public void set_property_with_value_from_provided_func()
+		{
+			var dependency = new object();
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty(y => y.ResolvableDependency, () => dependency));
+
+			var instance = container.Get<Foobar>();
+
+			instance.ResolvableDependency.Should().Be(dependency);
+		}
+
+		[Fact]
 		public void set_property_with_resolvable_type_should_work()
 		{
 			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty("ResolvableDependency"));
