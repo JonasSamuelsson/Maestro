@@ -11,7 +11,7 @@ namespace Maestro.Fluent
 			_pipelineEngine = pipelineEngine;
 		}
 
-		public IConstantInstanceBuilder<TInstance> InterceptUsing(IInterceptor interceptor)
+		public IConstantInstanceBuilder<TInstance> Intercept(IInterceptor interceptor)
 		{
 			_pipelineEngine.AddOnActivateInterceptor(interceptor);
 			return this;

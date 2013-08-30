@@ -16,9 +16,9 @@ namespace Maestro.Tests
 			var activateInterceptor = new Interceptor();
 
 			new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>))
-				.OnCreate.InterceptUsing(createInterceptor)
+				.OnCreate.Intercept(createInterceptor)
 				.Lifetime.Custom(lifetime)
-				.OnActivate.InterceptUsing(activateInterceptor))
+				.OnActivate.Intercept(activateInterceptor))
 				.Get<IList<int>>();
 
 			createInterceptor.Cloned.Should().BeTrue();

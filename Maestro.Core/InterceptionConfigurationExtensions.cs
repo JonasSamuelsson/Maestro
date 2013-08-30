@@ -1,15 +1,40 @@
-﻿using Maestro.Fluent;
-using Maestro.Interceptors;
-using System;
+﻿using System;
 using System.Linq.Expressions;
+using Maestro.Fluent;
+using Maestro.Interceptors;
 
 namespace Maestro
 {
 	public static class InterceptionConfigurationExtensions
 	{
+		public static TParent Intercept<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance> action)
+		{
+			return parent.Intercept((instance, context) => action(instance));
+		}
+
+		public static TParent Intercept<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance, IContext> action)
+		{
+			return parent.Intercept((i, c) =>
+											{
+												action(i, c);
+												return i;
+											});
+		}
+
+		public static TParent Intercept<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Func<TInstance, TInstance> func)
+		{
+			return parent.Intercept((instance, context) => func(instance));
+		}
+
+		public static TParent Intercept<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent,
+			Func<TInstance, IContext, TInstance> func)
+		{
+			return parent.Intercept(new LambdaInterceptor<TInstance>(func));
+		}
+
 		public static TParent SetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property)
 		{
-			return parent.InterceptUsing(new SetPropertyInterceptor(property));
+			return parent.Intercept(new SetPropertyInterceptor(property));
 		}
 
 		public static TParent SetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property, object value)
@@ -24,7 +49,7 @@ namespace Maestro
 
 		public static TParent SetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property, Func<IContext, object> factory)
 		{
-			return parent.InterceptUsing(new SetPropertyInterceptor(property, factory));
+			return parent.Intercept(new SetPropertyInterceptor(property, factory));
 		}
 
 		public static TParent SetProperty<TInstance, TValue, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, TValue>> property)
@@ -57,7 +82,7 @@ namespace Maestro
 
 		public static TParent TrySetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property)
 		{
-			return parent.InterceptUsing(new TrySetPropertyInterceptor(property));
+			return parent.Intercept(new TrySetPropertyInterceptor(property));
 		}
 
 		public static TParent TrySetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, object>> property)

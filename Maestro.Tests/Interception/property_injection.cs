@@ -7,6 +7,17 @@ namespace Maestro.Tests.Interception
 	public class property_injection
 	{
 		[Fact]
+		public void set_property_using_injected_action()
+		{
+			var dependency = new object();
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.Intercept(y => y.ResolvableDependency = dependency));
+
+			var instance = container.Get<Foobar>();
+
+			instance.ResolvableDependency.Should().Be(dependency);
+		}
+
+		[Fact]
 		public void set_property_with_provided_value()
 		{
 			var dependency = new object();

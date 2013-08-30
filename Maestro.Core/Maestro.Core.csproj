@@ -80,6 +80,7 @@
     <Compile Include="Conventions\IConventionFilter.cs" />
     <Compile Include="Conventions\IConvention.cs" />
     <Compile Include="Interceptors\IInterceptor.cs" />
+    <Compile Include="Interceptors\LambdaInterceptor.cs" />
     <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
     <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
     <Compile Include="Lifetimes\ILifetime.cs" />
