@@ -5,7 +5,7 @@ namespace Maestro.Interceptors
 	internal class SetPropertyInterceptor : IInterceptor
 	{
 		private readonly string _propertyName;
-		private readonly Func<IContext, object> _factory;
+		private Func<IContext, object> _factory;
 		private Action<object, object> _setter;
 
 		public SetPropertyInterceptor(string propertyName, Func<IContext, object> factory = null)
@@ -26,6 +26,9 @@ namespace Maestro.Interceptors
 
 			if (_setter == null)
 				_setter = Reflector.GetPropertySetter(instanceType, _propertyName);
+
+			if (_factory == null)
+				_factory = Reflector.GetPropertyValueProvider(propertyType, context);
 
 			var value = _factory != null
 				? _factory(context)

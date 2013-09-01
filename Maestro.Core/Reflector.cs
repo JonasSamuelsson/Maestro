@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -14,7 +15,41 @@ namespace Maestro
 			return compiler != null;
 		}
 
-		public static Func<object[], object> GetInstantiator(ConstructorInfo ctor)
+		public static Func<IContext, object> GetConstructorValueProvider(Type type, IContext context)
+		{
+			return GetValueProvider(false, type, context);
+		}
+
+		private static Func<IContext, object> GetValueProvider(bool resolveValueTypeArrays, Type type, IContext context)
+		{
+			if (context.CanGet(type))
+				return GetValueProvider(type);
+
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+				return GetValuesProvider(type);
+
+			if (type.IsArray && (resolveValueTypeArrays || !type.GetElementType().IsValueType))
+				return GetArray(GetValuesProvider(type), type.GetElementType());
+
+			return GetValueProvider(type);
+		}
+
+		private static Func<IContext, object> GetArray(Func<IContext, object> valuesProvider, Type elementType)
+		{
+			throw new NotImplementedException();
+		}
+
+		private static Func<IContext, object> GetValuesProvider(Type type)
+		{
+			throw new NotImplementedException();
+		}
+
+		private static Func<IContext, object> GetValueProvider(Type type)
+		{
+			throw new NotImplementedException();
+		}
+
+		public static Func<object[], object> GetConstructorCall(ConstructorInfo ctor)
 		{
 			MethodInfo compiler;
 			if (!TryGetExpressionCompiler(typeof(Expression<Func<object[], object>>), out compiler))
@@ -79,6 +114,11 @@ namespace Maestro
 			{
 				instance.GetType().GetProperty(_propertyName).SetValue(instance, value, null);
 			}
+		}
+
+		public static Func<IContext, object> GetPropertyValueProvider(Type type, IContext context)
+		{
+			return GetValueProvider(true, type, context);
 		}
 	}
 }

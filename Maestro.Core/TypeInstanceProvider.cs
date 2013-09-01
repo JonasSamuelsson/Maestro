@@ -42,7 +42,7 @@ namespace Maestro
 				return;
 			}
 
-			_ctor = Reflector.GetInstantiator(constructor);
+			_ctor = Reflector.GetConstructorCall(constructor);
 			_ctorParameterTypes = constructor.GetParameters().Select(x => x.ParameterType).ToArray();
 			_canGet = true;
 		}
