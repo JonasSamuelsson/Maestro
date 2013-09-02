@@ -24,15 +24,13 @@ namespace Maestro.Interceptors
 			var instanceType = instance.GetType();
 			var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
 
-			if (_setter == null)
-				_setter = Reflector.GetPropertySetter(instanceType, _propertyName);
-
 			if (_factory == null)
 				_factory = Reflector.GetPropertyValueProvider(propertyType, context);
 
-			var value = _factory != null
-				? _factory(context)
-				: context.Get(propertyType);
+			if (_setter == null)
+				_setter = Reflector.GetPropertySetter(instanceType, _propertyName);
+
+			var value = _factory(context);
 			_setter(instance, value);
 			return instance;
 		}

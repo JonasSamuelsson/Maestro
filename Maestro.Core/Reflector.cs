@@ -8,9 +8,17 @@ namespace Maestro
 {
 	internal static class Reflector
 	{
-		private static bool TryGetExpressionCompiler(Type expressionType, out MethodInfo compiler)
+		public static bool AlwaysUseReflection;
+
+		private static bool TryGetExpressionCompiler<T>(out MethodInfo compiler)
 		{
-			var methods = expressionType.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
+			if (AlwaysUseReflection)
+			{
+				compiler = null;
+				return false;
+			}
+
+			var methods = typeof(Expression<T>).GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
 			compiler = methods.SingleOrDefault(x => x.Name == "Compile" && x.GetParameters().Length == 0);
 			return compiler != null;
 		}
@@ -26,33 +34,60 @@ namespace Maestro
 				return GetValueProvider(type);
 
 			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-				return GetValuesProvider(type);
+				return GetEnumerableProvider(type.GetGenericArguments().Single());
 
 			if (type.IsArray && (resolveValueTypeArrays || !type.GetElementType().IsValueType))
-				return GetArray(GetValuesProvider(type), type.GetElementType());
+				return GetArrayProvider(type.GetElementType());
 
 			return GetValueProvider(type);
 		}
 
-		private static Func<IContext, object> GetArray(Func<IContext, object> valuesProvider, Type elementType)
+		private static Func<IContext, object> GetArrayProvider(Type type)
 		{
-			throw new NotImplementedException();
+			var getAllMethod = typeof(IContext).GetMethod("GetAll", new Type[0]).MakeGenericMethod(type);
+			var toArrayMethod = typeof(Enumerable).GetMethod("ToArray").MakeGenericMethod(type);
+
+			MethodInfo compiler;
+			if (!TryGetExpressionCompiler<Func<IContext, object>>(out compiler))
+				return ctx => toArrayMethod.Invoke(null, new[] { getAllMethod.Invoke(ctx, null) });
+
+			var context = Expression.Parameter(typeof(IContext), "context");
+			var enumerable = Expression.Call(context, getAllMethod);
+			var array = Expression.Call(toArrayMethod, new[] { enumerable });
+			var lambda = Expression.Lambda<Func<IContext, object>>(array, new[] { context });
+			return (Func<IContext, object>)compiler.Invoke(lambda, null);
 		}
 
-		private static Func<IContext, object> GetValuesProvider(Type type)
+		private static Func<IContext, object> GetEnumerableProvider(Type type)
 		{
-			throw new NotImplementedException();
+			MethodInfo compiler;
+			if (!TryGetExpressionCompiler<Func<IContext, object>>(out compiler))
+				return ctx => ctx.GetAll(type);
+
+			var context = Expression.Parameter(typeof(IContext), "context");
+			var getAllMethod = typeof(IContext).GetMethod("GetAll", new Type[0]).MakeGenericMethod(type);
+			var enumerable = Expression.Call(context, getAllMethod);
+			var lambda = Expression.Lambda<Func<IContext, object>>(enumerable, new[] { context });
+			return (Func<IContext, object>)compiler.Invoke(lambda, null);
 		}
 
 		private static Func<IContext, object> GetValueProvider(Type type)
 		{
-			throw new NotImplementedException();
+			MethodInfo compiler;
+			if (!TryGetExpressionCompiler<Func<IContext, object>>(out compiler))
+				return ctx => ctx.Get(type);
+
+			var context = Expression.Parameter(typeof(IContext), "context");
+			var getMethod = typeof(IContext).GetMethod("Get", new[] { typeof(Type) });
+			var value = Expression.Call(context, getMethod, Expression.Constant(type));
+			var lambda = Expression.Lambda<Func<IContext, object>>(value, new[] { context });
+			return (Func<IContext, object>)compiler.Invoke(lambda, null);
 		}
 
 		public static Func<object[], object> GetConstructorCall(ConstructorInfo ctor)
 		{
 			MethodInfo compiler;
-			if (!TryGetExpressionCompiler(typeof(Expression<Func<object[], object>>), out compiler))
+			if (!TryGetExpressionCompiler<Func<object[], object>>(out compiler))
 				return new ReflectionInstantiator(ctor).Instantiate;
 
 			var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
@@ -72,7 +107,7 @@ namespace Maestro
 		public static Action<object, object> GetPropertySetter(Type instanceType, string propertyName)
 		{
 			MethodInfo compiler;
-			if (!TryGetExpressionCompiler(typeof(Expression<Action<object, object>>), out compiler))
+			if (!TryGetExpressionCompiler<Action<object, object>>(out compiler))
 				return new ReflectionPropertySetter(propertyName).SetPropertery;
 
 			var property = instanceType.GetProperty(propertyName);

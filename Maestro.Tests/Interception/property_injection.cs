@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests.Interception
 {
-	public class property_injection
+	internal abstract class property_injection
 	{
 		[Fact]
 		public void set_property_using_injected_action()
@@ -80,10 +81,57 @@ namespace Maestro.Tests.Interception
 			container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		}
 
+		[Fact]
+		public void set_enumerable_property_should_work()
+		{
+			var o = new object();
+			var container = new Container(x =>
+													{
+														x.For<object>().Use(o);
+														x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty(y => y.Enumerable);
+													});
+
+			var instance = container.Get<Foobar>();
+
+			instance.Enumerable.Should().BeEquivalentTo(new[] { o });
+		}
+
+		[Fact]
+		public void set_array_property_should_work()
+		{
+			var o = new object();
+			var container = new Container(x =>
+													{
+														x.For<object>().Use(o);
+														x.For<Foobar>().Use<Foobar>().OnCreate.SetProperty(y => y.Array);
+													});
+
+			var instance = container.Get<Foobar>();
+
+			instance.Array.Should().BeEquivalentTo(new[] { o });
+		}
+
 		private class Foobar
 		{
 			public object ResolvableDependency { get; set; }
 			public IDisposable UnresolvableDependency { get; set; }
+			public IEnumerable<object> Enumerable { get; set; }
+			public object[] Array { get; set; }
+		}
+
+		public class property_injection_using_expressions : property_injection { }
+
+		public class property_injection_using_reflection : property_injection, IDisposable
+		{
+			public property_injection_using_reflection()
+			{
+				Reflector.AlwaysUseReflection = true;
+			}
+
+			public void Dispose()
+			{
+				Reflector.AlwaysUseReflection = false;
+			}
 		}
 	}
 }

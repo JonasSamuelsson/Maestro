@@ -75,7 +75,7 @@ namespace Maestro
 		{
 			pipelineEngine = null;
 
-			if (!type.IsConcreteClosedClass())
+			if (!type.IsConcreteClosedClass() || type.IsArray)
 				return false;
 
 			pipelineEngine = fallbackPipelines.GetOrAdd(type);
@@ -128,10 +128,6 @@ namespace Maestro
 				using (((TypeStack)context.TypeStack).Push(type))
 					return pipelineEngine.CanGet(context);
 
-			Type enumerableType;
-			if (TryGetEnumerableType(_plugins, type, out enumerableType))
-				return true;
-
 			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
 				using (((TypeStack)context.TypeStack).Push(type))
 					return pipelineEngine.CanGet(context);
@@ -143,18 +139,16 @@ namespace Maestro
 		{
 			try
 			{
-				var instance = GetDependency(type, context);
+				IPipelineEngine pipelineEngine;
+				if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
+					using (((TypeStack)context.TypeStack).Push(type))
+						return pipelineEngine.Get(context);
 
-				if (!type.IsArray || instance.GetType().IsArray)
-					return instance;
+				if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
+					using (((TypeStack)context.TypeStack).Push(type))
+						return pipelineEngine.Get(context);
 
-				var elementType = type.GetElementType();
-				var objects = ((IEnumerable<object>)instance).ToList();
-				var array = Array.CreateInstance(elementType, objects.Count);
-				for (var i = 0; i < objects.Count; i++)
-					array.SetValue(objects[i], i);
-
-				return array;
+				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 			}
 			catch (ActivationException)
 			{
@@ -164,24 +158,6 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName), exception);
 			}
-		}
-
-		private object GetDependency(Type type, IContext context)
-		{
-			IPipelineEngine pipelineEngine;
-			if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
-				using (((TypeStack)context.TypeStack).Push(type))
-					return pipelineEngine.Get(context);
-
-			Type enumerableType;
-			if (TryGetEnumerableType(_plugins, type, out enumerableType))
-				return ((IDependencyResolver)this).GetAll(enumerableType, context);
-
-			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
-				using (((TypeStack)context.TypeStack).Push(type))
-					return pipelineEngine.Get(context);
-
-			throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 		}
 
 		private static bool TryGetPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context,
@@ -224,33 +200,6 @@ namespace Maestro
 			}
 
 			return TryGetPipeline(plugins, type, context, out pipelineEngine);
-		}
-
-		private static bool TryGetEnumerableType(ICustomDictionary<IPlugin> plugins, Type type, out Type enumerableType)
-		{
-			enumerableType = null;
-
-			if (type.IsArray)
-			{
-				var elementType = type.GetElementType();
-				if (!elementType.IsValueType || plugins.Contains(elementType))
-				{
-					enumerableType = elementType;
-					return true;
-				}
-			}
-
-			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-			{
-				var genericArgument = type.GetGenericArguments().Single();
-				if (!genericArgument.IsValueType || plugins.Contains(genericArgument))
-				{
-					enumerableType = genericArgument;
-					return true;
-				}
-			}
-
-			return false;
 		}
 
 		IEnumerable<object> IDependencyResolver.GetAll(Type type, IContext context)
