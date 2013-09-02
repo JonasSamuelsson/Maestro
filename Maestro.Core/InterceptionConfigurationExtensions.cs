@@ -7,12 +7,12 @@ namespace Maestro
 {
 	public static class InterceptionConfigurationExtensions
 	{
-		public static TParent Intercept<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance> action)
+		public static TParent Visit<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance> action)
 		{
-			return parent.Intercept((instance, context) => action(instance));
+			return parent.Visit((instance, context) => action(instance));
 		}
 
-		public static TParent Intercept<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance, IContext> action)
+		public static TParent Visit<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance, IContext> action)
 		{
 			return parent.Intercept((i, c) =>
 											{
@@ -26,8 +26,7 @@ namespace Maestro
 			return parent.Intercept((instance, context) => func(instance));
 		}
 
-		public static TParent Intercept<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent,
-			Func<TInstance, IContext, TInstance> func)
+		public static TParent Intercept<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Func<TInstance, IContext, TInstance> func)
 		{
 			return parent.Intercept(new LambdaInterceptor<TInstance>(func));
 		}
@@ -44,7 +43,7 @@ namespace Maestro
 
 		public static TParent SetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property, Func<object> factory)
 		{
-			return parent.SetProperty(x => factory());
+			return parent.SetProperty(property, x => factory());
 		}
 
 		public static TParent SetProperty<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property, Func<IContext, object> factory)
