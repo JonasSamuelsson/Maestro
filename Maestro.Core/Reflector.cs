@@ -53,7 +53,7 @@ namespace Maestro
 
 			var context = Expression.Parameter(typeof(IContext), "context");
 			var enumerable = Expression.Call(context, getAllMethod);
-			var array = Expression.Call(toArrayMethod, new[] { enumerable });
+			var array = Expression.Call(toArrayMethod, new Expression[] { enumerable });
 			var lambda = Expression.Lambda<Func<IContext, object>>(array, new[] { context });
 			return (Func<IContext, object>)compiler.Invoke(lambda, null);
 		}
@@ -79,7 +79,7 @@ namespace Maestro
 
 			var context = Expression.Parameter(typeof(IContext), "context");
 			var getMethod = typeof(IContext).GetMethod("Get", new[] { typeof(Type) });
-			var value = Expression.Call(context, getMethod, Expression.Constant(type));
+			var value = Expression.Call(context, getMethod, new Expression[] { Expression.Constant(type) });
 			var lambda = Expression.Lambda<Func<IContext, object>>(value, new[] { context });
 			return (Func<IContext, object>)compiler.Invoke(lambda, null);
 		}
@@ -88,7 +88,7 @@ namespace Maestro
 		{
 			MethodInfo compiler;
 			if (!TryGetExpressionCompiler<Func<object[], object>>(out compiler))
-				return new ReflectionInstantiator(ctor).Instantiate;
+				return ctor.Invoke;
 
 			var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
 			var args = Expression.Parameter(typeof(object[]), "args");
@@ -106,34 +106,20 @@ namespace Maestro
 
 		public static Action<object, object> GetPropertySetter(Type instanceType, string propertyName)
 		{
-			MethodInfo compiler;
-			if (!TryGetExpressionCompiler<Action<object, object>>(out compiler))
-				return new ReflectionPropertySetter(propertyName).SetPropertery;
-
 			var property = instanceType.GetProperty(propertyName);
 			var setMethod = property.GetSetMethod();
+
+			MethodInfo compiler;
+			if (!TryGetExpressionCompiler<Action<object, object>>(out compiler))
+				return (inst, val) => setMethod.Invoke(inst, new[] { val });
+
 			var instance = Expression.Parameter(typeof(object), "instance");
 			var value = Expression.Parameter(typeof(object), "value");
 			var typedInstance = Expression.Convert(instance, instanceType);
 			var typedValue = Expression.Convert(value, property.PropertyType);
-			var call = Expression.Call(typedInstance, setMethod, typedValue);
+			var call = Expression.Call(typedInstance, setMethod, new Expression[] { typedValue });
 			var lambda = Expression.Lambda<Action<object, object>>(call, new[] { instance, value });
 			return (Action<object, object>)compiler.Invoke(lambda, null);
-		}
-
-		private class ReflectionInstantiator
-		{
-			private readonly ConstructorInfo _ctor;
-
-			public ReflectionInstantiator(ConstructorInfo ctor)
-			{
-				_ctor = ctor;
-			}
-
-			public object Instantiate(object[] args)
-			{
-				return _ctor.Invoke(args);
-			}
 		}
 
 		private class ReflectionPropertySetter
