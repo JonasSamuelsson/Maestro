@@ -8,7 +8,7 @@ namespace Maestro
 {
 	internal static class Reflector
 	{
-		public static bool AlwaysUseReflection;
+		public static bool AlwaysUseReflection = true;
 
 		private static bool TryGetExpressionCompiler<T>(out MethodInfo compiler)
 		{
@@ -23,12 +23,7 @@ namespace Maestro
 			return compiler != null;
 		}
 
-		public static Func<IContext, object> GetConstructorValueProvider(Type type, IContext context)
-		{
-			return GetValueProvider(false, type, context);
-		}
-
-		private static Func<IContext, object> GetValueProvider(bool resolveValueTypeArrays, Type type, IContext context)
+		private static Func<IContext, object> GetValueProviderOrNull(Type type, IContext context, bool resolveValueTypeArrays)
 		{
 			if (context.CanGet(type))
 				return GetValueProvider(type);
@@ -39,7 +34,7 @@ namespace Maestro
 			if (type.IsArray && (resolveValueTypeArrays || !type.GetElementType().IsValueType))
 				return GetArrayProvider(type.GetElementType());
 
-			return GetValueProvider(type);
+			return null;
 		}
 
 		private static Func<IContext, object> GetArrayProvider(Type type)
@@ -84,26 +79,6 @@ namespace Maestro
 			return (Func<IContext, object>)compiler.Invoke(lambda, null);
 		}
 
-		public static Func<object[], object> GetConstructorCall(ConstructorInfo ctor)
-		{
-			MethodInfo compiler;
-			if (!TryGetExpressionCompiler<Func<object[], object>>(out compiler))
-				return ctor.Invoke;
-
-			var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
-			var args = Expression.Parameter(typeof(object[]), "args");
-			var typedArgs = new Expression[parameterTypes.Count];
-			for (var i = 0; i < parameterTypes.Count; i++)
-			{
-				var parameterType = parameterTypes[i];
-				var arg = Expression.ArrayIndex(args, Expression.Constant(i));
-				typedArgs[i] = Expression.Convert(arg, parameterType);
-			}
-			var @new = Expression.New(ctor, typedArgs);
-			var lambda = Expression.Lambda<Func<object[], object>>(@new, args);
-			return (Func<object[], object>)compiler.Invoke(lambda, null);
-		}
-
 		public static Action<object, object> GetPropertySetter(Type instanceType, string propertyName)
 		{
 			var property = instanceType.GetProperty(propertyName);
@@ -122,24 +97,38 @@ namespace Maestro
 			return (Action<object, object>)compiler.Invoke(lambda, null);
 		}
 
-		private class ReflectionPropertySetter
-		{
-			private readonly string _propertyName;
-
-			public ReflectionPropertySetter(string propertyName)
-			{
-				_propertyName = propertyName;
-			}
-
-			public void SetPropertery(object instance, object value)
-			{
-				instance.GetType().GetProperty(_propertyName).SetValue(instance, value, null);
-			}
-		}
-
 		public static Func<IContext, object> GetPropertyValueProvider(Type type, IContext context)
 		{
-			return GetValueProvider(true, type, context);
+			return GetValueProviderOrNull(type, context, true) ?? (ctx => ctx.Get(type));
+		}
+
+		public static Func<IContext, object> GetInstantiatorOrNull(Type type, IContext context)
+		{
+			foreach (var constructor in type.GetConstructors().OrderByDescending(x => x.GetParameters().Length))
+			{
+				var ctor = constructor; // prevents access to modified closure
+				var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
+				var providers = parameterTypes.Select(x => new { @delegate = GetValueProviderOrNull(x, context, false), type = x }).ToList();
+				if (providers.Any(x => x.@delegate == null))
+					continue;
+
+				MethodInfo compiler;
+				if (!TryGetExpressionCompiler<Func<IContext, object>>(out compiler))
+					return ctx => ctor.Invoke(providers.Select(x => x.@delegate.Invoke(ctx)).ToArray());
+
+				var ctxExpression = Expression.Parameter(typeof(IContext), "context");
+				var arguments = providers.Select(x =>
+															{
+																Expression<Func<IContext, object>> @delegate = ctx => x.@delegate.Invoke(ctx);
+																var call = Expression.Invoke(@delegate, new Expression[] { ctxExpression });
+																return Expression.Convert(call, x.type);
+															});
+				var @new = Expression.New(ctor, arguments.Cast<Expression>().ToArray());
+				var lambda = Expression.Lambda<Func<IContext, object>>(@new, new[] { ctxExpression });
+				return (Func<IContext, object>)compiler.Invoke(lambda, null);
+			}
+
+			return null;
 		}
 	}
 }

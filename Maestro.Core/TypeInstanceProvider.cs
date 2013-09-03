@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 
 namespace Maestro
 {
@@ -8,6 +6,8 @@ namespace Maestro
 	{
 		private readonly Type _type;
 		private int _configId;
+		private Func<IContext, object> _instantiator;
+
 		private bool? _canGet;
 		private Func<object[], object> _ctor;
 		private Type[] _ctorParameterTypes;
@@ -15,61 +15,73 @@ namespace Maestro
 		public TypeInstanceProvider(Type type)
 		{
 			_type = type;
+			_configId = Int32.MinValue;
 		}
 
 		public bool CanGet(IContext context)
 		{
-			if (ShouldReevaluateSelectedCtor(context))
-				FindCtor(context);
+			var instantiator = _instantiator;
 
-			return _canGet.Value;
-		}
-
-		private bool ShouldReevaluateSelectedCtor(IContext context)
-		{
-			return !_canGet.HasValue || _configId != context.ConfigId;
-		}
-
-		private void FindCtor(IContext context)
-		{
-			_configId = context.ConfigId;
-
-			ConstructorInfo constructor;
-			if (!TryGetConstructor(context, out constructor))
+			if (_configId != context.ConfigId)
 			{
-				_canGet = false;
-				_ctorParameterTypes = null;
-				return;
+				instantiator = Reflector.GetInstantiatorOrNull(_type, context);
+				_instantiator = instantiator;
+				_configId = context.ConfigId;
 			}
 
-			_ctor = Reflector.GetConstructorCall(constructor);
-			_ctorParameterTypes = constructor.GetParameters().Select(x => x.ParameterType).ToArray();
-			_canGet = true;
+			return instantiator != null;
 		}
 
-		private bool TryGetConstructor(IContext context, out ConstructorInfo constructor)
-		{
-			constructor = null;
-			foreach (var ctor in _type.GetConstructors().OrderByDescending(x => x.GetParameters().Length))
-			{
-				var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
-				if (parameterTypes.Any() && !parameterTypes.All(context.CanGet)) continue;
-				constructor = ctor;
-				return true;
-			}
-			return false;
-		}
+		//private bool ShouldReevaluateSelectedCtor(IContext context)
+		//{
+		//	return !_canGet.HasValue || _configId != context.ConfigId;
+		//}
+
+		//private void FindCtor(IContext context)
+		//{
+		//	_configId = context.ConfigId;
+
+		//	ConstructorInfo constructor;
+		//	if (!TryGetConstructor(context, out constructor))
+		//	{
+		//		_canGet = false;
+		//		_ctorParameterTypes = null;
+		//		return;
+		//	}
+
+		//	_ctor = Reflector.GetConstructorCall(constructor);
+		//	_ctorParameterTypes = constructor.GetParameters().Select(x => x.ParameterType).ToArray();
+		//	_canGet = true;
+		//}
+
+		//private bool TryGetConstructor(IContext context, out ConstructorInfo constructor)
+		//{
+		//	constructor = null;
+		//	foreach (var ctor in _type.GetConstructors().OrderByDescending(x => x.GetParameters().Length))
+		//	{
+		//		var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
+		//		if (parameterTypes.Any() && !parameterTypes.All(context.CanGet)) continue;
+		//		constructor = ctor;
+		//		return true;
+		//	}
+		//	return false;
+		//}
 
 		public object Get(IContext context)
 		{
-			if (ShouldReevaluateSelectedCtor(context))
-				FindCtor(context);
+			var instantiator = _instantiator;
 
-			if (!_canGet.Value)
-				throw new InvalidOperationException(string.Format("Can't find appropriate constructor to invoke {0}.", _type.FullName));
+			if (_configId != context.ConfigId)
+			{
+				instantiator = Reflector.GetInstantiatorOrNull(_type, context);
+				_instantiator = instantiator;
+				_configId = context.ConfigId;
+			}
 
-			var ctorArgs = _ctorParameterTypes.Select(context.Get).ToArray();
-			return _ctor(ctorArgs);
+			if (instantiator == null)
+				throw new InvalidOperationException(string.Format("Can't find appropriate constructor for {0}.", _type.FullName));
+
+			return instantiator.Invoke(context);
 		}
 
 		public IProvider MakeGenericProvider(Type[] types)
