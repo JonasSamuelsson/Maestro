@@ -6,52 +6,30 @@ namespace Maestro.Tests.Providers
 	public class type_instance_provider
 	{
 		[Fact]
-		public void should_instantiate_type_with_default_constructor()
-		{
-			var container = new Container(x => x.For<object>().Use<object>());
-
-			var instance = container.Get<object>();
-
-			instance.Should().NotBeNull();
-		}
-
-		[Fact]
-		public void should_instantiate_type_with_constructor_dependency()
-		{
-			var container = new Container(x => x.For<TypeWithSingleCtorDependency>().Use<TypeWithSingleCtorDependency>());
-
-			var instance = container.Get<TypeWithSingleCtorDependency>();
-
-			instance.Object.Should().NotBeNull();
-		}
-
-		[Fact]
 		public void should_use_constructor_with_most_resolvable_parameters()
 		{
-			var container = new Container(x => x.For<TypeWithMultipleCtors>().Use<TypeWithMultipleCtors>());
+			var container = new Container(x =>
+													{
+														x.For<object>().Use<object>();
+														x.For<TypeWithOptionalObjectDependency>().Use<TypeWithOptionalObjectDependency>();
+														x.For<TypeWithOptionalStringDependency>().Use<TypeWithOptionalStringDependency>();
+													});
 
-			var instance = container.Get<TypeWithMultipleCtors>();
-
-			instance.Object.Should().NotBeNull();
-			instance.String.Should().BeNull();
+			container.Get<TypeWithOptionalObjectDependency>().Object.Should().NotBeNull();
+			container.Get<TypeWithOptionalStringDependency>().String.Should().BeNull();
 		}
 
 		[Fact]
 		public void should_reevaluate_constructor_to_use_when_config_changes()
 		{
 			var @string = "string";
-			var container = new Container(x => x.For<TypeWithMultipleCtors>().Use<TypeWithMultipleCtors>());
+			var container = new Container(x => x.For<TypeWithOptionalStringDependency>().Use<TypeWithOptionalStringDependency>());
 
-			var instance1 = container.Get<TypeWithMultipleCtors>();
-
-			instance1.Object.Should().NotBeNull();
-			instance1.String.Should().BeNull();
+			container.Get<TypeWithOptionalStringDependency>().String.Should().BeNull();
 
 			container.Configure(x => x.For<string>().Use(@string));
-			var instance2 = container.Get<TypeWithMultipleCtors>();
 
-			instance2.Object.Should().NotBeNull();
-			instance2.String.Should().Be(@string);
+			container.Get<TypeWithOptionalStringDependency>().String.Should().Be(@string);
 		}
 
 		[Fact]
@@ -64,9 +42,11 @@ namespace Maestro.Tests.Providers
 			instance.Should().BeOfType<GenericType<int>>();
 		}
 
-		private class TypeWithSingleCtorDependency
+		private class TypeWithOptionalObjectDependency
 		{
-			public TypeWithSingleCtorDependency(object @object)
+			public TypeWithOptionalObjectDependency() { }
+
+			public TypeWithOptionalObjectDependency(object @object)
 			{
 				Object = @object;
 			}
@@ -74,23 +54,16 @@ namespace Maestro.Tests.Providers
 			public object Object { get; private set; }
 		}
 
-		private class TypeWithMultipleCtors
+		private class TypeWithOptionalStringDependency
 		{
-			public TypeWithMultipleCtors() { }
+			public TypeWithOptionalStringDependency() { }
 
-			public TypeWithMultipleCtors(object @object)
-			{
-				Object = @object;
-			}
-
-			public TypeWithMultipleCtors(object @object, string @string)
-				: this(@object)
+			public TypeWithOptionalStringDependency(string @string)
 			{
 				String = @string;
 			}
 
-			public object Object { get; private set; }
-			public string String { get; private set; }
+			public object String { get; private set; }
 		}
 
 		private class GenericType<T> { }

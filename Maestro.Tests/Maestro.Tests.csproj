@@ -81,6 +81,7 @@
     <Compile Include="default_type_instance_with_configured_dependencies.cs" />
     <Compile Include="Interception\property_injection.cs" />
     <Compile Include="Lifetimes\request_lifetime.cs" />
+    <Compile Include="Providers\type_instance_provider_constructor_dependency_resolution.cs" />
     <Compile Include="resolve_array_dependencies.cs" />
     <Compile Include="resolve_dependencies.cs" />
     <Compile Include="resolve_enumerable.cs" />

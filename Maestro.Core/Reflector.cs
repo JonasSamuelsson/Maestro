@@ -28,7 +28,7 @@ namespace Maestro
 			if (context.CanGet(type))
 				return GetValueProvider(type);
 
-			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) && !type.GetGenericArguments().Single().IsValueType)
 				return GetEnumerableProvider(type.GetGenericArguments().Single());
 
 			if (type.IsArray && (resolveValueTypeArrays || !type.GetElementType().IsValueType))
