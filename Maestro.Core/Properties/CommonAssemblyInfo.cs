@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.1.0")]
 
 [assembly: InternalsVisibleTo("Maestro.Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100db433161a1ce90" +
 																		 "7127aeb3136c24003dd1c643e291f771dd49407e206a37cf22197103619a0a7f8ba604f9bb623f" +
