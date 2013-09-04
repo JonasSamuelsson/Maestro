@@ -25,17 +25,17 @@ namespace Maestro.Tests.Providers
 		[Fact]
 		public void should_resolve_registered_reference_type()
 		{
-			var @object = new object();
-			var container = new Container(x => x.For<object>().Use(@object));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<object>>();
-			instance.Dependency.Should().Be(@object);
+			var dependency = new Dependency();
+			var container = new Container(x => x.For<Dependency>().Use(dependency));
+			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency>>();
+			instance.Dependency.Should().Be(dependency);
 		}
 
 		[Fact]
 		public void should_resolve_unregistered_but_instantiatable_reference_type()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<object>>();
+			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency>>();
 			instance.Dependency.Should().NotBeNull();
 		}
 
@@ -67,52 +67,52 @@ namespace Maestro.Tests.Providers
 		[Fact]
 		public void should_resolve_registered_reference_type_enumerable()
 		{
-			var @objects = new[] { new object(), new object() };
-			var container = new Container(x => x.For<IEnumerable<object>>().Use(@objects));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<object>>>();
-			instance.Dependency.Should().BeEquivalentTo(@objects);
+			var dependencies = new[] { new Dependency(), new Dependency() };
+			var container = new Container(x => x.For<IEnumerable<Dependency>>().Use(dependencies));
+			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
+			instance.Dependency.Should().BeEquivalentTo(dependencies);
 		}
 
 		[Fact]
 		public void should_resolve_reference_type_enumerable_with_registered_item()
 		{
-			var @object = new object();
-			var container = new Container(x => x.For<object>().Use(@object));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<object>>>();
-			instance.Dependency.Should().BeEquivalentTo(new[] { @object });
+			var dependency = new Dependency();
+			var container = new Container(x => x.For<Dependency>().Use(dependency));
+			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
+			instance.Dependency.Should().BeEquivalentTo(new[] { dependency });
 		}
 
 		[Fact]
 		public void should_resolve_unregistered_reference_type_enumerable()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<object>>>();
+			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
 			instance.Dependency.Should().BeEmpty();
 		}
 
 		[Fact]
 		public void should_resolve_registered_reference_type_array()
 		{
-			var @objects = new[] { new object(), new object() };
-			var container = new Container(x => x.For<object[]>().Use(@objects));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<object[]>>();
-			instance.Dependency.Should().BeEquivalentTo(@objects);
+			var dependencies = new[] { new Dependency(), new Dependency() };
+			var container = new Container(x => x.For<Dependency[]>().Use(dependencies));
+			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency[]>>();
+			instance.Dependency.Should().BeEquivalentTo(dependencies);
 		}
 
 		[Fact]
 		public void should_resolve_reference_type_array_with_registered_item()
 		{
-			var @object = new object();
-			var container = new Container(x => x.For<object>().Use(@object));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<object[]>>();
-			instance.Dependency.Should().BeEquivalentTo(new[] { @object });
+			var dependency = new Dependency();
+			var container = new Container(x => x.For<Dependency>().Use(dependency));
+			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency[]>>();
+			instance.Dependency.Should().BeEquivalentTo(new[] { dependency });
 		}
 
 		[Fact]
 		public void should_resolve_unregistered_reference_type_array()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<object[]>>();
+			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency[]>>();
 			instance.Dependency.Should().BeEmpty();
 		}
 
@@ -182,9 +182,6 @@ namespace Maestro.Tests.Providers
 			public T Dependency { get; private set; }
 		}
 
-		private interface IReferenceType1 { }
-		private interface IReferenceType2 { }
-		private interface IReferenceType3 { }
-		private class ReferenceType : IReferenceType1, IReferenceType2, IReferenceType3 { }
+		private class Dependency { }
 	}
 }

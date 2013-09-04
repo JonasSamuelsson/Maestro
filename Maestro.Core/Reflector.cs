@@ -28,11 +28,11 @@ namespace Maestro
 			if (context.CanGet(type))
 				return GetValueProvider(type);
 
-			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) && !type.GetGenericArguments().Single().IsValueType)
-				return GetEnumerableProvider(type.GetGenericArguments().Single());
-
 			if (type.IsArray && (resolveValueTypeArrays || !type.GetElementType().IsValueType))
 				return GetArrayProvider(type.GetElementType());
+
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) && !type.GetGenericArguments().Single().IsValueType)
+				return GetEnumerableProvider(type.GetGenericArguments().Single());
 
 			return null;
 		}
@@ -55,12 +55,13 @@ namespace Maestro
 
 		private static Func<IContext, object> GetEnumerableProvider(Type type)
 		{
+			var getAllMethod = typeof(IContext).GetMethod("GetAll", new Type[0]).MakeGenericMethod(type);
+
 			MethodInfo compiler;
 			if (!TryGetExpressionCompiler<Func<IContext, object>>(out compiler))
-				return ctx => ctx.GetAll(type);
+				return ctx => getAllMethod.Invoke(ctx, null);
 
 			var context = Expression.Parameter(typeof(IContext), "context");
-			var getAllMethod = typeof(IContext).GetMethod("GetAll", new Type[0]).MakeGenericMethod(type);
 			var enumerable = Expression.Call(context, getAllMethod);
 			var lambda = Expression.Lambda<Func<IContext, object>>(enumerable, new[] { context });
 			return (Func<IContext, object>)compiler.Invoke(lambda, null);
