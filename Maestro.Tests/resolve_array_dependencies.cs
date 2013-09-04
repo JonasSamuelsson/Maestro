@@ -13,15 +13,15 @@ namespace Maestro.Tests
 			var container = new Container(x =>
 			{
 				x.For<TypeWithArrayOfObjectDependency>().Use<TypeWithArrayOfObjectDependency>();
+				x.Add<object>().Use<object>();
 				x.Add<object>().Use<EventArgs>();
-				x.Add<object>().Use<Exception>();
 			});
 
 			var instance = container.Get<TypeWithArrayOfObjectDependency>();
 
 			instance.Objects.Should().HaveCount(2);
+			instance.Objects.Should().Contain(x => x.GetType() == typeof(object));
 			instance.Objects.Should().Contain(x => x.GetType() == typeof(EventArgs));
-			instance.Objects.Should().Contain(x => x.GetType() == typeof(Exception));
 		}
 
 		[Fact]

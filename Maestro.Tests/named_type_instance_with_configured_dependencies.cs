@@ -13,12 +13,12 @@ namespace Maestro.Tests
 			var container = new Container(x =>
 			{
 				x.Add<ClassWithDependency>(name).Use<ClassWithDependency>();
-				x.Add<object>(name).Use<Exception>();
+				x.Add<object>(name).Use<object>();
 			});
 
 			var o = container.Get<ClassWithDependency>(name);
 
-			o.Dependency.Should().BeOfType<Exception>();
+			o.Dependency.Should().BeOfType<object>();
 		}
 
 		[Fact]
