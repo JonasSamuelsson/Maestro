@@ -6,8 +6,14 @@ namespace Maestro.Lifetimes
 {
 	public class RequestLifetime : ILifetime
 	{
-		private readonly string _lockKey = Guid.NewGuid().ToString();
-		private readonly Dictionary<long, object> _dictionary = new Dictionary<long, object>();
+		private readonly string _lockKey;
+		private readonly Dictionary<long, object> _dictionary;
+
+		public RequestLifetime()
+		{
+			_lockKey = Guid.NewGuid().ToString();
+			_dictionary = new Dictionary<long, object>();
+		}
 
 		public ILifetime Clone()
 		{

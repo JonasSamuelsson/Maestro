@@ -50,11 +50,6 @@ namespace Maestro
 			return type.IsClass && type != typeof(string) && !type.IsAbstract;
 		}
 
-		public static bool IsConcreteSubClassOf<T>(this Type type)
-		{
-			return type.IsConcreteSubClassOf(typeof(T));
-		}
-
 		public static bool IsConcreteSubClassOf(this Type type, Type basetype)
 		{
 			if (type == basetype)

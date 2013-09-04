@@ -8,10 +8,6 @@ namespace Maestro
 		private int _configId;
 		private Func<IContext, object> _instantiator;
 
-		private bool? _canGet;
-		private Func<object[], object> _ctor;
-		private Type[] _ctorParameterTypes;
-
 		public TypeInstanceProvider(Type type)
 		{
 			_type = type;
