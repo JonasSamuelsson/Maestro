@@ -5,8 +5,23 @@ using Xunit;
 
 namespace Maestro.Tests.Providers
 {
-	public class type_instance_provider_constructor_dependency_resolution
+	public abstract class type_instance_provider_constructor_dependency_resolution
 	{
+		public class type_instance_provider_constructor_dependency_resolution_using_expressions : type_instance_provider_constructor_dependency_resolution { }
+
+		public class type_instance_provider_constructor_dependency_resolution_using_reflection : type_instance_provider_constructor_dependency_resolution, IDisposable
+		{
+			public type_instance_provider_constructor_dependency_resolution_using_reflection()
+			{
+				Reflector.AlwaysUseReflection = true;
+			}
+
+			public void Dispose()
+			{
+				Reflector.AlwaysUseReflection = false;
+			}
+		}
+
 		[Fact]
 		public void should_resolve_registered_reference_type()
 		{
