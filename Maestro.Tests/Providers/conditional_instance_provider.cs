@@ -6,7 +6,7 @@ namespace Maestro.Tests.Providers
 	public class conditional_instance_provider
 	{
 		[Fact]
-		public void FactMethodName()
+		public void should_get_predicated_or_fallback_instance()
 		{
 			var defaultObject = "default";
 			var namedObject = "named";
@@ -14,7 +14,7 @@ namespace Maestro.Tests.Providers
 			var container = new Container(x => x.For<object>().UseConditional(y =>
 			{
 				y.If(z => z.Name != Container.DefaultName).Use(namedObject);
-				y.Default.Use(defaultObject);
+				y.Else.Use(defaultObject);
 			}));
 
 			container.Get<Foobar>().Dependency.Should().Be(defaultObject);

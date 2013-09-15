@@ -54,10 +54,10 @@ namespace Maestro.Fluent
 			return new TypeInstanceBuilder<T>(pipeline);
 		}
 
-		public void UseConditional(Action<IConditionalInstancePipelineBuilder<TPlugin>> action)
+		public void UseConditional(Action<IConditionalInstanceBuilder<TPlugin>> action)
 		{
-			var provider = new ConditionalInstanceProvider<TPlugin>(_defaultSettings, action);
-			var pipeline = new PipelineEngine(provider);
+			var builder = new ConditionalInstanceBuilder<TPlugin>(_defaultSettings);
+			var pipeline = builder.GetPipeline(action);
 			_registerPipeline(pipeline);
 		}
 	}

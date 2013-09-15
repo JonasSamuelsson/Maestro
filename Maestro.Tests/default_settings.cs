@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FluentAssertions;
+using Maestro.Conventions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
-using Maestro.Conventions;
 using Xunit;
 
 namespace Maestro.Tests
@@ -16,12 +16,29 @@ namespace Maestro.Tests
 													{
 														x.Default.Lifetime.Singleton();
 														x.For<object>().Use<object>();
+														x.For<IConditional>().UseConditional(y =>
+																										 {
+																											 y.Else.Use<DefaultConditional>();
+																											 y.If(ctx => ctx.Name != null).Use<NamedConditional>();
+																										 });
 													});
-			var instance1 = container.Get<object>();
-			var instance2 = container.Get<object>();
 
-			instance1.Should().Be(instance2);
+			var object1 = container.Get<object>();
+			var object2 = container.Get<object>();
+			object1.Should().Be(object2);
+
+			var conditional1 = container.Get<IConditional>();
+			var conditional2 = container.Get<IConditional>();
+			conditional1.Should().Be(conditional2);
+
+			var conditional3 = container.Get<IConditional>("xyz");
+			var conditional4 = container.Get<IConditional>("xyz");
+			conditional3.Should().Be(conditional4);
 		}
+
+		public interface IConditional { }
+		public class DefaultConditional : IConditional { }
+		public class NamedConditional : IConditional { }
 
 		[Fact]
 		public void configured_filter_should_be_used_in_conventional_registrations()

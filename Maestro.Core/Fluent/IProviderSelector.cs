@@ -9,6 +9,6 @@ namespace Maestro.Fluent
 		ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> func) where TInstance : TPlugin;
 		ITypeInstanceBuilder<TInstance> Use<TInstance>() where TInstance : TPlugin;
 		ITypeInstanceBuilder<TPlugin> Use(Type type);
-		void UseConditional(Action<IConditionalInstancePipelineBuilder<TPlugin>> action);
+		void UseConditional(Action<IConditionalInstanceBuilder<TPlugin>> action);
 	}
 }

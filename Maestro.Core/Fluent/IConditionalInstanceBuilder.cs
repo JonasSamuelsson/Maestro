@@ -2,9 +2,9 @@
 
 namespace Maestro.Fluent
 {
-	public interface IConditionalInstancePipelineBuilder<TPlugin>
+	public interface IConditionalInstanceBuilder<TPlugin>
 	{
 		IProviderSelector<TPlugin> If(Func<IContext, bool> predicate);
-		IProviderSelector<TPlugin> Default { get; }
+		IProviderSelector<TPlugin> Else { get; }
 	}
 }
