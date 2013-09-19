@@ -121,6 +121,15 @@ namespace Maestro
 			return GetAll(typeof(T)).Cast<T>().ToList();
 		}
 
+		public string PrintConfiguration()
+		{
+			var builder = new ConfigOutputBuilder();
+			using (builder.Category("Defaults"))
+				_defaultSettings.PrintConfiguration(builder);
+			builder.Line();
+			return builder.ToString();
+		}
+
 		bool IDependencyResolver.CanGet(Type type, IContext context)
 		{
 			IPipelineEngine pipelineEngine;

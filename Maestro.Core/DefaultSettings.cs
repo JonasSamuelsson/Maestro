@@ -29,5 +29,10 @@ namespace Maestro
 		{
 			return _filters;
 		}
+
+		public void PrintConfiguration(ConfigOutputBuilder builder)
+		{
+			builder.Item("Lifetime : {0}", _lifetime);
+		}
 	}
 }

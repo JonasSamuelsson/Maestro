@@ -30,6 +30,11 @@ namespace Maestro
 			Item(string.Format(format, args));
 		}
 
+		public void Line()
+		{
+			Item(string.Empty);
+		}
+
 		public override string ToString()
 		{
 			return _builder.ToString().Trim();
