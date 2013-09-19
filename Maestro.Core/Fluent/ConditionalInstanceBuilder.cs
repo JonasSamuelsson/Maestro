@@ -26,7 +26,7 @@ namespace Maestro.Fluent
 		public IPipelineEngine GetPipeline(Action<IConditionalInstanceBuilder<TPlugin>> action)
 		{
 			action(this);
-			return new PipelineEngine(_conditionalInstanceProvider);
+			return new ConditionalPipelineEngine(_conditionalInstanceProvider);
 		}
 	}
 }
