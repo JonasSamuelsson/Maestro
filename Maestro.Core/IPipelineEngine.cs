@@ -12,5 +12,6 @@ namespace Maestro
 		void AddOnCreateInterceptor(IInterceptor interceptor);
 		void SetLifetime(ILifetime lifetime);
 		void AddOnActivateInterceptor(IInterceptor interceptor);
+		void PrintConfiguration(ConfigOutputBuilder builder);
 	}
 }

@@ -8,6 +8,11 @@ namespace Maestro
 		private readonly StringBuilder _builder = new StringBuilder();
 		private int _indentations;
 
+		public IDisposable Category(object o)
+		{
+			return Category("{0}", o);
+		}
+
 		public IDisposable Category(string category)
 		{
 			Item(category);
@@ -22,7 +27,7 @@ namespace Maestro
 
 		public void Item(string item)
 		{
-			_builder.AppendLine(new string('\t', _indentations) + item);
+			_builder.AppendLine(new string(' ', 3 * _indentations) + item);
 		}
 
 		public void Item(string format, params object[] args)

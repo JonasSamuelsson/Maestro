@@ -23,7 +23,12 @@ namespace Maestro
 
 		public IProvider MakeGenericProvider(Type[] types)
 		{
-			throw new NotImplementedException();
+			return this;
+		}
+
+		public override string ToString()
+		{
+			return "lambda instance";
 		}
 	}
 }

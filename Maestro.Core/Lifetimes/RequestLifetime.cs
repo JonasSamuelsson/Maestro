@@ -46,5 +46,10 @@ namespace Maestro.Lifetimes
 			lock (_dictionary)
 				_dictionary.Remove(requestId);
 		}
+
+		public override string ToString()
+		{
+			return "request";
+		}
 	}
 }

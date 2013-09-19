@@ -17,13 +17,13 @@ namespace Maestro.Tests
 			var container = new Container(x =>
 			{
 				x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Tag, @default);
-				x.Add<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Tag, name1);
+				x.For<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Tag, name1);
 				x.For<ParentWithMultipleChildren>().Use<ParentWithMultipleChildren>().OnCreate.SetProperty(y => y.Tag, @default);
-				x.Add<ParentWithMultipleChildren>(name1).Use<ParentWithMultipleChildren>().OnCreate.SetProperty(y => y.Tag, name1);
+				x.For<ParentWithMultipleChildren>(name1).Use<ParentWithMultipleChildren>().OnCreate.SetProperty(y => y.Tag, name1);
 				x.For<Child>().Use<Child>().OnCreate.SetProperty(y => y.Tag, @default);
-				x.Add<Child>(name2).Use<Child>().OnCreate.SetProperty(y => y.Tag, name2);
+				x.For<Child>(name2).Use<Child>().OnCreate.SetProperty(y => y.Tag, name2);
 				x.For<GrandChild>().Use(defaultGrandChild);
-				x.Add<GrandChild>(name1).Use(namedGrandChild);
+				x.For<GrandChild>(name1).Use(namedGrandChild);
 			});
 
 			{
@@ -71,10 +71,10 @@ namespace Maestro.Tests
 			var container = new Container(x =>
 			{
 				x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Tag, grandChild);
-				x.Add<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Tag, grandChild1);
-				x.Add<ParentWithSingleChild>(name2).Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Tag, grandChild);
+				x.For<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Tag, grandChild1);
+				x.For<ParentWithSingleChild>(name2).Use<ParentWithSingleChild>().OnCreate.SetProperty(y => y.Tag, grandChild);
 				x.For<GrandChild>().Use(grandChild);
-				x.Add<GrandChild>(name1).Use(grandChild1);
+				x.For<GrandChild>(name1).Use(grandChild1);
 			});
 
 			container.GetAll<ParentWithSingleChild>().Should().OnlyContain(x => x.Tag == x.Child.GrandChild);

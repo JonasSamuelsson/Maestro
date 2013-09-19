@@ -1,34 +1,77 @@
-﻿using System;
-using Maestro.Interceptors;
+﻿using Maestro.Interceptors;
 using Maestro.Lifetimes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro
 {
 	internal class ConditionalPipelineEngine : IPipelineEngine
 	{
-		private readonly IProvider _provider;
+		private readonly List<Item> _conditionalPipelineEngines;
+		private IPipelineEngine _defaultPipelineEngine;
 
-		public ConditionalPipelineEngine(IProvider provider)
+		public ConditionalPipelineEngine()
 		{
-			_provider = provider;
+			_conditionalPipelineEngines = new List<Item>();
+		}
+
+		public void Add(IPipelineEngine pipelineEngine)
+		{
+			_defaultPipelineEngine = pipelineEngine;
+		}
+
+		public void Add(Func<IContext, bool> condition, IPipelineEngine pipelineEngine)
+		{
+			_conditionalPipelineEngines.Add(new Item(condition, pipelineEngine));
 		}
 
 		public bool CanGet(IContext context)
 		{
-			return _provider.CanGet(context);
+			IPipelineEngine engine;
+			return TryGetPipeline(context, out engine) && engine.CanGet(context);
 		}
 
 		public object Get(IContext context)
 		{
-			return _provider.Get(context);
+			IPipelineEngine engine;
+			if (TryGetPipeline(context, out engine)) return engine.Get(context);
+			throw new Exception("Conditional instance not found.");
 		}
 
 		public IPipelineEngine MakeGenericPipelineEngine(Type[] types)
 		{
-			var genericProvider = _provider.MakeGenericProvider(types);
-			return _provider is ConditionalInstanceProvider
-				? (IPipelineEngine)new ConditionalPipelineEngine(genericProvider)
-				: new PipelineEngine(genericProvider);
+			var engine = new ConditionalPipelineEngine();
+			foreach (var item in _conditionalPipelineEngines)
+				engine.Add(item.Condition, item.PipelineEngine.MakeGenericPipelineEngine(types));
+			if (_defaultPipelineEngine != null)
+				engine.Add(_defaultPipelineEngine.MakeGenericPipelineEngine(types));
+			return engine;
+		}
+
+		private bool TryGetPipeline(IContext context, out IPipelineEngine pipelineEngine)
+		{
+			foreach (var conditionalPipelineEngine in _conditionalPipelineEngines.Where(x => x.Condition(context)))
+			{
+				pipelineEngine = conditionalPipelineEngine.PipelineEngine;
+				return true;
+			}
+
+			pipelineEngine = _defaultPipelineEngine;
+			return pipelineEngine != null;
+		}
+
+		private struct Item
+		{
+			public Item(Func<IContext, bool> condition, IPipelineEngine pipelineEngine)
+				: this()
+			{
+				Condition = condition;
+				PipelineEngine = pipelineEngine;
+			}
+
+			public Func<IContext, bool> Condition { get; private set; }
+			public IPipelineEngine PipelineEngine { get; private set; }
 		}
 
 		public void AddOnCreateInterceptor(IInterceptor interceptor)
@@ -44,6 +87,20 @@ namespace Maestro
 		public void AddOnActivateInterceptor(IInterceptor interceptor)
 		{
 			throw new NotSupportedException();
+		}
+
+		public void PrintConfiguration(ConfigOutputBuilder builder)
+		{
+			using (builder.Category("conditional instance"))
+			{
+				var list = _conditionalPipelineEngines.Select((x, i) => new { index = i + 1, engine = x.PipelineEngine }).ToList();
+				foreach (var item in list)
+					using (builder.Category("condition {0}", item.index))
+						item.engine.PrintConfiguration(builder);
+				if (_defaultPipelineEngine != null)
+					using (builder.Category("default"))
+						_defaultPipelineEngine.PrintConfiguration(builder);
+			}
 		}
 	}
 }

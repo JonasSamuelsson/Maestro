@@ -18,5 +18,10 @@
 
 			return _instance;
 		}
+
+		public override string ToString()
+		{
+			return "singleton";
+		}
 	}
 }

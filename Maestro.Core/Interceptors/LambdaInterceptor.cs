@@ -20,5 +20,10 @@ namespace Maestro.Interceptors
 		{
 			return _func((TInstance)instance, context);
 		}
+
+		public override string ToString()
+		{
+			return "lambda interceptor";
+		}
 	}
 }

@@ -6,12 +6,12 @@ namespace Maestro
 {
 	internal class ConditionalInstanceProvider : IProvider
 	{
-		private readonly List<ConditionalPipelineEngine> _conditionalPipelineEngines;
+		private readonly List<PredicatedPipelineEngine> _conditionalPipelineEngines;
 		private IPipelineEngine _defaultPipelineEngine;
 
 		public ConditionalInstanceProvider()
 		{
-			_conditionalPipelineEngines = new List<ConditionalPipelineEngine>();
+			_conditionalPipelineEngines = new List<PredicatedPipelineEngine>();
 		}
 
 		public void Add(IPipelineEngine pipelineEngine)
@@ -21,7 +21,7 @@ namespace Maestro
 
 		public void Add(Func<IContext, bool> condition, IPipelineEngine pipelineEngine)
 		{
-			_conditionalPipelineEngines.Add(new ConditionalPipelineEngine(condition, pipelineEngine));
+			_conditionalPipelineEngines.Add(new PredicatedPipelineEngine(condition, pipelineEngine));
 		}
 
 		public bool CanGet(IContext context)
@@ -45,7 +45,7 @@ namespace Maestro
 			foreach (var item in _conditionalPipelineEngines)
 			{
 				var genericPipelineEngine = item.PipelineEngine.MakeGenericPipelineEngine(types);
-				var conditionalPipelineEngine = new ConditionalPipelineEngine(item.Condition, genericPipelineEngine);
+				var conditionalPipelineEngine = new PredicatedPipelineEngine(item.Condition, genericPipelineEngine);
 				provider._conditionalPipelineEngines.Add(conditionalPipelineEngine);
 			}
 			return provider;
@@ -63,9 +63,9 @@ namespace Maestro
 			return pipelineEngine != null;
 		}
 
-		private struct ConditionalPipelineEngine
+		private struct PredicatedPipelineEngine
 		{
-			public ConditionalPipelineEngine(Func<IContext, bool> condition, IPipelineEngine pipelineEngine)
+			public PredicatedPipelineEngine(Func<IContext, bool> condition, IPipelineEngine pipelineEngine)
 				: this()
 			{
 				Condition = condition;

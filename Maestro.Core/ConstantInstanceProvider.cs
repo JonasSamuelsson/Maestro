@@ -25,5 +25,11 @@ namespace Maestro
 		{
 			throw new NotSupportedException();
 		}
+
+		public override string ToString()
+		{
+			var strings = new[] { _instance.GetType().ToString(), _instance.ToString() };
+			return string.Format("constant instance : {0}", string.Join(" > ", strings));
+		}
 	}
 }

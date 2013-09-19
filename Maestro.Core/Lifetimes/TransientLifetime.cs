@@ -20,5 +20,10 @@
 		{
 			return pipeline.Execute();
 		}
+
+		public override string ToString()
+		{
+			return "transient";
+		}
 	}
 }

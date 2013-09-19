@@ -33,5 +33,10 @@ namespace Maestro.Interceptors
 
 			return instance;
 		}
+
+		public override string ToString()
+		{
+			return string.Format("try set property {0}", _propertyName);
+		}
 	}
 }

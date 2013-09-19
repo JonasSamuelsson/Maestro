@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Maestro
@@ -30,9 +31,14 @@ namespace Maestro
 			_dictionary.Clear();
 		}
 
-		public bool Contains(Type type)
+		public IEnumerator<KeyValuePair<Type, IPipelineEngine>> GetEnumerator()
 		{
-			return _dictionary.ContainsKey(type);
+			throw new NotImplementedException();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 	}
 }

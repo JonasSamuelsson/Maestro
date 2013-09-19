@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Maestro.Interceptors;
+using Maestro.Lifetimes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Maestro.Interceptors;
-using Maestro.Lifetimes;
 
 namespace Maestro
 {
@@ -57,6 +57,18 @@ namespace Maestro
 		public void AddOnActivateInterceptor(IInterceptor interceptor)
 		{
 			_onActivateInterceptors.Add(interceptor);
+		}
+
+		public void PrintConfiguration(ConfigOutputBuilder builder)
+		{
+			using (builder.Category(_provider))
+			{
+				foreach (var interceptor in _onActivateInterceptors)
+					builder.Item("on activate : {0}", interceptor);
+				builder.Item("lifetime : {0}", _lifetime);
+				foreach (var interceptor in _onCreateInterceptors)
+					builder.Item("on create : {0}", interceptor);
+			}
 		}
 
 		private class Pipeline : IPipeline

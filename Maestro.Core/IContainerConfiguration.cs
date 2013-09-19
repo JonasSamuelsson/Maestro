@@ -6,9 +6,11 @@ namespace Maestro
 	public interface IContainerConfiguration
 	{
 		IProviderSelector<object> For(Type type);
+		IProviderSelector<object> For(Type type, string name);
 		IProviderSelector<TPlugin> For<TPlugin>();
-		IProviderSelector<object> Add(Type type, string name = null);
-		IProviderSelector<TPlugin> Add<TPlugin>(string name = null);
+		IProviderSelector<TPlugin> For<TPlugin>(string name);
+		IProviderSelector<object> Add(Type type);
+		IProviderSelector<TPlugin> Add<TPlugin>();
 		IConventionExpression Scan { get; }
 		IDefaultSettingsExpression Default { get; }
 	}

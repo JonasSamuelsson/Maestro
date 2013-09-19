@@ -1,5 +1,5 @@
-﻿using System;
-using Maestro.Fluent;
+﻿using Maestro.Fluent;
+using System;
 
 namespace Maestro
 {
@@ -16,28 +16,40 @@ namespace Maestro
 
 		public IProviderSelector<object> For(Type type)
 		{
-			var plugin = _plugins.GetOrAdd(type);
-			return new ProviderSelector<object>(x => plugin.Add(Container.DefaultName, x), _defaultSettings);
+			return Add<object>(type, Container.DefaultName);
 		}
 
 		public IProviderSelector<TPlugin> For<TPlugin>()
 		{
-			var plugin = _plugins.GetOrAdd(typeof(TPlugin));
-			return new ProviderSelector<TPlugin>(x => plugin.Add(Container.DefaultName, x), _defaultSettings);
+			return Add<TPlugin>(typeof(TPlugin), Container.DefaultName);
 		}
 
-		public IProviderSelector<object> Add(Type type, string name = null)
+		public IProviderSelector<object> For(Type type, string name)
 		{
-			name = name ?? Guid.NewGuid().ToString();
+			Validate(name);
+			return Add<object>(type, name);
+		}
+
+		public IProviderSelector<TPlugin> For<TPlugin>(string name)
+		{
+			Validate(name);
+			return Add<TPlugin>(typeof(TPlugin), name);
+		}
+
+		public IProviderSelector<object> Add(Type type)
+		{
+			return Add<object>(type, Guid.NewGuid().ToString());
+		}
+
+		public IProviderSelector<TPlugin> Add<TPlugin>()
+		{
+			return Add<TPlugin>(typeof(TPlugin), Guid.NewGuid().ToString());
+		}
+
+		private IProviderSelector<T> Add<T>(Type type, string name)
+		{
 			var plugin = _plugins.GetOrAdd(type);
-			return new ProviderSelector<object>(x => plugin.Add(name, x), _defaultSettings);
-		}
-
-		public IProviderSelector<TPlugin> Add<TPlugin>(string name = null)
-		{
-			name = name ?? Guid.NewGuid().ToString();
-			var plugin = _plugins.GetOrAdd(typeof(TPlugin));
-			return new ProviderSelector<TPlugin>(x => plugin.Add(name, x), _defaultSettings);
+			return new ProviderSelector<T>(x => plugin.Add(name, x), _defaultSettings);
 		}
 
 		public IConventionExpression Scan
@@ -48,6 +60,14 @@ namespace Maestro
 		public IDefaultSettingsExpression Default
 		{
 			get { return _defaultSettings; }
+		}
+
+		private static void Validate(string name)
+		{
+			if (name == null) throw new ArgumentNullException("name");
+			if (name == string.Empty) throw new ArgumentException("name");
+			if (name.Trim() == string.Empty) throw new ArgumentException("name");
+			if (name == Container.DefaultName) throw new ArgumentException("name");
 		}
 	}
 }

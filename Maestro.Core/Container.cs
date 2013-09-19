@@ -124,9 +124,13 @@ namespace Maestro
 		public string PrintConfiguration()
 		{
 			var builder = new ConfigOutputBuilder();
-			using (builder.Category("Defaults"))
-				_defaultSettings.PrintConfiguration(builder);
-			builder.Line();
+			foreach (var pair in _plugins.OrderBy(x => x.Key.FullName))
+				foreach (var name in pair.Value.GetNames().OrderBy(x => x))
+				{
+					using (builder.Category("{0} : {1}", name, pair.Key))
+						pair.Value.Get(name).PrintConfiguration(builder);
+					builder.Line();
+				}
 			return builder.ToString();
 		}
 
