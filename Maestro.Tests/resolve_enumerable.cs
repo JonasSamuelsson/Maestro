@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using System;
 using System.Linq;
 using Xunit;
 
@@ -67,22 +66,6 @@ namespace Maestro.Tests
 			}
 
 			public object Object { get; private set; }
-		}
-
-		[Fact]
-		public void FactMethodName()
-		{
-			var container = new Container(x =>
-													{
-														x.For<object>().Use<Exception>()
-															.Lifetime.Singleton()
-															.OnActivate.SetProperty(y => y.StackTrace)
-															.OnCreate.TrySetProperty(y => y.TargetSite);
-														x.For<IDisposable>().Use(() => default(IDisposable));
-														x.For<string>().Use("default string");
-														x.For<string>("abc").UseConditional(y => y.If(_ => true).Use("named string"));
-													});
-			var s = container.PrintConfiguration();
 		}
 	}
 }

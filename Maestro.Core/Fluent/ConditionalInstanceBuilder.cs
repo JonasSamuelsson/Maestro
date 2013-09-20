@@ -15,6 +15,7 @@ namespace Maestro.Fluent
 
 		public IProviderSelector<TPlugin> If(Func<IContext, bool> predicate)
 		{
+			if (predicate == null) throw new ArgumentNullException();
 			return new ProviderSelector<TPlugin>(x => _conditionalPipelineEngine.Add(predicate, x), _defaultSettings);
 		}
 
@@ -23,7 +24,7 @@ namespace Maestro.Fluent
 			get { return new ProviderSelector<TPlugin>(x => _conditionalPipelineEngine.Add(x), _defaultSettings); }
 		}
 
-		public IPipelineEngine GetPipeline(Action<IConditionalInstanceBuilder<TPlugin>> action)
+		internal IPipelineEngine GetPipeline(Action<IConditionalInstanceBuilder<TPlugin>> action)
 		{
 			action(this);
 			return _conditionalPipelineEngine;

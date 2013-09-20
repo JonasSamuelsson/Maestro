@@ -89,17 +89,21 @@ namespace Maestro
 			throw new NotSupportedException();
 		}
 
-		public void PrintConfiguration(ConfigOutputBuilder builder)
+		public void GetConfiguration(DiagnosticsBuilder builder)
 		{
 			using (builder.Category("conditional instance"))
 			{
 				var list = _conditionalPipelineEngines.Select((x, i) => new { index = i + 1, engine = x.PipelineEngine }).ToList();
 				foreach (var item in list)
-					using (builder.Category("condition {0}", item.index))
-						item.engine.PrintConfiguration(builder);
+				{
+					builder.Prefix("condition {0} : ", item.index);
+					item.engine.GetConfiguration(builder);
+				}
 				if (_defaultPipelineEngine != null)
-					using (builder.Category("default"))
-						_defaultPipelineEngine.PrintConfiguration(builder);
+				{
+					builder.Prefix("default : ");
+					_defaultPipelineEngine.GetConfiguration(builder);
+				}
 			}
 		}
 	}

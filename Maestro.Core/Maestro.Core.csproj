@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
     <Compile Include="ConditionalPipelineEngine.cs" />
-    <Compile Include="ConfigOutputBuilder.cs" />
+    <Compile Include="DiagnosticsBuilder.cs" />
     <Compile Include="Conventions\ConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />
     <Compile Include="ConditionalInstanceProvider.cs" />

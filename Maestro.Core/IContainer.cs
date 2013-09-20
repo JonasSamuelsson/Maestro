@@ -12,6 +12,6 @@ namespace Maestro
 		IEnumerable<object> GetAll(Type type);
 		IEnumerable<T> GetAll<T>();
 
-		string PrintConfiguration();
+		string GetConfiguration();
 	}
 }

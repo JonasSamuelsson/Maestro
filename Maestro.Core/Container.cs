@@ -32,7 +32,7 @@ namespace Maestro
 			get { return _defaultContainer ?? (_defaultContainer = new Container()); }
 		}
 
-		internal static string DefaultName { get { return "default"; } }
+		internal static string DefaultName { get { return string.Empty; } }
 
 		public void Configure(Action<IContainerConfiguration> action)
 		{
@@ -121,16 +121,20 @@ namespace Maestro
 			return GetAll(typeof(T)).Cast<T>().ToList();
 		}
 
-		public string PrintConfiguration()
+		public string GetConfiguration()
 		{
-			var builder = new ConfigOutputBuilder();
+			var builder = new DiagnosticsBuilder();
 			foreach (var pair in _plugins.OrderBy(x => x.Key.FullName))
-				foreach (var name in pair.Value.GetNames().OrderBy(x => x))
-				{
-					using (builder.Category("{0} : {1}", name, pair.Key))
-						pair.Value.Get(name).PrintConfiguration(builder);
-					builder.Line();
-				}
+			{
+				using (builder.Category(pair.Key))
+					foreach (var name in pair.Value.GetNames().OrderBy(x => x))
+					{
+						var prefix = name == DefaultName ? "{default}" : name;
+						builder.Prefix(prefix + " : ");
+						pair.Value.Get(name).GetConfiguration(builder);
+					}
+				builder.Line();
+			}
 			return builder.ToString();
 		}
 

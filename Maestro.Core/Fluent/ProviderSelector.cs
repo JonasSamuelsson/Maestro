@@ -15,20 +15,24 @@ namespace Maestro.Fluent
 
 		public IConstantInstanceBuilder<TInstance> Use<TInstance>(TInstance instance) where TInstance : TPlugin
 		{
+			// ReSharper disable once CompareNonConstrainedGenericWithNull
+			if (instance == null) throw new ArgumentNullException("instance");
 			var provider = new ConstantInstanceProvider(instance);
 			var pipeline = new PipelineEngine(provider);
 			_registerPipeline(pipeline);
 			return new ConstantInstanceBuilder<TInstance>(pipeline);
 		}
 
-		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<TInstance> func) where TInstance : TPlugin
+		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<TInstance> lambda) where TInstance : TPlugin
 		{
-			return Use(_ => func());
+			if (lambda == null) throw new ArgumentNullException();
+			return Use(_ => lambda());
 		}
 
-		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> func) where TInstance : TPlugin
+		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> lambda) where TInstance : TPlugin
 		{
-			var provider = new LambdaInstanceProvider(context => func(context));
+			if (lambda == null) throw new ArgumentNullException();
+			var provider = new LambdaInstanceProvider(context => lambda(context));
 			var pipeline = new PipelineEngine(provider);
 			pipeline.SetLifetime(_defaultSettings.GetLifetime());
 			_registerPipeline(pipeline);
@@ -42,6 +46,7 @@ namespace Maestro.Fluent
 
 		public ITypeInstanceBuilder<TPlugin> Use(Type type)
 		{
+			if (type == null) throw new ArgumentNullException();
 			return UseType<TPlugin>(type);
 		}
 
@@ -56,6 +61,7 @@ namespace Maestro.Fluent
 
 		public void UseConditional(Action<IConditionalInstanceBuilder<TPlugin>> action)
 		{
+			if (action == null) throw new ArgumentNullException();
 			var builder = new ConditionalInstanceBuilder<TPlugin>(_defaultSettings);
 			var pipeline = builder.GetPipeline(action);
 			_registerPipeline(pipeline);

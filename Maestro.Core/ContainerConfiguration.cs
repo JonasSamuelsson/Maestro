@@ -26,13 +26,13 @@ namespace Maestro
 
 		public IProviderSelector<object> For(Type type, string name)
 		{
-			Validate(name);
+			if (name == null) throw new ArgumentNullException("name");
 			return Add<object>(type, name);
 		}
 
 		public IProviderSelector<TPlugin> For<TPlugin>(string name)
 		{
-			Validate(name);
+			if (name == null) throw new ArgumentNullException("name");
 			return Add<TPlugin>(typeof(TPlugin), name);
 		}
 
@@ -60,14 +60,6 @@ namespace Maestro
 		public IDefaultSettingsExpression Default
 		{
 			get { return _defaultSettings; }
-		}
-
-		private static void Validate(string name)
-		{
-			if (name == null) throw new ArgumentNullException("name");
-			if (name == string.Empty) throw new ArgumentException("name");
-			if (name.Trim() == string.Empty) throw new ArgumentException("name");
-			if (name == Container.DefaultName) throw new ArgumentException("name");
 		}
 	}
 }

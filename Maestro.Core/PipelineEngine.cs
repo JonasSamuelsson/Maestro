@@ -59,7 +59,7 @@ namespace Maestro
 			_onActivateInterceptors.Add(interceptor);
 		}
 
-		public void PrintConfiguration(ConfigOutputBuilder builder)
+		public void GetConfiguration(DiagnosticsBuilder builder)
 		{
 			using (builder.Category(_provider))
 			{

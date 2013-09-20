@@ -30,7 +30,7 @@ namespace Maestro
 			return _filters;
 		}
 
-		public void PrintConfiguration(ConfigOutputBuilder builder)
+		public void GetConfiguration(DiagnosticsBuilder builder)
 		{
 			builder.Item("Lifetime : {0}", _lifetime);
 		}
