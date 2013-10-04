@@ -4,18 +4,11 @@ using System.Collections.Generic;
 
 namespace Maestro
 {
-	class ThreadSafeDictionary<T> : IThreadSafeDictionary<T>
+	class ThreadSafeDictionary<TKey, TValue> : IThreadSafeDictionary<TKey, TValue>
 	{
-		private Dictionary<Type, T> _dictionary;
-		private readonly Func<Type, T> _factory;
+		private Dictionary<TKey, TValue> _dictionary = new Dictionary<TKey, TValue>();
 
-		public ThreadSafeDictionary(Func<Type, T> factory)
-		{
-			_dictionary = new Dictionary<Type, T>();
-			_factory = factory;
-		}
-
-		public IEnumerator<KeyValuePair<Type, T>> GetEnumerator()
+		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{
 			return _dictionary.GetEnumerator();
 		}
@@ -25,27 +18,44 @@ namespace Maestro
 			return GetEnumerator();
 		}
 
-		public T GetOrAdd(Type type)
+		public IEnumerable<TKey> Keys
 		{
-			T value;
-			if (_dictionary.TryGetValue(type, out value)) return value;
+			get { return _dictionary.Keys; }
+		}
+
+		public void Add(TKey key, TValue value)
+		{
 			lock (this)
-				if (!_dictionary.TryGetValue(type, out value))
+				_dictionary = new Dictionary<TKey, TValue>(_dictionary) { { key, value } };
+		}
+
+		public TValue Get(TKey key)
+		{
+			return _dictionary[key];
+		}
+
+		public TValue GetOrAdd(TKey key, Func<TKey, TValue> factory)
+		{
+			TValue value;
+			if (_dictionary.TryGetValue(key, out value)) return value;
+			lock (this)
+				if (!_dictionary.TryGetValue(key, out value))
 				{
-					value = _factory(type);
-					_dictionary = new Dictionary<Type, T>(_dictionary) { { type, value } };
+					value = factory(key);
+					_dictionary = new Dictionary<TKey, TValue>(_dictionary) { { key, value } };
 				}
 			return value;
 		}
 
-		public bool TryGet(Type type, out T value)
+		public bool TryGet(TKey key, out TValue value)
 		{
-			return _dictionary.TryGetValue(type, out value);
+			return _dictionary.TryGetValue(key, out value);
 		}
 
 		public void Clear()
 		{
-			lock (this) _dictionary = new Dictionary<Type, T>();
+			lock (this)
+				_dictionary = new Dictionary<TKey, TValue>();
 		}
 	}
 }

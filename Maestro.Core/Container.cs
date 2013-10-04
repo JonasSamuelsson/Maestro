@@ -8,16 +8,16 @@ namespace Maestro
 	public class Container : IContainer, IDependencyResolver
 	{
 		private static IContainer _defaultContainer;
-		private readonly IThreadSafeDictionary<IPlugin> _plugins;
-		private readonly IThreadSafeDictionary<IPipelineEngine> _fallbackPipelines;
+		private readonly IThreadSafeDictionary<Type, IPlugin> _plugins;
+		private readonly IThreadSafeDictionary<Type, IPipelineEngine> _fallbackPipelines;
 		private readonly DefaultSettings _defaultSettings;
 		private long _requestId;
 		private int _configId;
 
 		public Container()
 		{
-			_plugins = new ThreadSafeDictionary<IPlugin>(x => new Plugin());
-			_fallbackPipelines = new ThreadSafeDictionary<IPipelineEngine>(x => new PipelineEngine(new TypeInstanceProvider(x)));
+			_plugins = new ThreadSafeDictionary<Type, IPlugin>();
+			_fallbackPipelines = new ThreadSafeDictionary<Type, IPipelineEngine>();
 			_defaultSettings = new DefaultSettings();
 		}
 
@@ -71,14 +71,14 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetFallbackPipeline(IThreadSafeDictionary<IPipelineEngine> fallbackPipelines, Type type, out IPipelineEngine pipelineEngine)
+		private static bool TryGetFallbackPipeline(IThreadSafeDictionary<Type, IPipelineEngine> fallbackPipelines, Type type, out IPipelineEngine pipelineEngine)
 		{
 			pipelineEngine = null;
 
 			if (!type.IsConcreteClosedClass() || type.IsArray)
 				return false;
 
-			pipelineEngine = fallbackPipelines.GetOrAdd(type);
+			pipelineEngine = fallbackPipelines.GetOrAdd(type, x => new PipelineEngine(new TypeInstanceProvider(x)));
 			return true;
 		}
 
@@ -177,7 +177,7 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetPipeline(IThreadSafeDictionary<IPlugin> plugins, Type type, IContext context,
+		private static bool TryGetPipeline(IThreadSafeDictionary<Type, IPlugin> plugins, Type type, IContext context,
 			out IPipelineEngine pipelineEngine)
 		{
 			pipelineEngine = null;
@@ -195,7 +195,7 @@ namespace Maestro
 			return false;
 		}
 
-		private static bool TryGetGenericPipeline(IThreadSafeDictionary<IPlugin> plugins, Type type, IContext context, out IPipelineEngine pipelineEngine)
+		private static bool TryGetGenericPipeline(IThreadSafeDictionary<Type, IPlugin> plugins, Type type, IContext context, out IPipelineEngine pipelineEngine)
 		{
 			pipelineEngine = null;
 
@@ -211,7 +211,7 @@ namespace Maestro
 
 				var genericArguments = type.GetGenericArguments();
 				var names = plugin.GetNames().ToList();
-				var genericPlugin = plugins.GetOrAdd(type);
+				var genericPlugin = plugins.GetOrAdd(type, x => new Plugin());
 				foreach (var name in names)
 					genericPlugin.Add(name, plugin.Get(name).MakeGenericPipelineEngine(genericArguments));
 			}

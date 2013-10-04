@@ -5,10 +5,10 @@ namespace Maestro
 {
 	internal class ContainerConfiguration : IContainerConfiguration
 	{
-		private readonly IThreadSafeDictionary<IPlugin> _plugins;
+		private readonly IThreadSafeDictionary<Type, IPlugin> _plugins;
 		private readonly DefaultSettings _defaultSettings;
 
-		public ContainerConfiguration(IThreadSafeDictionary<IPlugin> plugins, DefaultSettings defaultSettings)
+		public ContainerConfiguration(IThreadSafeDictionary<Type, IPlugin> plugins, DefaultSettings defaultSettings)
 		{
 			_plugins = plugins;
 			_defaultSettings = defaultSettings;
@@ -48,7 +48,7 @@ namespace Maestro
 
 		private IProviderSelector<T> Add<T>(Type type, string name)
 		{
-			var plugin = _plugins.GetOrAdd(type);
+			var plugin = _plugins.GetOrAdd(type, x => new Plugin());
 			return new ProviderSelector<T>(x => plugin.Add(name, x), _defaultSettings);
 		}
 

@@ -4,7 +4,7 @@ namespace Maestro
 {
 	internal class Plugin : IPlugin
 	{
-		private readonly Dictionary<string, IPipelineEngine> _dictionary = new Dictionary<string, IPipelineEngine>();
+		private readonly IThreadSafeDictionary<string, IPipelineEngine> _dictionary = new ThreadSafeDictionary<string, IPipelineEngine>();
 
 		public void Add(string name, IPipelineEngine pipelineEngine)
 		{
@@ -13,12 +13,12 @@ namespace Maestro
 
 		public IPipelineEngine Get(string name)
 		{
-			return _dictionary[name];
+			return _dictionary.Get(name);
 		}
 
 		public bool TryGet(string name, out IPipelineEngine pipelineEngine)
 		{
-			return _dictionary.TryGetValue(name, out pipelineEngine);
+			return _dictionary.TryGet(name, out pipelineEngine);
 		}
 
 		public IEnumerable<string> GetNames()
