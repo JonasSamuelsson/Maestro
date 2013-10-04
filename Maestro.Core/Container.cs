@@ -8,16 +8,16 @@ namespace Maestro
 	public class Container : IContainer, IDependencyResolver
 	{
 		private static IContainer _defaultContainer;
-		private readonly ICustomDictionary<IPlugin> _plugins;
-		private readonly ICustomDictionary<IPipelineEngine> _fallbackPipelines;
+		private readonly IThreadSafeDictionary<IPlugin> _plugins;
+		private readonly IThreadSafeDictionary<IPipelineEngine> _fallbackPipelines;
 		private readonly DefaultSettings _defaultSettings;
 		private long _requestId;
 		private int _configId;
 
 		public Container()
 		{
-			_plugins = new PluginDictionary();
-			_fallbackPipelines = new FallbackPipelineDictionary();
+			_plugins = new ThreadSafeDictionary<IPlugin>(x => new Plugin());
+			_fallbackPipelines = new ThreadSafeDictionary<IPipelineEngine>(x => new PipelineEngine(new TypeInstanceProvider(x)));
 			_defaultSettings = new DefaultSettings();
 		}
 
@@ -71,7 +71,7 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetFallbackPipeline(ICustomDictionary<IPipelineEngine> fallbackPipelines, Type type, out IPipelineEngine pipelineEngine)
+		private static bool TryGetFallbackPipeline(IThreadSafeDictionary<IPipelineEngine> fallbackPipelines, Type type, out IPipelineEngine pipelineEngine)
 		{
 			pipelineEngine = null;
 
@@ -177,7 +177,7 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context,
+		private static bool TryGetPipeline(IThreadSafeDictionary<IPlugin> plugins, Type type, IContext context,
 			out IPipelineEngine pipelineEngine)
 		{
 			pipelineEngine = null;
@@ -195,7 +195,7 @@ namespace Maestro
 			return false;
 		}
 
-		private static bool TryGetGenericPipeline(ICustomDictionary<IPlugin> plugins, Type type, IContext context, out IPipelineEngine pipelineEngine)
+		private static bool TryGetGenericPipeline(IThreadSafeDictionary<IPlugin> plugins, Type type, IContext context, out IPipelineEngine pipelineEngine)
 		{
 			pipelineEngine = null;
 

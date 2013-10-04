@@ -5,10 +5,10 @@ namespace Maestro
 {
 	internal class ContainerConfiguration : IContainerConfiguration
 	{
-		private readonly ICustomDictionary<IPlugin> _plugins;
+		private readonly IThreadSafeDictionary<IPlugin> _plugins;
 		private readonly DefaultSettings _defaultSettings;
 
-		public ContainerConfiguration(ICustomDictionary<IPlugin> plugins, DefaultSettings defaultSettings)
+		public ContainerConfiguration(IThreadSafeDictionary<IPlugin> plugins, DefaultSettings defaultSettings)
 		{
 			_plugins = plugins;
 			_defaultSettings = defaultSettings;

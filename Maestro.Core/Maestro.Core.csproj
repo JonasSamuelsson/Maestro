@@ -58,7 +58,6 @@
     <Compile Include="Conventions\LambdaFilter.cs" />
     <Compile Include="DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />
-    <Compile Include="FallbackPipelineDictionary.cs" />
     <Compile Include="Fluent\ConditionalInstanceBuilder.cs" />
     <Compile Include="Fluent\ConstantInstanceBuilder.cs" />
     <Compile Include="Fluent\ConventionExpression.cs" />
@@ -92,7 +91,7 @@
     <Compile Include="IContainer.cs" />
     <Compile Include="IContainerConfiguration.cs" />
     <Compile Include="IContext.cs" />
-    <Compile Include="ICustomDictionary.cs" />
+    <Compile Include="IThreadSafeDictionary.cs" />
     <Compile Include="IDependencyResolver.cs" />
     <Compile Include="IPipelineEngine.cs" />
     <Compile Include="IPlugin.cs" />
@@ -104,10 +103,10 @@
     <Compile Include="InterceptionConfigurationExtensions.cs" />
     <Compile Include="PipelineEngine.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="PluginDictionary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="Reflector.cs" />
+    <Compile Include="ThreadSafeDictionary.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="TypeInstanceProvider.cs" />
     <Compile Include="TypeStack.cs" />
