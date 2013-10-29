@@ -18,7 +18,7 @@ namespace Maestro.Tests
 			new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>))
 				.OnCreate.Intercept(createInterceptor)
 				.Lifetime.Custom(lifetime)
-				.OnActivate.Intercept(activateInterceptor))
+				.Intercept(activateInterceptor))
 				.Get<IList<int>>();
 
 			createInterceptor.Cloned.Should().BeTrue();

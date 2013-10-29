@@ -23,7 +23,7 @@ namespace Maestro.Tests.Interception
 		{
 			var interceptor = new Interceptor();
 
-			new Container(x => x.For<object>().Use<object>().OnActivate.Intercept(interceptor)).Get<object>();
+			new Container(x => x.For<object>().Use<object>().Intercept(interceptor)).Get<object>();
 
 			interceptor.IsExecuted.Should().BeTrue();
 		}
@@ -35,7 +35,7 @@ namespace Maestro.Tests.Interception
 
 			new Container(x => x.For<object>().Use<object>()
 				.OnCreate.Intercept(new Interceptor(() => list.Add("create")))
-				.OnActivate.Intercept(new Interceptor(() => list.Add("activate"))))
+				.Intercept(new Interceptor(() => list.Add("activate"))))
 				.Get<object>();
 
 			list.Should().ContainInOrder(new[] { "create", "activate" });
@@ -49,8 +49,8 @@ namespace Maestro.Tests.Interception
 			new Container(x => x.For<object>().Use<object>()
 				.OnCreate.Intercept(new Interceptor(() => list.Add("create1")))
 				.OnCreate.Intercept(new Interceptor(() => list.Add("create2")))
-				.OnActivate.Intercept(new Interceptor(() => list.Add("activate1")))
-				.OnActivate.Intercept(new Interceptor(() => list.Add("activate2"))))
+				.Intercept(new Interceptor(() => list.Add("activate1")))
+				.Intercept(new Interceptor(() => list.Add("activate2"))))
 			.Get<object>();
 
 			list.Should().ContainInOrder(new[] { "create1", "create2", "activate1", "activate2" });
@@ -62,7 +62,7 @@ namespace Maestro.Tests.Interception
 			var interceptor = new Interceptor();
 
 			new Container(x => x.For<object>().Use<object>()
-				.OnActivate.Intercept(interceptor)
+				.Intercept(interceptor)
 				.Lifetime.Singleton()).Get<object>();
 
 			interceptor.ExecuteCount.Should().Be(1);
@@ -74,7 +74,7 @@ namespace Maestro.Tests.Interception
 			var interceptor = new Interceptor();
 
 			var container = new Container(x => x.For<object>().Use<object>()
-				.OnActivate.Intercept(interceptor)
+				.Intercept(interceptor)
 				.Lifetime.Singleton());
 			container.Get<object>();
 			container.Get<object>();

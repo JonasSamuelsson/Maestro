@@ -1,4 +1,6 @@
-﻿namespace Maestro.Fluent
+﻿using Maestro.Interceptors;
+
+namespace Maestro.Fluent
 {
 	internal class TypeInstanceBuilder<TInstance> : ITypeInstanceBuilder<TInstance>
 	{
@@ -19,9 +21,10 @@
 			get { return new LifetimeSelector<ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.SetLifetime); }
 		}
 
-		public IInterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>> OnActivate
+		public ITypeInstanceBuilder<TInstance> Intercept(IInterceptor interceptor)
 		{
-			get { return new InterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnActivateInterceptor); }
+			_pipelineEngine.AddOnActivateInterceptor(interceptor);
+			return this;
 		}
 	}
 }

@@ -73,7 +73,6 @@
     <Compile Include="Fluent\ILifetimeExpression.cs" />
     <Compile Include="Fluent\ILifetimeSelector.cs" />
     <Compile Include="Fluent\InterceptExpression.cs" />
-    <Compile Include="Fluent\IOnActivateExpression.cs" />
     <Compile Include="Fluent\IOnCreateExpression.cs" />
     <Compile Include="Fluent\LambdaInstanceBuilder.cs" />
     <Compile Include="Fluent\IConditionalInstanceBuilder.cs" />
@@ -90,6 +89,7 @@
     <Compile Include="Interceptors\LambdaInterceptor.cs" />
     <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
     <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
+    <Compile Include="LifetimeExpressionExtensions.cs" />
     <Compile Include="Lifetimes\ILifetime.cs" />
     <Compile Include="IPipeline.cs" />
     <Compile Include="LambdaInstanceProvider.cs" />

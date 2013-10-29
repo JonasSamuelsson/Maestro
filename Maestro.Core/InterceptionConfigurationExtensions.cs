@@ -7,12 +7,12 @@ namespace Maestro
 {
 	public static class InterceptionConfigurationExtensions
 	{
-		public static TParent Visit<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance> action)
+		public static TParent Decorate<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance> action)
 		{
-			return parent.Visit((instance, context) => action(instance));
+			return parent.Decorate((instance, context) => action(instance));
 		}
 
-		public static TParent Visit<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance, IContext> action)
+		public static TParent Decorate<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Action<TInstance, IContext> action)
 		{
 			return parent.Intercept((i, c) =>
 											{
