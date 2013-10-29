@@ -2,19 +2,21 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Maestro</id>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
         <title>Maestro</title>
         <authors>Jonas Samuelsson</authors>
-        <owners>Jonas Samuelsson</owners>
+        <owners>JonasSamuelsson</owners>
         <licenseUrl>https://github.com/JonasSamuelsson/Maestro/blob/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/JonasSamuelsson/Maestro</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Maestro is a dependency injection / inversion of control framework for .net with portable class library support.</description>
-        <tags>Maestro container di ioc</tags>
+        <tags>Maestro container ioc di</tags>
     </metadata>
     <files>
+        <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.dll" target="lib\net40\Maestro.Core.dll" />
+        <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.dll" target="lib\net40\Maestro.net40-client.dll" />
         <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.dll" target="lib\net40-client\Maestro.Core.dll" />
         <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.dll" target="lib\net40-client\Maestro.net40-client.dll" />
-        <file src="..\Maestro.Core\bin\Release\Maestro.Core.dll" target="lib\Maestro.Core.dll" />
+        <file src="..\Maestro.Core\bin\Release\Maestro.Core.dll" target="lib\portable-net4+sl5+wp8+win8\Maestro.Core.dll" />
     </files>
 </package>
