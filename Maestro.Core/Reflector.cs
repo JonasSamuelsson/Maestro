@@ -8,7 +8,7 @@ namespace Maestro
 {
 	internal static class Reflector
 	{
-		public static bool AlwaysUseReflection = true;
+		public static bool AlwaysUseReflection = false;
 
 		private static bool TryGetExpressionCompiler<T>(out MethodInfo compiler)
 		{
