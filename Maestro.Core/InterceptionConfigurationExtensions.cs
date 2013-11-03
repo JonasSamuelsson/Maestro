@@ -38,12 +38,12 @@ namespace Maestro
 
 		public static TParent Set<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property, object value)
 		{
-			return parent.Set(property, _ => value);
+			return parent.Intercept(new SetPropertyInterceptor(property, _ => value));
 		}
 
 		public static TParent Set<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property, Func<object> factory)
 		{
-			return parent.Set(property, x => factory());
+			return parent.Intercept(new SetPropertyInterceptor(property, _ => factory()));
 		}
 
 		public static TParent Set<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property, Func<IContext, object> factory)
@@ -53,30 +53,25 @@ namespace Maestro
 
 		public static TParent Set<TInstance, TValue, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, TValue>> property)
 		{
-			var name = ((MemberExpression)property.Body).Member.Name;
-			return parent.Set(name);
+			return parent.Set(property.GetName());
 		}
 
 		public static TParent Set<TInstance, TValue, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, TValue>> property, TValue value)
 		{
-			return parent.Set(property, _ => value);
+			var propertyName = property.GetName();
+			return parent.Intercept(new SetPropertyInterceptor(propertyName, _ => value));
 		}
 
 		public static TParent Set<TInstance, TValue, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, TValue>> property, Func<TValue> factory)
 		{
-			return parent.Set(property, _ => factory());
+			var propertyName = property.GetName();
+			return parent.Intercept(new SetPropertyInterceptor(propertyName, _ => factory()));
 		}
 
 		public static TParent Set<TInstance, TValue, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory)
 		{
-			var name = ((MemberExpression)property.Body).Member.Name;
-			return parent.Set(name, x => factory(x));
-		}
-
-		public static TParent Set<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, object>> property)
-		{
-			var name = ((MemberExpression)property.Body).Member.Name;
-			return parent.Set(name);
+			var propertyName = property.GetName();
+			return parent.Intercept(new SetPropertyInterceptor(propertyName, ctx => factory(ctx)));
 		}
 
 		public static TParent TrySet<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, string property)
@@ -86,8 +81,12 @@ namespace Maestro
 
 		public static TParent TrySet<TInstance, TParent>(this IInterceptExpression<TInstance, TParent> parent, Expression<Func<TInstance, object>> property)
 		{
-			var name = ((MemberExpression)property.Body).Member.Name;
-			return parent.TrySet(name);
+			return parent.TrySet(property.GetName());
+		}
+
+		private static string GetName<TInstance, TValue>(this Expression<Func<TInstance, TValue>> property)
+		{
+			return ((MemberExpression)property.Body).Member.Name;
 		}
 	}
 }
