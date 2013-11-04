@@ -13,49 +13,55 @@ namespace Maestro.Tests.Conventions
 		public void should_use_provided_registrator()
 		{
 			var types = new[] { typeof(object) };
-			var registrator = new Convention();
+			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan.Types(types).Using(registrator));
+			container.Configure(x => x.Scan.Types(types).Using(convention));
 
-			registrator.ProcessedTypes.Should().BeEquivalentTo(types);
+			convention.ProcessedTypes.Should().BeEquivalentTo(types);
 		}
 
 		[Fact]
 		public void should_filter_types_using_provided_lambda()
 		{
-			var registrator = new Convention();
+			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan.Types(new[] { typeof(object), typeof(int) }).Where(t => t.IsClass).Using(registrator));
+			container.Configure(x => x.Scan
+			                          .Types(new[] {typeof (object), typeof (int)})
+			                          .Where(t => t.IsClass)
+			                          .Using(convention));
 
-			registrator.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
+			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
 		}
 
 		[Fact]
 		public void should_filter_types_using_provided_filter()
 		{
-			var registrator = new Convention();
+			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan.Types(new[] { typeof(object), typeof(int) }).Matching(new IsClassFilter()).Using(registrator));
+			container.Configure(x => x.Scan
+			                          .Types(new[] {typeof (object), typeof (int)})
+			                          .Matching(new IsClassFilter())
+			                          .Using(convention));
 
-			registrator.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
+			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
 		}
 
 		[Fact]
 		public void type_should_match_all_filters_to_get_processed()
 		{
-			var registrator = new Convention();
+			var convention = new Convention();
 			var container = new Container();
 
 			container.Configure(x => x.Scan
-				.Types(new[] { typeof(object), typeof(int), typeof(string) })
-				.Where(t => t.IsClass)
-				.Where(t => t.Name.Contains("n"))
-				.Using(registrator));
+			                          .Types(new[] {typeof (object), typeof (int), typeof (string)})
+			                          .Where(t => t.IsClass)
+			                          .Where(t => t.Name.Contains("n"))
+			                          .Using(convention));
 
-			registrator.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(string) });
+			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(string) });
 		}
 
 		private class Convention : IConvention
