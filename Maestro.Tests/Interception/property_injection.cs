@@ -11,7 +11,7 @@ namespace Maestro.Tests.Interception
 		public void set_property_using_injected_action()
 		{
 			var dependency = new object();
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.Decorate(y => y.ResolvableDependency = dependency));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().Execute(y => y.ResolvableDependency = dependency));
 
 			var instance = container.Get<Foobar>();
 
@@ -22,7 +22,7 @@ namespace Maestro.Tests.Interception
 		public void set_property_with_provided_value()
 		{
 			var dependency = new object();
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.Set(y => y.ResolvableDependency, dependency));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set(y => y.ResolvableDependency, dependency));
 
 			var instance = container.Get<Foobar>();
 
@@ -33,7 +33,7 @@ namespace Maestro.Tests.Interception
 		public void set_property_with_value_from_provided_func()
 		{
 			var dependency = new object();
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.Set(y => y.ResolvableDependency, () => dependency));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set(y => y.ResolvableDependency, () => dependency));
 
 			var instance = container.Get<Foobar>();
 
@@ -43,7 +43,7 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void set_property_with_resolvable_type_should_work()
 		{
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.Set("ResolvableDependency"));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set("ResolvableDependency"));
 			var instance = container.Get<Foobar>();
 
 			instance.ResolvableDependency.Should().NotBeNull();
@@ -52,7 +52,7 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void set_missing_property_should_throw()
 		{
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.Set("missing property"));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set("missing property"));
 
 			container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		}
@@ -60,7 +60,7 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void set_property_with_unresolvable_type_should_throw()
 		{
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.Set(y => y.UnresolvableDependency));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set(y => y.UnresolvableDependency));
 
 			container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		}
@@ -68,7 +68,7 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void try_set_property_with_unresolvable_type_should_work()
 		{
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.TrySet(y => y.UnresolvableDependency));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().TrySet(y => y.UnresolvableDependency));
 
 			container.Invoking(x => x.Get<Foobar>()).ShouldNotThrow();
 		}
@@ -76,7 +76,7 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void try_set_missing_property_should_throw()
 		{
-			var container = new Container(x => x.For<Foobar>().Use<Foobar>().OnCreate.TrySet("missing property"));
+			var container = new Container(x => x.For<Foobar>().Use<Foobar>().TrySet("missing property"));
 
 			container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		}
@@ -88,7 +88,7 @@ namespace Maestro.Tests.Interception
 			var container = new Container(x =>
 													{
 														x.For<object>().Use(o);
-														x.For<Foobar>().Use<Foobar>().OnCreate.Set(y => y.Enumerable);
+														x.For<Foobar>().Use<Foobar>().Set(y => y.Enumerable);
 													});
 
 			var instance = container.Get<Foobar>();
@@ -103,7 +103,7 @@ namespace Maestro.Tests.Interception
 			var container = new Container(x =>
 													{
 														x.For<object>().Use(o);
-														x.For<Foobar>().Use<Foobar>().OnCreate.Set(y => y.Array);
+														x.For<Foobar>().Use<Foobar>().Set(y => y.Array);
 													});
 
 			var instance = container.Get<Foobar>();

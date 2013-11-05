@@ -36,6 +36,9 @@
     <AssemblyOriginatorKeyFile>..\Maestro.Core\Maestro.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.2.1\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="FluentAssertions">
       <HintPath>..\packages\FluentAssertions.2.0.1\lib\net40\FluentAssertions.dll</HintPath>
     </Reference>
@@ -99,6 +102,10 @@
     <ProjectReference Include="..\Maestro.Core\Maestro.Core.csproj">
       <Project>{e07cb006-2c92-4cc5-b6fb-053a4be849eb}</Project>
       <Name>Maestro.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Maestro.Interception.DynamicProxy\Maestro.Interception.DynamicProxy.csproj">
+      <Project>{f74c9100-d385-4573-b973-0b534e1fb976}</Project>
+      <Name>Maestro.Interception.DynamicProxy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

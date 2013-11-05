@@ -16,12 +16,12 @@ namespace Maestro.Tests
 			var namedGrandChild = new GrandChild();
 			var container = new Container(x =>
 			{
-				x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().OnCreate.Set(y => y.Tag, @default);
-				x.For<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().OnCreate.Set(y => y.Tag, name1);
-				x.For<ParentWithMultipleChildren>().Use<ParentWithMultipleChildren>().OnCreate.Set(y => y.Tag, @default);
-				x.For<ParentWithMultipleChildren>(name1).Use<ParentWithMultipleChildren>().OnCreate.Set(y => y.Tag, name1);
-				x.For<Child>().Use<Child>().OnCreate.Set(y => y.Tag, @default);
-				x.For<Child>(name2).Use<Child>().OnCreate.Set(y => y.Tag, name2);
+				x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().Set(y => y.Tag, @default);
+				x.For<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().Set(y => y.Tag, name1);
+				x.For<ParentWithMultipleChildren>().Use<ParentWithMultipleChildren>().Set(y => y.Tag, @default);
+				x.For<ParentWithMultipleChildren>(name1).Use<ParentWithMultipleChildren>().Set(y => y.Tag, name1);
+				x.For<Child>().Use<Child>().Set(y => y.Tag, @default);
+				x.For<Child>(name2).Use<Child>().Set(y => y.Tag, name2);
 				x.For<GrandChild>().Use(defaultGrandChild);
 				x.For<GrandChild>(name1).Use(namedGrandChild);
 			});
@@ -70,9 +70,9 @@ namespace Maestro.Tests
 			var grandChild1 = new GrandChild();
 			var container = new Container(x =>
 			{
-				x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().OnCreate.Set(y => y.Tag, grandChild);
-				x.For<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().OnCreate.Set(y => y.Tag, grandChild1);
-				x.For<ParentWithSingleChild>(name2).Use<ParentWithSingleChild>().OnCreate.Set(y => y.Tag, grandChild);
+				x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().Set(y => y.Tag, grandChild);
+				x.For<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().Set(y => y.Tag, grandChild1);
+				x.For<ParentWithSingleChild>(name2).Use<ParentWithSingleChild>().Set(y => y.Tag, grandChild);
 				x.For<GrandChild>().Use(grandChild);
 				x.For<GrandChild>(name1).Use(grandChild1);
 			});

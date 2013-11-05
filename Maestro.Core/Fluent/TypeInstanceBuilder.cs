@@ -11,19 +11,14 @@ namespace Maestro.Fluent
 			_pipelineEngine = pipelineEngine;
 		}
 
-		public IInterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>> OnCreate
-		{
-			get { return new InterceptExpression<TInstance, ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.AddOnCreateInterceptor); }
-		}
-
 		public ILifetimeSelector<ITypeInstanceBuilder<TInstance>> Lifetime
 		{
 			get { return new LifetimeSelector<ITypeInstanceBuilder<TInstance>>(this, _pipelineEngine.SetLifetime); }
 		}
 
-		public ITypeInstanceBuilder<TInstance> Intercept(IInterceptor interceptor)
+		public ITypeInstanceBuilder<TInstance> InterceptWith(IInterceptor interceptor)
 		{
-			_pipelineEngine.AddOnActivateInterceptor(interceptor);
+			_pipelineEngine.AddInterceptor(interceptor);
 			return this;
 		}
 	}

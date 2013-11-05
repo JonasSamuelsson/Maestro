@@ -1,85 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
+using Castle.DynamicProxy;
 using FluentAssertions;
-using Maestro.Interceptors;
 using Xunit;
+using IInterceptor = Maestro.Interceptors.IInterceptor;
 
 namespace Maestro.Tests.Interception
 {
 	public class intercept_instance
 	{
 		[Fact]
-		public void provided_OnCreate_interceptor_should_be_executed()
-		{
-			var interceptor = new Interceptor();
-
-			new Container(x => x.For<object>().Use<object>().OnCreate.Intercept(interceptor)).Get<object>();
-
-			interceptor.IsExecuted.Should().BeTrue();
-		}
-
-		[Fact]
-		public void provided_OnActivate_interceptor_should_be_executed()
-		{
-			var interceptor = new Interceptor();
-
-			new Container(x => x.For<object>().Use<object>().Intercept(interceptor)).Get<object>();
-
-			interceptor.IsExecuted.Should().BeTrue();
-		}
-
-		[Fact]
-		public void OnCreate_interceptors_should_be_executed_before_OnActivate_interceptors()
-		{
-			var list = new List<string>();
-
-			new Container(x => x.For<object>().Use<object>()
-				.OnCreate.Intercept(new Interceptor(() => list.Add("create")))
-				.Intercept(new Interceptor(() => list.Add("activate"))))
-				.Get<object>();
-
-			list.Should().ContainInOrder(new[] { "create", "activate" });
-		}
-
-		[Fact]
 		public void interceptors_should_be_executed_in_the_same_order_they_are_configured()
 		{
 			var list = new List<string>();
 
 			new Container(x => x.For<object>().Use<object>()
-				.OnCreate.Intercept(new Interceptor(() => list.Add("create1")))
-				.OnCreate.Intercept(new Interceptor(() => list.Add("create2")))
-				.Intercept(new Interceptor(() => list.Add("activate1")))
-				.Intercept(new Interceptor(() => list.Add("activate2"))))
+				.InterceptWith(new Interceptor(() => list.Add("create1")))
+				.InterceptWith(new Interceptor(() => list.Add("create2")))
+				.InterceptWith(new Interceptor(() => list.Add("activate1")))
+				.InterceptWith(new Interceptor(() => list.Add("activate2"))))
 			.Get<object>();
 
 			list.Should().ContainInOrder(new[] { "create1", "create2", "activate1", "activate2" });
 		}
 
 		[Fact]
-		public void OnCreate_insterceptors_should_not_be_executed_if_instance_is_cached()
+		public void insterceptors_should_not_be_executed_if_instance_is_cached()
 		{
 			var interceptor = new Interceptor();
 
 			new Container(x => x.For<object>().Use<object>()
-				.Intercept(interceptor)
+				.InterceptWith(interceptor)
 				.Lifetime.Singleton()).Get<object>();
 
 			interceptor.ExecuteCount.Should().Be(1);
 		}
 
 		[Fact]
-		public void OnActivate_interceptors_should_be_executed_even_when_instance_is_chached()
+		public void interceptors_should_not_be_executed_if_instance_is_chached()
 		{
 			var interceptor = new Interceptor();
 
 			var container = new Container(x => x.For<object>().Use<object>()
-				.Intercept(interceptor)
+				.InterceptWith(interceptor)
 				.Lifetime.Singleton());
+			
+			interceptor.ExecuteCount.Should().Be(0);
 			container.Get<object>();
+			interceptor.ExecuteCount.Should().Be(1);
 			container.Get<object>();
+			interceptor.ExecuteCount.Should().Be(1);
+		}
 
-			interceptor.ExecuteCount.Should().Be(2);
+		[Fact]
+		public void dynamic_proxy_interception()
+		{
+			var interceptor = new DynamicProxyInterceptor();
+			var container = new Container(x => x.For(typeof(ITarget))
+			                                    .Use(() => (object)new Target())
+															.InterceptWithProxy((o, pg) => pg.CreateInterfaceProxyWithTarget((ITarget)o, interceptor)));
+
+			container.Get<ITarget>().ToString();
+
+			interceptor.Executed.Should().BeTrue();
+		}
+
+		public interface ITarget
+		{
+			string ToString();
+		}
+
+		private class Target : ITarget { }
+
+		public class DynamicProxyInterceptor : Castle.DynamicProxy.IInterceptor
+		{
+			public void Intercept(IInvocation invocation)
+			{
+				Executed = true;
+				invocation.Proceed();
+			}
+
+			public bool Executed { get; private set; }
 		}
 
 		private class Interceptor : IInterceptor
@@ -93,11 +94,6 @@ namespace Maestro.Tests.Interception
 			}
 
 			public int ExecuteCount { get; private set; }
-
-			public bool IsExecuted
-			{
-				get { return ExecuteCount != 0; }
-			}
 
 			public IInterceptor Clone()
 			{

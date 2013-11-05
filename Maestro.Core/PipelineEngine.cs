@@ -8,17 +8,15 @@ namespace Maestro
 {
 	internal class PipelineEngine : IPipelineEngine
 	{
-		private readonly List<IInterceptor> _onActivateInterceptors;
-		private ILifetime _lifetime;
-		private readonly List<IInterceptor> _onCreateInterceptors;
 		private readonly IProvider _provider;
+		private readonly List<IInterceptor> _interceptors;
+		private ILifetime _lifetime;
 
 		public PipelineEngine(IProvider provider)
 		{
-			_onActivateInterceptors = new List<IInterceptor>();
-			_lifetime = TransientLifetime.Instance;
-			_onCreateInterceptors = new List<IInterceptor>();
 			_provider = provider;
+			_interceptors = new List<IInterceptor>();
+			_lifetime = TransientLifetime.Instance;
 		}
 
 		public bool CanGet(IContext context)
@@ -28,25 +26,16 @@ namespace Maestro
 
 		public object Get(IContext context)
 		{
-			var pipeline = new Pipeline(_onCreateInterceptors, _provider, context);
-			var instance = _lifetime.Execute(context, pipeline);
-			return _onActivateInterceptors.Count == 0
-				? instance
-				: _onActivateInterceptors.Aggregate(instance, (current, interceptor) => interceptor.Execute(current, context));
+			var pipeline = new Pipeline(_interceptors, _provider, context);
+			return _lifetime.Execute(context, pipeline);
 		}
 
 		public IPipelineEngine MakeGenericPipelineEngine(Type[] types)
 		{
 			var engine = new PipelineEngine(_provider.MakeGenericProvider(types));
-			engine._onCreateInterceptors.AddRange(_onCreateInterceptors.Select(x => x.Clone()));
+			engine._interceptors.AddRange(_interceptors.Select(x => x.Clone()));
 			engine._lifetime = _lifetime.Clone();
-			engine._onActivateInterceptors.AddRange(_onActivateInterceptors.Select(x => x.Clone()));
 			return engine;
-		}
-
-		public void AddOnCreateInterceptor(IInterceptor interceptor)
-		{
-			_onCreateInterceptors.Add(interceptor);
 		}
 
 		public void SetLifetime(ILifetime lifetime)
@@ -54,20 +43,18 @@ namespace Maestro
 			_lifetime = lifetime;
 		}
 
-		public void AddOnActivateInterceptor(IInterceptor interceptor)
+		public void AddInterceptor(IInterceptor interceptor)
 		{
-			_onActivateInterceptors.Add(interceptor);
+			_interceptors.Add(interceptor);
 		}
 
 		public void GetConfiguration(DiagnosticsBuilder builder)
 		{
 			using (builder.Category(_provider))
 			{
-				foreach (var interceptor in _onActivateInterceptors)
-					builder.Item("on activate : {0}", interceptor);
+				foreach (var interceptor in _interceptors)
+					builder.Item("interceptor : {0}", interceptor);
 				builder.Item("lifetime : {0}", _lifetime);
-				foreach (var interceptor in _onCreateInterceptors)
-					builder.Item("on create : {0}", interceptor);
 			}
 		}
 

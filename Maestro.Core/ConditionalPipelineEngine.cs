@@ -84,7 +84,7 @@ namespace Maestro
 			throw new NotSupportedException();
 		}
 
-		public void AddOnActivateInterceptor(IInterceptor interceptor)
+		public void AddInterceptor(IInterceptor interceptor)
 		{
 			throw new NotSupportedException();
 		}

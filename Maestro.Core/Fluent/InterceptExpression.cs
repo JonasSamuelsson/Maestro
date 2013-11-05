@@ -14,7 +14,7 @@ namespace Maestro.Fluent
 			_action = action;
 		}
 
-		public TParent Intercept(IInterceptor interceptor)
+		public TParent InterceptWith(IInterceptor interceptor)
 		{
 			_action(interceptor);
 			return _parent;

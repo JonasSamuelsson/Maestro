@@ -13,14 +13,13 @@ namespace Maestro.Fluent
 			_defaultSettings = defaultSettings;
 		}
 
-		public IConstantInstanceBuilder<TInstance> Use<TInstance>(TInstance instance) where TInstance : TPlugin
+		public void Use<TInstance>(TInstance instance) where TInstance : TPlugin
 		{
-			// ReSharper disable once CompareNonConstrainedGenericWithNull
+			 //ReSharper disable once CompareNonConstrainedGenericWithNull
 			if (instance == null) throw new ArgumentNullException("instance");
 			var provider = new ConstantInstanceProvider(instance);
 			var pipeline = new PipelineEngine(provider);
 			_registerPipeline(pipeline);
-			return new ConstantInstanceBuilder<TInstance>(pipeline);
 		}
 
 		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<TInstance> lambda) where TInstance : TPlugin
