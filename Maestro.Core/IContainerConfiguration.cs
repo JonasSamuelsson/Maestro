@@ -5,12 +5,12 @@ namespace Maestro
 {
 	public interface IContainerConfiguration
 	{
-		IProviderSelector<object> For(Type type);
-		IProviderSelector<object> For(Type type, string name);
-		IProviderSelector<TPlugin> For<TPlugin>();
-		IProviderSelector<TPlugin> For<TPlugin>(string name);
-		IProviderSelector<object> Add(Type type);
-		IProviderSelector<TPlugin> Add<TPlugin>();
+		IInstanceExpression<object> For(Type type);
+		IInstanceExpression<object> For(Type type, string name);
+		IInstanceExpression<TPlugin> For<TPlugin>();
+		IInstanceExpression<TPlugin> For<TPlugin>(string name);
+		IInstanceExpression<object> Add(Type type);
+		IInstanceExpression<TPlugin> Add<TPlugin>();
 		IConventionExpression Scan { get; }
 		IDefaultSettingsExpression Default { get; }
 	}

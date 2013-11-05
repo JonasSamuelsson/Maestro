@@ -14,42 +14,42 @@ namespace Maestro
 			_defaultSettings = defaultSettings;
 		}
 
-		public IProviderSelector<object> For(Type type)
+		public IInstanceExpression<object> For(Type type)
 		{
 			return Add<object>(type, Container.DefaultName);
 		}
 
-		public IProviderSelector<TPlugin> For<TPlugin>()
+		public IInstanceExpression<TPlugin> For<TPlugin>()
 		{
 			return Add<TPlugin>(typeof(TPlugin), Container.DefaultName);
 		}
 
-		public IProviderSelector<object> For(Type type, string name)
+		public IInstanceExpression<object> For(Type type, string name)
 		{
 			if (name == null) throw new ArgumentNullException("name");
 			return Add<object>(type, name);
 		}
 
-		public IProviderSelector<TPlugin> For<TPlugin>(string name)
+		public IInstanceExpression<TPlugin> For<TPlugin>(string name)
 		{
 			if (name == null) throw new ArgumentNullException("name");
 			return Add<TPlugin>(typeof(TPlugin), name);
 		}
 
-		public IProviderSelector<object> Add(Type type)
+		public IInstanceExpression<object> Add(Type type)
 		{
 			return Add<object>(type, Guid.NewGuid().ToString());
 		}
 
-		public IProviderSelector<TPlugin> Add<TPlugin>()
+		public IInstanceExpression<TPlugin> Add<TPlugin>()
 		{
 			return Add<TPlugin>(typeof(TPlugin), Guid.NewGuid().ToString());
 		}
 
-		private IProviderSelector<T> Add<T>(Type type, string name)
+		private IInstanceExpression<T> Add<T>(Type type, string name)
 		{
 			var plugin = _plugins.GetOrAdd(type, x => new Plugin());
-			return new ProviderSelector<T>(x => plugin.Add(name, x), _defaultSettings);
+			return new InstanceExpression<T>(x => plugin.Add(name, x), _defaultSettings);
 		}
 
 		public IConventionExpression Scan

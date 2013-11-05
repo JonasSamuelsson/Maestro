@@ -2,11 +2,11 @@
 
 namespace Maestro.Interceptors
 {
-	internal class LambdaInterceptor<TInstance> : IInterceptor
+	internal class LambdaInterceptor<TIn, TOut> : IInterceptor
 	{
-		private readonly Func<TInstance, IContext, TInstance> _func;
+		private readonly Func<TIn, IContext, TOut> _func;
 
-		public LambdaInterceptor(Func<TInstance, IContext, TInstance> func)
+		public LambdaInterceptor(Func<TIn, IContext, TOut> func)
 		{
 			_func = func;
 		}
@@ -18,7 +18,7 @@ namespace Maestro.Interceptors
 
 		public object Execute(object instance, IContext context)
 		{
-			return _func((TInstance)instance, context);
+			return _func((TIn)instance, context);
 		}
 
 		public override string ToString()

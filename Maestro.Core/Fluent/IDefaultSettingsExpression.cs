@@ -2,7 +2,7 @@
 {
 	public interface IDefaultSettingsExpression
 	{
-		ILifetimeSelector<IDefaultSettingsExpression> Lifetime { get; }
+		ILifetimeExpression<IDefaultSettingsExpression> Lifetime { get; }
 		IDefaultFilterExpression Filters { get; }
 	}
 }

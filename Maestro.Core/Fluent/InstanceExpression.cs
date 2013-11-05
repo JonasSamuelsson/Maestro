@@ -2,12 +2,12 @@
 
 namespace Maestro.Fluent
 {
-	internal class ProviderSelector<TPlugin> : IProviderSelector<TPlugin>
+	internal class InstanceExpression<TPlugin> : IInstanceExpression<TPlugin>
 	{
 		private readonly Action<IPipelineEngine> _registerPipeline;
 		private readonly DefaultSettings _defaultSettings;
 
-		public ProviderSelector(Action<IPipelineEngine> registerPipeline, DefaultSettings defaultSettings)
+		public InstanceExpression(Action<IPipelineEngine> registerPipeline, DefaultSettings defaultSettings)
 		{
 			_registerPipeline = registerPipeline;
 			_defaultSettings = defaultSettings;
@@ -22,40 +22,40 @@ namespace Maestro.Fluent
 			_registerPipeline(pipeline);
 		}
 
-		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<TInstance> lambda) where TInstance : TPlugin
+		public IInstanceBuilder<TInstance> Use<TInstance>(Func<TInstance> lambda) where TInstance : TPlugin
 		{
 			if (lambda == null) throw new ArgumentNullException();
 			return Use(_ => lambda());
 		}
 
-		public ILambdaInstanceBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> lambda) where TInstance : TPlugin
+		public IInstanceBuilder<TInstance> Use<TInstance>(Func<IContext, TInstance> lambda) where TInstance : TPlugin
 		{
 			if (lambda == null) throw new ArgumentNullException();
 			var provider = new LambdaInstanceProvider(context => lambda(context));
 			var pipeline = new PipelineEngine(provider);
 			pipeline.SetLifetime(_defaultSettings.GetLifetime());
 			_registerPipeline(pipeline);
-			return new LambdaInstanceBuilder<TInstance>(pipeline);
+			return new InstanceBuilder<TInstance>(pipeline);
 		}
 
-		public ITypeInstanceBuilder<TInstance> Use<TInstance>() where TInstance : TPlugin
+		public IInstanceBuilder<TInstance> Use<TInstance>() where TInstance : TPlugin
 		{
 			return UseType<TInstance>(typeof(TInstance));
 		}
 
-		public ITypeInstanceBuilder<TPlugin> Use(Type type)
+		public IInstanceBuilder<TPlugin> Use(Type type)
 		{
 			if (type == null) throw new ArgumentNullException();
 			return UseType<TPlugin>(type);
 		}
 
-		private ITypeInstanceBuilder<T> UseType<T>(Type type)
+		private IInstanceBuilder<T> UseType<T>(Type type)
 		{
 			var provider = new TypeInstanceProvider(type);
 			var pipeline = new PipelineEngine(provider);
 			pipeline.SetLifetime(_defaultSettings.GetLifetime());
 			_registerPipeline(pipeline);
-			return new TypeInstanceBuilder<T>(pipeline);
+			return new InstanceBuilder<T>(pipeline);
 		}
 
 		public void UseConditional(Action<IConditionalInstanceBuilder<TPlugin>> action)

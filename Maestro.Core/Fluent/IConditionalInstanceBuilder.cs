@@ -4,7 +4,7 @@ namespace Maestro.Fluent
 {
 	public interface IConditionalInstanceBuilder<TPlugin>
 	{
-		IProviderSelector<TPlugin> If(Func<IContext, bool> predicate);
-		IProviderSelector<TPlugin> Else { get; }
+		IInstanceExpression<TPlugin> If(Func<IContext, bool> predicate);
+		IInstanceExpression<TPlugin> Else { get; }
 	}
 }

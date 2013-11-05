@@ -13,15 +13,15 @@ namespace Maestro.Fluent
 			_conditionalPipelineEngine = new ConditionalPipelineEngine();
 		}
 
-		public IProviderSelector<TPlugin> If(Func<IContext, bool> predicate)
+		public IInstanceExpression<TPlugin> If(Func<IContext, bool> predicate)
 		{
 			if (predicate == null) throw new ArgumentNullException();
-			return new ProviderSelector<TPlugin>(x => _conditionalPipelineEngine.Add(predicate, x), _defaultSettings);
+			return new InstanceExpression<TPlugin>(x => _conditionalPipelineEngine.Add(predicate, x), _defaultSettings);
 		}
 
-		public IProviderSelector<TPlugin> Else
+		public IInstanceExpression<TPlugin> Else
 		{
-			get { return new ProviderSelector<TPlugin>(x => _conditionalPipelineEngine.Add(x), _defaultSettings); }
+			get { return new InstanceExpression<TPlugin>(x => _conditionalPipelineEngine.Add(x), _defaultSettings); }
 		}
 
 		internal IPipelineEngine GetPipeline(Action<IConditionalInstanceBuilder<TPlugin>> action)

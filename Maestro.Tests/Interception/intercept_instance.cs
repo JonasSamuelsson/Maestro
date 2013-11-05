@@ -56,8 +56,8 @@ namespace Maestro.Tests.Interception
 		public void dynamic_proxy_interception()
 		{
 			var interceptor = new DynamicProxyInterceptor();
-			var container = new Container(x => x.For(typeof(ITarget))
-			                                    .Use(() => (object)new Target())
+			var container = new Container(x => x.For<ITarget>()
+			                                    .Use<Target>()
 															.InterceptWithProxy((o, pg) => pg.CreateInterfaceProxyWithTarget((ITarget)o, interceptor)));
 
 			container.Get<ITarget>().ToString();
