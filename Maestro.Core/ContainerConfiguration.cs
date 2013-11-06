@@ -26,13 +26,13 @@ namespace Maestro
 
 		public IInstanceExpression<object> For(Type type, string name)
 		{
-			if (name == null) throw new ArgumentNullException("name");
+			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name");
 			return Add<object>(type, name);
 		}
 
 		public IInstanceExpression<TPlugin> For<TPlugin>(string name)
 		{
-			if (name == null) throw new ArgumentNullException("name");
+			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name");
 			return Add<TPlugin>(typeof(TPlugin), name);
 		}
 
