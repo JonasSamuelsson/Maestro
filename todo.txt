@@ -1,15 +1,13 @@
-Scoping
-	Custom
-	Transient
-	Singleton
-	Context
-Interception
-	Custom
-	Lambda
-	Property injection (via string/expression)
-		SetProperty
-		TrySetProperty
-CommonServiceLocator
-Performance ?
-	TypeInstanceProvider
-	PropertyInjection
+config api
+	intermediate objects > xyzExpression
+	the rest > xyzBuilder
+	
+xyzProvider > xyzFactory
+	Get > GetInstance
+PipelineEngine > InstanceBuilder
+InterceptorPipeline
+	Add
+	Execute
+Pipeline (exposed in ILifetime)
+	IInstanceFactory
+	IInterceptorPipeline
