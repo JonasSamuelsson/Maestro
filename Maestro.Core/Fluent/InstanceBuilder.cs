@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Maestro.Interceptors;
+using System;
 using System.Linq.Expressions;
-using Maestro.Interceptors;
 
 namespace Maestro.Fluent
 {
@@ -35,17 +35,19 @@ namespace Maestro.Fluent
 
 		public IInstanceBuilder<TInstance> Execute(Action<TInstance, IContext> action)
 		{
-			return InterceptWith((i, c) =>
-										{
-											action(i, c);
-											return i;
-										});
+			return InterceptWith(new ActionInterceptor<TInstance>(action));
 		}
 
 		public IInstanceBuilder<TInstance> InterceptWith(IInterceptor interceptor)
 		{
 			_pipelineEngine.AddInterceptor(interceptor);
 			return this;
+		}
+
+		public IInstanceBuilder<TOut> InterceptWith<TOut>(IInterceptor<TInstance, TOut> interceptor)
+		{
+			_pipelineEngine.AddInterceptor(interceptor);
+			return new InstanceBuilder<TOut>(_pipelineEngine);
 		}
 
 		public IInstanceBuilder<TOut> InterceptWith<TOut>(Func<TInstance, TOut> lambda)
@@ -55,8 +57,7 @@ namespace Maestro.Fluent
 
 		public IInstanceBuilder<TOut> InterceptWith<TOut>(Func<TInstance, IContext, TOut> lambda)
 		{
-			_pipelineEngine.AddInterceptor(new LambdaInterceptor<TInstance, TOut>(lambda));
-			return new InstanceBuilder<TOut>(_pipelineEngine);
+			return InterceptWith(new LambdaInterceptor<TInstance, TOut>(lambda));
 		}
 
 		public IInstanceBuilder<TInstance> Set(string property)
@@ -81,24 +82,24 @@ namespace Maestro.Fluent
 
 		public IInstanceBuilder<TInstance> Set<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
-			return Set(GetName(property));
+			return Set(property.GetName());
 		}
 
 		public IInstanceBuilder<TInstance> Set<TValue>(Expression<Func<TInstance, TValue>> property, TValue value)
 		{
-			var propertyName = GetName(property);
+			var propertyName = property.GetName();
 			return InterceptWith(new SetPropertyInterceptor(propertyName, _ => value));
 		}
 
 		public IInstanceBuilder<TInstance> Set<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory)
 		{
-			var propertyName = GetName(property);
+			var propertyName = property.GetName();
 			return InterceptWith(new SetPropertyInterceptor(propertyName, _ => factory()));
 		}
 
 		public IInstanceBuilder<TInstance> Set<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory)
 		{
-			var propertyName = GetName(property);
+			var propertyName = property.GetName();
 			return InterceptWith(new SetPropertyInterceptor(propertyName, ctx => factory(ctx)));
 		}
 
@@ -109,12 +110,7 @@ namespace Maestro.Fluent
 
 		public IInstanceBuilder<TInstance> TrySet<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
-			return TrySet(GetName(property));
-		}
-
-		private static string GetName<TValue>(Expression<Func<TInstance, TValue>> property)
-		{
-			return ((MemberExpression)property.Body).Member.Name;
+			return TrySet(property.GetName());
 		}
 	}
 }

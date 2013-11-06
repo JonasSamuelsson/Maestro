@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Maestro.Interceptors;
+using System;
 using System.Linq.Expressions;
-using Maestro.Interceptors;
 
 namespace Maestro.Fluent
 {
@@ -13,6 +13,7 @@ namespace Maestro.Fluent
 		IInstanceBuilder<TInstance> Execute(Action<TInstance> action);
 		IInstanceBuilder<TInstance> Execute(Action<TInstance, IContext> action);
 		IInstanceBuilder<TInstance> InterceptWith(IInterceptor interceptor);
+		IInstanceBuilder<TOut> InterceptWith<TOut>(IInterceptor<TInstance, TOut> interceptor);
 		IInstanceBuilder<TOut> InterceptWith<TOut>(Func<TInstance, TOut> lambda);
 		IInstanceBuilder<TOut> InterceptWith<TOut>(Func<TInstance, IContext, TOut> lambda);
 		IInstanceBuilder<TInstance> Set(string property);

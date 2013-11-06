@@ -131,5 +131,10 @@ namespace Maestro
 
 			return null;
 		}
+
+		public static string GetName<T, TValue>(this Expression<Func<T, TValue>> property)
+		{
+			return ((MemberExpression)property.Body).Member.Name;
+		}
 	}
 }

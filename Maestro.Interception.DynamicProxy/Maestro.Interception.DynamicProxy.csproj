@@ -49,7 +49,9 @@
     </Compile>
     <Compile Include="Input.cs" />
     <Compile Include="InstanceBuilderExtensions.cs" />
+    <Compile Include="InterceptExpressionExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ProxyGeneratorFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Maestro.Core\Maestro.snk">

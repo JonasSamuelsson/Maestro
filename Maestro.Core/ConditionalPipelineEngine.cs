@@ -43,7 +43,7 @@ namespace Maestro
 		{
 			var engine = new ConditionalPipelineEngine();
 			foreach (var item in _conditionalPipelineEngines)
-				engine.Add(item.Condition, item.PipelineEngine.MakeGenericPipelineEngine(types));
+				engine.Add(item.IsMatch, item.PipelineEngine.MakeGenericPipelineEngine(types));
 			if (_defaultPipelineEngine != null)
 				engine.Add(_defaultPipelineEngine.MakeGenericPipelineEngine(types));
 			return engine;
@@ -51,7 +51,7 @@ namespace Maestro
 
 		private bool TryGetPipeline(IContext context, out IPipelineEngine pipelineEngine)
 		{
-			foreach (var conditionalPipelineEngine in _conditionalPipelineEngines.Where(x => x.Condition(context)))
+			foreach (var conditionalPipelineEngine in _conditionalPipelineEngines.Where(x => x.IsMatch(context)))
 			{
 				pipelineEngine = conditionalPipelineEngine.PipelineEngine;
 				return true;
@@ -63,20 +63,15 @@ namespace Maestro
 
 		private struct Item
 		{
-			public Item(Func<IContext, bool> condition, IPipelineEngine pipelineEngine)
+			public Item(Func<IContext, bool> predicate, IPipelineEngine pipelineEngine)
 				: this()
 			{
-				Condition = condition;
+				IsMatch = predicate;
 				PipelineEngine = pipelineEngine;
 			}
 
-			public Func<IContext, bool> Condition { get; private set; }
+			public Func<IContext, bool> IsMatch { get; private set; }
 			public IPipelineEngine PipelineEngine { get; private set; }
-		}
-
-		public void AddOnCreateInterceptor(IInterceptor interceptor)
-		{
-			throw new NotSupportedException();
 		}
 
 		public void SetLifetime(ILifetime lifetime)
