@@ -3,7 +3,7 @@ using System;
 
 namespace Maestro
 {
-	internal static class ProxyGeneratorFactory
+	public static class ProxyGeneratorFactory
 	{
 		private static readonly Lazy<ProxyGenerator> ProxyGenerator = new Lazy<ProxyGenerator>(() => new ProxyGenerator());
 
