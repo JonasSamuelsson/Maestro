@@ -13,6 +13,5 @@ namespace Maestro
 		IInstanceExpression<TPlugin> Add<TPlugin>();
 		IConventionExpression Scan { get; }
 		IDefaultSettingsExpression Default { get; }
-		IInterceptExpression<T> InstancesWhere<T>(Func<T, IContext, bool> predicate = null);
 	}
 }

@@ -61,10 +61,5 @@ namespace Maestro
 		{
 			get { return _defaultSettings; }
 		}
-
-		public IInterceptExpression<T> InstancesWhere<T>(Func<T, IContext, bool> predicate = null)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }
