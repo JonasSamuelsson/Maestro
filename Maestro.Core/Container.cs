@@ -8,16 +8,16 @@ namespace Maestro
 	public class Container : IContainer, IDependencyResolver
 	{
 		private static IContainer _defaultContainer;
-		private readonly IThreadSafeDictionary<Type, IPlugin> _plugins;
-		private readonly IThreadSafeDictionary<Type, IPipelineEngine> _fallbackPipelines;
+		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
+		private readonly ThreadSafeDictionary<Type, IInstanceBuilder> _fallbackPipelines;
 		private readonly DefaultSettings _defaultSettings;
 		private long _requestId;
 		private int _configId;
 
 		public Container()
 		{
-			_plugins = new ThreadSafeDictionary<Type, IPlugin>();
-			_fallbackPipelines = new ThreadSafeDictionary<Type, IPipelineEngine>();
+			_plugins = new ThreadSafeDictionary<Type, Plugin>();
+			_fallbackPipelines = new ThreadSafeDictionary<Type, IInstanceBuilder>();
 			_defaultSettings = new DefaultSettings();
 		}
 
@@ -50,13 +50,13 @@ namespace Maestro
 				using (var context = new Context(_configId, requestId, name, this))
 				using (((TypeStack)context.TypeStack).Push(type))
 				{
-					IPipelineEngine pipelineEngine;
-					if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
-						return pipelineEngine.Get(context);
+					IInstanceBuilder instanceBuilder;
+					if (TryGetPipeline(_plugins, type, context, out instanceBuilder))
+						return instanceBuilder.Get(context);
 
-					IPipelineEngine fallbackPipelineEngine;
-					if (TryGetFallbackPipeline(_fallbackPipelines, type, out fallbackPipelineEngine))
-						return fallbackPipelineEngine.Get(context);
+					IInstanceBuilder fallbackInstanceBuilder;
+					if (TryGetFallbackPipeline(_fallbackPipelines, type, out fallbackInstanceBuilder))
+						return fallbackInstanceBuilder.Get(context);
 				}
 
 				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
@@ -71,14 +71,14 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetFallbackPipeline(IThreadSafeDictionary<Type, IPipelineEngine> fallbackPipelines, Type type, out IPipelineEngine pipelineEngine)
+		private static bool TryGetFallbackPipeline(ThreadSafeDictionary<Type, IInstanceBuilder> fallbackPipelines, Type type, out IInstanceBuilder instanceBuilder)
 		{
-			pipelineEngine = null;
+			instanceBuilder = null;
 
 			if (!type.IsConcreteClosedClass() || type.IsArray)
 				return false;
 
-			pipelineEngine = fallbackPipelines.GetOrAdd(type, x => new PipelineEngine(new TypeInstanceProvider(x)));
+			instanceBuilder = fallbackPipelines.GetOrAdd(type, x => new InstanceBuilder(new TypeInstanceFactory(x)));
 			return true;
 		}
 
@@ -91,7 +91,7 @@ namespace Maestro
 		{
 			try
 			{
-				IPlugin plugin;
+				Plugin plugin;
 				if (!_plugins.TryGet(type, out plugin))
 					return Enumerable.Empty<object>();
 
@@ -140,14 +140,14 @@ namespace Maestro
 
 		bool IDependencyResolver.CanGet(Type type, IContext context)
 		{
-			IPipelineEngine pipelineEngine;
-			if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
+			IInstanceBuilder instanceBuilder;
+			if (TryGetPipeline(_plugins, type, context, out instanceBuilder))
 				using (((TypeStack)context.TypeStack).Push(type))
-					return pipelineEngine.CanGet(context);
+					return instanceBuilder.CanGet(context);
 
-			if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
+			if (TryGetFallbackPipeline(_fallbackPipelines, type, out instanceBuilder))
 				using (((TypeStack)context.TypeStack).Push(type))
-					return pipelineEngine.CanGet(context);
+					return instanceBuilder.CanGet(context);
 
 			return false;
 		}
@@ -156,14 +156,14 @@ namespace Maestro
 		{
 			try
 			{
-				IPipelineEngine pipelineEngine;
-				if (TryGetPipeline(_plugins, type, context, out pipelineEngine))
+				IInstanceBuilder instanceBuilder;
+				if (TryGetPipeline(_plugins, type, context, out instanceBuilder))
 					using (((TypeStack)context.TypeStack).Push(type))
-						return pipelineEngine.Get(context);
+						return instanceBuilder.Get(context);
 
-				if (TryGetFallbackPipeline(_fallbackPipelines, type, out pipelineEngine))
+				if (TryGetFallbackPipeline(_fallbackPipelines, type, out instanceBuilder))
 					using (((TypeStack)context.TypeStack).Push(type))
-						return pipelineEngine.Get(context);
+						return instanceBuilder.Get(context);
 
 				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
 			}
@@ -177,33 +177,33 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetPipeline(IThreadSafeDictionary<Type, IPlugin> plugins, Type type, IContext context,
-			out IPipelineEngine pipelineEngine)
+		private static bool TryGetPipeline(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context,
+			out IInstanceBuilder instanceBuilder)
 		{
-			pipelineEngine = null;
+			instanceBuilder = null;
 
-			IPlugin plugin;
+			Plugin plugin;
 			if (!plugins.TryGet(type, out plugin))
-				return type.IsGenericType && TryGetGenericPipeline(plugins, type, context, out pipelineEngine);
+				return type.IsGenericType && TryGetGenericPipeline(plugins, type, context, out instanceBuilder);
 
-			if (plugin.TryGet(context.Name, out pipelineEngine))
+			if (plugin.TryGet(context.Name, out instanceBuilder))
 				return true;
 
-			if (context.Name != DefaultName && plugin.TryGet(DefaultName, out pipelineEngine))
+			if (context.Name != DefaultName && plugin.TryGet(DefaultName, out instanceBuilder))
 				return true;
 
 			return false;
 		}
 
-		private static bool TryGetGenericPipeline(IThreadSafeDictionary<Type, IPlugin> plugins, Type type, IContext context, out IPipelineEngine pipelineEngine)
+		private static bool TryGetGenericPipeline(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context, out IInstanceBuilder instanceBuilder)
 		{
-			pipelineEngine = null;
+			instanceBuilder = null;
 
 			lock (plugins)
 			{
-				IPlugin plugin;
+				Plugin plugin;
 				if (plugins.TryGet(type, out plugin))
-					return TryGetPipeline(plugins, type, context, out pipelineEngine);
+					return TryGetPipeline(plugins, type, context, out instanceBuilder);
 
 				var typeDefinition = type.GetGenericTypeDefinition();
 				if (!plugins.TryGet(typeDefinition, out plugin))
@@ -216,14 +216,14 @@ namespace Maestro
 					genericPlugin.Add(name, plugin.Get(name).MakeGenericPipelineEngine(genericArguments));
 			}
 
-			return TryGetPipeline(plugins, type, context, out pipelineEngine);
+			return TryGetPipeline(plugins, type, context, out instanceBuilder);
 		}
 
 		IEnumerable<object> IDependencyResolver.GetAll(Type type, IContext context)
 		{
 			try
 			{
-				IPlugin plugin;
+				Plugin plugin;
 				if (!_plugins.TryGet(type, out plugin))
 					return Enumerable.Empty<object>();
 

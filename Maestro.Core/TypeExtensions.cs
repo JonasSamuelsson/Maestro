@@ -6,7 +6,7 @@ namespace Maestro
 {
 	internal static class TypeExtensions
 	{
-		internal static IEnumerable<Type> GetClasses(this Type @class)
+		private static IEnumerable<Type> GetClasses(this Type @class)
 		{
 			if (!@class.IsClass)
 				throw new InvalidOperationException();
@@ -73,6 +73,7 @@ namespace Maestro
 			var typeDefinitions =
 				from t in basetype.IsClass ? type.GetClasses() : type.GetInterfaces()
 				where t.IsGenericType
+				// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 				let tArgs = t.GetGenericArguments().Where(x => x.FullName == null).Distinct().ToArray()
 				where args.Length == tArgs.Length
 				select t.GetGenericTypeDefinition();

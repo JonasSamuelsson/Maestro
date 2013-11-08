@@ -5,51 +5,51 @@ namespace Maestro
 {
 	internal class ContainerConfiguration : IContainerConfiguration
 	{
-		private readonly IThreadSafeDictionary<Type, IPlugin> _plugins;
+		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
 		private readonly DefaultSettings _defaultSettings;
 
-		public ContainerConfiguration(IThreadSafeDictionary<Type, IPlugin> plugins, DefaultSettings defaultSettings)
+		public ContainerConfiguration(ThreadSafeDictionary<Type, Plugin> plugins, DefaultSettings defaultSettings)
 		{
 			_plugins = plugins;
 			_defaultSettings = defaultSettings;
 		}
 
-		public IInstanceExpression<object> For(Type type)
+		public IInstanceFactoryExpression<object> For(Type type)
 		{
 			return Add<object>(type, Container.DefaultName);
 		}
 
-		public IInstanceExpression<TPlugin> For<TPlugin>()
+		public IInstanceFactoryExpression<TPlugin> For<TPlugin>()
 		{
 			return Add<TPlugin>(typeof(TPlugin), Container.DefaultName);
 		}
 
-		public IInstanceExpression<object> For(Type type, string name)
+		public IInstanceFactoryExpression<object> For(Type type, string name)
 		{
 			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name");
 			return Add<object>(type, name);
 		}
 
-		public IInstanceExpression<TPlugin> For<TPlugin>(string name)
+		public IInstanceFactoryExpression<TPlugin> For<TPlugin>(string name)
 		{
 			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name");
 			return Add<TPlugin>(typeof(TPlugin), name);
 		}
 
-		public IInstanceExpression<object> Add(Type type)
+		public IInstanceFactoryExpression<object> Add(Type type)
 		{
 			return Add<object>(type, Guid.NewGuid().ToString());
 		}
 
-		public IInstanceExpression<TPlugin> Add<TPlugin>()
+		public IInstanceFactoryExpression<TPlugin> Add<TPlugin>()
 		{
 			return Add<TPlugin>(typeof(TPlugin), Guid.NewGuid().ToString());
 		}
 
-		private IInstanceExpression<T> Add<T>(Type type, string name)
+		private IInstanceFactoryExpression<T> Add<T>(Type type, string name)
 		{
 			var plugin = _plugins.GetOrAdd(type, x => new Plugin());
-			return new InstanceExpression<T>(x => plugin.Add(name, x), _defaultSettings);
+			return new InstanceFactoryExpression<T>(x => plugin.Add(name, x), _defaultSettings);
 		}
 
 		public IConventionExpression Scan

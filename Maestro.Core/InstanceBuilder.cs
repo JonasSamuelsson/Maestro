@@ -6,33 +6,33 @@ using System.Linq;
 
 namespace Maestro
 {
-	internal class PipelineEngine : IPipelineEngine
+	internal class InstanceBuilder : IInstanceBuilder
 	{
-		private readonly IProvider _provider;
+		private readonly IInstanceFactory _instanceFactory;
 		private readonly List<IInterceptor> _interceptors;
 		private ILifetime _lifetime;
 
-		public PipelineEngine(IProvider provider)
+		public InstanceBuilder(IInstanceFactory instanceFactory)
 		{
-			_provider = provider;
+			_instanceFactory = instanceFactory;
 			_interceptors = new List<IInterceptor>();
 			_lifetime = TransientLifetime.Instance;
 		}
 
 		public bool CanGet(IContext context)
 		{
-			return _provider.CanGet(context);
+			return _instanceFactory.CanGet(context);
 		}
 
 		public object Get(IContext context)
 		{
-			var pipeline = new Pipeline(_interceptors, _provider, context);
+			var pipeline = new Pipeline(_interceptors, _instanceFactory, context);
 			return _lifetime.Execute(context, pipeline);
 		}
 
-		public IPipelineEngine MakeGenericPipelineEngine(Type[] types)
+		public IInstanceBuilder MakeGenericPipelineEngine(Type[] types)
 		{
-			var engine = new PipelineEngine(_provider.MakeGenericProvider(types));
+			var engine = new InstanceBuilder(_instanceFactory.MakeGenericInstanceFactory(types));
 			engine._interceptors.AddRange(_interceptors.Select(x => x.Clone()));
 			engine._lifetime = _lifetime.Clone();
 			return engine;
@@ -50,7 +50,7 @@ namespace Maestro
 
 		public void GetConfiguration(DiagnosticsBuilder builder)
 		{
-			using (builder.Category(_provider))
+			using (builder.Category(_instanceFactory))
 			{
 				foreach (var interceptor in _interceptors)
 					builder.Item("interceptor : {0}", interceptor);
@@ -61,19 +61,19 @@ namespace Maestro
 		private class Pipeline : IPipeline
 		{
 			private readonly List<IInterceptor> _interceptors;
-			private readonly IProvider _provider;
+			private readonly IInstanceFactory _instanceFactory;
 			private readonly IContext _context;
 
-			public Pipeline(List<IInterceptor> interceptors, IProvider provider, IContext context)
+			public Pipeline(List<IInterceptor> interceptors, IInstanceFactory instanceFactory, IContext context)
 			{
 				_interceptors = interceptors;
-				_provider = provider;
+				_instanceFactory = instanceFactory;
 				_context = context;
 			}
 
 			public object Execute()
 			{
-				var instance = _provider.Get(_context);
+				var instance = _instanceFactory.Get(_context);
 				return _interceptors.Count == 0
 					? instance
 					: _interceptors.Aggregate(instance, (current, interceptor) => interceptor.Execute(current, _context));

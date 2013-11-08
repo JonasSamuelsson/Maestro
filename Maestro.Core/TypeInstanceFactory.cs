@@ -2,13 +2,13 @@
 
 namespace Maestro
 {
-	internal class TypeInstanceProvider : IProvider
+	internal class TypeInstanceFactory : IInstanceFactory
 	{
 		private readonly Type _type;
 		private int _configId;
 		private Func<IContext, object> _instantiator;
 
-		public TypeInstanceProvider(Type type)
+		public TypeInstanceFactory(Type type)
 		{
 			_type = type;
 			_configId = Int32.MinValue;
@@ -45,10 +45,10 @@ namespace Maestro
 			return instantiator.Invoke(context);
 		}
 
-		public IProvider MakeGenericProvider(Type[] types)
+		public IInstanceFactory MakeGenericInstanceFactory(Type[] types)
 		{
 			var genericType = _type.MakeGenericType(types);
-			return new TypeInstanceProvider(genericType);
+			return new TypeInstanceFactory(genericType);
 		}
 
 		public override string ToString()

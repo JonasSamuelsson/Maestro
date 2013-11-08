@@ -2,23 +2,23 @@
 
 namespace Maestro
 {
-	internal class Plugin : IPlugin
+	internal class Plugin
 	{
-		private readonly IThreadSafeDictionary<string, IPipelineEngine> _dictionary = new ThreadSafeDictionary<string, IPipelineEngine>();
+		private readonly ThreadSafeDictionary<string, IInstanceBuilder> _dictionary = new ThreadSafeDictionary<string, IInstanceBuilder>();
 
-		public void Add(string name, IPipelineEngine pipelineEngine)
+		public void Add(string name, IInstanceBuilder instanceBuilder)
 		{
-			_dictionary.Add(name, pipelineEngine);
+			_dictionary.Add(name, instanceBuilder);
 		}
 
-		public IPipelineEngine Get(string name)
+		public IInstanceBuilder Get(string name)
 		{
 			return _dictionary.Get(name);
 		}
 
-		public bool TryGet(string name, out IPipelineEngine pipelineEngine)
+		public bool TryGet(string name, out IInstanceBuilder instanceBuilder)
 		{
-			return _dictionary.TryGet(name, out pipelineEngine);
+			return _dictionary.TryGet(name, out instanceBuilder);
 		}
 
 		public IEnumerable<string> GetNames()

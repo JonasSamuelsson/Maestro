@@ -54,8 +54,8 @@ namespace Maestro.Tests
 
 			var foos = container.GetAll<Foo>().ToList();
 
-			foos.Should().Contain(x => x.Object == defaultDependency);
-			foos.Should().Contain(x => x.Object == namedDependency);
+			foos.Should().Contain(x => (string)x.Object == defaultDependency);
+			foos.Should().Contain(x => (string)x.Object == namedDependency);
 		}
 
 		private class Foo

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Maestro
 {
-	class ThreadSafeDictionary<TKey, TValue> : IThreadSafeDictionary<TKey, TValue>
+	class ThreadSafeDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 	{
 		private Dictionary<TKey, TValue> _dictionary = new Dictionary<TKey, TValue>();
 

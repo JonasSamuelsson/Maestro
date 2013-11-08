@@ -2,10 +2,10 @@
 
 namespace Maestro
 {
-	internal interface IProvider
+	internal interface IInstanceFactory
 	{
 		bool CanGet(IContext context);
 		object Get(IContext context);
-		IProvider MakeGenericProvider(Type[] types);
+		IInstanceFactory MakeGenericInstanceFactory(Type[] types);
 	}
 }

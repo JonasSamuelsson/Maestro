@@ -50,31 +50,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
-    <Compile Include="ConditionalPipelineEngine.cs" />
+    <Compile Include="ConditionalInstanceBuilder.cs" />
     <Compile Include="DiagnosticsBuilder.cs" />
     <Compile Include="Conventions\ConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />
-    <Compile Include="ConditionalInstanceProvider.cs" />
-    <Compile Include="ConstantInstanceProvider.cs" />
+    <Compile Include="ConditionalInstanceFactory.cs" />
+    <Compile Include="ConstantInstanceFactory.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="ContainerConfiguration.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Conventions\DefaultImplementationConvention.cs" />
     <Compile Include="Conventions\LambdaFilter.cs" />
-    <Compile Include="DefaultFilterExpression.cs" />
+    <Compile Include="Fluent\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />
-    <Compile Include="Fluent\ConditionalInstanceBuilder.cs" />
+    <Compile Include="Fluent\ConditionalInstanceBuilderExpression.cs" />
     <Compile Include="Fluent\ConventionExpression.cs" />
     <Compile Include="Fluent\IConventionExpression.cs" />
     <Compile Include="Fluent\IDefaultFilterExpression.cs" />
     <Compile Include="Fluent\IDefaultSettingsExpression.cs" />
-    <Compile Include="Fluent\IInstanceBuilder.cs" />
+    <Compile Include="Fluent\IInstanceBuilderExpression.cs" />
     <Compile Include="Fluent\ILifetimeExpression.cs" />
-    <Compile Include="Fluent\InstanceBuilder.cs" />
-    <Compile Include="Fluent\IConditionalInstanceBuilder.cs" />
-    <Compile Include="Fluent\IInstanceExpression.cs" />
+    <Compile Include="Fluent\InstanceBuilderExpression.cs" />
+    <Compile Include="Fluent\IConditionalInstanceBuilderExpression.cs" />
+    <Compile Include="Fluent\IInstanceFactoryExpression.cs" />
     <Compile Include="Fluent\LifetimeExpression.cs" />
-    <Compile Include="Fluent\InstanceExpression.cs" />
+    <Compile Include="Fluent\InstanceFactoryExpression.cs" />
     <Compile Include="Conventions\IConventionFilter.cs" />
     <Compile Include="Conventions\IConvention.cs" />
     <Compile Include="Interceptors\ActionInterceptor.cs" />
@@ -85,20 +85,18 @@
     <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
     <Compile Include="Lifetimes\ILifetime.cs" />
     <Compile Include="IPipeline.cs" />
-    <Compile Include="LambdaInstanceProvider.cs" />
+    <Compile Include="LambdaInstanceFactory.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="IContainerConfiguration.cs" />
     <Compile Include="IContext.cs" />
-    <Compile Include="IThreadSafeDictionary.cs" />
     <Compile Include="IDependencyResolver.cs" />
-    <Compile Include="IPipelineEngine.cs" />
-    <Compile Include="IPlugin.cs" />
-    <Compile Include="IProvider.cs" />
+    <Compile Include="IInstanceBuilder.cs" />
+    <Compile Include="IInstanceFactory.cs" />
     <Compile Include="ITypeStack.cs" />
     <Compile Include="Lifetimes\RequestLifetime.cs" />
     <Compile Include="Lifetimes\SingletonLifetime.cs" />
     <Compile Include="Lifetimes\TransientLifetime.cs" />
-    <Compile Include="PipelineEngine.cs" />
+    <Compile Include="InstanceBuilder.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
@@ -106,7 +104,7 @@
     <Compile Include="Reflector.cs" />
     <Compile Include="ThreadSafeDictionary.cs" />
     <Compile Include="TypeExtensions.cs" />
-    <Compile Include="TypeInstanceProvider.cs" />
+    <Compile Include="TypeInstanceFactory.cs" />
     <Compile Include="TypeStack.cs" />
   </ItemGroup>
   <ItemGroup />

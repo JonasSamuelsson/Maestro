@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Maestro.Conventions;
+﻿using Maestro.Conventions;
 using Maestro.Fluent;
 using Maestro.Lifetimes;
+using System.Collections.Generic;
 
 namespace Maestro
 {
@@ -28,11 +28,6 @@ namespace Maestro
 		public IEnumerable<IConventionFilter> GetFilters()
 		{
 			return _filters;
-		}
-
-		public void GetConfiguration(DiagnosticsBuilder builder)
-		{
-			builder.Item("Lifetime : {0}", _lifetime);
 		}
 	}
 }

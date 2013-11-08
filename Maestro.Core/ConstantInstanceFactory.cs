@@ -2,11 +2,11 @@
 
 namespace Maestro
 {
-	internal class ConstantInstanceProvider : IProvider
+	internal class ConstantInstanceFactory : IInstanceFactory
 	{
 		private readonly object _instance;
 
-		public ConstantInstanceProvider(object instance)
+		public ConstantInstanceFactory(object instance)
 		{
 			_instance = instance;
 		}
@@ -21,7 +21,7 @@ namespace Maestro
 			return _instance;
 		}
 
-		public IProvider MakeGenericProvider(Type[] types)
+		public IInstanceFactory MakeGenericInstanceFactory(Type[] types)
 		{
 			throw new NotSupportedException();
 		}

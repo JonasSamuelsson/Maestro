@@ -2,11 +2,11 @@
 
 namespace Maestro
 {
-	internal class LambdaInstanceProvider : IProvider
+	internal class LambdaInstanceFactory : IInstanceFactory
 	{
 		private readonly Func<IContext, object> _lambda;
 
-		public LambdaInstanceProvider(Func<IContext, object> lambda)
+		public LambdaInstanceFactory(Func<IContext, object> lambda)
 		{
 			_lambda = lambda;
 		}
@@ -21,7 +21,7 @@ namespace Maestro
 			return _lambda(context);
 		}
 
-		public IProvider MakeGenericProvider(Type[] types)
+		public IInstanceFactory MakeGenericInstanceFactory(Type[] types)
 		{
 			return this;
 		}
