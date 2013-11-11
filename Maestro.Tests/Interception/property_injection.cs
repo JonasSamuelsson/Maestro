@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using Maestro.Utils;
 using Xunit;
 
 namespace Maestro.Tests.Interception

@@ -1,5 +1,5 @@
-﻿using Maestro.Conventions;
-using Maestro.Fluent;
+﻿using Maestro.Configuration;
+using Maestro.Conventions;
 using Maestro.Lifetimes;
 using System.Collections.Generic;
 

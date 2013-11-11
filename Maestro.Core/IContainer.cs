@@ -5,7 +5,7 @@ namespace Maestro
 {
 	public interface IContainer
 	{
-		void Configure(Action<IContainerConfiguration> action);
+		void Configure(Action<IContainerExpression> action);
 
 		object Get(Type type, string name = null);
 		T Get<T>(string name = null);

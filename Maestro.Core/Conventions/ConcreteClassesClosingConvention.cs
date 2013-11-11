@@ -12,13 +12,13 @@ namespace Maestro.Conventions
 			_genericTypeDefinition = genericTypeDefinition;
 		}
 
-		public void Process(IEnumerable<Type> types, IContainerConfiguration containerConfiguration)
+		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
 			foreach (var type in types)
 			{
 				Type genericType;
 				if (!type.IsConcreteClassClosing(_genericTypeDefinition, out genericType)) continue;
-				containerConfiguration.For(genericType).Use(type);
+				containerExpression.For(genericType).Use(type);
 			}
 		}
 	}

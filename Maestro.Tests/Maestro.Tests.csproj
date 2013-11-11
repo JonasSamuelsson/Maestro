@@ -69,15 +69,15 @@
     <Compile Include="CommonServiceLocator.cs" />
     <Compile Include="Conventions\concrete_classes_closing_convention.cs" />
     <Compile Include="Lifetimes\transient_lifetime.cs" />
-    <Compile Include="Providers\conditional_instance_provider.cs" />
-    <Compile Include="Providers\constant_instance_provider.cs" />
+    <Compile Include="Factories\conditional_instance_factory.cs" />
+    <Compile Include="Factories\constant_instance_factory.cs" />
     <Compile Include="Conventions\conventional_registration.cs" />
     <Compile Include="DefaultContainerInstance.cs" />
     <Compile Include="default_settings.cs" />
     <Compile Include="FluentAssertionsExtensions.cs" />
     <Compile Include="Lifetimes\custom_lifetime.cs" />
     <Compile Include="Interception\intercept_instance.cs" />
-    <Compile Include="Providers\lambda_instance_provider.cs" />
+    <Compile Include="Factories\lambda_instance_factory.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />
     <Compile Include="open_generic_type.cs" />
@@ -86,7 +86,7 @@
     <Compile Include="default_type_instance_with_configured_dependencies.cs" />
     <Compile Include="Interception\property_injection.cs" />
     <Compile Include="Lifetimes\request_lifetime.cs" />
-    <Compile Include="Providers\type_instance_provider_constructor_dependency_resolution.cs" />
+    <Compile Include="Factories\type_instance_factory_constructor_dependency_resolution.cs" />
     <Compile Include="resolve_array_dependencies.cs" />
     <Compile Include="resolve_dependencies.cs" />
     <Compile Include="resolve_enumerable.cs" />
@@ -95,7 +95,7 @@
     <Compile Include="Lifetimes\singleton_lifetime.cs" />
     <Compile Include="TypeExtensions_IsConcreteClassClosing.cs" />
     <Compile Include="TypeExtensions_IsConcreteSubClassOf.cs" />
-    <Compile Include="Providers\type_instance_provider.cs" />
+    <Compile Include="Factories\type_instance_factory.cs" />
     <Compile Include="Conventions\use_default_implementation_convention.cs" />
   </ItemGroup>
   <ItemGroup>

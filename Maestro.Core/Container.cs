@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Maestro.Configuration;
+using Maestro.Factories;
+using Maestro.Utils;
 
 namespace Maestro
 {
@@ -21,7 +24,7 @@ namespace Maestro
 			_defaultSettings = new DefaultSettings();
 		}
 
-		public Container(Action<IContainerConfiguration> action)
+		public Container(Action<IContainerExpression> action)
 			: this()
 		{
 			Configure(action);
@@ -34,9 +37,9 @@ namespace Maestro
 
 		internal static string DefaultName { get { return string.Empty; } }
 
-		public void Configure(Action<IContainerConfiguration> action)
+		public void Configure(Action<IContainerExpression> action)
 		{
-			action(new ContainerConfiguration(_plugins, _defaultSettings));
+			action(new ContainerExpression(_plugins, _defaultSettings));
 			_fallbackPipelines.Clear();
 			Interlocked.Increment(ref _configId);
 		}

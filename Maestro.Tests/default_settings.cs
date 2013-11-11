@@ -57,7 +57,7 @@ namespace Maestro.Tests
 		{
 			public IEnumerable<Type> Types { get; private set; }
 
-			public void Process(IEnumerable<Type> types, IContainerConfiguration containerConfiguration)
+			public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 			{
 				Types = types.ToList();
 			}

@@ -13,10 +13,10 @@ namespace Maestro.Conventions
 			_baseType = baseType;
 		}
 
-		public void Process(IEnumerable<Type> types, IContainerConfiguration containerConfiguration)
+		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
 			foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
-				containerConfiguration.Add(_baseType).Use(type);
+				containerExpression.Add(_baseType).Use(type);
 		}
 	}
 }

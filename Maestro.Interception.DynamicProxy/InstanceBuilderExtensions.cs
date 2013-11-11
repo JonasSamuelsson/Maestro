@@ -1,6 +1,6 @@
 ﻿using Castle.DynamicProxy;
-using Maestro.Fluent;
 using System;
+using Maestro.Configuration;
 
 namespace Maestro
 {
