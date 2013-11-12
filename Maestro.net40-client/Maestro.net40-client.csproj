@@ -48,7 +48,7 @@
     <Compile Include="..\Maestro.Core\Properties\VersioningAssemblyInfo.cs">
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ConventionExpressionExtensions.cs" />
+    <Compile Include="Configuration\ConventionExpressionExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Castle.DynamicProxy;
 using FluentAssertions;
+using Maestro.Configuration;
 using Xunit;
 using IInterceptor = Maestro.Interceptors.IInterceptor;
 

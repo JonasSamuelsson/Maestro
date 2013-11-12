@@ -1,30 +1,29 @@
-﻿using Castle.DynamicProxy;
-using System;
-using Maestro.Configuration;
+﻿using System;
+using Castle.DynamicProxy;
 
-namespace Maestro
+namespace Maestro.Configuration
 {
-	public static class InstanceBuilderExtensions
+	public static class InstanceBuilderExpressionExtensions
 	{
 		public static IInstanceBuilderExpression<TOut> InterceptWithProxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
 			Func<Input<TIn>, TOut> proxyFactory)
 		{
 			var proxyGenerator = ProxyGeneratorFactory.GetProxyGenerator();
-			return builderExpression.InterceptWith((i, ctx) => proxyFactory(new Input<TIn>(i, ctx, proxyGenerator)));
+			return builderExpression.InterceptWith((x, ctx) => proxyFactory(new Input<TIn>(x, ctx, proxyGenerator)));
 		}
 
 		public static IInstanceBuilderExpression<TOut> InterceptWithProxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
 			Func<TIn, ProxyGenerator, TOut> proxyFactory)
 		{
 			var proxyGenerator = ProxyGeneratorFactory.GetProxyGenerator();
-			return builderExpression.InterceptWith((i, ctx) => proxyFactory(i, proxyGenerator));
+			return builderExpression.InterceptWith((x, ctx) => proxyFactory(x, proxyGenerator));
 		}
 
 		public static IInstanceBuilderExpression<TOut> InterceptWithProxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
 			Func<TIn, IContext, ProxyGenerator, TOut> proxyFactory)
 		{
 			var proxyGenerator = ProxyGeneratorFactory.GetProxyGenerator();
-			return builderExpression.InterceptWith((i, ctx) => proxyFactory(i, ctx, proxyGenerator));
+			return builderExpression.InterceptWith((x, ctx) => proxyFactory(x, ctx, proxyGenerator));
 		}
 	}
 }

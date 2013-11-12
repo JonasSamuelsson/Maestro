@@ -48,8 +48,8 @@
     <Compile Include="..\Maestro.Core\Properties\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Input.cs" />
-    <Compile Include="InstanceBuilderExtensions.cs" />
+    <Compile Include="Configuration\Input.cs" />
+    <Compile Include="Configuration\InstanceBuilderExpressionExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyGeneratorFactory.cs" />
   </ItemGroup>

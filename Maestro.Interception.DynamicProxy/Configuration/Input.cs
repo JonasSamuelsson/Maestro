@@ -1,6 +1,6 @@
 ﻿using Castle.DynamicProxy;
 
-namespace Maestro
+namespace Maestro.Configuration
 {
 	public struct Input<TIn>
 	{
