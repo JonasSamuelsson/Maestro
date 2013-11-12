@@ -19,9 +19,9 @@ namespace Maestro.Configuration
 			return Custom(TransientLifetime.Instance);
 		}
 
-		public TParent Request()
+		public TParent RequestSingleton()
 		{
-			return Custom<RequestLifetime>();
+			return Custom<RequestSingletonLifetime>();
 		}
 
 		public TParent Singleton()

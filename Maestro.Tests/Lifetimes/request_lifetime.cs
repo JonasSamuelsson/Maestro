@@ -8,7 +8,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void the_same_instance_should_be_used_during_one_request()
 		{
-			var container = new Container(x => x.For<object>().Use<object>().Lifetime.Request());
+			var container = new Container(x => x.For<object>().Use<object>().Lifetime.RequestSingleton());
 
 			var foo = container.Get<Foo>();
 
