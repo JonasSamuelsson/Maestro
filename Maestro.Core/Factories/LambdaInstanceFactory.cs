@@ -26,6 +26,11 @@ namespace Maestro.Factories
 			return this;
 		}
 
+		public IInstanceFactory Clone()
+		{
+			return this;
+		}
+
 		public override string ToString()
 		{
 			return "lambda instance";

@@ -4,30 +4,48 @@ using System.Linq;
 using System.Threading;
 using Maestro.Configuration;
 using Maestro.Factories;
+using Maestro.Lifetimes;
 using Maestro.Utils;
 
 namespace Maestro
 {
-	public class Container : IContainer, IDependencyResolver
+	public class Container : IContainer, IContextContainer
 	{
 		private static IContainer _defaultContainer;
+
+		private readonly Guid _id;
 		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
-		private readonly ThreadSafeDictionary<Type, IInstanceBuilder> _fallbackPipelines;
+		private readonly ThreadSafeDictionary<Type, Plugin> _parentPlugins;
+		private readonly ThreadSafeDictionary<Type, IInstanceBuilder> _fallbackInstanceBuilders;
 		private readonly DefaultSettings _defaultSettings;
+		private readonly bool _isChildContainer;
 		private long _requestId;
 		private int _configId;
+		private event Action<Guid> _disposed;
 
 		public Container()
 		{
+			_id = Guid.NewGuid();
 			_plugins = new ThreadSafeDictionary<Type, Plugin>();
-			_fallbackPipelines = new ThreadSafeDictionary<Type, IInstanceBuilder>();
+			_parentPlugins = new ThreadSafeDictionary<Type, Plugin>();
+			_fallbackInstanceBuilders = new ThreadSafeDictionary<Type, IInstanceBuilder>();
 			_defaultSettings = new DefaultSettings();
+			_isChildContainer = false;
 		}
 
 		public Container(Action<IContainerExpression> action)
 			: this()
 		{
 			Configure(action);
+		}
+
+		private Container(Container container)
+			: this()
+		{
+			_isChildContainer = true;
+			foreach (var pair in container._plugins)
+				_parentPlugins.Add(pair.Key, pair.Value.Clone());
+			this.Configure(x => x.Default.Lifetime.Custom<ContainerSingletonLifetime>());
 		}
 
 		public static IContainer Default
@@ -40,7 +58,7 @@ namespace Maestro
 		public void Configure(Action<IContainerExpression> action)
 		{
 			action(new ContainerExpression(_plugins, _defaultSettings));
-			_fallbackPipelines.Clear();
+			_fallbackInstanceBuilders.Clear();
 			Interlocked.Increment(ref _configId);
 		}
 
@@ -54,11 +72,15 @@ namespace Maestro
 				using (((TypeStack)context.TypeStack).Push(type))
 				{
 					IInstanceBuilder instanceBuilder;
-					if (TryGetPipeline(_plugins, type, context, out instanceBuilder))
+
+					if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
+						return instanceBuilder.Get(context);
+
+					if (TryGetInstanceBuilder(_parentPlugins, type, context, out instanceBuilder))
 						return instanceBuilder.Get(context);
 
 					IInstanceBuilder fallbackInstanceBuilder;
-					if (TryGetFallbackPipeline(_fallbackPipelines, type, out fallbackInstanceBuilder))
+					if (TryGetFallbackInstanceBuilder(_fallbackInstanceBuilders, type, out fallbackInstanceBuilder))
 						return fallbackInstanceBuilder.Get(context);
 				}
 
@@ -74,7 +96,7 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetFallbackPipeline(ThreadSafeDictionary<Type, IInstanceBuilder> fallbackPipelines, Type type, out IInstanceBuilder instanceBuilder)
+		private static bool TryGetFallbackInstanceBuilder(ThreadSafeDictionary<Type, IInstanceBuilder> fallbackPipelines, Type type, out IInstanceBuilder instanceBuilder)
 		{
 			instanceBuilder = null;
 
@@ -95,17 +117,21 @@ namespace Maestro
 			try
 			{
 				Plugin plugin;
-				if (!_plugins.TryGet(type, out plugin))
+				Plugin parentPlugin = null;
+				if (!_plugins.TryGet(type, out plugin) && !_parentPlugins.TryGet(type, out parentPlugin))
 					return Enumerable.Empty<object>();
 
+				var set = new HashSet<string>();
 				var requestId = Interlocked.Increment(ref _requestId);
 				using (var context = new Context(_configId, requestId, DefaultName, this))
-					return plugin.GetNames().ToList()
-						.Select(name => new { name, engine = plugin.Get(name) })
+					return new[] { plugin ?? Plugin.Empty, parentPlugin ?? Plugin.Empty }
+						.SelectMany(x => x)
+						.Where(x => !set.Contains(x.Key))
+						.Each(x => set.Add(x.Key))
 						.Select(x =>
 								  {
-									  context.Name = x.name;
-									  return x.engine.Get(context);
+									  context.Name = x.Key;
+									  return x.Value.Get(context);
 								  })
 						.ToList();
 			}
@@ -127,44 +153,52 @@ namespace Maestro
 		public string GetConfiguration()
 		{
 			var builder = new DiagnosticsBuilder();
-			foreach (var pair in _plugins.OrderBy(x => x.Key.FullName))
+			foreach (var pair1 in _plugins.OrderBy(x => x.Key.FullName))
 			{
-				using (builder.Category(pair.Key))
-					foreach (var name in pair.Value.GetNames().OrderBy(x => x))
+				using (builder.Category(pair1.Key))
+					foreach (var pair2 in pair1.Value.OrderBy(x => x.Key))
 					{
-						var prefix = name == DefaultName ? "{default}" : name;
+						var prefix = pair2.Key == DefaultName ? "{default}" : pair2.Key;
 						builder.Prefix(prefix + " : ");
-						pair.Value.Get(name).GetConfiguration(builder);
+						pair2.Value.GetConfiguration(builder);
 					}
 				builder.Line();
 			}
 			return builder.ToString();
 		}
 
-		bool IDependencyResolver.CanGet(Type type, IContext context)
+		bool IContextContainer.CanGet(Type type, IContext context)
 		{
 			IInstanceBuilder instanceBuilder;
-			if (TryGetPipeline(_plugins, type, context, out instanceBuilder))
+			if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
+				using (((TypeStack)context.TypeStack).Push(type))
+					return instanceBuilder.CanGet(context);
+			if (TryGetInstanceBuilder(_parentPlugins, type, context, out instanceBuilder))
 				using (((TypeStack)context.TypeStack).Push(type))
 					return instanceBuilder.CanGet(context);
 
-			if (TryGetFallbackPipeline(_fallbackPipelines, type, out instanceBuilder))
+			if (TryGetFallbackInstanceBuilder(_fallbackInstanceBuilders, type, out instanceBuilder))
 				using (((TypeStack)context.TypeStack).Push(type))
 					return instanceBuilder.CanGet(context);
 
 			return false;
 		}
 
-		object IDependencyResolver.Get(Type type, IContext context)
+		object IContextContainer.Get(Type type, IContext context)
 		{
 			try
 			{
 				IInstanceBuilder instanceBuilder;
-				if (TryGetPipeline(_plugins, type, context, out instanceBuilder))
+
+				if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
 					using (((TypeStack)context.TypeStack).Push(type))
 						return instanceBuilder.Get(context);
 
-				if (TryGetFallbackPipeline(_fallbackPipelines, type, out instanceBuilder))
+				if (TryGetInstanceBuilder(_parentPlugins, type, context, out instanceBuilder))
+					using (((TypeStack)context.TypeStack).Push(type))
+						return instanceBuilder.Get(context);
+
+				if (TryGetFallbackInstanceBuilder(_fallbackInstanceBuilders, type, out instanceBuilder))
 					using (((TypeStack)context.TypeStack).Push(type))
 						return instanceBuilder.Get(context);
 
@@ -180,14 +214,14 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetPipeline(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context,
+		private static bool TryGetInstanceBuilder(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context,
 			out IInstanceBuilder instanceBuilder)
 		{
 			instanceBuilder = null;
 
 			Plugin plugin;
 			if (!plugins.TryGet(type, out plugin))
-				return type.IsGenericType && TryGetGenericPipeline(plugins, type, context, out instanceBuilder);
+				return type.IsGenericType && TryGetGenericInstanceBuilder(plugins, type, context, out instanceBuilder);
 
 			if (plugin.TryGet(context.Name, out instanceBuilder))
 				return true;
@@ -198,7 +232,7 @@ namespace Maestro
 			return false;
 		}
 
-		private static bool TryGetGenericPipeline(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context, out IInstanceBuilder instanceBuilder)
+		private static bool TryGetGenericInstanceBuilder(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context, out IInstanceBuilder instanceBuilder)
 		{
 			instanceBuilder = null;
 
@@ -206,34 +240,38 @@ namespace Maestro
 			{
 				Plugin plugin;
 				if (plugins.TryGet(type, out plugin))
-					return TryGetPipeline(plugins, type, context, out instanceBuilder);
+					return TryGetInstanceBuilder(plugins, type, context, out instanceBuilder);
 
 				var typeDefinition = type.GetGenericTypeDefinition();
 				if (!plugins.TryGet(typeDefinition, out plugin))
 					return false;
 
 				var genericArguments = type.GetGenericArguments();
-				var names = plugin.GetNames().ToList();
 				var genericPlugin = plugins.GetOrAdd(type, x => new Plugin());
-				foreach (var name in names)
-					genericPlugin.Add(name, plugin.Get(name).MakeGenericPipelineEngine(genericArguments));
+				foreach (var pair in plugin)
+					genericPlugin.Add(pair.Key, pair.Value.MakeGenericPipelineEngine(genericArguments));
 			}
 
-			return TryGetPipeline(plugins, type, context, out instanceBuilder);
+			return TryGetInstanceBuilder(plugins, type, context, out instanceBuilder);
 		}
 
-		IEnumerable<object> IDependencyResolver.GetAll(Type type, IContext context)
+		IEnumerable<object> IContextContainer.GetAll(Type type, IContext context)
 		{
 			try
 			{
 				Plugin plugin;
-				if (!_plugins.TryGet(type, out plugin))
+				Plugin parentPlugin = null;
+				if (!_plugins.TryGet(type, out plugin) && !_parentPlugins.TryGet(type, out parentPlugin))
 					return Enumerable.Empty<object>();
 
+				var set = new HashSet<string>();
 				using (((TypeStack)context.TypeStack).Push(type))
-					return plugin.GetNames().ToList()
-						.Select(name => plugin.Get(name))
-						.Select(engine => engine.Get(context));
+					return new[] { plugin ?? Plugin.Empty, parentPlugin ?? Plugin.Empty }
+						.SelectMany(x => x)
+						.Where(x => !set.Contains(x.Key))
+						.Each(x => set.Add(x.Key))
+						.Select(x => x.Value.Get(context))
+						.ToList();
 			}
 			catch (ActivationException)
 			{
@@ -243,6 +281,32 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get all dependencies {0}-{1}.", context.Name, type.FullName), exception);
 			}
+		}
+
+		Guid IContextContainer.Id
+		{
+			get { return _id; }
+		}
+
+		public event Action<Guid> Disposed
+		{
+			add { _disposed += value; }
+			remove { _disposed -= value; }
+		}
+
+		public IContainer GetChildContainer(Action<IContainerExpression> action = null)
+		{
+			if (_isChildContainer) throw new NotSupportedException();
+			var container = new Container(this);
+			if (action != null) container.Configure(action);
+			return container;
+		}
+
+		public void Dispose()
+		{
+			var disposed = _disposed;
+			if (disposed != null)
+				disposed(_id);
 		}
 	}
 }

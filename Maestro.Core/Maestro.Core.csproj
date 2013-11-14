@@ -51,6 +51,8 @@
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
     <Compile Include="ConditionalInstanceBuilder.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Lifetimes\ContainerSingletonLifetime.cs" />
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
     <Compile Include="Conventions\ConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />
@@ -89,7 +91,7 @@
     <Compile Include="IContainer.cs" />
     <Compile Include="IContainerExpression.cs" />
     <Compile Include="IContext.cs" />
-    <Compile Include="IDependencyResolver.cs" />
+    <Compile Include="IContextContainer.cs" />
     <Compile Include="IInstanceBuilder.cs" />
     <Compile Include="Factories\IInstanceFactory.cs" />
     <Compile Include="ITypeStack.cs" />

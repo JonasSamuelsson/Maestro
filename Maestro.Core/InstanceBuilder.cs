@@ -34,10 +34,10 @@ namespace Maestro
 
 		public IInstanceBuilder MakeGenericPipelineEngine(Type[] types)
 		{
-			var engine = new InstanceBuilder(_instanceFactory.MakeGenericInstanceFactory(types));
-			engine._interceptors.AddRange(_interceptors.Select(x => x.Clone()));
-			engine._lifetime = _lifetime.Clone();
-			return engine;
+			var instanceBuilder = new InstanceBuilder(_instanceFactory.MakeGenericInstanceFactory(types));
+			instanceBuilder._interceptors.AddRange(_interceptors.Select(x => x.Clone()));
+			instanceBuilder._lifetime = _lifetime.Clone();
+			return instanceBuilder;
 		}
 
 		public void SetLifetime(ILifetime lifetime)
@@ -58,6 +58,14 @@ namespace Maestro
 					builder.Item("interceptor : {0}", interceptor);
 				builder.Item("lifetime : {0}", _lifetime);
 			}
+		}
+
+		public IInstanceBuilder Clone()
+		{
+			var instanceBuilder = new InstanceBuilder(_instanceFactory.Clone());
+			instanceBuilder._interceptors.AddRange(_interceptors.Select(x => x.Clone()));
+			instanceBuilder._lifetime = _lifetime.Clone();
+			return instanceBuilder;
 		}
 
 		private class Pipeline : IPipeline

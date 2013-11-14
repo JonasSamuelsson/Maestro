@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Maestro
 {
-	public interface IContainer
+	public interface IContainer : IDisposable
 	{
 		void Configure(Action<IContainerExpression> action);
 
@@ -13,5 +13,7 @@ namespace Maestro
 		IEnumerable<T> GetAll<T>();
 
 		string GetConfiguration();
+
+		IContainer GetChildContainer(Action<IContainerExpression> action = null);
 	}
 }

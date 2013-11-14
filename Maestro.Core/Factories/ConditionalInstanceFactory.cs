@@ -39,16 +39,30 @@ namespace Maestro.Factories
 
 		public IInstanceFactory MakeGenericInstanceFactory(Type[] types)
 		{
-			var provider = new ConditionalInstanceFactory();
+			var instanceFactory = new ConditionalInstanceFactory();
 			if (_defaultInstanceBuilder != null)
-				provider._defaultInstanceBuilder = _defaultInstanceBuilder.MakeGenericPipelineEngine(types);
+				instanceFactory._defaultInstanceBuilder = _defaultInstanceBuilder.MakeGenericPipelineEngine(types);
 			foreach (var item in _conditionalPipelineEngines)
 			{
 				var genericPipelineEngine = item.InstanceBuilder.MakeGenericPipelineEngine(types);
 				var conditionalPipelineEngine = new PredicatedPipelineEngine(item.Condition, genericPipelineEngine);
-				provider._conditionalPipelineEngines.Add(conditionalPipelineEngine);
+				instanceFactory._conditionalPipelineEngines.Add(conditionalPipelineEngine);
 			}
-			return provider;
+			return instanceFactory;
+		}
+
+		public IInstanceFactory Clone()
+		{
+			var instanceFactory = new ConditionalInstanceFactory();
+			if (_defaultInstanceBuilder != null)
+				instanceFactory._defaultInstanceBuilder = _defaultInstanceBuilder.Clone();
+			foreach (var item in _conditionalPipelineEngines)
+			{
+				var genericPipelineEngine = item.InstanceBuilder.Clone();
+				var conditionalPipelineEngine = new PredicatedPipelineEngine(item.Condition, genericPipelineEngine);
+				instanceFactory._conditionalPipelineEngines.Add(conditionalPipelineEngine);
+			}
+			return instanceFactory;
 		}
 
 		private bool TryGetPipeline(IContext context, out IInstanceBuilder instanceBuilder)

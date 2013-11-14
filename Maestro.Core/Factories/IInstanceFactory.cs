@@ -7,5 +7,6 @@ namespace Maestro.Factories
 		bool CanGet(IContext context);
 		object Get(IContext context);
 		IInstanceFactory MakeGenericInstanceFactory(Type[] types);
+		IInstanceFactory Clone();
 	}
 }

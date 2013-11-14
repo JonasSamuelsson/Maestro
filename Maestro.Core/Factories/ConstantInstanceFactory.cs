@@ -26,6 +26,11 @@ namespace Maestro.Factories
 			throw new NotSupportedException();
 		}
 
+		public IInstanceFactory Clone()
+		{
+			return this;
+		}
+
 		public override string ToString()
 		{
 			var strings = new[] { _instance.GetType().ToString(), _instance.ToString() };

@@ -52,6 +52,11 @@ namespace Maestro.Factories
 			return new TypeInstanceFactory(genericType);
 		}
 
+		public IInstanceFactory Clone()
+		{
+			return new TypeInstanceFactory(_type);
+		}
+
 		public override string ToString()
 		{
 			return string.Format("type instance : {0}", _type);

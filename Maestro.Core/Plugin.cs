@@ -1,13 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Maestro.Utils;
 
 namespace Maestro
 {
-	internal class Plugin
+	internal class Plugin : IEnumerable<KeyValuePair<string, IInstanceBuilder>>
 	{
+		public static readonly Plugin Empty = new EmptyPlugin();
 		private readonly ThreadSafeDictionary<string, IInstanceBuilder> _dictionary = new ThreadSafeDictionary<string, IInstanceBuilder>();
 
-		public void Add(string name, IInstanceBuilder instanceBuilder)
+		public virtual void Add(string name, IInstanceBuilder instanceBuilder)
 		{
 			_dictionary.Add(name, instanceBuilder);
 		}
@@ -22,9 +25,30 @@ namespace Maestro
 			return _dictionary.TryGet(name, out instanceBuilder);
 		}
 
-		public IEnumerable<string> GetNames()
+		public Plugin Clone()
 		{
-			return _dictionary.Keys;
+			var plugin = new Plugin();
+			foreach (var pair in _dictionary)
+				plugin.Add(pair.Key, pair.Value.Clone());
+			return plugin;
+		}
+
+		public IEnumerator<KeyValuePair<string, IInstanceBuilder>> GetEnumerator()
+		{
+			return _dictionary.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		private class EmptyPlugin : Plugin
+		{
+			public override void Add(string name, IInstanceBuilder instanceBuilder)
+			{
+				throw new NotSupportedException();
+			}
 		}
 	}
 }

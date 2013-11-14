@@ -7,14 +7,14 @@ namespace Maestro
 {
 	internal class Context : IContext, IDisposable
 	{
-		private readonly IDependencyResolver _dependencyResolver;
+		private readonly IContextContainer _contextContainer;
 
-		public Context(int configId, long requestId, string name, IDependencyResolver dependencyResolver)
+		public Context(int configId, long requestId, string name, IContextContainer contextContainer)
 		{
 			ConfigId = configId;
 			RequestId = requestId;
 			Name = name;
-			_dependencyResolver = dependencyResolver;
+			_contextContainer = contextContainer;
 
 			TypeStack = new TypeStack();
 		}
@@ -24,9 +24,14 @@ namespace Maestro
 		public string Name { get; internal set; }
 		public ITypeStack TypeStack { get; private set; }
 
+		public Guid ContainerId
+		{
+			get { return _contextContainer.Id; }
+		}
+
 		public bool CanGet(Type type)
 		{
-			return _dependencyResolver.CanGet(type, this);
+			return _contextContainer.CanGet(type, this);
 		}
 
 		public bool CanGet<T>()
@@ -36,7 +41,7 @@ namespace Maestro
 
 		public object Get(Type type)
 		{
-			return _dependencyResolver.Get(type, this);
+			return _contextContainer.Get(type, this);
 		}
 
 		public T Get<T>()
@@ -46,7 +51,7 @@ namespace Maestro
 
 		public IEnumerable<object> GetAll(Type type)
 		{
-			return _dependencyResolver.GetAll(type, this);
+			return _contextContainer.GetAll(type, this);
 		}
 
 		public IEnumerable<T> GetAll<T>()
@@ -55,6 +60,11 @@ namespace Maestro
 		}
 
 		public event Action Disposed;
+		public event Action<Guid> ContainerDisposed
+		{
+			add { _contextContainer.Disposed += value; }
+			remove { _contextContainer.Disposed -= value; }
+		}
 
 		public void Dispose()
 		{

@@ -42,12 +42,12 @@ namespace Maestro
 
 		public IInstanceBuilder MakeGenericPipelineEngine(Type[] types)
 		{
-			var engine = new ConditionalInstanceBuilder();
+			var builder = new ConditionalInstanceBuilder();
 			foreach (var item in _conditionalPipelineEngines)
-				engine.Add(item.IsMatch, item.InstanceBuilder.MakeGenericPipelineEngine(types));
+				builder.Add(item.IsMatch, item.InstanceBuilder.MakeGenericPipelineEngine(types));
 			if (_defaultInstanceBuilder != null)
-				engine.Add(_defaultInstanceBuilder.MakeGenericPipelineEngine(types));
-			return engine;
+				builder.Add(_defaultInstanceBuilder.MakeGenericPipelineEngine(types));
+			return builder;
 		}
 
 		private bool TryGetPipeline(IContext context, out IInstanceBuilder instanceBuilder)
@@ -60,6 +60,16 @@ namespace Maestro
 
 			instanceBuilder = _defaultInstanceBuilder;
 			return instanceBuilder != null;
+		}
+
+		public IInstanceBuilder Clone()
+		{
+			var builder = new ConditionalInstanceBuilder();
+			foreach (var item in _conditionalPipelineEngines)
+				builder.Add(item.IsMatch, item.InstanceBuilder.Clone());
+			if (_defaultInstanceBuilder != null)
+				builder.Add(_defaultInstanceBuilder.Clone());
+			return builder;
 		}
 
 		private struct Item

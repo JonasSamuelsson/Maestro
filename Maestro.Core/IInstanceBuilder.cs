@@ -13,5 +13,6 @@ namespace Maestro
 		void SetLifetime(ILifetime lifetime);
 		void AddInterceptor(IInterceptor interceptor);
 		void GetConfiguration(DiagnosticsBuilder builder);
+		IInstanceBuilder Clone();
 	}
 }

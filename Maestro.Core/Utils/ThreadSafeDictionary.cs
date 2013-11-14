@@ -18,11 +18,6 @@ namespace Maestro.Utils
 			return GetEnumerator();
 		}
 
-		public IEnumerable<TKey> Keys
-		{
-			get { return _dictionary.Keys; }
-		}
-
 		public void Add(TKey key, TValue value)
 		{
 			lock (this)
@@ -56,6 +51,17 @@ namespace Maestro.Utils
 		{
 			lock (this)
 				_dictionary = new Dictionary<TKey, TValue>();
+		}
+
+		public void Remove(TKey key)
+		{
+			lock (this)
+			{
+				if (!_dictionary.ContainsKey(key)) return;
+				var dictionary = new Dictionary<TKey, TValue>(_dictionary);
+				dictionary.Remove(key);
+				_dictionary = dictionary;
+			}
 		}
 	}
 }
