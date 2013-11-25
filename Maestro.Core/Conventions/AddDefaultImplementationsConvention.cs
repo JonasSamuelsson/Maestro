@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Maestro.Conventions
 {
-	internal class DefaultImplementationConvention : IConvention
+	internal class AddDefaultImplementationsConvention : IConvention
 	{
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{

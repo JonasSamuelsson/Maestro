@@ -9,13 +9,26 @@ namespace Maestro.Configuration
 {
 	public static class ConventionExpressionExtensions
 	{
-		public static IConventionExpression StartupDirectory(this IConventionExpression expression, bool? includeSubDirectories)
+		/// <summary>
+		/// Adds all types from assemblies found in startup directory.
+		/// </summary>
+		/// <param name="expression"></param>
+		/// <param name="includeSubDirectories"></param>
+		/// <returns></returns>
+		public static IConventionExpression StartupDirectory(this IConventionExpression expression, bool? includeSubDirectories = null)
 		{
 			var directory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 			return expression.Directory(directory, includeSubDirectories);
 		}
 
-		public static IConventionExpression Directory(this IConventionExpression expression, string directory, bool? includeSubDirectories)
+		/// <summary>
+		/// Adds all types from assemblies found in <paramref name="directory"/>.
+		/// </summary>
+		/// <param name="expression"></param>
+		/// <param name="directory"></param>
+		/// <param name="includeSubDirectories"></param>
+		/// <returns></returns>
+		public static IConventionExpression Directory(this IConventionExpression expression, string directory, bool? includeSubDirectories = null)
 		{
 			var assemblies = new List<Assembly>();
 			var option = includeSubDirectories.GetValueOrDefault() ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;

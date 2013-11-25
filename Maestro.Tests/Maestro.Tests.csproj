@@ -63,7 +63,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\Maestro.Core\Properties\VersioningAssemblyInfo.cs">
-      <Link>VersioningAssemblyInfo.cs</Link>
+      <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Conventions\add_concrete_sub_classes_convention.cs" />
     <Compile Include="CommonServiceLocator.cs" />

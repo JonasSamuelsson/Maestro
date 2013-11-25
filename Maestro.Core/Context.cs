@@ -9,9 +9,9 @@ namespace Maestro
 	{
 		private readonly IContextContainer _contextContainer;
 
-		public Context(int configId, long requestId, string name, IContextContainer contextContainer)
+		public Context(int configVersion, long requestId, string name, IContextContainer contextContainer)
 		{
-			ConfigId = configId;
+			ConfigVersion = configVersion;
 			RequestId = requestId;
 			Name = name;
 			_contextContainer = contextContainer;
@@ -19,7 +19,7 @@ namespace Maestro
 			TypeStack = new TypeStack();
 		}
 
-		public int ConfigId { get; private set; }
+		public int ConfigVersion { get; private set; }
 		public long RequestId { get; private set; }
 		public string Name { get; internal set; }
 		public ITypeStack TypeStack { get; private set; }

@@ -19,14 +19,9 @@ namespace Maestro.Configuration
 			_filters = new List<IConventionFilter>(defaultSettings.GetFilters());
 		}
 
-		public IConventionExpression Assemblies(params Assembly[] assemblies)
-		{
-			return Types(assemblies.SelectMany(x => x.GetTypes()));
-		}
-
 		public IConventionExpression Assemblies(IEnumerable<Assembly> assemblies)
 		{
-			return Assemblies(assemblies.ToArray());
+			return Types(assemblies.SelectMany(x => x.GetTypes()));
 		}
 
 		public IConventionExpression Assembly(Assembly assembly)
@@ -78,12 +73,12 @@ namespace Maestro.Configuration
 
 		public void ForConcreteClassesClosing(Type genericTypeDefinition)
 		{
-			Using(new ConcreteClassesClosingConvention(genericTypeDefinition));
+			Using(new AddConcreteClassesClosingConvention(genericTypeDefinition));
 		}
 
 		public void ForDefaultImplementations()
 		{
-			Using(new DefaultImplementationConvention());
+			Using(new AddDefaultImplementationsConvention());
 		}
 
 		public void Using(IConvention convention)

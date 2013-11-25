@@ -21,8 +21,11 @@ namespace Maestro
 		private readonly bool _isChildContainer;
 		private long _requestId;
 		private int _configId;
-		private event Action<Guid> _disposed;
+		private event Action<Guid> DisposedEvent;
 
+		/// <summary>
+		/// Instantiates a new empty container.
+		/// </summary>
 		public Container()
 		{
 			_id = Guid.NewGuid();
@@ -33,6 +36,9 @@ namespace Maestro
 			_isChildContainer = false;
 		}
 
+		/// <summary>
+		/// Instantiates a new container with configuration.
+		/// </summary>
 		public Container(Action<IContainerExpression> action)
 			: this()
 		{
@@ -45,9 +51,12 @@ namespace Maestro
 			_isChildContainer = true;
 			foreach (var pair in container._plugins)
 				_parentPlugins.Add(pair.Key, pair.Value.Clone());
-			this.Configure(x => x.Default.Lifetime.Custom<ContainerSingletonLifetime>());
+			Configure(x => x.Default.Lifetime.Custom<ContainerSingletonLifetime>());
 		}
 
+		/// <summary>
+		/// The static default container instance.
+		/// </summary>
 		public static IContainer Default
 		{
 			get { return _defaultContainer ?? (_defaultContainer = new Container()); }
@@ -290,8 +299,8 @@ namespace Maestro
 
 		public event Action<Guid> Disposed
 		{
-			add { _disposed += value; }
-			remove { _disposed -= value; }
+			add { DisposedEvent += value; }
+			remove { DisposedEvent -= value; }
 		}
 
 		public IContainer GetChildContainer(Action<IContainerExpression> action = null)
@@ -304,7 +313,7 @@ namespace Maestro
 
 		public void Dispose()
 		{
-			var disposed = _disposed;
+			var disposed = DisposedEvent;
 			if (disposed != null)
 				disposed(_id);
 		}

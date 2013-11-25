@@ -5,7 +5,7 @@ namespace Maestro
 {
 	public interface IContext
 	{
-		int ConfigId { get; }
+		int ConfigVersion { get; }
 		long RequestId { get; }
 		string Name { get; }
 		ITypeStack TypeStack { get; }
@@ -16,7 +16,7 @@ namespace Maestro
 		object Get(Type type);
 		T Get<T>();
 		IEnumerable<object> GetAll(Type type);
-		IEnumerable<T> GetAll<T>(); 
+		IEnumerable<T> GetAll<T>();
 
 		event Action Disposed;
 		event Action<Guid> ContainerDisposed;

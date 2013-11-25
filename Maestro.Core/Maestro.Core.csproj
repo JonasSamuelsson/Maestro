@@ -37,6 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Maestro.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -54,14 +55,14 @@
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="Lifetimes\ContainerSingletonLifetime.cs" />
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
-    <Compile Include="Conventions\ConcreteClassesClosingConvention.cs" />
+    <Compile Include="Conventions\AddConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />
     <Compile Include="Factories\ConditionalInstanceFactory.cs" />
     <Compile Include="Factories\ConstantInstanceFactory.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="Configuration\ContainerExpression.cs" />
     <Compile Include="Context.cs" />
-    <Compile Include="Conventions\DefaultImplementationConvention.cs" />
+    <Compile Include="Conventions\AddDefaultImplementationsConvention.cs" />
     <Compile Include="Conventions\LambdaFilter.cs" />
     <Compile Include="Configuration\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />

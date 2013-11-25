@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Maestro.Conventions
 {
-	internal class ConcreteClassesClosingConvention : IConvention
+	internal class AddConcreteClassesClosingConvention : IConvention
 	{
 		private readonly Type _genericTypeDefinition;
 
-		public ConcreteClassesClosingConvention(Type genericTypeDefinition)
+		public AddConcreteClassesClosingConvention(Type genericTypeDefinition)
 		{
 			_genericTypeDefinition = genericTypeDefinition;
 		}

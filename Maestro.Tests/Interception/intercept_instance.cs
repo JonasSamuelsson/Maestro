@@ -16,10 +16,10 @@ namespace Maestro.Tests.Interception
 			var list = new List<string>();
 
 			new Container(x => x.For<object>().Use<object>()
-				.InterceptWith(new Interceptor(() => list.Add("create1")))
-				.InterceptWith(new Interceptor(() => list.Add("create2")))
-				.InterceptWith(new Interceptor(() => list.Add("activate1")))
-				.InterceptWith(new Interceptor(() => list.Add("activate2"))))
+				.Intercept(new Interceptor(() => list.Add("create1")))
+				.Intercept(new Interceptor(() => list.Add("create2")))
+				.Intercept(new Interceptor(() => list.Add("activate1")))
+				.Intercept(new Interceptor(() => list.Add("activate2"))))
 			.Get<object>();
 
 			list.Should().ContainInOrder(new[] { "create1", "create2", "activate1", "activate2" });
@@ -31,7 +31,7 @@ namespace Maestro.Tests.Interception
 			var interceptor = new Interceptor();
 
 			new Container(x => x.For<object>().Use<object>()
-				.InterceptWith(interceptor)
+				.Intercept(interceptor)
 				.Lifetime.Singleton()).Get<object>();
 
 			interceptor.ExecuteCount.Should().Be(1);
@@ -43,9 +43,9 @@ namespace Maestro.Tests.Interception
 			var interceptor = new Interceptor();
 
 			var container = new Container(x => x.For<object>().Use<object>()
-				.InterceptWith(interceptor)
+				.Intercept(interceptor)
 				.Lifetime.Singleton());
-			
+
 			interceptor.ExecuteCount.Should().Be(0);
 			container.Get<object>();
 			interceptor.ExecuteCount.Should().Be(1);
@@ -58,7 +58,7 @@ namespace Maestro.Tests.Interception
 		{
 			var interceptor = new DynamicProxyInterceptor();
 			var container = new Container(x => x.For<ITarget>()
-			                                    .Use<Target>()
+															.Use<Target>()
 															.InterceptWithProxy((o, pg) => pg.CreateInterfaceProxyWithTarget((ITarget)o, interceptor)));
 
 			container.Get<ITarget>().ToString();
