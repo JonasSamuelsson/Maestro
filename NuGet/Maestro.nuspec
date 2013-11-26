@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
     <metadata>
         <id>Maestro</id>
-        <version>1.3.0-beta1</version>
+        <version>1.3.0-rc1</version>
         <title>Maestro</title>
         <authors>Jonas Samuelsson</authors>
         <owners>JonasSamuelsson</owners>
@@ -14,9 +14,14 @@
     </metadata>
     <files>
         <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.dll" target="lib\net40\Maestro.Core.dll" />
+        <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.xml" target="lib\net40\Maestro.Core.xml" />
         <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.dll" target="lib\net40\Maestro.net40-client.dll" />
+        <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.xml" target="lib\net40\Maestro.net40-client.xml" />
         <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.dll" target="lib\net40-client\Maestro.Core.dll" />
+        <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.xml" target="lib\net40-client\Maestro.Core.xml" />
         <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.dll" target="lib\net40-client\Maestro.net40-client.dll" />
+        <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.xml" target="lib\net40-client\Maestro.net40-client.xml" />
         <file src="..\Maestro.Core\bin\Release\Maestro.Core.dll" target="lib\portable-net4+sl5+wp8+win8\Maestro.Core.dll" />
+        <file src="..\Maestro.Core\bin\Release\Maestro.Core.xml" target="lib\portable-net4+sl5+wp8+win8\Maestro.Core.xml" />
     </files>
 </package>
