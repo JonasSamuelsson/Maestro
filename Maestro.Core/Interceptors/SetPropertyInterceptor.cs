@@ -6,13 +6,14 @@ namespace Maestro.Interceptors
 	internal class SetPropertyInterceptor : IInterceptor
 	{
 		private readonly string _propertyName;
-		private Func<IContext, object> _factory;
-		private Action<object, object> _setter;
+		private readonly Func<IContext, object> _factory;
+		private readonly ThreadSafeDictionary<Guid, Setter> _dictionary;
 
 		public SetPropertyInterceptor(string propertyName, Func<IContext, object> factory = null)
 		{
 			_propertyName = propertyName;
 			_factory = factory;
+			_dictionary = new ThreadSafeDictionary<Guid, Setter>();
 		}
 
 		public IInterceptor Clone()
@@ -25,20 +26,32 @@ namespace Maestro.Interceptors
 			var instanceType = instance.GetType();
 			var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
 
-			if (_factory == null)
-				_factory = Reflector.GetPropertyValueProvider(propertyType, context);
+			Setter setter;
+			if (!_dictionary.TryGet(context.ContainerId, out setter) || setter.ConfigVersion != context.ConfigVersion)
+			{
+				setter = new Setter
+							{
+								ConfigVersion = context.ConfigVersion,
+								Get = _factory ?? Reflector.GetPropertyValueProvider(propertyType, context),
+								Set = Reflector.GetPropertySetter(instanceType, _propertyName)
+							};
+				_dictionary.Set(context.ContainerId, setter);
+			}
 
-			if (_setter == null)
-				_setter = Reflector.GetPropertySetter(instanceType, _propertyName);
-
-			var value = _factory(context);
-			_setter(instance, value);
+			setter.Set(instance, setter.Get(context));
 			return instance;
 		}
 
 		public override string ToString()
 		{
 			return string.Format("set property {0}", _propertyName);
+		}
+
+		private class Setter
+		{
+			public int ConfigVersion { get; set; }
+			public Func<IContext, object> Get { get; set; }
+			public Action<object, object> Set { get; set; }
 		}
 	}
 }

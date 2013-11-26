@@ -3,7 +3,7 @@ using Maestro.Utils;
 
 namespace Maestro.Lifetimes
 {
-	public class ContainerSingletonLifetime : ILifetime
+	internal class ContainerSingletonLifetime : ILifetime
 	{
 		private readonly ThreadSafeDictionary<Guid, object> _cache = new ThreadSafeDictionary<Guid, object>();
 

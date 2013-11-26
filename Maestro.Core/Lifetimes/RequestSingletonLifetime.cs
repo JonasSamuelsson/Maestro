@@ -2,7 +2,7 @@
 
 namespace Maestro.Lifetimes
 {
-	public class RequestSingletonLifetime : ILifetime
+	internal class RequestSingletonLifetime : ILifetime
 	{
 		private readonly Dictionary<long, object> _dictionary;
 

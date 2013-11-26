@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
@@ -11,30 +12,23 @@ namespace Maestro.Tests
 		[Fact]
 		public void configured_interceptors_and_lifetimes_should_be_cloned_and_clone_should_be_executed()
 		{
-			var createInterceptor = new Interceptor();
 			var lifetime = new Lifetime();
-			var activateInterceptor = new Interceptor();
+			var interceptor = new Interceptor();
 
 			new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>))
-				.Intercept(createInterceptor)
 				.Lifetime.Custom(lifetime)
-				.Intercept(activateInterceptor))
+				.Intercept(interceptor))
 				.Get<IList<int>>();
 
-			createInterceptor.Cloned.Should().BeTrue();
-			createInterceptor.Executed.Should().BeFalse();
-			createInterceptor.Clone.Cloned.Should().BeFalse();
-			createInterceptor.Clone.Executed.Should().BeTrue();
-
-			lifetime.Cloned.Should().BeTrue();
+			lifetime.IsCloned.Should().BeTrue();
 			lifetime.Executed.Should().BeFalse();
-			lifetime.Clone.Cloned.Should().BeFalse();
+			lifetime.Clone.IsCloned.Should().BeFalse();
 			lifetime.Clone.Executed.Should().BeTrue();
 
-			activateInterceptor.Cloned.Should().BeTrue();
-			activateInterceptor.Executed.Should().BeFalse();
-			activateInterceptor.Clone.Cloned.Should().BeFalse();
-			activateInterceptor.Clone.Executed.Should().BeTrue();
+			interceptor.IsCloned.Should().BeTrue();
+			interceptor.Executed.Should().BeFalse();
+			interceptor.Clone.IsCloned.Should().BeFalse();
+			interceptor.Clone.Executed.Should().BeTrue();
 		}
 
 		private class Interceptor : IInterceptor
@@ -42,7 +36,7 @@ namespace Maestro.Tests
 			public Interceptor Clone { get; private set; }
 			public bool Executed { get; private set; }
 
-			public bool Cloned
+			public bool IsCloned
 			{
 				get { return Clone != null; }
 			}
@@ -65,7 +59,7 @@ namespace Maestro.Tests
 			public Lifetime Clone { get; private set; }
 			public bool Executed { get; private set; }
 
-			public bool Cloned
+			public bool IsCloned
 			{
 				get { return Clone != null; }
 			}

@@ -1,4 +1,5 @@
-﻿namespace Maestro.Interceptors
+﻿
+namespace Maestro.Interceptors
 {
 	public abstract class InterceptorBase<TIn, TOut> : IInterceptor<TIn, TOut>
 	{

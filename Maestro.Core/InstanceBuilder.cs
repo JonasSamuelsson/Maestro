@@ -1,9 +1,9 @@
-﻿using Maestro.Factories;
-using Maestro.Interceptors;
-using Maestro.Lifetimes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.Factories;
+using Maestro.Interceptors;
+using Maestro.Lifetimes;
 using Maestro.Utils;
 
 namespace Maestro
@@ -34,7 +34,7 @@ namespace Maestro
 
 		public IInstanceBuilder MakeGenericPipelineEngine(Type[] types)
 		{
-			var instanceBuilder = new InstanceBuilder(_instanceFactory.MakeGenericInstanceFactory(types));
+			var instanceBuilder = new InstanceBuilder(_instanceFactory.MakeGeneric(types));
 			instanceBuilder._interceptors.AddRange(_interceptors.Select(x => x.Clone()));
 			instanceBuilder._lifetime = _lifetime.Clone();
 			return instanceBuilder;
@@ -63,8 +63,8 @@ namespace Maestro
 		public IInstanceBuilder Clone()
 		{
 			var instanceBuilder = new InstanceBuilder(_instanceFactory.Clone());
-			instanceBuilder._interceptors.AddRange(_interceptors.Select(x => x.Clone()));
-			instanceBuilder._lifetime = _lifetime.Clone();
+			instanceBuilder._interceptors.AddRange(_interceptors);
+			instanceBuilder._lifetime = _lifetime;
 			return instanceBuilder;
 		}
 

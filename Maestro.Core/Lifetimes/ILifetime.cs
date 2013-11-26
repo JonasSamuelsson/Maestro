@@ -1,4 +1,5 @@
-﻿namespace Maestro.Lifetimes
+﻿
+namespace Maestro.Lifetimes
 {
 	public interface ILifetime
 	{

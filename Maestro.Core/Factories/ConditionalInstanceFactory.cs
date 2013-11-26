@@ -37,7 +37,7 @@ namespace Maestro.Factories
 			throw new Exception("Conditional instance not found.");
 		}
 
-		public IInstanceFactory MakeGenericInstanceFactory(Type[] types)
+		public IInstanceFactory MakeGeneric(Type[] types)
 		{
 			var instanceFactory = new ConditionalInstanceFactory();
 			if (_defaultInstanceBuilder != null)

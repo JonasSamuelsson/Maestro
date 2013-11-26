@@ -1,4 +1,6 @@
-﻿namespace Maestro.Lifetimes
+﻿using System;
+
+namespace Maestro.Lifetimes
 {
 	internal class TransientLifetime : ILifetime
 	{

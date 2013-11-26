@@ -2,7 +2,7 @@
 
 namespace Maestro.Interceptors
 {
-	public class ActionInterceptor<T> : InterceptorBase<T, T>
+	internal class ActionInterceptor<T> : InterceptorBase<T, T>
 	{
 		private readonly Action<T, IContext> _action;
 

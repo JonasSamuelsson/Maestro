@@ -21,7 +21,7 @@ namespace Maestro.Factories
 			return _instance;
 		}
 
-		public IInstanceFactory MakeGenericInstanceFactory(Type[] types)
+		public IInstanceFactory MakeGeneric(Type[] types)
 		{
 			throw new NotSupportedException();
 		}

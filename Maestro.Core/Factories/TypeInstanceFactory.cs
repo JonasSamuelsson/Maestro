@@ -6,47 +6,52 @@ namespace Maestro.Factories
 	internal class TypeInstanceFactory : IInstanceFactory
 	{
 		private readonly Type _type;
-		private int _configVersion;
-		private Func<IContext, object> _instantiator;
+		private readonly ThreadSafeDictionary<Guid, Factory> _factories;
 
 		public TypeInstanceFactory(Type type)
 		{
 			_type = type;
-			_configVersion = Int32.MinValue;
+			_factories = new ThreadSafeDictionary<Guid, Factory>();
 		}
 
 		public bool CanGet(IContext context)
 		{
-			var instantiator = _instantiator;
+			Factory factory;
 
-			if (_configVersion != context.ConfigVersion)
+			if (!_factories.TryGet(context.ContainerId, out factory) || factory.ConfigVersion != context.ConfigVersion)
 			{
-				instantiator = Reflector.GetInstantiatorOrNull(_type, context);
-				_instantiator = instantiator;
-				_configVersion = context.ConfigVersion;
+				factory = new Factory
+									{
+										ConfigVersion = context.ConfigVersion,
+										Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
+									};
+				_factories.Set(context.ContainerId, factory);
 			}
 
-			return instantiator != null;
+			return factory.Instantiate != null;
 		}
 
 		public object Get(IContext context)
 		{
-			var instantiator = _instantiator;
+			Factory factory;
 
-			if (_configVersion != context.ConfigVersion)
+			if (!_factories.TryGet(context.ContainerId, out factory) || factory.ConfigVersion != context.ConfigVersion)
 			{
-				instantiator = Reflector.GetInstantiatorOrNull(_type, context);
-				_instantiator = instantiator;
-				_configVersion = context.ConfigVersion;
+				factory = new Factory
+									{
+										ConfigVersion = context.ConfigVersion,
+										Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
+									};
+				_factories.Set(context.ContainerId, factory);
 			}
 
-			if (instantiator == null)
+			if (factory.Instantiate == null)
 				throw new InvalidOperationException(string.Format("Can't find appropriate constructor for {0}.", _type.FullName));
 
-			return instantiator.Invoke(context);
+			return factory.Instantiate(context);
 		}
 
-		public IInstanceFactory MakeGenericInstanceFactory(Type[] types)
+		public IInstanceFactory MakeGeneric(Type[] types)
 		{
 			var genericType = _type.MakeGenericType(types);
 			return new TypeInstanceFactory(genericType);
@@ -60,6 +65,12 @@ namespace Maestro.Factories
 		public override string ToString()
 		{
 			return string.Format("type instance : {0}", _type);
+		}
+
+		private class Factory
+		{
+			public int ConfigVersion { get; set; }
+			public Func<IContext, object> Instantiate { get; set; }
 		}
 	}
 }

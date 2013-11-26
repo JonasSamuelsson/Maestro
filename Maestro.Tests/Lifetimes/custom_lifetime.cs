@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Maestro.Lifetimes;
 using Xunit;
 
@@ -23,7 +24,7 @@ namespace Maestro.Tests.Lifetimes
 
 			public ILifetime Clone()
 			{
-				throw new System.NotImplementedException();
+				throw new NotImplementedException();
 			}
 
 			public object Execute(IContext context, IPipeline pipeline)

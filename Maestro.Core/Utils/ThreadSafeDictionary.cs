@@ -63,5 +63,15 @@ namespace Maestro.Utils
 				_dictionary = dictionary;
 			}
 		}
+
+		public void Set(TKey key, TValue value)
+		{
+			lock (this)
+			{
+				var dictionary = new Dictionary<TKey, TValue>(_dictionary);
+				dictionary[key] = value;
+				_dictionary = dictionary;
+			}
+		}
 	}
 }

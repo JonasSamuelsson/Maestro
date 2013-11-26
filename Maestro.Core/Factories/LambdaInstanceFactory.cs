@@ -21,7 +21,7 @@ namespace Maestro.Factories
 			return _lambda(context);
 		}
 
-		public IInstanceFactory MakeGenericInstanceFactory(Type[] types)
+		public IInstanceFactory MakeGeneric(Type[] types)
 		{
 			return this;
 		}

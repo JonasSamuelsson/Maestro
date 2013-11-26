@@ -1,6 +1,6 @@
 ﻿namespace Maestro.Lifetimes
 {
-	public class SingletonLifetime : ILifetime
+	internal class SingletonLifetime : ILifetime
 	{
 		private object _instance;
 
