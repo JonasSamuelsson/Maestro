@@ -13,7 +13,7 @@ namespace Maestro.Configuration
 		/// <param name="builderExpression"></param>
 		/// <param name="proxyFactory"></param>
 		/// <returns></returns>
-		public static IInstanceBuilderExpression<TOut> InterceptWithProxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
+		public static IInstanceBuilderExpression<TOut> Proxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
 			Func<Input<TIn>, TOut> proxyFactory)
 		{
 			var proxyGenerator = ProxyGeneratorFactory.GetProxyGenerator();
@@ -28,7 +28,7 @@ namespace Maestro.Configuration
 		/// <param name="builderExpression"></param>
 		/// <param name="proxyFactory"></param>
 		/// <returns></returns>
-		public static IInstanceBuilderExpression<TOut> InterceptWithProxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
+		public static IInstanceBuilderExpression<TOut> Proxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
 			Func<TIn, ProxyGenerator, TOut> proxyFactory)
 		{
 			var proxyGenerator = ProxyGeneratorFactory.GetProxyGenerator();
@@ -43,7 +43,7 @@ namespace Maestro.Configuration
 		/// <param name="builderExpression"></param>
 		/// <param name="proxyFactory"></param>
 		/// <returns></returns>
-		public static IInstanceBuilderExpression<TOut> InterceptWithProxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
+		public static IInstanceBuilderExpression<TOut> Proxy<TIn, TOut>(this IInstanceBuilderExpression<TIn> builderExpression,
 			Func<TIn, IContext, ProxyGenerator, TOut> proxyFactory)
 		{
 			var proxyGenerator = ProxyGeneratorFactory.GetProxyGenerator();
