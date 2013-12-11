@@ -90,7 +90,7 @@
     <Compile Include="IPipeline.cs" />
     <Compile Include="Factories\LambdaInstanceFactory.cs" />
     <Compile Include="IContainer.cs" />
-    <Compile Include="IContainerExpression.cs" />
+    <Compile Include="Configuration\IContainerExpression.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="IContextContainer.cs" />
     <Compile Include="IInstanceBuilder.cs" />

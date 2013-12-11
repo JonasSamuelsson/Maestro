@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Maestro.Configuration;
 
 namespace Maestro
 {
@@ -18,7 +19,7 @@ namespace Maestro
 		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
 		/// <returns></returns>
 		object Get(Type type, string name = null);
-		
+
 		/// <summary>
 		/// Gets an instance of type <typeparamref name="T"/> named <paramref name="name"/>.
 		/// </summary>

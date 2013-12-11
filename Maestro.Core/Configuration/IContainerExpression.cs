@@ -1,7 +1,6 @@
 ﻿using System;
-using Maestro.Configuration;
 
-namespace Maestro
+namespace Maestro.Configuration
 {
 	public interface IContainerExpression
 	{

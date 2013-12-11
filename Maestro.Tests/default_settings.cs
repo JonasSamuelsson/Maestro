@@ -1,8 +1,9 @@
-﻿using FluentAssertions;
-using Maestro.Conventions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
+using Maestro.Configuration;
+using Maestro.Conventions;
 using Xunit;
 
 namespace Maestro.Tests

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using Maestro.Configuration;
 using Maestro.Conventions;
 using Xunit;
 
@@ -28,9 +29,9 @@ namespace Maestro.Tests.Conventions
 			var container = new Container();
 
 			container.Configure(x => x.Scan
-			                          .Types(new[] {typeof (object), typeof (int)})
-			                          .Where(t => t.IsClass)
-			                          .Using(convention));
+											  .Types(new[] { typeof(object), typeof(int) })
+											  .Where(t => t.IsClass)
+											  .Using(convention));
 
 			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
 		}
@@ -42,9 +43,9 @@ namespace Maestro.Tests.Conventions
 			var container = new Container();
 
 			container.Configure(x => x.Scan
-			                          .Types(new[] {typeof (object), typeof (int)})
-			                          .Matching(new IsClassFilter())
-			                          .Using(convention));
+											  .Types(new[] { typeof(object), typeof(int) })
+											  .Matching(new IsClassFilter())
+											  .Using(convention));
 
 			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
 		}
@@ -56,10 +57,10 @@ namespace Maestro.Tests.Conventions
 			var container = new Container();
 
 			container.Configure(x => x.Scan
-			                          .Types(new[] {typeof (object), typeof (int), typeof (string)})
-			                          .Where(t => t.IsClass)
-			                          .Where(t => t.Name.Contains("n"))
-			                          .Using(convention));
+											  .Types(new[] { typeof(object), typeof(int), typeof(string) })
+											  .Where(t => t.IsClass)
+											  .Where(t => t.Name.Contains("n"))
+											  .Using(convention));
 
 			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(string) });
 		}
