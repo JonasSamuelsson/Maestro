@@ -2,19 +2,19 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>CommonServiceLocator.MaestroAdapter</id>
-        <version>1.0.0-rc1</version>
+        <version>1.0.0</version>
         <title>CommonServiceLocator.MaestroAdapter</title>
         <authors>Jonas Samuelsson</authors>
         <owners>JonasSamuelsson</owners>
         <licenseUrl>https://github.com/JonasSamuelsson/Maestro</licenseUrl>
         <projectUrl>https://github.com/JonasSamuelsson/Maestro</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Common service locator adapter for Maestro.</description>
+        <description>Common Service Locator adapter for Maestro.</description>
         <tags>Maestro container ioc di CommonServiceLocator</tags>
         <dependencies>
             <group targetFramework=".NETFramework4.0">
                 <dependency id="CommonServiceLocator" version="1.0" />
-                <dependency id="Maestro" version="1.3.0-rc1" />
+                <dependency id="Maestro" version="1.3.0" />
             </group>
         </dependencies>
     </metadata>
