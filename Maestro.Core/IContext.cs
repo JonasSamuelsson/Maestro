@@ -9,7 +9,6 @@ namespace Maestro
 		long RequestId { get; }
 		string Name { get; }
 		ITypeStack TypeStack { get; }
-		Guid ContainerId { get; }
 
 		bool CanGet(Type type);
 		bool CanGet<T>();
@@ -19,6 +18,5 @@ namespace Maestro
 		IEnumerable<T> GetAll<T>();
 
 		event Action Disposed;
-		event Action<Guid> ContainerDisposed;
 	}
 }

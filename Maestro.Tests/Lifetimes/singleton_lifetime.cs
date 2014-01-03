@@ -14,20 +14,6 @@ namespace Maestro.Tests.Lifetimes
 			var o2 = container.Get<object>();
 
 			o1.Should().Be(o2);
-
-			var parent = new Container(x => x.For(typeof(IFoo<>)).Use(typeof(Foo<>)).AsSingleton());
-			var child1 = parent.GetChildContainer();
-			var child2 = parent.GetChildContainer();
-
-			var foo1 = parent.Get<IFoo<int>>();
-			var foo2 = child1.Get<IFoo<int>>();
-			var foo3 = child2.Get<IFoo<int>>();
-
-			foo1.Should().Be(foo2);
-			foo2.Should().Be(foo3);
 		}
-
-		private interface IFoo<T> { }
-		private class Foo<T> : IFoo<T> { }
 	}
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using Maestro.Configuration;
 using Maestro.Factories;
-using Maestro.Lifetimes;
 using Maestro.Utils;
 
 namespace Maestro
@@ -15,7 +14,6 @@ namespace Maestro
 
 		private readonly Guid _id;
 		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
-		private readonly Container _parentContainer;
 		private readonly ThreadSafeDictionary<Type, IInstanceBuilder> _fallbackInstanceBuilders;
 		private readonly DefaultSettings _defaultSettings;
 		private long _requestId;
@@ -44,14 +42,6 @@ namespace Maestro
 			Configure(action);
 		}
 
-		private Container(Container container)
-			: this()
-		{
-			_parentContainer = container;
-			_parentContainer.ConfigVersionChanged += ParentContainerConfigVersionChanged;
-			Configure(x => x.Default.Lifetime.Custom<ContainerSingletonLifetime>());
-		}
-
 		private void ParentContainerConfigVersionChanged()
 		{
 			Interlocked.Increment(ref _configVersion);
@@ -68,11 +58,6 @@ namespace Maestro
 		internal static string DefaultName
 		{
 			get { return string.Empty; }
-		}
-
-		private bool IsChildContainer
-		{
-			get { return _parentContainer != null; }
 		}
 
 		public void Configure(Action<IContainerExpression> action)
@@ -96,9 +81,6 @@ namespace Maestro
 					IInstanceBuilder instanceBuilder;
 
 					if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
-						return instanceBuilder.Get(context);
-
-					if (IsChildContainer && TryGetInstanceBuilder(_parentContainer._plugins, type, context, out instanceBuilder))
 						return instanceBuilder.Get(context);
 
 					IInstanceBuilder fallbackInstanceBuilder;
@@ -139,23 +121,15 @@ namespace Maestro
 			try
 			{
 				Plugin plugin;
-				Plugin parentPlugin = null;
-				if (!_plugins.TryGet(type, out plugin) && (!IsChildContainer || !_parentContainer._plugins.TryGet(type, out parentPlugin)))
+				if (!_plugins.TryGet(type, out plugin))
 					return Enumerable.Empty<object>();
 
-				var set = new HashSet<string>();
 				var requestId = Interlocked.Increment(ref _requestId);
 				var configVersion = _configVersion;
 				using (var context = new Context(configVersion, requestId, DefaultName, this))
-					return new[] { plugin ?? Plugin.Empty, parentPlugin ?? Plugin.Empty }
-						.SelectMany(x => x)
-						.Where(x => !set.Contains(x.Key))
-						.Each(x => set.Add(x.Key))
-						.Select(x =>
-								  {
-									  context.Name = x.Key;
-									  return x.Value.Get(context);
-								  })
+					return plugin
+						.Each(x => context.Name = x.Key)
+						.Select(x => x.Value.Get(context))
 						.ToList();
 			}
 			catch (ActivationException)
@@ -197,12 +171,7 @@ namespace Maestro
 				using (((TypeStack)context.TypeStack).Push(type))
 					return instanceBuilder.CanGet(context);
 
-			if (IsChildContainer && TryGetInstanceBuilder(_parentContainer._plugins, type, context, out instanceBuilder))
-				using (((TypeStack)context.TypeStack).Push(type))
-					return instanceBuilder.CanGet(context);
-
-			var fallbackInstanceBuilders = IsChildContainer ? _parentContainer._fallbackInstanceBuilders : _fallbackInstanceBuilders;
-			if (TryGetFallbackInstanceBuilder(fallbackInstanceBuilders, type, out instanceBuilder))
+			if (TryGetFallbackInstanceBuilder(_fallbackInstanceBuilders, type, out instanceBuilder))
 				using (((TypeStack)context.TypeStack).Push(type))
 					return instanceBuilder.CanGet(context);
 
@@ -219,12 +188,7 @@ namespace Maestro
 					using (((TypeStack)context.TypeStack).Push(type))
 						return instanceBuilder.Get(context);
 
-				if (IsChildContainer && TryGetInstanceBuilder(_parentContainer._plugins, type, context, out instanceBuilder))
-					using (((TypeStack)context.TypeStack).Push(type))
-						return instanceBuilder.Get(context);
-
-				var fallbackInstanceBuilders = IsChildContainer ? _parentContainer._fallbackInstanceBuilders : _fallbackInstanceBuilders;
-				if (TryGetFallbackInstanceBuilder(fallbackInstanceBuilders, type, out instanceBuilder))
+				if (TryGetFallbackInstanceBuilder(_fallbackInstanceBuilders, type, out instanceBuilder))
 					using (((TypeStack)context.TypeStack).Push(type))
 						return instanceBuilder.Get(context);
 
@@ -286,16 +250,11 @@ namespace Maestro
 			try
 			{
 				Plugin plugin;
-				Plugin parentPlugin = null;
-				if (!_plugins.TryGet(type, out plugin) && (!IsChildContainer || !_parentContainer._plugins.TryGet(type, out parentPlugin)))
+				if (!_plugins.TryGet(type, out plugin))
 					return Enumerable.Empty<object>();
 
-				var set = new HashSet<string>();
 				using (((TypeStack)context.TypeStack).Push(type))
-					return new[] { plugin ?? Plugin.Empty, parentPlugin ?? Plugin.Empty }
-						.SelectMany(x => x)
-						.Where(x => !set.Contains(x.Key))
-						.Each(x => set.Add(x.Key))
+					return plugin
 						.Select(x => x.Value.Get(context))
 						.ToList();
 			}
@@ -320,19 +279,8 @@ namespace Maestro
 			remove { DisposedEvent -= value; }
 		}
 
-		public IContainer GetChildContainer(Action<IContainerExpression> action = null)
-		{
-			if (IsChildContainer) throw new NotSupportedException();
-			var container = new Container(this);
-			if (action != null) container.Configure(action);
-			return container;
-		}
-
 		public void Dispose()
 		{
-			if (IsChildContainer)
-				_parentContainer.ConfigVersionChanged -= ParentContainerConfigVersionChanged;
-
 			var disposed = DisposedEvent;
 			if (disposed != null)
 				disposed(_id);

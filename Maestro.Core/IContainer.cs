@@ -47,13 +47,5 @@ namespace Maestro
 		/// </summary>
 		/// <returns></returns>
 		string GetConfiguration();
-
-		/// <summary>
-		/// Gets a child container.
-		/// </summary>
-		/// <param name="action"></param>
-		/// <returns></returns>
-		/// <remarks>This method is not supperted in child containers.</remarks>
-		IContainer GetChildContainer(Action<IContainerExpression> action = null);
 	}
 }

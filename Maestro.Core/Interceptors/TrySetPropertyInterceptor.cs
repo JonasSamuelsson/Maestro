@@ -6,12 +6,11 @@ namespace Maestro.Interceptors
 	internal class TrySetPropertyInterceptor : IInterceptor
 	{
 		private readonly string _propertyName;
-		private readonly ThreadSafeDictionary<Guid, Setter> _dictionary;
+		private Setter _setter;
 
 		public TrySetPropertyInterceptor(string propertyName)
 		{
 			_propertyName = propertyName;
-			_dictionary = new ThreadSafeDictionary<Guid, Setter>();
 		}
 
 		public IInterceptor Clone()
@@ -24,23 +23,21 @@ namespace Maestro.Interceptors
 			var instanceType = instance.GetType();
 			var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
 
-			Setter setter;
-			if (_dictionary.TryGet(context.ContainerId, out setter) && setter.ConfigVersion != context.ConfigVersion)
+			var setter = _setter;
+			if (setter == null || setter.ConfigVersion != context.ConfigVersion)
 			{
-				setter.Set(instance, setter.Get(context));
-				return instance;
+				if (!context.CanGet(propertyType))
+					return instance;
+
+				setter = new Setter
+							{
+								ConfigVersion = context.ConfigVersion,
+								Get = Reflector.GetPropertyValueProvider(propertyType, context),
+								Set = Reflector.GetPropertySetter(instanceType, _propertyName)
+							};
+				_setter = setter;
 			}
 
-			if (!context.CanGet(propertyType))
-				return instance;
-
-			setter = new Setter
-						{
-							ConfigVersion = context.ConfigVersion,
-							Get = Reflector.GetPropertyValueProvider(propertyType, context),
-							Set = Reflector.GetPropertySetter(instanceType, _propertyName)
-						};
-			_dictionary.Set(context.ContainerId, setter);
 			setter.Set(instance, setter.Get(context));
 			return instance;
 		}

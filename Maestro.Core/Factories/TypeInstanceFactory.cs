@@ -6,26 +6,25 @@ namespace Maestro.Factories
 	internal class TypeInstanceFactory : IInstanceFactory
 	{
 		private readonly Type _type;
-		private readonly ThreadSafeDictionary<Guid, Factory> _factories;
+		private Factory _factory;
 
 		public TypeInstanceFactory(Type type)
 		{
 			_type = type;
-			_factories = new ThreadSafeDictionary<Guid, Factory>();
 		}
 
 		public bool CanGet(IContext context)
 		{
-			Factory factory;
+			var factory = _factory;
 
-			if (!_factories.TryGet(context.ContainerId, out factory) || factory.ConfigVersion != context.ConfigVersion)
+			if (factory == null || factory.ConfigVersion != context.ConfigVersion)
 			{
 				factory = new Factory
 									{
 										ConfigVersion = context.ConfigVersion,
 										Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
 									};
-				_factories.Set(context.ContainerId, factory);
+				_factory = factory;
 			}
 
 			return factory.Instantiate != null;
@@ -33,16 +32,16 @@ namespace Maestro.Factories
 
 		public object Get(IContext context)
 		{
-			Factory factory;
+			var factory = _factory;
 
-			if (!_factories.TryGet(context.ContainerId, out factory) || factory.ConfigVersion != context.ConfigVersion)
+			if (factory == null || factory.ConfigVersion != context.ConfigVersion)
 			{
 				factory = new Factory
-									{
-										ConfigVersion = context.ConfigVersion,
-										Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
-									};
-				_factories.Set(context.ContainerId, factory);
+				{
+					ConfigVersion = context.ConfigVersion,
+					Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
+				};
+				_factory = factory;
 			}
 
 			if (factory.Instantiate == null)

@@ -24,11 +24,6 @@ namespace Maestro
 		public string Name { get; internal set; }
 		public ITypeStack TypeStack { get; private set; }
 
-		public Guid ContainerId
-		{
-			get { return _contextContainer.Id; }
-		}
-
 		public bool CanGet(Type type)
 		{
 			return _contextContainer.CanGet(type, this);
@@ -60,11 +55,6 @@ namespace Maestro
 		}
 
 		public event Action Disposed;
-		public event Action<Guid> ContainerDisposed
-		{
-			add { _contextContainer.Disposed += value; }
-			remove { _contextContainer.Disposed -= value; }
-		}
 
 		public void Dispose()
 		{
