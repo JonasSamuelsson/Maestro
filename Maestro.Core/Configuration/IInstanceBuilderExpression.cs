@@ -12,18 +12,6 @@ namespace Maestro.Configuration
 		ILifetimeExpression<IInstanceBuilderExpression<TInstance>> Lifetime { get; }
 
 		/// <summary>
-		/// Configures the instance as singleton.
-		/// </summary>
-		/// <returns></returns>
-		IInstanceBuilderExpression<TInstance> AsSingleton();
-
-		/// <summary>
-		/// Configures the instance as transient.
-		/// </summary>
-		/// <returns></returns>
-		IInstanceBuilderExpression<TInstance> AsTransient();
-
-		/// <summary>
 		/// Adds an action to execute against the instance.
 		/// </summary>
 		/// <param name="action"></param>

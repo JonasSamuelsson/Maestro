@@ -16,11 +16,9 @@ namespace Maestro
 		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
 		private readonly ThreadSafeDictionary<Type, IInstanceBuilder> _fallbackInstanceBuilders;
 		private readonly DefaultSettings _defaultSettings;
-		private long _requestId;
+		private long _contextId;
 		private int _configVersion;
 		private event Action<Guid> DisposedEvent;
-
-		private event Action ConfigVersionChanged = delegate { };
 
 		/// <summary>
 		/// Instantiates a new empty container.
@@ -65,7 +63,6 @@ namespace Maestro
 			action(new ContainerExpression(_plugins, _defaultSettings));
 			_fallbackInstanceBuilders.Clear();
 			Interlocked.Increment(ref _configVersion);
-			ConfigVersionChanged();
 		}
 
 		public object Get(Type type, string name = null)
@@ -73,9 +70,9 @@ namespace Maestro
 			try
 			{
 				name = name ?? DefaultName;
-				var requestId = Interlocked.Increment(ref _requestId);
+				var contextId = Interlocked.Increment(ref _contextId);
 				var configVersion = _configVersion;
-				using (var context = new Context(configVersion, requestId, name, this))
+				using (var context = new Context(configVersion, contextId, name, this))
 				using (((TypeStack)context.TypeStack).Push(type))
 				{
 					IInstanceBuilder instanceBuilder;
@@ -124,9 +121,9 @@ namespace Maestro
 				if (!_plugins.TryGet(type, out plugin))
 					return Enumerable.Empty<object>();
 
-				var requestId = Interlocked.Increment(ref _requestId);
+				var contextId = Interlocked.Increment(ref _contextId);
 				var configVersion = _configVersion;
-				using (var context = new Context(configVersion, requestId, DefaultName, this))
+				using (var context = new Context(configVersion, contextId, DefaultName, this))
 					return plugin
 						.Each(x => context.Name = x.Key)
 						.Select(x => x.Value.Get(context))

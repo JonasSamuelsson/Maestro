@@ -19,16 +19,6 @@ namespace Maestro.Configuration
 			get { return new LifetimeExpression<IInstanceBuilderExpression<TInstance>>(this, _instanceBuilder.SetLifetime); }
 		}
 
-		public IInstanceBuilderExpression<TInstance> AsSingleton()
-		{
-			return Lifetime.Singleton();
-		}
-
-		public IInstanceBuilderExpression<TInstance> AsTransient()
-		{
-			return Lifetime.Transient();
-		}
-
 		public IInstanceBuilderExpression<TInstance> Execute(Action<TInstance> action)
 		{
 			return Execute((instance, context) => action(instance));

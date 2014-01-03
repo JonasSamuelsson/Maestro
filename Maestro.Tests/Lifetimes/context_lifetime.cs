@@ -3,16 +3,19 @@ using Xunit;
 
 namespace Maestro.Tests.Lifetimes
 {
-	public class request_lifetime
+	public class context_lifetime
 	{
 		[Fact]
-		public void the_same_instance_should_be_used_during_one_request()
+		public void the_same_instance_should_be_returned_per_call_to_get()
 		{
-			var container = new Container(x => x.For<object>().Use<object>().Lifetime.RequestSingleton());
+			var container = new Container(x => x.For<object>().Use<object>().Lifetime.Context());
 
-			var foo = container.Get<Foo>();
+			var foo1 = container.Get<Foo>();
+			var foo2 = container.Get<Foo>();
 
-			foo.Object.Should().Be(foo.Bar.Object);
+			foo1.Object.Should().Be(foo1.Bar.Object);
+			foo2.Object.Should().Be(foo2.Bar.Object);
+			foo1.Object.Should().NotBe(foo2.Object);
 		}
 
 		private class Foo

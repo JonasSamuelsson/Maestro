@@ -6,7 +6,7 @@ namespace Maestro
 	public interface IContext
 	{
 		int ConfigVersion { get; }
-		long RequestId { get; }
+		long ContextId { get; }
 		string Name { get; }
 		ITypeStack TypeStack { get; }
 

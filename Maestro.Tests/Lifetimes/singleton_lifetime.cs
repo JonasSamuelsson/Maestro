@@ -8,7 +8,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void singleton_instances_should_always_return_the_same_instance()
 		{
-			var container = new Container(x => x.For<object>().Use<object>().AsSingleton());
+			var container = new Container(x => x.For<object>().Use<object>().Lifetime.Singleton());
 
 			var o1 = container.Get<object>();
 			var o2 = container.Get<object>();

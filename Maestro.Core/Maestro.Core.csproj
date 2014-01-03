@@ -95,7 +95,7 @@
     <Compile Include="IInstanceBuilder.cs" />
     <Compile Include="Factories\IInstanceFactory.cs" />
     <Compile Include="ITypeStack.cs" />
-    <Compile Include="Lifetimes\RequestSingletonLifetime.cs" />
+    <Compile Include="Lifetimes\ContextSingletonLifetime.cs" />
     <Compile Include="Lifetimes\SingletonLifetime.cs" />
     <Compile Include="Lifetimes\TransientLifetime.cs" />
     <Compile Include="InstanceBuilder.cs" />

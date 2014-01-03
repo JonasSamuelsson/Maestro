@@ -11,10 +11,10 @@ namespace Maestro.Configuration
 		T Transient();
 
 		/// <summary>
-		/// Sets instance lifetime to one instance per get-request to the container.
+		/// Sets instance lifetime to one instance per IContext.
 		/// </summary>
 		/// <returns></returns>
-		T RequestSingleton();
+		T Context();
 
 		/// <summary>
 		/// Sets instance lifetime to singleton.
