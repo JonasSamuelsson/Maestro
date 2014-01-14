@@ -33,24 +33,26 @@ namespace Maestro.Utils
 		{
 			if (types.Contains(type))
 				throw new InvalidOperationException("Cyclic dependency.");
-			
+
 			var index = types.Count;
 			types.Add(type);
-			return new Disposable(() => types.RemoveAt(index));
+			return new Disposable(types, index);
 		}
 
 		private struct Disposable : IDisposable
 		{
-			private readonly Action _action;
+			private readonly List<Type> _list;
+			private readonly int _index;
 
-			public Disposable(Action action)
+			public Disposable(List<Type> list, int index)
 			{
-				_action = action;
+				_list = list;
+				_index = index;
 			}
 
 			public void Dispose()
 			{
-				_action();
+				_list.RemoveAt(_index);
 			}
 		}
 	}
