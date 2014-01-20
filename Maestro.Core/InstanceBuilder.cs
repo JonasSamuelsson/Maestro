@@ -84,9 +84,17 @@ namespace Maestro
 			public object Execute()
 			{
 				var instance = _instanceFactory.Get(_context);
-				return _interceptors.Count == 0
-					? instance
-					: _interceptors.Aggregate(instance, (current, interceptor) => interceptor.Execute(current, _context));
+
+				if (_interceptors.Count == 0)
+					return instance;
+
+				for (var i = 0; i < _interceptors.Count; i++)
+				{
+					var interceptor = _interceptors[i];
+					instance = interceptor.Execute(instance, _context);
+				}
+
+				return instance;
 			}
 		}
 	}
