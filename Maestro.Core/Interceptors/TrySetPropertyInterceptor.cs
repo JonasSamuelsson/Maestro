@@ -20,12 +20,13 @@ namespace Maestro.Interceptors
 
 		public object Execute(object instance, IContext context)
 		{
-			var instanceType = instance.GetType();
-			var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
-
 			var setter = _setter;
+		
 			if (setter == null || setter.ConfigVersion != context.ConfigVersion)
 			{
+				var instanceType = instance.GetType();
+				var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
+
 				if (!context.CanGet(propertyType))
 					return instance;
 

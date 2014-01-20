@@ -22,18 +22,19 @@ namespace Maestro.Interceptors
 
 		public object Execute(object instance, IContext context)
 		{
-			var instanceType = instance.GetType();
-			var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
-
 			var setter = _setter;
+
 			if (setter == null || setter.ConfigVersion != context.ConfigVersion)
 			{
+				var instanceType = instance.GetType();
+				var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
+
 				setter = new Setter
-				         {
-					         ConfigVersion = context.ConfigVersion,
-					         Get = _factory ?? Reflector.GetPropertyValueProvider(propertyType, context),
-					         Set = Reflector.GetPropertySetter(instanceType, _propertyName)
-				         };
+							{
+								ConfigVersion = context.ConfigVersion,
+								Get = _factory ?? Reflector.GetPropertyValueProvider(propertyType, context),
+								Set = Reflector.GetPropertySetter(instanceType, _propertyName)
+							};
 				_setter = setter;
 			}
 
