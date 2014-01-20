@@ -14,7 +14,7 @@ namespace Maestro
 
 		private readonly Guid _id;
 		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
-		private readonly ThreadSafeDictionary<string, IInstanceBuilder> _instanceBuilderCache;
+		private readonly ThreadSafeDictionary<long, IInstanceBuilder> _instanceBuilderCache;
 		private readonly DefaultSettings _defaultSettings;
 		private long _contextId;
 		private int _configVersion;
@@ -27,7 +27,7 @@ namespace Maestro
 		{
 			_id = Guid.NewGuid();
 			_plugins = new ThreadSafeDictionary<Type, Plugin>();
-			_instanceBuilderCache = new ThreadSafeDictionary<string, IInstanceBuilder>();
+			_instanceBuilderCache = new ThreadSafeDictionary<long, IInstanceBuilder>();
 			_defaultSettings = new DefaultSettings();
 		}
 
@@ -174,7 +174,7 @@ namespace Maestro
 
 		private bool TryGetInstanceBuilder(Type type, IContext context, out IInstanceBuilder instanceBuilder)
 		{
-			var key = string.Format("{0}>{1}", type.FullName, context.Name);
+			var key = (long)type.GetHashCode() << 32 | context.Name.GetHashCode();
 
 			if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
 				return true;
