@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Maestro.Utils;
 
 namespace Maestro
@@ -8,7 +9,14 @@ namespace Maestro
 	internal class Plugin : IEnumerable<KeyValuePair<string, IInstanceBuilder>>
 	{
 		public static readonly Plugin Empty = new EmptyPlugin();
-		private readonly ThreadSafeDictionary<string, IInstanceBuilder> _dictionary = new ThreadSafeDictionary<string, IInstanceBuilder>();
+		private readonly ThreadSafeDictionary<string, IInstanceBuilder> _dictionary;
+
+		public Plugin() : this(Enumerable.Empty<KeyValuePair<string, IInstanceBuilder>>()) { }
+
+		public Plugin(IEnumerable<KeyValuePair<string, IInstanceBuilder>> keyValuePairs)
+		{
+			_dictionary = new ThreadSafeDictionary<string, IInstanceBuilder>(keyValuePairs);
+		}
 
 		public virtual void Add(string name, IInstanceBuilder instanceBuilder)
 		{

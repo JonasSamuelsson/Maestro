@@ -1,12 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro.Utils
 {
 	class ThreadSafeDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 	{
-		private Dictionary<TKey, TValue> _dictionary = new Dictionary<TKey, TValue>();
+		private Dictionary<TKey, TValue> _dictionary;
+
+		public ThreadSafeDictionary() : this(Enumerable.Empty<KeyValuePair<TKey, TValue>>()) { }
+
+		public ThreadSafeDictionary(IEnumerable<KeyValuePair<TKey, TValue>> dictionary)
+		{
+			_dictionary = dictionary.ToDictionary(x => x.Key, x => x.Value);
+		}
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{

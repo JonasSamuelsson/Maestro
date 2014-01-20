@@ -14,7 +14,7 @@ namespace Maestro
 
 		private readonly Guid _id;
 		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
-		private readonly ThreadSafeDictionary<Type, IInstanceBuilder> _fallbackInstanceBuilders;
+		private readonly ThreadSafeDictionary<string, IInstanceBuilder> _instanceBuilderCache;
 		private readonly DefaultSettings _defaultSettings;
 		private long _contextId;
 		private int _configVersion;
@@ -27,7 +27,7 @@ namespace Maestro
 		{
 			_id = Guid.NewGuid();
 			_plugins = new ThreadSafeDictionary<Type, Plugin>();
-			_fallbackInstanceBuilders = new ThreadSafeDictionary<Type, IInstanceBuilder>();
+			_instanceBuilderCache = new ThreadSafeDictionary<string, IInstanceBuilder>();
 			_defaultSettings = new DefaultSettings();
 		}
 
@@ -38,11 +38,6 @@ namespace Maestro
 			: this()
 		{
 			Configure(action);
-		}
-
-		private void ParentContainerConfigVersionChanged()
-		{
-			Interlocked.Increment(ref _configVersion);
 		}
 
 		/// <summary>
@@ -61,7 +56,7 @@ namespace Maestro
 		public void Configure(Action<IContainerExpression> action)
 		{
 			action(new ContainerExpression(_plugins, _defaultSettings));
-			_fallbackInstanceBuilders.Clear();
+			_instanceBuilderCache.Clear();
 			Interlocked.Increment(ref _configVersion);
 		}
 
@@ -76,13 +71,8 @@ namespace Maestro
 				using (((TypeStack)context.TypeStack).Push(type))
 				{
 					IInstanceBuilder instanceBuilder;
-
-					if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
+					if (TryGetInstanceBuilder(type, context, out instanceBuilder))
 						return instanceBuilder.Get(context);
-
-					IInstanceBuilder fallbackInstanceBuilder;
-					if (TryGetFallbackInstanceBuilder(_fallbackInstanceBuilders, type, out fallbackInstanceBuilder))
-						return fallbackInstanceBuilder.Get(context);
 				}
 
 				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
@@ -95,17 +85,6 @@ namespace Maestro
 			{
 				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName), exception);
 			}
-		}
-
-		private static bool TryGetFallbackInstanceBuilder(ThreadSafeDictionary<Type, IInstanceBuilder> fallbackPipelines, Type type, out IInstanceBuilder instanceBuilder)
-		{
-			instanceBuilder = null;
-
-			if (!type.IsConcreteClosedClass() || type.IsArray)
-				return false;
-
-			instanceBuilder = fallbackPipelines.GetOrAdd(type, x => new InstanceBuilder(new TypeInstanceFactory(x)));
-			return true;
 		}
 
 		public T Get<T>(string name = null)
@@ -125,6 +104,7 @@ namespace Maestro
 				var configVersion = _configVersion;
 				using (var context = new Context(configVersion, contextId, DefaultName, this))
 					return plugin
+						// ReSharper disable once AccessToDisposedClosure
 						.Each(x => context.Name = x.Key)
 						.Select(x => x.Value.Get(context))
 						.ToList();
@@ -164,11 +144,7 @@ namespace Maestro
 		bool IContextContainer.CanGet(Type type, IContext context)
 		{
 			IInstanceBuilder instanceBuilder;
-			if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
-				using (((TypeStack)context.TypeStack).Push(type))
-					return instanceBuilder.CanGet(context);
-
-			if (TryGetFallbackInstanceBuilder(_fallbackInstanceBuilders, type, out instanceBuilder))
+			if (TryGetInstanceBuilder(type, context, out instanceBuilder))
 				using (((TypeStack)context.TypeStack).Push(type))
 					return instanceBuilder.CanGet(context);
 
@@ -180,12 +156,7 @@ namespace Maestro
 			try
 			{
 				IInstanceBuilder instanceBuilder;
-
-				if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
-					using (((TypeStack)context.TypeStack).Push(type))
-						return instanceBuilder.Get(context);
-
-				if (TryGetFallbackInstanceBuilder(_fallbackInstanceBuilders, type, out instanceBuilder))
+				if (TryGetInstanceBuilder(type, context, out instanceBuilder))
 					using (((TypeStack)context.TypeStack).Push(type))
 						return instanceBuilder.Get(context);
 
@@ -201,15 +172,60 @@ namespace Maestro
 			}
 		}
 
+		private bool TryGetInstanceBuilder(Type type, IContext context, out IInstanceBuilder instanceBuilder)
+		{
+			var key = string.Format("{0}>{1}", type.FullName, context.Name);
+
+			if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
+				return true;
+
+			if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
+			{
+				_instanceBuilderCache.Add(key, instanceBuilder);
+				return true;
+			}
+
+			if (type.IsConcreteClosedClass() && !type.IsArray)
+			{
+				instanceBuilder = new InstanceBuilder(new TypeInstanceFactory(type));
+				_instanceBuilderCache.Add(key, instanceBuilder);
+				return true;
+			}
+
+			return false;
+		}
+
 		private static bool TryGetInstanceBuilder(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context,
 			out IInstanceBuilder instanceBuilder)
 		{
+			Plugin plugin;
 			instanceBuilder = null;
 
-			Plugin plugin;
-			if (!plugins.TryGet(type, out plugin))
-				return type.IsGenericType && TryGetGenericInstanceBuilder(plugins, type, context, out instanceBuilder);
+			if (plugins.TryGet(type, out plugin))
+				return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
 
+			if (!type.IsGenericType)
+				return false;
+
+			lock (plugins)
+			{
+				if (plugins.TryGet(type, out plugin))
+					return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
+
+				Plugin typeDefinitionPlugin;
+				var typeDefinition = type.GetGenericTypeDefinition();
+				if (!plugins.TryGet(typeDefinition, out typeDefinitionPlugin))
+					return false;
+
+				var genericArguments = type.GetGenericArguments();
+				plugin = new Plugin(typeDefinitionPlugin.Select(x => new KeyValuePair<string, IInstanceBuilder>(x.Key, x.Value.MakeGenericPipelineEngine(genericArguments))));
+				plugins.Add(type, plugin);
+				return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
+			}
+		}
+
+		private static bool TryGetInstanceBuilder(Plugin plugin, IContext context, out IInstanceBuilder instanceBuilder)
+		{
 			if (plugin.TryGet(context.Name, out instanceBuilder))
 				return true;
 
@@ -217,29 +233,6 @@ namespace Maestro
 				return true;
 
 			return false;
-		}
-
-		private static bool TryGetGenericInstanceBuilder(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context, out IInstanceBuilder instanceBuilder)
-		{
-			instanceBuilder = null;
-
-			lock (plugins)
-			{
-				Plugin plugin;
-				if (plugins.TryGet(type, out plugin))
-					return TryGetInstanceBuilder(plugins, type, context, out instanceBuilder);
-
-				var typeDefinition = type.GetGenericTypeDefinition();
-				if (!plugins.TryGet(typeDefinition, out plugin))
-					return false;
-
-				var genericArguments = type.GetGenericArguments();
-				var genericPlugin = plugins.GetOrAdd(type, x => new Plugin());
-				foreach (var pair in plugin)
-					genericPlugin.Add(pair.Key, pair.Value.MakeGenericPipelineEngine(genericArguments));
-			}
-
-			return TryGetInstanceBuilder(plugins, type, context, out instanceBuilder);
 		}
 
 		IEnumerable<object> IContextContainer.GetAll(Type type, IContext context)
