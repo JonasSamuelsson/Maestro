@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Maestro.Configuration;
 using Maestro.Conventions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests
@@ -17,7 +17,7 @@ namespace Maestro.Tests
 													{
 														x.Default.Lifetime.Singleton();
 														x.For<object>().Use<object>();
-														x.For<IConditional>().UseConditional(y =>
+														x.For<IConditional>().Use(y =>
 																										 {
 																											 y.Else.Use<DefaultConditional>();
 																											 y.If(ctx => ctx.Name != null).Use<NamedConditional>();

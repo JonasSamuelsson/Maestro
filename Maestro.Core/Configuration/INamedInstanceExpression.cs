@@ -2,7 +2,7 @@
 
 namespace Maestro.Configuration
 {
-	public interface IInstanceFactoryExpression<TPlugin>
+	public interface INamedInstanceExpression<TPlugin>
 	{
 		/// <summary>
 		/// Setup a constant instance.
@@ -45,6 +45,6 @@ namespace Maestro.Configuration
 		/// Used to configure a conditional instance.
 		/// </summary>
 		/// <param name="action"></param>
-		void UseConditional(Action<IConditionalInstanceBuilderExpression<TPlugin>> action);
+		void Use(Action<IConditionalExpression<TPlugin>> action);
 	}
 }

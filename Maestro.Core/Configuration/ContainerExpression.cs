@@ -1,5 +1,5 @@
-﻿using System;
-using Maestro.Utils;
+﻿using Maestro.Utils;
+using System;
 
 namespace Maestro.Configuration
 {
@@ -14,42 +14,41 @@ namespace Maestro.Configuration
 			_defaultSettings = defaultSettings;
 		}
 
-		public IInstanceFactoryExpression<object> For(Type type)
+		public IInstanceExpression<object> For(Type type)
 		{
-			return Add<object>(type, Container.DefaultName);
+			return For<object>(type);
 		}
 
-		public IInstanceFactoryExpression<TPlugin> For<TPlugin>()
+		public IInstanceExpression<TPlugin> For<TPlugin>()
 		{
-			return Add<TPlugin>(typeof(TPlugin), Container.DefaultName);
+			return For<TPlugin>(typeof(TPlugin));
 		}
 
-		public IInstanceFactoryExpression<object> For(Type type, string name)
-		{
-			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name");
-			return Add<object>(type, name);
-		}
-
-		public IInstanceFactoryExpression<TPlugin> For<TPlugin>(string name)
-		{
-			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name");
-			return Add<TPlugin>(typeof(TPlugin), name);
-		}
-
-		public IInstanceFactoryExpression<object> Add(Type type)
-		{
-			return Add<object>(type, Guid.NewGuid().ToString());
-		}
-
-		public IInstanceFactoryExpression<TPlugin> Add<TPlugin>()
-		{
-			return Add<TPlugin>(typeof(TPlugin), Guid.NewGuid().ToString());
-		}
-
-		private IInstanceFactoryExpression<T> Add<T>(Type type, string name)
+		private IInstanceExpression<T> For<T>(Type type)
 		{
 			var plugin = _plugins.GetOrAdd(type, x => new Plugin());
-			return new InstanceFactoryExpression<T>(x => plugin.Add(name, x), _defaultSettings);
+			var defaultInstanceRegistrator = new InstanceRegistrator<T>(x => plugin.Add(Container.DefaultName, x), _defaultSettings);
+			var anonymousInstanceRegistrator = new InstanceRegistrator<T>(x => plugin.Add(Guid.NewGuid().ToString(), x), _defaultSettings);
+			return new InstanceExpression<T>(defaultInstanceRegistrator, anonymousInstanceRegistrator);
+		}
+
+		public INamedInstanceExpression<object> For(Type type, string name)
+		{
+			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name");
+			return For<object>(type, name);
+		}
+
+		public INamedInstanceExpression<TPlugin> For<TPlugin>(string name)
+		{
+			if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("name");
+			return For<TPlugin>(typeof(TPlugin), name);
+		}
+
+		private INamedInstanceExpression<T> For<T>(Type type, string name)
+		{
+			var plugin = _plugins.GetOrAdd(type, x => new Plugin());
+			var instanceRegistrator = new InstanceRegistrator<T>(x => plugin.Add(name, x), _defaultSettings);
+			return new NamedInstanceExpression<T>(instanceRegistrator);
 		}
 
 		public IConventionExpression Scan

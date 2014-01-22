@@ -13,8 +13,8 @@ namespace Maestro.Tests
 			var container = new Container(x =>
 			{
 				x.For<TypeWithArrayOfObjectDependency>().Use<TypeWithArrayOfObjectDependency>();
-				x.Add<object>().Use<object>();
-				x.Add<object>().Use<EventArgs>();
+				x.For<object>().Add<object>();
+				x.For<object>().Add<EventArgs>();
 			});
 
 			var instance = container.Get<TypeWithArrayOfObjectDependency>();
@@ -48,7 +48,7 @@ namespace Maestro.Tests
 
 			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
 
-			container.Configure(x => x.Add<int>().Use(0));
+			container.Configure(x => x.For<int>().Add(0));
 			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
 
 			container.Configure(x => x.For<int[]>().Use(array));

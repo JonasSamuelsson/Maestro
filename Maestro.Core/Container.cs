@@ -174,7 +174,7 @@ namespace Maestro
 
 		private bool TryGetInstanceBuilder(Type type, IContext context, out IInstanceBuilder instanceBuilder)
 		{
-			var key = (long)type.GetHashCode() << 32 | context.Name.GetHashCode();
+			var key = (long)type.GetHashCode() << 32 | (uint)context.Name.GetHashCode();
 
 			if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
 				return true;

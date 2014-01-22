@@ -12,9 +12,9 @@ namespace Maestro.Tests
 			var container = new Container(x =>
 			{
 				x.For<Parent>().Use<Parent>();
-				x.Add<IChild>().Use<Child1>();
-				x.Add<IChild>().Use<Child2>();
-				x.Add<IChild>().Use<Child3>();
+				x.For<IChild>().Add<Child1>();
+				x.For<IChild>().Add<Child2>();
+				x.For<IChild>().Add<Child3>();
 			});
 
 			var parent = container.Get<Parent>();

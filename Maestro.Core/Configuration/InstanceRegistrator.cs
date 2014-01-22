@@ -1,20 +1,20 @@
-﻿using System;
-using Maestro.Factories;
+﻿using Maestro.Factories;
+using System;
 
 namespace Maestro.Configuration
 {
-	internal class InstanceFactoryExpression<TPlugin> : IInstanceFactoryExpression<TPlugin>
+	internal class InstanceRegistrator<TPlugin>
 	{
 		private readonly Action<IInstanceBuilder> _registerPipeline;
 		private readonly DefaultSettings _defaultSettings;
 
-		public InstanceFactoryExpression(Action<IInstanceBuilder> registerPipeline, DefaultSettings defaultSettings)
+		public InstanceRegistrator(Action<IInstanceBuilder> registerPipeline, DefaultSettings defaultSettings)
 		{
 			_registerPipeline = registerPipeline;
 			_defaultSettings = defaultSettings;
 		}
 
-		public void Use<TInstance>(TInstance instance) where TInstance : TPlugin
+		public void Register<TInstance>(TInstance instance)
 		{
 			//ReSharper disable once CompareNonConstrainedGenericWithNull
 			if (instance == null) throw new ArgumentNullException("instance");
@@ -23,13 +23,13 @@ namespace Maestro.Configuration
 			_registerPipeline(pipeline);
 		}
 
-		public IInstanceBuilderExpression<TInstance> Use<TInstance>(Func<TInstance> lambda) where TInstance : TPlugin
+		public IInstanceBuilderExpression<TInstance> Register<TInstance>(Func<TInstance> lambda) where TInstance : TPlugin
 		{
 			if (lambda == null) throw new ArgumentNullException();
-			return Use(_ => lambda());
+			return Register((IContext _) => lambda());
 		}
 
-		public IInstanceBuilderExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> lambda) where TInstance : TPlugin
+		public IInstanceBuilderExpression<TInstance> Register<TInstance>(Func<IContext, TInstance> lambda) where TInstance : TPlugin
 		{
 			if (lambda == null) throw new ArgumentNullException();
 			var provider = new LambdaInstanceFactory(context => lambda(context));
@@ -39,12 +39,12 @@ namespace Maestro.Configuration
 			return new InstanceBuilderExpression<TInstance>(pipeline);
 		}
 
-		public IInstanceBuilderExpression<TInstance> Use<TInstance>() where TInstance : TPlugin
+		public IInstanceBuilderExpression<TInstance> Register<TInstance>() where TInstance : TPlugin
 		{
 			return UseType<TInstance>(typeof(TInstance));
 		}
 
-		public IInstanceBuilderExpression<TPlugin> Use(Type type)
+		public IInstanceBuilderExpression<TPlugin> Register(Type type)
 		{
 			if (type == null) throw new ArgumentNullException();
 			return UseType<TPlugin>(type);
@@ -59,10 +59,10 @@ namespace Maestro.Configuration
 			return new InstanceBuilderExpression<T>(pipeline);
 		}
 
-		public void UseConditional(Action<IConditionalInstanceBuilderExpression<TPlugin>> action)
+		public void Register(Action<IConditionalExpression<TPlugin>> action)
 		{
 			if (action == null) throw new ArgumentNullException();
-			var builder = new ConditionalInstanceBuilderExpression<TPlugin>(_defaultSettings);
+			var builder = new ConditionalExpression<TPlugin>(_defaultSettings);
 			var pipeline = builder.GetPipeline(action);
 			_registerPipeline(pipeline);
 		}

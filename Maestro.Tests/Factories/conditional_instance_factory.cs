@@ -11,12 +11,12 @@ namespace Maestro.Tests.Factories
 			var defaultObject = "default";
 			var namedObject = "named";
 
-			var container = new Container(x => x.For<object>().UseConditional(y =>
-			                                                                  {
-				                                                                  y.If(z => z.Name != Container.DefaultName)
-				                                                                   .Use(namedObject);
-				                                                                  y.Else.Use(defaultObject);
-			                                                                  }));
+			var container = new Container(x => x.For<object>().Use(y =>
+			{
+				y.If(z => z.Name != Container.DefaultName)
+					.Use(namedObject);
+				y.Else.Use(defaultObject);
+			}));
 
 			container.Get<Foobar>().Dependency.Should().Be(defaultObject);
 			container.Get<Foobar>("not default").Dependency.Should().Be(namedObject);
