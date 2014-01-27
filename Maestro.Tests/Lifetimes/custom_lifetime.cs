@@ -1,6 +1,6 @@
 ﻿using System;
-using FluentAssertions;
 using Maestro.Lifetimes;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Lifetimes
@@ -15,7 +15,7 @@ namespace Maestro.Tests.Lifetimes
 
 			container.Get<object>();
 
-			lifetime.Executed.Should().BeTrue();
+			lifetime.Executed.ShouldBe(true);
 		}
 
 		private class Lifetime : ILifetime

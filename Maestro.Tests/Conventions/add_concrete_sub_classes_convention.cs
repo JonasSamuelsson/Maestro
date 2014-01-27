@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Conventions
@@ -15,9 +15,9 @@ namespace Maestro.Tests.Conventions
 
 			var instances = container.GetAll<IBaseType>().ToList();
 
-			instances.Should().HaveCount(2);
-			instances.Should().Contain(x => x.IsOfType<Implementation1>());
-			instances.Should().Contain(x => x.IsOfType<Implementation2>());
+			instances.Count.ShouldBe(2);
+			instances.OfType<Implementation1>().Count().ShouldBe(1);
+			instances.OfType<Implementation2>().Count().ShouldBe(1);
 		}
 
 		private interface IBaseType { }
