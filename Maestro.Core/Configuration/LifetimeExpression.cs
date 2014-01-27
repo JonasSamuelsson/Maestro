@@ -16,25 +16,25 @@ namespace Maestro.Configuration
 
 		public TParent Transient()
 		{
-			return Custom(TransientLifetime.Instance);
+			return Use(TransientLifetime.Instance);
 		}
 
 		public TParent Context()
 		{
-			return Custom<ContextSingletonLifetime>();
+			return Use<ContextSingletonLifetime>();
 		}
 
 		public TParent Singleton()
 		{
-			return Custom<SingletonLifetime>();
+			return Use<SingletonLifetime>();
 		}
 
-		public TParent Custom<TLifetime>() where TLifetime : ILifetime, new()
+		public TParent Use<TLifetime>() where TLifetime : ILifetime, new()
 		{
-			return Custom(new TLifetime());
+			return Use(new TLifetime());
 		}
 
-		public TParent Custom(ILifetime lifetime)
+		public TParent Use(ILifetime lifetime)
 		{
 			_action(lifetime);
 			return _parent;

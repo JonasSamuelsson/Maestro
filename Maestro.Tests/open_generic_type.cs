@@ -16,7 +16,7 @@ namespace Maestro.Tests
 			var interceptor = new Interceptor();
 
 			new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>))
-				.Lifetime.Custom(lifetime)
+				.Lifetime.Use(lifetime)
 				.Intercept(interceptor))
 				.Get<IList<int>>();
 

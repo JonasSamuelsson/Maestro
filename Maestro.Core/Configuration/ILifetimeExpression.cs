@@ -27,13 +27,13 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <typeparam name="TLifetime"></typeparam>
 		/// <returns></returns>
-		T Custom<TLifetime>() where TLifetime : ILifetime, new();
+		T Use<TLifetime>() where TLifetime : ILifetime, new();
 
 		/// <summary>
 		/// Use custom lifetime <paramref name="lifetime"/>
 		/// </summary>
 		/// <param name="lifetime"></param>
 		/// <returns></returns>
-		T Custom(ILifetime lifetime);
+		T Use(ILifetime lifetime);
 	}
 }

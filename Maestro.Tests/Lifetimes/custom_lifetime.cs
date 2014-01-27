@@ -11,7 +11,7 @@ namespace Maestro.Tests.Lifetimes
 		public void provided_lifetime_should_be_executed()
 		{
 			var lifetime = new Lifetime();
-			var container = new Container(x => x.For<object>().Use<object>().Lifetime.Custom(lifetime));
+			var container = new Container(x => x.For<object>().Use<object>().Lifetime.Use(lifetime));
 
 			container.Get<object>();
 
