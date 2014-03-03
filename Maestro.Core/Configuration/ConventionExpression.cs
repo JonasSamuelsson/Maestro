@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Maestro.Conventions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Maestro.Conventions;
 
 namespace Maestro.Configuration
 {
@@ -71,14 +71,14 @@ namespace Maestro.Configuration
 			Using(new AddConcreteSubClassesConvention(type));
 		}
 
-		public void ForConcreteClassesClosing(Type genericTypeDefinition)
+		public void AddConcreteClassesClosing(Type genericTypeDefinition)
 		{
 			Using(new AddConcreteClassesClosingConvention(genericTypeDefinition));
 		}
 
-		public void ForDefaultImplementations()
+		public void UseDefaultImplementations()
 		{
-			Using(new AddDefaultImplementationsConvention());
+			Using(new UseDefaultImplementationsConvention());
 		}
 
 		public void Using(IConvention convention)

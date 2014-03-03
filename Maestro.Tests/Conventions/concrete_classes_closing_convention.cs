@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FluentAssertions;
+using System;
 using System.Collections.Generic;
-using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests.Conventions
@@ -11,10 +11,10 @@ namespace Maestro.Tests.Conventions
 		public void should_register_type_closing_provided_generic_type_definition()
 		{
 			var types = new[] { typeof(List<IDisposable>), typeof(ListOfObjects) };
-			var container = new Container(x => x.Scan.Types(types).ForConcreteClassesClosing(typeof(IList<>)));
+			var container = new Container(x => x.Scan.Types(types).AddConcreteClassesClosing(typeof(IList<>)));
 
-			container.Invoking(x => x.Get<IList<IDisposable>>()).ShouldNotThrow("IList<IDisposable>");
-			container.Invoking(x => x.Get<IList<object>>()).ShouldNotThrow("IList<object>");
+			container.Invoking(x => x.GetAll<IList<IDisposable>>()).ShouldNotThrow("IList<IDisposable>");
+			container.Invoking(x => x.GetAll<IList<object>>()).ShouldNotThrow("IList<object>");
 			container.Invoking(x => x.Get<IList<string>>()).ShouldThrow<ActivationException>();
 		}
 

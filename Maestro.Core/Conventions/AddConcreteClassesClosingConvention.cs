@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Maestro.Configuration;
+using System;
 using System.Collections.Generic;
-using Maestro.Configuration;
 
 namespace Maestro.Conventions
 {
@@ -19,7 +19,7 @@ namespace Maestro.Conventions
 			{
 				Type genericType;
 				if (!type.IsConcreteClassClosing(_genericTypeDefinition, out genericType)) continue;
-				containerExpression.For(genericType).Use(type);
+				containerExpression.For(genericType).Add(type);
 			}
 		}
 	}

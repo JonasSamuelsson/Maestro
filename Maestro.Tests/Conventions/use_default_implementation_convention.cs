@@ -11,7 +11,7 @@ namespace Maestro.Tests.Conventions
 		{
 			var ns = typeof(IFoobar1).Namespace;
 
-			var container = new Container(x => x.Scan.AssemblyContainingTypeOf(this).Where(y => y.Namespace != null && y.Namespace.StartsWith(ns)).ForDefaultImplementations());
+			var container = new Container(x => x.Scan.AssemblyContainingTypeOf(this).Where(y => y.Namespace != null && y.Namespace.StartsWith(ns)).UseDefaultImplementations());
 
 			container.Invoking(x => x.Get<IFoobar1>()).ShouldNotThrow();
 			container.Invoking(x => x.Get<IFoobar2>()).ShouldNotThrow();

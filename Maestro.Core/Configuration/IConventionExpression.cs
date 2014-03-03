@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Maestro.Conventions;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Maestro.Conventions;
 
 namespace Maestro.Configuration
 {
@@ -64,27 +64,27 @@ namespace Maestro.Configuration
 		IConventionExpression Matching(IConventionFilter filter);
 
 		/// <summary>
-		/// Adds concrete sub classes of <typeparamref name="T"/> to the container.
+		/// Adds concrete sub classes of <typeparamref name="T"/>.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		void AddConcreteSubClassesOf<T>();
 
 		/// <summary>
-		/// Adds concrete sub classes of <paramref name="type"/> to the container.
+		/// Adds concrete sub classes of <paramref name="type"/>.
 		/// </summary>
 		/// <param name="type"></param>
 		void AddConcreteSubClassesOf(Type type);
 
 		/// <summary>
-		/// Adds implementations of <paramref name="genericTypeDefinition"/> to the container.
+		/// Adds implementations of <paramref name="genericTypeDefinition"/>.
 		/// </summary>
 		/// <param name="genericTypeDefinition"></param>
-		void ForConcreteClassesClosing(Type genericTypeDefinition);
+		void AddConcreteClassesClosing(Type genericTypeDefinition);
 
 		/// <summary>
-		/// Adds default implementations to the container.
+		/// Adds default implementations.
 		/// </summary>
-		void ForDefaultImplementations();
+		void UseDefaultImplementations();
 
 		/// <summary>
 		/// Uses <paramref name="convention"/> to configure the container.

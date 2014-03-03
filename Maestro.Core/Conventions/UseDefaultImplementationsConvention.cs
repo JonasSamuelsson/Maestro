@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Maestro.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Maestro.Configuration;
 
 namespace Maestro.Conventions
 {
-	internal class AddDefaultImplementationsConvention : IConvention
+	internal class UseDefaultImplementationsConvention : IConvention
 	{
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{

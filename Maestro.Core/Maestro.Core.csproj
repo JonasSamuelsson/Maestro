@@ -66,7 +66,7 @@
     <Compile Include="Container.cs" />
     <Compile Include="Configuration\ContainerExpression.cs" />
     <Compile Include="Context.cs" />
-    <Compile Include="Conventions\AddDefaultImplementationsConvention.cs" />
+    <Compile Include="Conventions\UseDefaultImplementationsConvention.cs" />
     <Compile Include="Conventions\LambdaFilter.cs" />
     <Compile Include="Configuration\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />
