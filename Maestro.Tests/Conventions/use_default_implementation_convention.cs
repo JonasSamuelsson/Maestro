@@ -18,6 +18,17 @@ namespace Maestro.Tests.Conventions
 			container.Invoking(x => x.Get<IFoobar3>()).ShouldThrow<ActivationException>();
 			container.Invoking(x => x.Get<IFoobar4>()).ShouldThrow<ActivationException>();
 		}
+
+		[Fact]
+		public void should_support_instance_configuration()
+		{
+			var container = new Container(x => x.Scan.Types(new[]{typeof(IFoobar1), typeof(Foobar1)}).UseDefaultImplementations(y => y.Lifetime.Singleton()));
+
+			var instance1 = container.Get<IFoobar1>();
+			var instance2 = container.Get<IFoobar1>();
+
+			instance1.Should().Be(instance2);
+		}
 	}
 }
 

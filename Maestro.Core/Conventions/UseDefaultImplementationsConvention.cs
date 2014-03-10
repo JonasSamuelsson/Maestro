@@ -7,6 +7,13 @@ namespace Maestro.Conventions
 {
 	internal class UseDefaultImplementationsConvention : IConvention
 	{
+		private readonly Action<IInstanceBuilderExpression<object>> _instanceConfiguration;
+
+		public UseDefaultImplementationsConvention(Action<IInstanceBuilderExpression<object>> instanceConfiguration)
+		{
+			_instanceConfiguration = instanceConfiguration;
+		}
+
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
 			types = types as IList<Type> ?? types.ToList();
@@ -20,7 +27,8 @@ namespace Maestro.Conventions
 				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
 				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
 				if (@class == null) continue;
-				containerExpression.For(@interface).Use(@class);
+				var instanceBuilderExpression = containerExpression.For(@interface).Use(@class);
+				_instanceConfiguration(instanceBuilderExpression);
 			}
 		}
 	}

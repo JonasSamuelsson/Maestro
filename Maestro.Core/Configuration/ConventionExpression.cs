@@ -76,9 +76,9 @@ namespace Maestro.Configuration
 			Using(new AddConcreteClassesClosingConvention(genericTypeDefinition));
 		}
 
-		public void UseDefaultImplementations()
+		public void UseDefaultImplementations(Action<IInstanceBuilderExpression<object>> action = null)
 		{
-			Using(new UseDefaultImplementationsConvention());
+			Using(new UseDefaultImplementationsConvention(action ?? delegate { }));
 		}
 
 		public void Using(IConvention convention)

@@ -84,7 +84,7 @@ namespace Maestro.Configuration
 		/// <summary>
 		/// Adds default implementations.
 		/// </summary>
-		void UseDefaultImplementations();
+		void UseDefaultImplementations(Action<IInstanceBuilderExpression<object>> action = null);
 
 		/// <summary>
 		/// Uses <paramref name="convention"/> to configure the container.
