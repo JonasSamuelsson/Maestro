@@ -61,14 +61,18 @@ namespace Maestro.Configuration
 			return this;
 		}
 
-		public void AddConcreteSubClassesOf<T>()
+		public void AddConcreteSubClassesOf<T>(Action<IInstanceBuilderExpression<T>> action = null)
 		{
-			AddConcreteSubClassesOf(typeof(T));
+			AddConcreteSubClassesOf(typeof(T), expression =>
+														  {
+															  action = action ?? delegate { };
+															  action(new InstanceBuilderExpression<T>(((InstanceBuilderExpression<object>)expression).InstanceBuilder));
+														  });
 		}
 
-		public void AddConcreteSubClassesOf(Type type)
+		public void AddConcreteSubClassesOf(Type type, Action<IInstanceBuilderExpression<object>> action = null)
 		{
-			Using(new AddConcreteSubClassesConvention(type));
+			Using(new AddConcreteSubClassesConvention(type, action ?? delegate { }));
 		}
 
 		public void AddConcreteClassesClosing(Type genericTypeDefinition, Action<IInstanceBuilderExpression<object>> action = null)

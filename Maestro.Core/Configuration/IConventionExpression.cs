@@ -67,13 +67,15 @@ namespace Maestro.Configuration
 		/// Adds concrete sub classes of <typeparamref name="T"/>.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		void AddConcreteSubClassesOf<T>();
+		/// <param name="action"></param>
+		void AddConcreteSubClassesOf<T>(Action<IInstanceBuilderExpression<T>> action = null);
 
 		/// <summary>
 		/// Adds concrete sub classes of <paramref name="type"/>.
 		/// </summary>
 		/// <param name="type"></param>
-		void AddConcreteSubClassesOf(Type type);
+		/// <param name="action"></param>
+		void AddConcreteSubClassesOf(Type type, Action<IInstanceBuilderExpression<object>> action = null);
 
 		/// <summary>
 		/// Adds implementations of <paramref name="genericTypeDefinition"/>.

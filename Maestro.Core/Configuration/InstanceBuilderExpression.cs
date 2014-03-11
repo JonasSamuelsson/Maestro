@@ -7,16 +7,16 @@ namespace Maestro.Configuration
 {
 	internal class InstanceBuilderExpression<TInstance> : IInstanceBuilderExpression<TInstance>
 	{
-		private readonly IInstanceBuilder _instanceBuilder;
-
 		public InstanceBuilderExpression(IInstanceBuilder instanceBuilder)
 		{
-			_instanceBuilder = instanceBuilder;
+			InstanceBuilder = instanceBuilder;
 		}
+
+		internal IInstanceBuilder InstanceBuilder { get; private set; }
 
 		public ILifetimeExpression<IInstanceBuilderExpression<TInstance>> Lifetime
 		{
-			get { return new LifetimeExpression<IInstanceBuilderExpression<TInstance>>(this, _instanceBuilder.SetLifetime); }
+			get { return new LifetimeExpression<IInstanceBuilderExpression<TInstance>>(this, InstanceBuilder.SetLifetime); }
 		}
 
 		public IInstanceBuilderExpression<TInstance> Execute(Action<TInstance> action)
@@ -31,14 +31,14 @@ namespace Maestro.Configuration
 
 		public IInstanceBuilderExpression<TInstance> Intercept(IInterceptor interceptor)
 		{
-			_instanceBuilder.AddInterceptor(interceptor);
+			InstanceBuilder.AddInterceptor(interceptor);
 			return this;
 		}
 
 		public IInstanceBuilderExpression<TOut> Intercept<TOut>(IInterceptor<TInstance, TOut> interceptor)
 		{
-			_instanceBuilder.AddInterceptor(interceptor);
-			return new InstanceBuilderExpression<TOut>(_instanceBuilder);
+			InstanceBuilder.AddInterceptor(interceptor);
+			return new InstanceBuilderExpression<TOut>(InstanceBuilder);
 		}
 
 		public IInstanceBuilderExpression<TOut> Intercept<TOut>(Func<TInstance, TOut> lambda)
