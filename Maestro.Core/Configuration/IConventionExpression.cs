@@ -79,11 +79,13 @@ namespace Maestro.Configuration
 		/// Adds implementations of <paramref name="genericTypeDefinition"/>.
 		/// </summary>
 		/// <param name="genericTypeDefinition"></param>
-		void AddConcreteClassesClosing(Type genericTypeDefinition);
+		/// <param name="action"></param>
+		void AddConcreteClassesClosing(Type genericTypeDefinition, Action<IInstanceBuilderExpression<object>> action = null);
 
 		/// <summary>
 		/// Adds default implementations.
 		/// </summary>
+		/// <param name="action"></param>
 		void UseDefaultImplementations(Action<IInstanceBuilderExpression<object>> action = null);
 
 		/// <summary>

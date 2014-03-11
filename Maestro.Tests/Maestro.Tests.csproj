@@ -70,7 +70,7 @@
     </Compile>
     <Compile Include="Conventions\add_concrete_sub_classes_convention.cs" />
     <Compile Include="CommonServiceLocator.cs" />
-    <Compile Include="Conventions\concrete_classes_closing_convention.cs" />
+    <Compile Include="Conventions\add_concrete_classes_closing_convention.cs" />
     <Compile Include="Lifetimes\transient_lifetime.cs" />
     <Compile Include="Factories\conditional_instance_factory.cs" />
     <Compile Include="Factories\constant_instance_factory.cs" />

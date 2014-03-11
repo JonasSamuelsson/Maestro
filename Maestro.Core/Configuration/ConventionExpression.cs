@@ -71,9 +71,9 @@ namespace Maestro.Configuration
 			Using(new AddConcreteSubClassesConvention(type));
 		}
 
-		public void AddConcreteClassesClosing(Type genericTypeDefinition)
+		public void AddConcreteClassesClosing(Type genericTypeDefinition, Action<IInstanceBuilderExpression<object>> action = null)
 		{
-			Using(new AddConcreteClassesClosingConvention(genericTypeDefinition));
+			Using(new AddConcreteClassesClosingConvention(genericTypeDefinition, action ?? delegate { }));
 		}
 
 		public void UseDefaultImplementations(Action<IInstanceBuilderExpression<object>> action = null)
