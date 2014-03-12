@@ -19,7 +19,7 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="..\Maestro.Core\bin\Release\Maestro.Core.dll" target="lib\net40\Maestro.Core.dll" />
-        <file src="..\Maestro.Core\bin\Release\Maestro.Core.xml" target="lib\net40\Maestro.Core.xml" />
+        <file src="..\src\Maestro.Core\bin\Release\Maestro.Core.dll" target="lib\net40\Maestro.Core.dll" />
+        <file src="..\src\Maestro.Core\bin\Release\Maestro.Core.xml" target="lib\net40\Maestro.Core.xml" />
     </files>
 </package>

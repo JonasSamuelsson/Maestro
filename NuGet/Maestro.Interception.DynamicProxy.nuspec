@@ -19,7 +19,7 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="..\Maestro.Interception.DynamicProxy\bin\Release\Maestro.Interception.DynamicProxy.dll" target="lib\net40\Maestro.Interception.DynamicProxy.dll" />
-        <file src="..\Maestro.Interception.DynamicProxy\bin\Release\Maestro.Interception.DynamicProxy.xml" target="lib\net40\Maestro.Interception.DynamicProxy.xml" />
+        <file src="..\src\Maestro.Interception.DynamicProxy\bin\Release\Maestro.Interception.DynamicProxy.dll" target="lib\net40\Maestro.Interception.DynamicProxy.dll" />
+        <file src="..\src\Maestro.Interception.DynamicProxy\bin\Release\Maestro.Interception.DynamicProxy.xml" target="lib\net40\Maestro.Interception.DynamicProxy.xml" />
     </files>
 </package>

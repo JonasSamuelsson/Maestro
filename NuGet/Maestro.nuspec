@@ -13,15 +13,15 @@
         <tags>Maestro container ioc di</tags>
     </metadata>
     <files>
-        <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.dll" target="lib\net40\Maestro.Core.dll" />
-        <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.xml" target="lib\net40\Maestro.Core.xml" />
-        <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.dll" target="lib\net40\Maestro.net40-client.dll" />
-        <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.xml" target="lib\net40\Maestro.net40-client.xml" />
-        <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.dll" target="lib\net40-client\Maestro.Core.dll" />
-        <file src="..\Maestro.net40-client\bin\Release\Maestro.Core.xml" target="lib\net40-client\Maestro.Core.xml" />
-        <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.dll" target="lib\net40-client\Maestro.net40-client.dll" />
-        <file src="..\Maestro.net40-client\bin\Release\Maestro.net40-client.xml" target="lib\net40-client\Maestro.net40-client.xml" />
-        <file src="..\Maestro.Core\bin\Release\Maestro.Core.dll" target="lib\portable-net4+sl5+wp8+win8\Maestro.Core.dll" />
-        <file src="..\Maestro.Core\bin\Release\Maestro.Core.xml" target="lib\portable-net4+sl5+wp8+win8\Maestro.Core.xml" />
+        <file src="..\src\Maestro.net40-client\bin\Release\Maestro.Core.dll" target="lib\net40\Maestro.Core.dll" />
+        <file src="..\src\Maestro.net40-client\bin\Release\Maestro.Core.xml" target="lib\net40\Maestro.Core.xml" />
+        <file src="..\src\Maestro.net40-client\bin\Release\Maestro.net40-client.dll" target="lib\net40\Maestro.net40-client.dll" />
+        <file src="..\src\Maestro.net40-client\bin\Release\Maestro.net40-client.xml" target="lib\net40\Maestro.net40-client.xml" />
+        <file src="..\src\Maestro.net40-client\bin\Release\Maestro.Core.dll" target="lib\net40-client\Maestro.Core.dll" />
+        <file src="..\src\Maestro.net40-client\bin\Release\Maestro.Core.xml" target="lib\net40-client\Maestro.Core.xml" />
+        <file src="..\src\Maestro.net40-client\bin\Release\Maestro.net40-client.dll" target="lib\net40-client\Maestro.net40-client.dll" />
+        <file src="..\src\Maestro.net40-client\bin\Release\Maestro.net40-client.xml" target="lib\net40-client\Maestro.net40-client.xml" />
+        <file src="..\src\Maestro.Core\bin\Release\Maestro.Core.dll" target="lib\portable-net4+sl5+wp8+win8\Maestro.Core.dll" />
+        <file src="..\src\Maestro.Core\bin\Release\Maestro.Core.xml" target="lib\portable-net4+sl5+wp8+win8\Maestro.Core.xml" />
     </files>
 </package>
