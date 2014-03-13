@@ -1,5 +1,5 @@
-﻿using System;
-using Maestro.Utils;
+﻿using Maestro.Utils;
+using System;
 
 namespace Maestro.Factories
 {
@@ -19,12 +19,11 @@ namespace Maestro.Factories
 
 			if (factory == null || factory.ConfigVersion != context.ConfigVersion)
 			{
-				factory = new Factory
-									{
-										ConfigVersion = context.ConfigVersion,
-										Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
-									};
-				_factory = factory;
+				_factory = factory = new Factory
+											{
+												ConfigVersion = context.ConfigVersion,
+												Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
+											};
 			}
 
 			return factory.Instantiate != null;
@@ -36,16 +35,15 @@ namespace Maestro.Factories
 
 			if (factory == null || factory.ConfigVersion != context.ConfigVersion)
 			{
-				factory = new Factory
-				{
-					ConfigVersion = context.ConfigVersion,
-					Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
-				};
-				_factory = factory;
+				_factory = factory = new Factory
+											{
+												ConfigVersion = context.ConfigVersion,
+												Instantiate = Reflector.GetInstantiatorOrNull(_type, context)
+											};
 			}
 
 			if (factory.Instantiate == null)
-				throw new InvalidOperationException(string.Format("Can't find appropriate constructor for {0}.", _type.FullName));
+				throw new InvalidOperationException(string.Format("Can't find appropriate constructor for type {0}.", _type.FullName));
 
 			return factory.Instantiate(context);
 		}

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Maestro.Configuration;
+using Maestro.Factories;
+using Maestro.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Maestro.Configuration;
-using Maestro.Factories;
-using Maestro.Utils;
 
 namespace Maestro
 {
@@ -75,7 +75,10 @@ namespace Maestro
 						return instanceBuilder.Get(context);
 				}
 
-				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName));
+				var message = name == DefaultName
+										? string.Format("Can't get default instance of type {0}.", type.FullName)
+										: string.Format("Can't get instance named '{0}' of type {1}.", name, type.FullName);
+				throw new ActivationException(message);
 			}
 			catch (ActivationException)
 			{
@@ -83,7 +86,10 @@ namespace Maestro
 			}
 			catch (Exception exception)
 			{
-				throw new ActivationException(string.Format("Can't get {0}-{1}.", name, type.FullName), exception);
+				var message = name == DefaultName
+										? string.Format("Can't get default instance of type {0}.", type.FullName)
+										: string.Format("Can't get instance named '{0}' of type {1}.", name, type.FullName);
+				throw new ActivationException(message, exception);
 			}
 		}
 
@@ -103,11 +109,10 @@ namespace Maestro
 				var contextId = Interlocked.Increment(ref _contextId);
 				var configVersion = _configVersion;
 				using (var context = new Context(configVersion, contextId, DefaultName, this))
-					return plugin
-						// ReSharper disable once AccessToDisposedClosure
-						.Each(x => context.Name = x.Key)
-						.Select(x => x.Value.Get(context))
-						.ToList();
+					// ReSharper disable once AccessToDisposedClosure
+					return plugin.Each(x => context.Name = x.Key)
+									 .Select(x => x.Value.Get(context))
+									 .ToList();
 			}
 			catch (ActivationException)
 			{
@@ -115,7 +120,7 @@ namespace Maestro
 			}
 			catch (Exception exception)
 			{
-				throw new ActivationException(string.Format("Can't get all {0}.", type.FullName), exception);
+				throw new ActivationException(string.Format("Can't get all instances of type {0}.", type.FullName), exception);
 			}
 		}
 
@@ -160,7 +165,10 @@ namespace Maestro
 					using (((TypeStack)context.TypeStack).Push(type))
 						return instanceBuilder.Get(context);
 
-				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName));
+				var message = context.Name == DefaultName
+										? string.Format("Can't get default dependency of type {0}.", type.FullName)
+										: string.Format("Can't get dependency named '{0} of type {1}.", context.Name, type.FullName);
+				throw new ActivationException(message);
 			}
 			catch (ActivationException)
 			{
@@ -168,7 +176,10 @@ namespace Maestro
 			}
 			catch (Exception exception)
 			{
-				throw new ActivationException(string.Format("Can't get dependency {0}-{1}.", context.Name, type.FullName), exception);
+				var message = context.Name == DefaultName
+										? string.Format("Can't get default dependency of type {0}.", type.FullName)
+										: string.Format("Can't get dependency named '{0} of type {1}.", context.Name, type.FullName);
+				throw new ActivationException(message, exception);
 			}
 		}
 
@@ -196,7 +207,7 @@ namespace Maestro
 		}
 
 		private static bool TryGetInstanceBuilder(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context,
-			out IInstanceBuilder instanceBuilder)
+			 out IInstanceBuilder instanceBuilder)
 		{
 			Plugin plugin;
 			instanceBuilder = null;
@@ -244,9 +255,8 @@ namespace Maestro
 					return Enumerable.Empty<object>();
 
 				using (((TypeStack)context.TypeStack).Push(type))
-					return plugin
-						.Select(x => x.Value.Get(context))
-						.ToList();
+					return plugin.Select(x => x.Value.Get(context))
+									 .ToList();
 			}
 			catch (ActivationException)
 			{
@@ -254,7 +264,7 @@ namespace Maestro
 			}
 			catch (Exception exception)
 			{
-				throw new ActivationException(string.Format("Can't get all dependencies {0}-{1}.", context.Name, type.FullName), exception);
+				throw new ActivationException(string.Format("Can't get dependencies of type {0}.", type.FullName), exception);
 			}
 		}
 
