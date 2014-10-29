@@ -190,20 +190,23 @@ namespace Maestro
 			if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
 				return true;
 
-			if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
+			lock (string.Format("{0}/{1}", _id, type.FullName))
 			{
-				_instanceBuilderCache.Add(key, instanceBuilder);
-				return true;
-			}
+				if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
+				{
+					_instanceBuilderCache.Add(key, instanceBuilder);
+					return true;
+				}
 
-			if (type.IsConcreteClosedClass() && !type.IsArray)
-			{
-				instanceBuilder = new InstanceBuilder(new TypeInstanceFactory(type));
-				_instanceBuilderCache.Add(key, instanceBuilder);
-				return true;
-			}
+				if (type.IsConcreteClosedClass() && !type.IsArray)
+				{
+					instanceBuilder = new InstanceBuilder(new TypeInstanceFactory(type));
+					_instanceBuilderCache.Add(key, instanceBuilder);
+					return true;
+				}
 
-			return false;
+				return false;
+			}
 		}
 
 		private static bool TryGetInstanceBuilder(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context,
@@ -218,21 +221,18 @@ namespace Maestro
 			if (!type.IsGenericType)
 				return false;
 
-			lock (plugins)
-			{
-				if (plugins.TryGet(type, out plugin))
-					return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
-
-				Plugin typeDefinitionPlugin;
-				var typeDefinition = type.GetGenericTypeDefinition();
-				if (!plugins.TryGet(typeDefinition, out typeDefinitionPlugin))
-					return false;
-
-				var genericArguments = type.GetGenericArguments();
-				plugin = new Plugin(typeDefinitionPlugin.Select(x => new KeyValuePair<string, IInstanceBuilder>(x.Key, x.Value.MakeGenericPipelineEngine(genericArguments))));
-				plugins.Add(type, plugin);
+			if (plugins.TryGet(type, out plugin))
 				return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
-			}
+
+			Plugin typeDefinitionPlugin;
+			var typeDefinition = type.GetGenericTypeDefinition();
+			if (!plugins.TryGet(typeDefinition, out typeDefinitionPlugin))
+				return false;
+
+			var genericArguments = type.GetGenericArguments();
+			plugin = new Plugin(typeDefinitionPlugin.Select(x => new KeyValuePair<string, IInstanceBuilder>(x.Key, x.Value.MakeGenericPipelineEngine(genericArguments))));
+			plugins.Add(type, plugin);
+			return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
 		}
 
 		private static bool TryGetInstanceBuilder(Plugin plugin, IContext context, out IInstanceBuilder instanceBuilder)
