@@ -1,10 +1,10 @@
-﻿using Maestro.Configuration;
-using Maestro.Factories;
-using Maestro.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Maestro.Configuration;
+using Maestro.Factories;
+using Maestro.Utils;
 
 namespace Maestro
 {
@@ -62,35 +62,14 @@ namespace Maestro
 
 		public object Get(Type type, string name = null)
 		{
-			try
-			{
-				name = name ?? DefaultName;
-				var contextId = Interlocked.Increment(ref _contextId);
-				var configVersion = _configVersion;
-				using (var context = new Context(configVersion, contextId, name, this))
-				using (((TypeStack)context.TypeStack).Push(type))
-				{
-					IInstanceBuilder instanceBuilder;
-					if (TryGetInstanceBuilder(type, context, out instanceBuilder))
-						return instanceBuilder.Get(context);
-				}
+			object instance;
+			if (TryGet(type, name, out instance))
+				return instance;
 
-				var message = name == DefaultName
-										? string.Format("Can't get default instance of type {0}.", type.FullName)
-										: string.Format("Can't get instance named '{0}' of type {1}.", name, type.FullName);
-				throw new ActivationException(message);
-			}
-			catch (ActivationException)
-			{
-				throw;
-			}
-			catch (Exception exception)
-			{
-				var message = name == DefaultName
-										? string.Format("Can't get default instance of type {0}.", type.FullName)
-										: string.Format("Can't get instance named '{0}' of type {1}.", name, type.FullName);
-				throw new ActivationException(message, exception);
-			}
+			var message = name == DefaultName
+									? string.Format("Can't get default instance of type {0}.", type.FullName)
+									: string.Format("Can't get instance named '{0}' of type {1}.", name, type.FullName);
+			throw new ActivationException(message);
 		}
 
 		public T Get<T>(string name = null)
@@ -127,6 +106,56 @@ namespace Maestro
 		public IEnumerable<T> GetAll<T>()
 		{
 			return GetAll(typeof(T)).Cast<T>().ToList();
+		}
+
+		public bool TryGet(Type type, out object instance)
+		{
+			return TryGet(type, DefaultName, out instance);
+		}
+
+		public bool TryGet(Type type, string name, out object instance)
+		{
+			try
+			{
+				instance = null;
+				name = name ?? DefaultName;
+				var contextId = Interlocked.Increment(ref _contextId);
+				var configVersion = _configVersion;
+				using (var context = new Context(configVersion, contextId, name, this))
+				using (((TypeStack)context.TypeStack).Push(type))
+				{
+					IInstanceBuilder instanceBuilder;
+					if (!TryGetInstanceBuilder(type, context, out instanceBuilder) || !instanceBuilder.CanGet(context))
+						return false;
+
+					instance = instanceBuilder.Get(context);
+					return true;
+				}
+			}
+			catch (ActivationException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				var message = name == DefaultName
+										? string.Format("Can't get default instance of type {0}.", type.FullName)
+										: string.Format("Can't get instance named '{0}' of type {1}.", name, type.FullName);
+				throw new ActivationException(message, exception);
+			}
+		}
+
+		public bool TryGet<T>(out T instance)
+		{
+			return TryGet(DefaultName, out instance);
+		}
+
+		public bool TryGet<T>(string name, out T instance)
+		{
+			object temp;
+			var result = TryGet(typeof(T), name, out temp);
+			instance = (T)temp;
+			return result;
 		}
 
 		public string GetConfiguration()

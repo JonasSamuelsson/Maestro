@@ -43,6 +43,44 @@ namespace Maestro
 		IEnumerable<T> GetAll<T>();
 
 		/// <summary>
+		/// Tries to get instance of type <paramref name="type"/>.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="instance"></param>
+		/// <returns></returns>
+		/// <remarks>Does not swallow any exceptions.</remarks>
+		bool TryGet(Type type, out object instance);
+
+		/// <summary>
+		/// Tries to get instance of type <paramref name="type"/> named <paramref name="name"/>.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="name"></param>
+		/// <param name="instance"></param>
+		/// <returns></returns>
+		/// <remarks>Does not swallow any exceptions.</remarks>
+		bool TryGet(Type type, string name, out object instance);
+
+		/// <summary>
+		/// Tries to get instance of type <typeparam name="T"/>.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="instance"></param>
+		/// <returns></returns>
+		/// <remarks>Does not swallow any exceptions.</remarks>
+		bool TryGet<T>(out T instance);
+
+		/// <summary>
+		/// Tries to get instance of type <typeparam name="T"/> named <paramref name="name"/>.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name"></param>
+		/// <param name="instance"></param>
+		/// <returns></returns>
+		/// <remarks>Does not swallow any exceptions.</remarks>
+		bool TryGet<T>(string name, out T instance);
+
+		/// <summary>
 		/// Gets a report of the complete container configuration.
 		/// </summary>
 		/// <returns></returns>
