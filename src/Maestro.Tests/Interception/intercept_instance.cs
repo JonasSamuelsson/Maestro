@@ -26,18 +26,6 @@ namespace Maestro.Tests.Interception
 		}
 
 		[Fact]
-		public void insterceptors_should_not_be_executed_if_instance_is_cached()
-		{
-			var interceptor = new Interceptor();
-
-			new Container(x => x.For<object>().Use<object>()
-				.Intercept(interceptor)
-				.Lifetime.Singleton()).Get<object>();
-
-			interceptor.ExecuteCount.Should().Be(1);
-		}
-
-		[Fact]
 		public void interceptors_should_not_be_executed_if_instance_is_chached()
 		{
 			var interceptor = new Interceptor();

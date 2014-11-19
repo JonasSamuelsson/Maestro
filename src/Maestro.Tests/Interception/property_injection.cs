@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Maestro.Tests.Interception
 {
-	internal abstract class property_injection
+	public abstract class property_injection
 	{
 		[Fact]
 		public void set_property_using_injected_action()
