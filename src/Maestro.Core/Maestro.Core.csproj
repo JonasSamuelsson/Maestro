@@ -112,9 +112,9 @@
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="Properties\VersioningAssemblyInfo.cs" />
     <Compile Include="Utils\Reflector.cs" />
-    <Compile Include="Utils\ThreadSafeDictionary.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Factories\TypeInstanceFactory.cs" />
+    <Compile Include="Utils\ThreadSafeDictionary.cs" />
     <Compile Include="Utils\TypeStack.cs" />
   </ItemGroup>
   <ItemGroup>
