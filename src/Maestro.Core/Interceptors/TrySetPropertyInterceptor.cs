@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Maestro.Utils;
 
 namespace Maestro.Interceptors
@@ -25,7 +26,7 @@ namespace Maestro.Interceptors
 			if (setter == null || setter.ConfigVersion != context.ConfigVersion)
 			{
 				var instanceType = instance.GetType();
-				var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
+				var propertyType = instanceType.GetTypeInfo().GetDeclaredProperty(_propertyName).PropertyType;
 
 				if (!context.CanGet(propertyType))
 					return instance;
