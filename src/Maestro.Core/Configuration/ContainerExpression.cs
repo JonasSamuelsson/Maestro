@@ -1,14 +1,14 @@
-﻿using Maestro.Utils;
-using System;
+﻿using System;
+using System.Collections.Concurrent;
 
 namespace Maestro.Configuration
 {
 	internal class ContainerExpression : IContainerExpression
 	{
-		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
+		private readonly ConcurrentDictionary<Type, Plugin> _plugins;
 		private readonly DefaultSettings _defaultSettings;
 
-		public ContainerExpression(ThreadSafeDictionary<Type, Plugin> plugins, DefaultSettings defaultSettings)
+        public ContainerExpression(ConcurrentDictionary<Type, Plugin> plugins, DefaultSettings defaultSettings)
 		{
 			_plugins = plugins;
 			_defaultSettings = defaultSettings;
