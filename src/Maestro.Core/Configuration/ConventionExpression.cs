@@ -21,7 +21,7 @@ namespace Maestro.Configuration
 
 		public IConventionExpression Assemblies(IEnumerable<Assembly> assemblies)
 		{
-			return Types(assemblies.SelectMany(x => x.GetTypes()));
+			return Types(assemblies.SelectMany(x => x.DefinedTypes).Select(ti => ti.AsType()));
 		}
 
 		public IConventionExpression Assembly(Assembly assembly)
@@ -36,7 +36,7 @@ namespace Maestro.Configuration
 
 		public IConventionExpression AssemblyContaining(Type type)
 		{
-			return Assembly(type.Assembly);
+			return Assembly(type.GetTypeInfo().Assembly);
 		}
 
 		public IConventionExpression AssemblyContainingTypeOf(object o)

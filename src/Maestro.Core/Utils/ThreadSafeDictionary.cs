@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Maestro.Utils
 {
 	class ThreadSafeDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 	{
-		private Dictionary<TKey, TValue> _dictionary;
+		private ImmutableDictionary<TKey, TValue> _dictionary;
 
 		public ThreadSafeDictionary() : this(Enumerable.Empty<KeyValuePair<TKey, TValue>>()) { }
 
 		public ThreadSafeDictionary(IEnumerable<KeyValuePair<TKey, TValue>> dictionary)
 		{
-			_dictionary = dictionary.ToDictionary(x => x.Key, x => x.Value);
+			_dictionary = dictionary.ToImmutableDictionary(x => x.Key, x => x.Value);
 		}
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -28,8 +29,10 @@ namespace Maestro.Utils
 
 		public void Add(TKey key, TValue value)
 		{
-			lock (this)
-				_dictionary = new Dictionary<TKey, TValue>(_dictionary) { { key, value } };
+		    lock (this)
+		    {
+		        _dictionary = _dictionary.Add(key, value);
+		    }
 		}
 
 		public TValue Get(TKey key)
@@ -45,7 +48,7 @@ namespace Maestro.Utils
 				if (!_dictionary.TryGetValue(key, out value))
 				{
 					value = factory(key);
-					_dictionary = new Dictionary<TKey, TValue>(_dictionary) { { key, value } };
+					_dictionary = _dictionary.Add(key, value);
 				}
 			return value;
 		}
@@ -57,18 +60,17 @@ namespace Maestro.Utils
 
 		public void Clear()
 		{
-			lock (this)
-				_dictionary = new Dictionary<TKey, TValue>();
+		    lock (this)
+		    {
+		        _dictionary = _dictionary.Clear();
+		    }
 		}
 
 		public void Remove(TKey key)
 		{
 			lock (this)
 			{
-				if (!_dictionary.ContainsKey(key)) return;
-				var dictionary = new Dictionary<TKey, TValue>(_dictionary);
-				dictionary.Remove(key);
-				_dictionary = dictionary;
+			    _dictionary = _dictionary.Remove(key);
 			}
 		}
 
@@ -76,9 +78,7 @@ namespace Maestro.Utils
 		{
 			lock (this)
 			{
-				var dictionary = new Dictionary<TKey, TValue>(_dictionary);
-				dictionary[key] = value;
-				_dictionary = dictionary;
+			    _dictionary = _dictionary.SetItem(key, value);
 			}
 		}
 	}
