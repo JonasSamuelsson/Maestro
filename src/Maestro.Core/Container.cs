@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Maestro.Configuration;
 using Maestro.Factories;
@@ -247,7 +248,7 @@ namespace Maestro
 			if (plugins.TryGet(type, out plugin))
 				return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
 
-			if (!type.IsGenericType)
+			if (!type.GetTypeInfo().IsGenericType)
 				return false;
 
 			if (plugins.TryGet(type, out plugin))
@@ -258,8 +259,8 @@ namespace Maestro
 			if (!plugins.TryGet(typeDefinition, out typeDefinitionPlugin))
 				return false;
 
-			var genericArguments = type.GetGenericArguments();
-			plugin = new Plugin(typeDefinitionPlugin.Select(x => new KeyValuePair<string, IInstanceBuilder>(x.Key, x.Value.MakeGenericPipelineEngine(genericArguments))));
+			var genericArguments = type.GetTypeInfo().GenericTypeArguments;
+            plugin = new Plugin(typeDefinitionPlugin.Select(x => new KeyValuePair<string, IInstanceBuilder>(x.Key, x.Value.MakeGenericPipelineEngine(genericArguments))));
 			plugins.Add(type, plugin);
 			return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
 		}

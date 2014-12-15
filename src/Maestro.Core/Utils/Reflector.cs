@@ -18,7 +18,7 @@ namespace Maestro.Utils
 				return false;
 			}
 
-			var methods = typeof(Expression<T>).GetMethods(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public);
+			var methods = typeof(Expression<T>).GetTypeInfo().DeclaredMethods.Where(m => m.IsPublic && !m.IsStatic);
 			compiler = methods.SingleOrDefault(x => x.Name == "Compile" && x.GetParameters().Length == 0);
 			return compiler != null;
 		}
@@ -28,19 +28,22 @@ namespace Maestro.Utils
 			if (context.CanGet(type))
 				return GetValueProvider(type);
 
-			if (type.IsArray && (resolveValueTypeArrays || !type.GetElementType().IsValueType))
+			if (type.IsArray && (resolveValueTypeArrays || !type.GetElementType().GetTypeInfo().IsValueType))
 				return GetArrayProvider(type.GetElementType());
 
-			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) && !type.GetGenericArguments().Single().IsValueType)
-				return GetEnumerableProvider(type.GetGenericArguments().Single());
+			var genericTypeParametersAndArguments =
+				type.GetTypeInfo().GenericTypeParameters.Union(type.GetTypeInfo().GenericTypeArguments).ToList();
+
+			if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) && !genericTypeParametersAndArguments.Single().GetTypeInfo().IsValueType)
+				return GetEnumerableProvider(genericTypeParametersAndArguments.Single());
 
 			return null;
 		}
 
 		private static Func<IContext, object> GetArrayProvider(Type type)
 		{
-			var getAllMethod = typeof(IContext).GetMethod("GetAll", new Type[0]).MakeGenericMethod(type);
-			var toArrayMethod = typeof(Enumerable).GetMethod("ToArray").MakeGenericMethod(type);
+			var getAllMethod = typeof (IContext).GetRuntimeMethod("GetAll", new Type[0]).MakeGenericMethod(type);
+			var toArrayMethod = typeof (Enumerable).GetTypeInfo().GetDeclaredMethod("ToArray").MakeGenericMethod(type);
 
 			MethodInfo compiler;
 			if (!TryGetExpressionCompiler<Func<IContext, object>>(out compiler))
@@ -55,7 +58,7 @@ namespace Maestro.Utils
 
 		private static Func<IContext, object> GetEnumerableProvider(Type type)
 		{
-			var getAllMethod = typeof(IContext).GetMethod("GetAll", new Type[0]).MakeGenericMethod(type);
+			var getAllMethod = typeof(IContext).GetRuntimeMethod("GetAll", new Type[0]).MakeGenericMethod(type);
 
 			MethodInfo compiler;
 			if (!TryGetExpressionCompiler<Func<IContext, object>>(out compiler))
@@ -74,7 +77,7 @@ namespace Maestro.Utils
 				return ctx => ctx.Get(type);
 
 			var context = Expression.Parameter(typeof(IContext), "context");
-			var getMethod = typeof(IContext).GetMethod("Get", new[] { typeof(Type) });
+			var getMethod = typeof(IContext).GetRuntimeMethod("Get", new[] { typeof(Type) });
 			var value = Expression.Call(context, getMethod, new Expression[] { Expression.Constant(type) });
 			var lambda = Expression.Lambda<Func<IContext, object>>(value, new[] { context });
 			return (Func<IContext, object>)compiler.Invoke(lambda, null);
@@ -82,8 +85,8 @@ namespace Maestro.Utils
 
 		public static Action<object, object> GetPropertySetter(Type instanceType, string propertyName)
 		{
-			var property = instanceType.GetProperty(propertyName);
-			var setMethod = property.GetSetMethod();
+			var property = instanceType.GetTypeInfo().GetDeclaredProperty(propertyName);
+			var setMethod = property.SetMethod;
 
 			MethodInfo compiler;
 			if (!TryGetExpressionCompiler<Action<object, object>>(out compiler))
@@ -105,7 +108,7 @@ namespace Maestro.Utils
 
 		public static Func<IContext, object> GetInstantiatorOrNull(Type type, IContext context)
 		{
-			foreach (var constructor in type.GetConstructors().OrderByDescending(x => x.GetParameters().Length))
+			foreach (var constructor in type.GetTypeInfo().DeclaredConstructors.OrderByDescending(x => x.GetParameters().Length))
 			{
 				var ctor = constructor; // prevents access to modified closure
 				var parameterTypes = ctor.GetParameters().Select(x => x.ParameterType).ToList();
