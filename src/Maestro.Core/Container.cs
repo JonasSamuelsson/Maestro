@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Maestro.Configuration;
 using Maestro.Factories;
@@ -13,8 +15,8 @@ namespace Maestro
 		private static IContainer _defaultContainer;
 
 		private readonly Guid _id;
-		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
-		private readonly ThreadSafeDictionary<long, IInstanceBuilder> _instanceBuilderCache;
+		private readonly ConcurrentDictionary<Type, Plugin> _plugins;
+        private readonly ConcurrentDictionary<long, IInstanceBuilder> _instanceBuilderCache;
 		private readonly DefaultSettings _defaultSettings;
 		private long _contextId;
 		private int _configVersion;
@@ -26,8 +28,8 @@ namespace Maestro
 		public Container()
 		{
 			_id = Guid.NewGuid();
-			_plugins = new ThreadSafeDictionary<Type, Plugin>();
-			_instanceBuilderCache = new ThreadSafeDictionary<long, IInstanceBuilder>();
+            _plugins = new ConcurrentDictionary<Type, Plugin>();
+            _instanceBuilderCache = new ConcurrentDictionary<long, IInstanceBuilder>();
 			_defaultSettings = new DefaultSettings();
 		}
 
@@ -82,7 +84,7 @@ namespace Maestro
 			try
 			{
 				Plugin plugin;
-				if (!_plugins.TryGet(type, out plugin))
+				if (!_plugins.TryGetValue(type, out plugin))
 					return Enumerable.Empty<object>();
 
 				var contextId = Interlocked.Increment(ref _contextId);
@@ -216,21 +218,21 @@ namespace Maestro
 		{
 			var key = (long)type.GetHashCode() << 32 | (uint)context.Name.GetHashCode();
 
-			if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
+			if (_instanceBuilderCache.TryGetValue(key, out instanceBuilder))
 				return true;
 
 			lock (string.Format("{0}/{1}", _id, type.FullName))
 			{
 				if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
 				{
-					_instanceBuilderCache.Add(key, instanceBuilder);
+					_instanceBuilderCache.AddOrUpdate(key, instanceBuilder, (n, ib) => ib);
 					return true;
 				}
 
 				if (type.IsConcreteClosedClass() && !type.IsArray)
 				{
 					instanceBuilder = new InstanceBuilder(new TypeInstanceFactory(type));
-					_instanceBuilderCache.Add(key, instanceBuilder);
+                    _instanceBuilderCache.AddOrUpdate(key, instanceBuilder, (n, ib) => ib);
 					return true;
 				}
 
@@ -238,29 +240,29 @@ namespace Maestro
 			}
 		}
 
-		private static bool TryGetInstanceBuilder(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context,
+        private static bool TryGetInstanceBuilder(ConcurrentDictionary<Type, Plugin> plugins, Type type, IContext context,
 			 out IInstanceBuilder instanceBuilder)
 		{
 			Plugin plugin;
 			instanceBuilder = null;
 
-			if (plugins.TryGet(type, out plugin))
+			if (plugins.TryGetValue(type, out plugin))
 				return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
 
-			if (!type.IsGenericType)
+			if (!type.GetTypeInfo().IsGenericType)
 				return false;
 
-			if (plugins.TryGet(type, out plugin))
+			if (plugins.TryGetValue(type, out plugin))
 				return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
 
 			Plugin typeDefinitionPlugin;
 			var typeDefinition = type.GetGenericTypeDefinition();
-			if (!plugins.TryGet(typeDefinition, out typeDefinitionPlugin))
+			if (!plugins.TryGetValue(typeDefinition, out typeDefinitionPlugin))
 				return false;
 
-			var genericArguments = type.GetGenericArguments();
-			plugin = new Plugin(typeDefinitionPlugin.Select(x => new KeyValuePair<string, IInstanceBuilder>(x.Key, x.Value.MakeGenericPipelineEngine(genericArguments))));
-			plugins.Add(type, plugin);
+			var genericArguments = type.GetTypeInfo().GenericTypeArguments;
+            plugin = new Plugin(typeDefinitionPlugin.Select(x => new KeyValuePair<string, IInstanceBuilder>(x.Key, x.Value.MakeGenericPipelineEngine(genericArguments))));
+			plugins.AddOrUpdate(type, plugin, (t, p) => p);
 			return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
 		}
 
@@ -280,7 +282,7 @@ namespace Maestro
 			try
 			{
 				Plugin plugin;
-				if (!_plugins.TryGet(type, out plugin))
+				if (!_plugins.TryGetValue(type, out plugin))
 					return Enumerable.Empty<object>();
 
 				using (((TypeStack)context.TypeStack).Push(type))

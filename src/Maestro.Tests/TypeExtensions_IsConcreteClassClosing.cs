@@ -16,7 +16,8 @@ namespace Maestro.Tests
 			Type outType;
 			var result = type.IsConcreteClassClosing(typeDefinition, out outType);
 			result.Should().Be(expected, reason);
-			outType.Should().Be(genericType);
+			if (result)
+			    outType.Should().Be(genericType);
 		}
 
 		static string GetName(Type type)

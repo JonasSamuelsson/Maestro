@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Tests", "Maestro.Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonServiceLocator.MaestroAdapter", "CommonServiceLocator.MaestroAdapter\CommonServiceLocator.MaestroAdapter.csproj", "{E79795D3-6C35-4846-91C1-D9E66C61E394}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.net40-client", "Maestro.net40-client\Maestro.net40-client.csproj", "{9396DE20-709E-438D-AA69-F828CA5D5224}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.net45-client", "Maestro.net45-client\Maestro.net45-client.csproj", "{9396DE20-709E-438D-AA69-F828CA5D5224}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Interception.DynamicProxy", "Maestro.Interception.DynamicProxy\Maestro.Interception.DynamicProxy.csproj", "{F74C9100-D385-4573-B973-0B534E1FB976}"
 EndProject
