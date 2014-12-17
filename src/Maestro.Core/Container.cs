@@ -62,6 +62,7 @@ namespace Maestro
 
 		public object Get(Type type, string name = null)
 		{
+			name = name ?? DefaultName;
 			object instance;
 			if (TryGet(type, name, out instance))
 				return instance;
@@ -219,7 +220,7 @@ namespace Maestro
 			if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
 				return true;
 
-			lock (string.Format("{0}/{1}", _id, type.FullName))
+			lock (string.Format("{0}/{1}", _id, key))
 			{
 				if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
 				{
