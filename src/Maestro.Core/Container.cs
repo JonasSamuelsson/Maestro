@@ -222,6 +222,9 @@ namespace Maestro
 
 			lock (string.Format("{0}/{1}", _id, key))
 			{
+				if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
+					return true;
+
 				if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
 				{
 					_instanceBuilderCache.Add(key, instanceBuilder);
