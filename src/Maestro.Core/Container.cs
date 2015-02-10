@@ -215,26 +215,26 @@ namespace Maestro
 
 		private bool TryGetInstanceBuilder(Type type, IContext context, out IInstanceBuilder instanceBuilder)
 		{
-			var key = (long)type.GetHashCode() << 32 | (uint)context.Name.GetHashCode();
+			var cacheKey = ((long)type.GetHashCode() << 32) + context.Name.GetHashCode();
 
-			if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
+			if (_instanceBuilderCache.TryGet(cacheKey, out instanceBuilder))
 				return true;
 
-			lock (string.Format("{0}/{1}", _id, key))
+			lock (string.Format("{0}/{1}", _instanceBuilderCache.GetHashCode(), cacheKey))
 			{
-				if (_instanceBuilderCache.TryGet(key, out instanceBuilder))
+				if (_instanceBuilderCache.TryGet(cacheKey, out instanceBuilder))
 					return true;
 
 				if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
 				{
-					_instanceBuilderCache.Add(key, instanceBuilder);
+					_instanceBuilderCache.Add(cacheKey, instanceBuilder);
 					return true;
 				}
 
 				if (type.IsConcreteClosedClass() && !type.IsArray)
 				{
 					instanceBuilder = new InstanceBuilder(new TypeInstanceFactory(type));
-					_instanceBuilderCache.Add(key, instanceBuilder);
+					_instanceBuilderCache.Add(cacheKey, instanceBuilder);
 					return true;
 				}
 
