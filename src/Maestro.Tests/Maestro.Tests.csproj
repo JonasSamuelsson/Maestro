@@ -70,6 +70,7 @@
     <Compile Include="..\Maestro.Core\Properties\VersioningAssemblyInfo.cs">
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="resolve_from_multiple_threads_simultaneously.cs" />
     <Compile Include="Conventions\add_concrete_sub_classes_convention.cs" />
     <Compile Include="CommonServiceLocator.cs" />
     <Compile Include="Conventions\add_concrete_classes_closing_convention.cs" />

@@ -220,7 +220,7 @@ namespace Maestro
 			if (_instanceBuilderCache.TryGet(cacheKey, out instanceBuilder))
 				return true;
 
-			lock (string.Format("{0}/{1}", _instanceBuilderCache.GetHashCode(), cacheKey))
+			lock (_instanceBuilderCache)
 			{
 				if (_instanceBuilderCache.TryGet(cacheKey, out instanceBuilder))
 					return true;
