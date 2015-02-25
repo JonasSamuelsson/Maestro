@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using System;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -9,11 +8,18 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_throw_ActivationException()
 		{
-			Action act = () => new Container().Get<Foo>();
-			act.ShouldThrow<ActivationException>();
+			Should.Throw<ActivationException>(() => new Container().Get<Alpha>())
+					.InnerException.Message.ShouldBe(@"Cyclic dependency.
+  Maestro.Tests.resolve_type_with_cyclic_dependencies+Beta
+  Maestro.Tests.resolve_type_with_cyclic_dependencies+Delta
+  Maestro.Tests.resolve_type_with_cyclic_dependencies+Charlie
+  Maestro.Tests.resolve_type_with_cyclic_dependencies+Beta
+  Maestro.Tests.resolve_type_with_cyclic_dependencies+Alpha");
 		}
 
-		private class Foo { public Foo(Bar bar) { } }
-		private class Bar { public Bar(Foo foo) { } }
+		private class Alpha { public Alpha(Beta beta) { } }
+		private class Beta { public Beta(Charlie charlie) { } }
+		private class Charlie { public Charlie(Delta delta) { } }
+		private class Delta { public Delta(Beta beta) { } }
 	}
 }

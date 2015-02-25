@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Maestro.Utils
 {
@@ -32,7 +33,15 @@ namespace Maestro.Utils
 		public IDisposable Push(Type type)
 		{
 			if (types.Contains(type))
-				throw new InvalidOperationException("Cyclic dependency.");
+			{
+				var builder = new StringBuilder();
+				builder.AppendLine("Cyclic dependency.")
+						 .AppendFormat("  {0}", type.FullName)
+						 .AppendLine();
+				foreach (var x in types.AsEnumerable().Reverse())
+					builder.AppendFormat("  {0}", x.FullName).AppendLine();
+				throw new InvalidOperationException(builder.ToString().Trim());
+			}
 
 			var index = types.Count;
 			types.Add(type);
