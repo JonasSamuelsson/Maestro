@@ -89,6 +89,7 @@ namespace Maestro
 				var contextId = Interlocked.Increment(ref _contextId);
 				var configVersion = _configVersion;
 				using (var context = new Context(configVersion, contextId, DefaultName, this))
+				using (((TypeStack)context.TypeStack).Push(type))
 					// ReSharper disable once AccessToDisposedClosure
 					return plugin.Each(x => context.Name = x.Key)
 									 .Select(x => x.Value.Get(context))
@@ -179,8 +180,8 @@ namespace Maestro
 		bool IContextContainer.CanGet(Type type, IContext context)
 		{
 			IInstanceBuilder instanceBuilder;
-			if (TryGetInstanceBuilder(type, context, out instanceBuilder))
-				using (((TypeStack)context.TypeStack).Push(type))
+			using (((TypeStack)context.TypeStack).Push(type))
+				if (TryGetInstanceBuilder(type, context, out instanceBuilder))
 					return instanceBuilder.CanGet(context);
 
 			return false;
@@ -191,8 +192,8 @@ namespace Maestro
 			try
 			{
 				IInstanceBuilder instanceBuilder;
-				if (TryGetInstanceBuilder(type, context, out instanceBuilder))
-					using (((TypeStack)context.TypeStack).Push(type))
+				using (((TypeStack)context.TypeStack).Push(type))
+					if (TryGetInstanceBuilder(type, context, out instanceBuilder))
 						return instanceBuilder.Get(context);
 
 				var message = context.Name == DefaultName
