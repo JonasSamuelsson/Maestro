@@ -58,13 +58,5 @@ namespace Maestro.Configuration
 			_registerPipeline(pipeline);
 			return new InstanceBuilderExpression<T>(pipeline);
 		}
-
-		public void Register(Action<IConditionalExpression<TPlugin>> action)
-		{
-			if (action == null) throw new ArgumentNullException();
-			var builder = new ConditionalExpression<TPlugin>(_defaultSettings);
-			var pipeline = builder.GetPipeline(action);
-			_registerPipeline(pipeline);
-		}
 	}
 }

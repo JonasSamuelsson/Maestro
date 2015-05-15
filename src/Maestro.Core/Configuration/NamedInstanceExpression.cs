@@ -35,10 +35,5 @@ namespace Maestro.Configuration
 		{
 			return _registrator.Register(type);
 		}
-
-		public void Use(Action<IConditionalExpression<TPlugin>> action)
-		{
-			_registrator.Register(action);
-		}
 	}
 }

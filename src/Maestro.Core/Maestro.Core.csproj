@@ -55,9 +55,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
-    <Compile Include="ConditionalInstanceBuilder.cs" />
-    <Compile Include="Configuration\ConditionalInstanceExpression.cs" />
-    <Compile Include="Configuration\IConditionalInstanceExpression.cs" />
     <Compile Include="Configuration\INamedInstanceExpression.cs" />
     <Compile Include="Configuration\InstanceRegistrator.cs" />
     <Compile Include="Configuration\NamedInstanceExpression.cs" />
@@ -65,7 +62,6 @@
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
     <Compile Include="Conventions\AddConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />
-    <Compile Include="Factories\ConditionalInstanceFactory.cs" />
     <Compile Include="Factories\ConstantInstanceFactory.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="Configuration\ContainerExpression.cs" />
@@ -74,7 +70,6 @@
     <Compile Include="Conventions\LambdaFilter.cs" />
     <Compile Include="Configuration\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />
-    <Compile Include="Configuration\ConditionalExpression.cs" />
     <Compile Include="Configuration\ConventionExpression.cs" />
     <Compile Include="Configuration\IConventionExpression.cs" />
     <Compile Include="Configuration\IDefaultFilterExpression.cs" />
@@ -82,7 +77,6 @@
     <Compile Include="Configuration\IInstanceBuilderExpression.cs" />
     <Compile Include="Configuration\ILifetimeExpression.cs" />
     <Compile Include="Configuration\InstanceBuilderExpression.cs" />
-    <Compile Include="Configuration\IConditionalExpression.cs" />
     <Compile Include="Configuration\IInstanceExpression.cs" />
     <Compile Include="Configuration\LifetimeExpression.cs" />
     <Compile Include="Configuration\InstanceExpression.cs" />

@@ -38,11 +38,6 @@ namespace Maestro.Configuration
 			return _defaultInstanceRegistrator.Register(type);
 		}
 
-		public void Use(Action<IConditionalExpression<TPlugin>> action)
-		{
-			_defaultInstanceRegistrator.Register(action);
-		}
-
 		public void Add<TInstance>(TInstance instance) where TInstance : TPlugin
 		{
 			_anonymousInstanceRegistrator.Register(instance);
@@ -66,11 +61,6 @@ namespace Maestro.Configuration
 		public IInstanceBuilderExpression<TPlugin> Add(Type type)
 		{
 			return _anonymousInstanceRegistrator.Register(type);
-		}
-
-		public void Add(Action<IConditionalExpression<TPlugin>> action)
-		{
-			_anonymousInstanceRegistrator.Register(action);
 		}
 	}
 }
