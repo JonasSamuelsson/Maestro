@@ -64,7 +64,6 @@ namespace Maestro
 		/// <summary>
 		/// Tries to get instance of type <typeparam name="T"/>.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
 		/// <param name="instance"></param>
 		/// <returns></returns>
 		/// <remarks>Does not swallow any exceptions.</remarks>
@@ -73,7 +72,6 @@ namespace Maestro
 		/// <summary>
 		/// Tries to get instance of type <typeparam name="T"/> named <paramref name="name"/>.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
 		/// <param name="name"></param>
 		/// <param name="instance"></param>
 		/// <returns></returns>
