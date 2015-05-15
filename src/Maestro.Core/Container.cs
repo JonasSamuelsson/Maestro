@@ -10,8 +10,6 @@ namespace Maestro
 {
 	public class Container : IContainer, IContextContainer
 	{
-		private static IContainer _defaultContainer;
-
 		private readonly Guid _id;
 		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
 		private readonly ThreadSafeDictionary<long, IInstanceBuilder> _instanceBuilderCache;
@@ -38,14 +36,6 @@ namespace Maestro
 			: this()
 		{
 			Configure(action);
-		}
-
-		/// <summary>
-		/// The static default container instance.
-		/// </summary>
-		public static IContainer Default
-		{
-			get { return _defaultContainer ?? (_defaultContainer = new Container()); }
 		}
 
 		internal static string DefaultName
