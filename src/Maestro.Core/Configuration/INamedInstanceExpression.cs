@@ -40,11 +40,5 @@ namespace Maestro.Configuration
 		/// <param name="type"></param>
 		/// <returns></returns>
 		IInstanceBuilderExpression<TPlugin> Use(Type type);
-
-		/// <summary>
-		/// Used to configure a conditional instance.
-		/// </summary>
-		/// <param name="action"></param>
-		void Use(Action<IConditionalExpression<TPlugin>> action);
 	}
 }

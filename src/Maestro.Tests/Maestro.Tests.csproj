@@ -76,7 +76,6 @@
     <Compile Include="CommonServiceLocator.cs" />
     <Compile Include="Conventions\add_concrete_classes_closing_convention.cs" />
     <Compile Include="Lifetimes\transient_lifetime.cs" />
-    <Compile Include="Factories\conditional_instance_factory.cs" />
     <Compile Include="Factories\constant_instance_factory.cs" />
     <Compile Include="Conventions\conventional_registration.cs" />
     <Compile Include="DefaultContainerInstance.cs" />
