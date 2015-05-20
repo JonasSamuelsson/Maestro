@@ -20,12 +20,15 @@ namespace Maestro.Internals
 
 		public void Add(Type type, string name, IPlugin plugin)
 		{
+			if (_entries.Any(x => x.Type == type && x.Name != null && x.Name == name))
+				throw new InvalidOperationException("Duplicate key");
+
 			_entries.Add(new Entry
-			             {
-				             Type = type,
-				             Name = name,
-				             Plugin = plugin
-			             });
+			{
+				Type = type,
+				Name = name,
+				Plugin = plugin
+			});
 		}
 
 		public bool TryGet(Type type, string name, out IPlugin plugin)
@@ -37,9 +40,9 @@ namespace Maestro.Internals
 		private IPlugin GetPluginOrNull(Type type, string name)
 		{
 			return _entries.FirstOrDefault(x => x.Type == type && x.Name == name)?.Plugin
-			       ?? _parent?.GetPluginOrNull(type, name)
-			       ?? _entries.FirstOrDefault(x => x.Type == type && x.Name == Container.DefaultName)?.Plugin
-			       ?? _parent?.GetPluginOrNull(type, Container.DefaultName);
+					 ?? _parent?.GetPluginOrNull(type, name)
+					 ?? _entries.FirstOrDefault(x => x.Type == type && x.Name == Container.DefaultName)?.Plugin
+					 ?? _parent?.GetPluginOrNull(type, Container.DefaultName);
 		}
 
 		public IEnumerable<IPlugin> GetAll(Type type)

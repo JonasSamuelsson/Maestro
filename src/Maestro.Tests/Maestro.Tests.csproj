@@ -74,7 +74,8 @@
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Context_disposed.cs" />
-    <Compile Include="Internals\BuilderLookup_tests.cs" />
+    <Compile Include="Internals\PipelineLookup_tests.cs" />
+    <Compile Include="Internals\Context_tests.cs" />
     <Compile Include="Internals\PluginLookup_tests.cs" />
     <Compile Include="resolve_from_multiple_threads_simultaneously.cs" />
     <Compile Include="Conventions\add_concrete_sub_classes_convention.cs" />

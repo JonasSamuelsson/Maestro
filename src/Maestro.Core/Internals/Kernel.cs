@@ -36,108 +36,70 @@ Context : IContext
 
 namespace Maestro.Internals
 {
-	static class Create
-	{
-		public static T Instance<T>(params object[] parameters)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal class Cntnr
-	{
-		private Kernel _kernel = new Kernel();
-
-		public object Get(Type type, string name)
-		{
-			object instance;
-			var ctx = Create.Instance<ICtx>();
-			if (_kernel.TryGet(type, name, ctx, out instance)) return instance;
-			throw new InvalidOperationException();
-		}
-
-		public IEnumerable<object> GetAll(Type type)
-		{
-			var ctx = Create.Instance<ICtx>();
-			return _kernel.GetAll(type, ctx);
-		}
-	}
-
-	internal interface ICtx
-	{
-		IDisposable PushFrame(Type type);
-	}
-
 	internal class Kernel
 	{
-		private readonly IPluginLookup _plugins = Create.Instance<IPluginLookup>();
-		private readonly IBuilderLookup _builders = Create.Instance<IBuilderLookup>();
-		private readonly IEnumerable<IInstanceFactoryResolver> _instanceFactoryResolvers = Create.Instance<IEnumerable<IInstanceFactoryResolver>>();
+		private readonly IPluginLookup _plugins;
+		private readonly IPipelineLookup _pipelines = new PipelineLookup();
 
-		public bool TryGet(Type type, string name, ICtx ctx, out object instance)
+		public Kernel(IPluginLookup plugins)
 		{
-			using (ctx.PushFrame(type))
-			{
-				instance = null;
-				var key = $"{type.FullName}-{name}";
-				IBuilder builder;
-				if (!_builders.TryGet(key, out builder))
-				{
-					lock (_builders)
-					{
-						if (!_builders.TryGet(key, out builder))
-						{
-							IPlugin plugin;
-							if (!_plugins.TryGet(type, name, out plugin))
-							{
-								var resolver = _instanceFactoryResolvers.FirstOrDefault(x => x.CanHandle(type));
-								if (resolver == null) return false;
-								var instanceFactory = resolver.GetInstanceFactory(type);
-								plugin = Create.Instance<IPlugin>(instanceFactory);
-							}
+			_plugins = plugins;
+		}
 
-							builder = Create.Instance<IBuilder>(plugin);
-							_builders.Add(key, builder);
+		public bool CanGet(Type type, string name)
+		{
+			return false;
+		}
+
+		public bool TryGet(Type type, string name, Context context, out object instance)
+		{
+			instance = null;
+			var key = $"{type.FullName}-{name}";
+			IPipeline pipeline;
+			if (!_pipelines.TryGet(key, out pipeline))
+			{
+				lock (_pipelines)
+				{
+					if (!_pipelines.TryGet(key, out pipeline))
+					{
+						IPlugin plugin;
+						if (!_plugins.TryGet(type, name, out plugin))
+						{
+							return false;
+							//var resolver = _instanceFactoryResolvers.FirstOrDefault(x => x.CanHandle(type));
+							//if (resolver == null) return false;
+							//var instanceFactory = resolver.GetInstanceFactory(type);
+							//plugin = Create.Instance<IPlugin>(instanceFactory);
 						}
+
+						pipeline = new Pipeline(plugin);
+						_pipelines.Add(key, pipeline);
 					}
 				}
-
-				instance = builder.Execute();
-				return true;
 			}
+
+			instance = pipeline.Execute(context);
+			return true;
 		}
 
-		public IEnumerable<object> GetAll(Type type, ICtx ctx)
+		public IEnumerable<object> GetAll(Type type, Context context)
 		{
-			using (ctx.PushFrame(type))
+			var key = type.FullName;
+			IEnumerable<IPipeline> builders;
+			if (!_pipelines.TryGet(key, out builders))
 			{
-				var key = type.FullName;
-				IEnumerable<IBuilder> builders;
-				if (!_builders.TryGet(key, out builders))
+				lock (_pipelines)
 				{
-					lock (_builders)
+					if (!_pipelines.TryGet(key, out builders))
 					{
-						if (!_builders.TryGet(key, out builders))
-						{
-							var plugins = _plugins.GetAll(type);
-							builders = plugins.Select(x => Create.Instance<IBuilder>(x)).ToList();
-							_builders.Add(key, builders);
-						}
+						var plugins = _plugins.GetAll(type);
+						builders = plugins.Select(x => new Pipeline(x)).ToList();
+						_pipelines.Add(key, builders);
 					}
 				}
-
-				return builders.Select(x => x.Execute());
 			}
-		}
 
-		private interface IInstanceFactoryResolver
-		{
-			bool CanHandle(Type type);
-			IFactory GetInstanceFactory(Type type);
-		}
-
-		private interface IFactory
-		{
+			return builders.Select(x => x.Execute(context)).ToList();
 		}
 	}
 }
