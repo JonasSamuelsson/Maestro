@@ -59,6 +59,7 @@
     <Compile Include="Configuration\InstanceRegistrator.cs" />
     <Compile Include="Configuration\NamedInstanceExpression.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Internals\ConcreteClosedClassPipelineFactory.cs" />
     <Compile Include="Internals\Context.cs" />
     <Compile Include="Internals\IPipeline.cs" />
     <Compile Include="Internals\IPipelineLookup.cs" />
@@ -69,7 +70,7 @@
     <Compile Include="Internals\PipelineLookup.cs" />
     <Compile Include="Internals\Plugin.cs" />
     <Compile Include="Internals\PluginLookup.cs" />
-    <Compile Include="Internals\todo.cs" />
+    <Compile Include="Internals\IPipelineFactory.cs" />
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
     <Compile Include="Conventions\AddConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />

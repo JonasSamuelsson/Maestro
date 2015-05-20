@@ -20,7 +20,7 @@ namespace Maestro.Internals
 
 		public object Execute(Context context)
 		{
-			return FactoryProvider.GetFatory().Invoke(context);
+			return FactoryProvider.GetFactory(context).Invoke(context);
 		}
 	}
 }

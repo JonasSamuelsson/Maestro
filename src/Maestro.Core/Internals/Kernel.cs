@@ -40,13 +40,17 @@ namespace Maestro.Internals
 	{
 		private readonly IPluginLookup _plugins;
 		private readonly IPipelineLookup _pipelines = new PipelineLookup();
+		private readonly IEnumerable<IPipelineFactory> _pipelineFactories = new IPipelineFactory[]
+		{
+			new ConcreteClosedClassPipelineFactory()
+		};
 
 		public Kernel(IPluginLookup plugins)
 		{
 			_plugins = plugins;
 		}
 
-		public bool CanGet(Type type, string name)
+		public bool CanGet(Type type, string name, Context context)
 		{
 			return false;
 		}
@@ -63,16 +67,11 @@ namespace Maestro.Internals
 					if (!_pipelines.TryGet(key, out pipeline))
 					{
 						IPlugin plugin;
-						if (!_plugins.TryGet(type, name, out plugin))
-						{
+						if (_plugins.TryGet(type, name, out plugin))
+							pipeline = new Pipeline(plugin);
+						else if (!_pipelineFactories.Any(x => x.TryGet(type, context, out pipeline)))
 							return false;
-							//var resolver = _instanceFactoryResolvers.FirstOrDefault(x => x.CanHandle(type));
-							//if (resolver == null) return false;
-							//var instanceFactory = resolver.GetInstanceFactory(type);
-							//plugin = Create.Instance<IPlugin>(instanceFactory);
-						}
 
-						pipeline = new Pipeline(plugin);
 						_pipelines.Add(key, pipeline);
 					}
 				}
