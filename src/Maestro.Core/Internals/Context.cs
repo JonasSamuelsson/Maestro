@@ -18,11 +18,12 @@ namespace Maestro.Internals
 		//IEnumerable<T> GetAll<T>();
 	}
 
-	class Context : IContext
+	class Context : IContext, IDisposable
 	{
 		private readonly string _name;
 		private readonly Kernel _kernel;
 		private readonly HashSet<Type> _processedTypes = new HashSet<Type>();
+		private bool _disposed;
 
 		public Context(string name, Kernel kernel)
 		{
@@ -34,6 +35,7 @@ namespace Maestro.Internals
 		{
 			try
 			{
+				AssertNotDisposed();
 				Push(type);
 				return _kernel.TryGet(type, _name, this, out instance);
 			}
@@ -47,6 +49,7 @@ namespace Maestro.Internals
 		{
 			try
 			{
+				AssertNotDisposed();
 				Push(type);
 				throw new NotImplementedException();
 			}
@@ -54,6 +57,11 @@ namespace Maestro.Internals
 			{
 				_processedTypes.Remove(type);
 			}
+		}
+
+		private void AssertNotDisposed()
+		{
+			if (_disposed) throw new ObjectDisposedException("Context has been disposed.");
 		}
 
 		private void Push(Type type)
@@ -73,6 +81,11 @@ namespace Maestro.Internals
 			}
 
 			return false;
+		}
+
+		public void Dispose()
+		{
+			_disposed = true;
 		}
 	}
 }

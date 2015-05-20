@@ -22,13 +22,23 @@ namespace Maestro.Tests.Internals
 		}
 
 		[Fact]
-		public void Get_unconfigured_interface_instance_should_fail()
+		public void TryGet_unconfigured_interface_instance_should_fail()
 		{
 			var context = new ContextBuilder().GetContext();
 
 			object instance;
-			context.TryGet(typeof(IEnumerable<>), out instance).ShouldBe(false);
+			context.TryGet(typeof(IDisposable), out instance).ShouldBe(false);
 			instance.ShouldBe(null);
+		}
+
+		[Fact]
+		public void Using_disposed_context_should_throw()
+		{
+			var context = new ContextBuilder().GetContext();
+			context.Dispose();
+			object instance;
+			Should.Throw<ObjectDisposedException>(() => context.TryGet(typeof(object), out instance));
+			Should.Throw<ObjectDisposedException>(() => context.GetAll(typeof(object)));
 		}
 
 		//[Fact]
