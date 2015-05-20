@@ -139,18 +139,5 @@ namespace Maestro.Internals
 		private interface IFactory
 		{
 		}
-
-		private interface IBuilder
-		{
-			object Execute();
-		}
-
-		private interface IBuilderLookup
-		{
-			void Add(string key, IBuilder builder);
-			void Add(string key, IEnumerable<IBuilder> builders);
-			bool TryGet(string key, out IBuilder builder);
-			bool TryGet(string key, out IEnumerable<IBuilder> builders);
-		}
 	}
 }

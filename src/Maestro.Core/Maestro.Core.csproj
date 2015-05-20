@@ -59,6 +59,8 @@
     <Compile Include="Configuration\InstanceRegistrator.cs" />
     <Compile Include="Configuration\NamedInstanceExpression.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="Internals\IBuilder.cs" />
+    <Compile Include="Internals\IBuilderLookup.cs" />
     <Compile Include="Internals\IPlugin.cs" />
     <Compile Include="Internals\IPluginLookup.cs" />
     <Compile Include="Internals\Kernel.cs" />
