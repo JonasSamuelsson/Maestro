@@ -51,7 +51,7 @@ namespace Maestro.Internals
 			{
 				AssertNotDisposed();
 				Push(type);
-				throw new NotImplementedException();
+				return _kernel.GetAll(type, this);
 			}
 			finally
 			{

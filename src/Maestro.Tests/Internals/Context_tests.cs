@@ -13,7 +13,7 @@ namespace Maestro.Tests.Internals
 		{
 			var expectedInstance = new object();
 			var context = new ContextBuilder()
-				.AddDefault(typeof(object), new InstanceFactoryProvider(expectedInstance))
+				.Add(typeof(object), new InstanceFactoryProvider(expectedInstance))
 				.GetContext();
 
 			object instance;
@@ -41,16 +41,18 @@ namespace Maestro.Tests.Internals
 			Should.Throw<ObjectDisposedException>(() => context.GetAll(typeof(object)));
 		}
 
-		//[Fact]
-		//public void Get_all_should_get_all_configured_instances()
-		//{
-		//	var instance1 = "foo";
-		//	var instance2 = "bar";
-		//	var context = new ContextBuilder()
-		//		.AddDefault(typeof (object), new InstanceFactoryProvider(instance1))
-		//		.AddNamed(typeof (object), new InstanceFactoryProvider(instance1))
-		//		.GetContext();
-		//}
+		[Fact]
+		public void GetAll_should_get_all_configured_instances()
+		{
+			var instance1 = new object();
+			var instance2 = new object();
+			var context = new ContextBuilder()
+				.Add(typeof(object), new InstanceFactoryProvider(instance1))
+				.Add(typeof(object), "foo", new InstanceFactoryProvider(instance2))
+				.GetContext();
+
+			context.GetAll(typeof(object)).ShouldBe(new[] { instance1, instance2 });
+		}
 
 		class ContextBuilder
 		{
@@ -65,9 +67,14 @@ namespace Maestro.Tests.Internals
 				_context = new Maestro.Internals.Context(name, kernel);
 			}
 
-			public ContextBuilder AddDefault(Type type, IFactoryProvider factoryProvider)
+			public ContextBuilder Add(Type type, IFactoryProvider factoryProvider)
 			{
-				_plugins.Add(type, Container.DefaultName, new Maestro.Internals.Plugin
+				return Add(type, Container.DefaultName, factoryProvider);
+			}
+
+			public ContextBuilder Add(Type type, string name, IFactoryProvider factoryProvider)
+			{
+				_plugins.Add(type, name, new Maestro.Internals.Plugin
 				{
 					FactoryProvider = factoryProvider
 				});
