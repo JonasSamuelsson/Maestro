@@ -9,7 +9,17 @@ namespace Maestro.Tests.Internals
 	public class Context_tests
 	{
 		[Fact]
-		public void TryGet_configured_instance_should_pass()
+		public void TryGet_unconfigured_abstract_type_should_fail()
+		{
+			var context = new ContextBuilder().GetContext();
+
+			object instance;
+			context.TryGet(typeof(IDisposable), out instance).ShouldBe(false);
+			instance.ShouldBe(null);
+		}
+
+		[Fact]
+		public void TryGet_configured_abstract_type_should_pass()
 		{
 			var expectedInstance = new object();
 			var context = new ContextBuilder()
@@ -22,13 +32,13 @@ namespace Maestro.Tests.Internals
 		}
 
 		[Fact]
-		public void TryGet_unconfigured_interface_instance_should_fail()
+		public void TryGet_unconfigured_concrete_closed_class_instance_should_fail()
 		{
 			var context = new ContextBuilder().GetContext();
 
 			object instance;
-			context.TryGet(typeof(IDisposable), out instance).ShouldBe(false);
-			instance.ShouldBe(null);
+			context.TryGet(typeof(object), out instance).ShouldBe(true);
+			instance.ShouldNotBe(null);
 		}
 
 		[Fact]
@@ -46,12 +56,14 @@ namespace Maestro.Tests.Internals
 		{
 			var instance1 = new object();
 			var instance2 = new object();
+			var instance3 = new object();
 			var context = new ContextBuilder()
 				.Add(typeof(object), new InstanceFactoryProvider(instance1))
 				.Add(typeof(object), "foo", new InstanceFactoryProvider(instance2))
+				.Add(typeof(object), null, new InstanceFactoryProvider(instance3))
 				.GetContext();
 
-			context.GetAll(typeof(object)).ShouldBe(new[] { instance1, instance2 });
+			context.GetAll(typeof(object)).ShouldBe(new[] { instance1, instance2, instance3 });
 		}
 
 		class ContextBuilder

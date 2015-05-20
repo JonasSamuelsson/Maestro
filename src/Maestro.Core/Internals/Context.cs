@@ -31,6 +31,20 @@ namespace Maestro.Internals
 			_kernel = kernel;
 		}
 
+		public bool CanGet(Type type)
+		{
+			try
+			{
+				AssertNotDisposed();
+				Push(type);
+				return _kernel.CanGet(type, _name, this);
+			}
+			finally
+			{
+				_processedTypes.Remove(type);
+			}
+		}
+
 		public bool TryGet(Type type, out object instance)
 		{
 			try
@@ -70,6 +84,11 @@ namespace Maestro.Internals
 			throw new InvalidOperationException("Cyclic dependency.");
 		}
 
+		public bool CanGetDependency(Type type)
+		{
+			return CanGet(type) || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+		}
+
 		public bool TryGetDependency(Type type, out object instance)
 		{
 			if (TryGet(type, out instance)) return true;
@@ -81,6 +100,13 @@ namespace Maestro.Internals
 			}
 
 			return false;
+		}
+
+		public object GetDependency(Type type)
+		{
+			object instance;
+			if (TryGetDependency(type, out instance)) return instance;
+			throw new InvalidOperationException();
 		}
 
 		public void Dispose()
