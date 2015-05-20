@@ -34,9 +34,7 @@ Context : IContext
 	Kernel
 */
 
-
-
-namespace Maestro
+namespace Maestro.Internals
 {
 	static class Create
 	{
@@ -140,82 +138,6 @@ namespace Maestro
 
 		private interface IFactory
 		{
-		}
-
-		private interface IPlugin
-		{
-			Func<object> Factory { get; set; }
-		}
-
-		private interface IPluginLookup
-		{
-			bool TryGet(Type type, string name, out IPlugin plugin);
-			IEnumerable<IPlugin> GetAll(Type type);
-		}
-
-		private class PluginLookup : IPluginLookup
-		{
-			readonly List<Entry> _entries = new List<Entry>();
-			readonly PluginLookup _parent;
-
-			public PluginLookup()
-			{
-			}
-
-			public PluginLookup(PluginLookup parent)
-			{
-				_parent = parent;
-			}
-
-			public void Add(Type type, string name, IPlugin plugin)
-			{
-				_entries.Add(new Entry
-				{
-					Type = type,
-					Name = name,
-					Plugin = plugin
-				});
-			}
-
-			public bool TryGet(Type type, string name, out IPlugin plugin)
-			{
-				plugin = GetPluginOrNull(type, name);
-				return plugin != null;
-			}
-
-			private IPlugin GetPluginOrNull(Type type, string name)
-			{
-				return _entries.FirstOrDefault(x => x.Type == type && x.Name == name)?.Plugin
-										  ?? _parent?.GetPluginOrNull(type, name)
-										  ?? _entries.FirstOrDefault(x => x.Type == type && x.Name == Container.DefaultName)?.Plugin
-										  ?? _parent?.GetPluginOrNull(type, Container.DefaultName);
-			}
-
-			public IEnumerable<IPlugin> GetAll(Type type)
-			{
-				var names = new HashSet<string>();
-				var plugins = new List<IPlugin>();
-				GetAll(type, names, plugins);
-				return plugins;
-			}
-
-			private void GetAll(Type type, ISet<string> names, ICollection<IPlugin> plugins)
-			{
-				foreach (var entry in _entries.Where(x => x.Type == type))
-				{
-					if (entry.Name != null) if (!names.Add(entry.Name)) continue;
-					plugins.Add(entry.Plugin);
-				}
-
-				_parent?.GetAll(type, names, plugins);
-			}
-
-			class Entry
-			{
-				public Type Type { get; set; }
-				public string Name { get; set; }
-				public IPlugin Plugin { get; set; }
-			}
 		}
 
 		private interface IBuilder

@@ -59,7 +59,10 @@
     <Compile Include="Configuration\InstanceRegistrator.cs" />
     <Compile Include="Configuration\NamedInstanceExpression.cs" />
     <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="Kernel.cs" />
+    <Compile Include="Internals\IPlugin.cs" />
+    <Compile Include="Internals\IPluginLookup.cs" />
+    <Compile Include="Internals\Kernel.cs" />
+    <Compile Include="Internals\PluginLookup.cs" />
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
     <Compile Include="Conventions\AddConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />
