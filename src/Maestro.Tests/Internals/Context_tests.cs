@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Maestro.Internals;
+using Maestro.Internals.FactoryProviders;
 using Shouldly;
 using Xunit;
 

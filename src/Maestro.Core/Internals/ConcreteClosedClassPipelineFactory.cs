@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using Maestro.Internals.FactoryProviders;
 
 namespace Maestro.Internals
 {

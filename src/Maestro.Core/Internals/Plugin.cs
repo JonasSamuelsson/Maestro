@@ -1,4 +1,6 @@
-﻿namespace Maestro.Internals
+﻿using Maestro.Internals.FactoryProviders;
+
+namespace Maestro.Internals
 {
 	class Plugin : IPlugin
 	{

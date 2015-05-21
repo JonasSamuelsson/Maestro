@@ -1,3 +1,5 @@
+using Maestro.Internals.FactoryProviders;
+
 namespace Maestro.Internals
 {
 	interface IPipeline
