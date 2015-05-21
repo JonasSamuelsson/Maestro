@@ -14,7 +14,7 @@ namespace Maestro.Internals
 			var pipelines = from ctor in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 								 let parameters = ctor.GetParameters()
 								 orderby parameters.Length descending
-								 where parameters.All(p => context.CanGetDependency(p.ParameterType))
+								 where parameters.All(p => context.Kernel.CanGetDependency(p.ParameterType, context))
 								 let factoryProvider = new TypeFactoryProvider(type) { Constructor = ctor }
 								 select new Pipeline(new Plugin { FactoryProvider = factoryProvider });
 			pipeline = pipelines.FirstOrDefault();

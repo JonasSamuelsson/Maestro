@@ -74,8 +74,9 @@
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Context_disposed.cs" />
-    <Compile Include="Internals\PipelineLookup_tests.cs" />
     <Compile Include="Internals\Context_tests.cs" />
+    <Compile Include="Internals\PipelineLookup_tests.cs" />
+    <Compile Include="Internals\Kernel_tests.cs" />
     <Compile Include="Internals\PluginLookup_tests.cs" />
     <Compile Include="v1_vs_v2_performance.cs" />
     <Compile Include="resolve_from_multiple_threads_simultaneously.cs" />

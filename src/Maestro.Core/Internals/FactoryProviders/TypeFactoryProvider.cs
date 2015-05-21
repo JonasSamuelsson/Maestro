@@ -27,7 +27,7 @@ namespace Maestro.Internals.FactoryProviders
 			return Type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 			           .Select(x => new { ctor = x, parameterTypes = x.GetParameters().Select(p => p.ParameterType).ToList() })
 			           .OrderByDescending(x => x.parameterTypes.Count)
-			           .Where(x => x.parameterTypes.All(context.CanGetDependency))
+			           .Where(x => x.parameterTypes.All(t => context.Kernel.CanGetDependency(t, context)))
 			           .Select(x => x.parameterTypes)
 			           .FirstOrDefault();
 		}
@@ -36,7 +36,7 @@ namespace Maestro.Internals.FactoryProviders
 		{
 			return ctx =>
 			       {
-				       var dependencies = types.Select(ctx.GetDependency).ToArray();
+				       var dependencies = types.Select(t => ctx.Kernel.GetDependency(t, ctx)).ToArray();
 				       return Activator.CreateInstance(Type, dependencies);
 			       };
 		}
