@@ -35,7 +35,14 @@ namespace Maestro.Tests
 								  duration = Execute(version, test.Action)
 							  };
 
-			throw new Exception(string.Join(Environment.NewLine, results.Select(x => $"{x.version} {x.test} {(int)x.duration.TotalMilliseconds}ms")));
+			foreach (var g in results.GroupBy(x => x.test))
+			{
+				Console.WriteLine(g.Key);
+				foreach (var result in g)
+				{
+					Console.WriteLine($"  {result.version} {(int)result.duration.TotalMilliseconds}ms");
+				}
+			}
 		}
 
 		private static void Assert(PerformanceTest v)
