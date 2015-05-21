@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Maestro.Internals
 {
@@ -20,93 +19,48 @@ namespace Maestro.Internals
 
 	class Context : IContext, IDisposable
 	{
-		private readonly string _name;
-		private readonly Kernel _kernel;
-		private readonly HashSet<Type> _processedTypes = new HashSet<Type>();
+		private readonly Stack<Type> _stack = new Stack<Type>();
 		private bool _disposed;
 
 		public Context(string name, Kernel kernel)
 		{
-			_name = name;
-			_kernel = kernel;
+			Name = name;
+			Kernel = kernel;
 		}
 
-		public bool CanGet(Type type)
+		public string Name { get; }
+		public Kernel Kernel { get; }
+
+		bool IContext.TryGet(Type type, out object instance)
 		{
-			try
-			{
-				AssertNotDisposed();
-				Push(type);
-				return _kernel.CanGet(type, _name, this);
-			}
-			finally
-			{
-				_processedTypes.Remove(type);
-			}
+			AssertNotDisposed();
+			return Kernel.TryGet(type, this, out instance);
 		}
 
-		public bool TryGet(Type type, out object instance)
+		IEnumerable<object> IContext.GetAll(Type type)
 		{
-			try
-			{
-				AssertNotDisposed();
-				Push(type);
-				return _kernel.TryGet(type, _name, this, out instance);
-			}
-			finally
-			{
-				_processedTypes.Remove(type);
-			}
+			AssertNotDisposed();
+			return Kernel.GetAll(type, this);
 		}
 
-		public IEnumerable<object> GetAll(Type type)
+		public void PushStackFrame(Type type)
 		{
-			try
+			if (_stack.Contains(type))
 			{
-				AssertNotDisposed();
-				Push(type);
-				return _kernel.GetAll(type, this);
+				throw new InvalidOperationException("Cyclic dependency");
 			}
-			finally
-			{
-				_processedTypes.Remove(type);
-			}
+
+			_stack.Push(type);
+		}
+
+		public void PopStackFrame()
+		{
+			_stack.Pop();
 		}
 
 		private void AssertNotDisposed()
 		{
 			if (_disposed) throw new ObjectDisposedException("Context has been disposed.");
-		}
-
-		private void Push(Type type)
-		{
-			if (_processedTypes.Add(type)) return;
-			throw new InvalidOperationException("Cyclic dependency.");
-		}
-
-		public bool CanGetDependency(Type type)
-		{
-			return CanGet(type) || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-		}
-
-		public bool TryGetDependency(Type type, out object instance)
-		{
-			if (TryGet(type, out instance)) return true;
-
-			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-			{
-				instance = GetAll(type.GetGenericArguments().Single());
-				return true;
-			}
-
-			return false;
-		}
-
-		public object GetDependency(Type type)
-		{
-			object instance;
-			if (TryGetDependency(type, out instance)) return instance;
-			throw new InvalidOperationException();
 		}
 
 		public void Dispose()

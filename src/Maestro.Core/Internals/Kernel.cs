@@ -50,16 +50,40 @@ namespace Maestro.Internals
 			_plugins = plugins;
 		}
 
-		public bool CanGet(Type type, string name, Context context)
+		public bool CanGet(Type type, Context context)
 		{
-			return false;
+			context.PushStackFrame(type);
+
+			try
+			{
+				IPipeline pipeline;
+				return TryGetPipeline(type, context, out pipeline);
+			}
+			finally
+			{
+				context.PopStackFrame();
+			}
 		}
 
-		public bool TryGet(Type type, string name, Context context, out object instance)
+		public bool TryGet(Type type, Context context, out object instance)
 		{
-			instance = null;
-			var key = $"{type.FullName}-{name}";
-			IPipeline pipeline;
+			context.PushStackFrame(type);
+
+			try
+			{
+				IPipeline pipeline;
+				instance = TryGetPipeline(type, context, out pipeline) ? pipeline.Execute(context) : null;
+				return instance != null;
+			}
+			finally
+			{
+				context.PopStackFrame();
+			}
+		}
+
+		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
+		{
+			var key = GetKey(type, context);
 			if (!_pipelines.TryGet(key, out pipeline))
 			{
 				lock (_pipelines)
@@ -67,38 +91,91 @@ namespace Maestro.Internals
 					if (!_pipelines.TryGet(key, out pipeline))
 					{
 						IPlugin plugin;
-						if (_plugins.TryGet(type, name, out plugin))
+						if (_plugins.TryGet(type, context.Name, out plugin))
+						{
 							pipeline = new Pipeline(plugin);
-						else if (!_pipelineFactories.Any(x => x.TryGet(type, context, out pipeline)))
-							return false;
+							_pipelines.Add(key, pipeline);
+							return true;
+						}
 
-						_pipelines.Add(key, pipeline);
+						foreach (var factory in _pipelineFactories)
+						{
+							if (!factory.TryGet(type, context, out pipeline)) continue;
+							_pipelines.Add(key, pipeline);
+							return true;
+						}
+
+						return false;
 					}
 				}
 			}
 
-			instance = pipeline.Execute(context);
 			return true;
+		}
+
+		private static string GetKey(Type type, Context context)
+		{
+			var key = $"{type.FullName}-{context.Name}";
+			return key;
 		}
 
 		public IEnumerable<object> GetAll(Type type, Context context)
 		{
-			var key = type.FullName;
-			IEnumerable<IPipeline> builders;
-			if (!_pipelines.TryGet(key, out builders))
+			context.PushStackFrame(type);
+
+			try
 			{
-				lock (_pipelines)
+				var key = type.FullName;
+				IEnumerable<IPipeline> builders;
+				if (!_pipelines.TryGet(key, out builders))
 				{
-					if (!_pipelines.TryGet(key, out builders))
+					lock (_pipelines)
 					{
-						var plugins = _plugins.GetAll(type);
-						builders = plugins.Select(x => new Pipeline(x)).ToList();
-						_pipelines.Add(key, builders);
+						if (!_pipelines.TryGet(key, out builders))
+						{
+							var plugins = _plugins.GetAll(type);
+							builders = plugins.Select(x => new Pipeline(x)).ToList();
+							_pipelines.Add(key, builders);
+						}
 					}
 				}
+
+				return builders.Select(x => x.Execute(context)).ToList();
+			}
+			finally
+			{
+				context.PopStackFrame();
+			}
+		}
+
+		public bool CanGetDependency(Type type, Context context)
+		{
+			return CanGet(type, context) || IsEnumerable(type);
+		}
+
+		public bool TryGetDependency(Type type, Context context, out object instance)
+		{
+			if (TryGet(type, context, out instance)) return true;
+
+			if (IsEnumerable(type))
+			{
+				instance = GetAll(type.GetGenericArguments().Single(), context);
+				return true;
 			}
 
-			return builders.Select(x => x.Execute(context)).ToList();
+			return false;
+		}
+
+		public object GetDependency(Type type, Context context)
+		{
+			object instance;
+			if (TryGetDependency(type, context, out instance)) return instance;
+			throw new InvalidOperationException();
+		}
+
+		private static bool IsEnumerable(Type type)
+		{
+			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
 		}
 	}
 }
