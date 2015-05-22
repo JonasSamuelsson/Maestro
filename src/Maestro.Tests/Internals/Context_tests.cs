@@ -10,13 +10,13 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void Using_a_disposed_context_should_throw()
 		{
-			var context = new Maestro.Internals.Context(string.Empty, new Kernel(new PluginLookup()));
+			var context = new Context(string.Empty, new Kernel(new PluginLookup()));
 
 			context.Dispose();
 
 			object instance;
-			Should.Throw<ObjectDisposedException>(() => ((Maestro.Internals.IContext)context).TryGet(typeof(object), out instance));
-			Should.Throw<ObjectDisposedException>(() => ((Maestro.Internals.IContext)context).GetAll(typeof(object)));
+			Should.Throw<ObjectDisposedException>(() => ((IContext)context).TryGet(typeof(object), out instance));
+			Should.Throw<ObjectDisposedException>(() => ((IContext)context).GetAll(typeof(object)));
 		}
 	}
 }

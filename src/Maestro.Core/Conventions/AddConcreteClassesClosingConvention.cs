@@ -1,6 +1,6 @@
-﻿using Maestro.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Maestro.Configuration;
 
 namespace Maestro.Conventions
 {
@@ -17,13 +17,14 @@ namespace Maestro.Conventions
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
-			foreach (var type in types)
-			{
-				Type genericType;
-				if (!type.IsConcreteClassClosing(_genericTypeDefinition, out genericType)) continue;
-				var instanceBuilderExpression = containerExpression.For(genericType).Add(type);
-				_instanceConfiguration(instanceBuilderExpression);
-			}
+			throw new NotImplementedException();
+			//foreach (var type in types)
+			//{
+			//	Type genericType;
+			//	if (!type.IsConcreteClassClosing(_genericTypeDefinition, out genericType)) continue;
+			//	var instanceBuilderExpression = containerExpression.For(genericType).Add();
+			//	_instanceConfiguration(instanceBuilderExpression);
+			//}
 		}
 	}
 }

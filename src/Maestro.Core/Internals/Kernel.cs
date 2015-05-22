@@ -38,17 +38,24 @@ namespace Maestro.Internals
 {
 	internal class Kernel
 	{
-		private readonly IPluginLookup _plugins;
-		private readonly IPipelineLookup _pipelines = new PipelineLookup();
-		private readonly IEnumerable<IPipelineFactory> _pipelineFactories = new IPipelineFactory[]
-		{
-			new ConcreteClosedClassPipelineFactory()
-		};
+		private readonly IPipelineLookup _pipelines;
+		private readonly IEnumerable<ITypeFactoryResolver> _typeFactoryResolvers;
 
-		public Kernel(IPluginLookup plugins)
+		public Kernel() : this(new PluginLookup())
 		{
-			_plugins = plugins;
 		}
+
+		public Kernel(PluginLookup plugins)
+		{
+			Plugins = plugins;
+			_pipelines = new PipelineLookup();
+			_typeFactoryResolvers = new ITypeFactoryResolver[]
+											{
+												new ConcreteClosedClassTypeFactoryResolver()
+											};
+		}
+
+		public PluginLookup Plugins { get; }
 
 		public bool CanGet(Type type, Context context)
 		{
@@ -91,16 +98,16 @@ namespace Maestro.Internals
 					if (!_pipelines.TryGet(key, out pipeline))
 					{
 						IPlugin plugin;
-						if (_plugins.TryGet(type, context.Name, out plugin))
+						if (Plugins.TryGet(type, context.Name, out plugin))
 						{
 							pipeline = new Pipeline(plugin);
 							_pipelines.Add(key, pipeline);
 							return true;
 						}
 
-						foreach (var factory in _pipelineFactories)
+						foreach (var typeFactoryResolver in _typeFactoryResolvers)
 						{
-							if (!factory.TryGet(type, context, out pipeline)) continue;
+							if (!typeFactoryResolver.TryGet(type, context, out pipeline)) continue;
 							_pipelines.Add(key, pipeline);
 							return true;
 						}
@@ -133,7 +140,7 @@ namespace Maestro.Internals
 					{
 						if (!_pipelines.TryGet(key, out builders))
 						{
-							var plugins = _plugins.GetAll(type);
+							var plugins = Plugins.GetAll(type);
 							builders = plugins.Select(x => new Pipeline(x)).ToList();
 							_pipelines.Add(key, builders);
 						}

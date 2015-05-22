@@ -13,7 +13,7 @@ namespace Maestro.Tests
 		[Fact]
 		public void v2_should_be_faster_than_v1()
 		{
-			var versions = new PerformanceTest[] { new v1() };
+			var versions = new PerformanceTest[] { new v2() };
 			foreach (var version in versions) Assert(version);
 
 			var tests = new[]
@@ -79,6 +79,24 @@ namespace Maestro.Tests
 
 			public string Name { get; set; }
 			public Action<PerformanceTest> Action { get; set; }
+		}
+
+		class v2 : PerformanceTest
+		{
+			readonly Container _container = new Container(x =>
+																		 {
+																			 x.For<SingletonType>().Use.Type<SingletonType>().Lifetime.Singleton();
+																		 });
+
+			public override T Get<T>()
+			{
+				return _container.Get<T>();
+			}
+
+			protected override IEnumerable<T> GetAll<T>()
+			{
+				return _container.GetAll<T>();
+			}
 		}
 	}
 }

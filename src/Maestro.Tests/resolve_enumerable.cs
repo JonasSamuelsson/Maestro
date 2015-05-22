@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using System.Linq;
+﻿using System.Linq;
+using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests

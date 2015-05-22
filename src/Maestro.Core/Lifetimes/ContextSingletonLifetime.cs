@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Maestro.Lifetimes
 {
@@ -18,27 +19,28 @@ namespace Maestro.Lifetimes
 
 		public object Execute(IContext context, IPipeline pipeline)
 		{
-			object instance;
+			throw new NotImplementedException();
+			//object instance;
 
-			lock (_dictionary)
-				if (_dictionary.TryGetValue(context.ContextId, out instance))
-					return instance;
+			//lock (_dictionary)
+			//	if (_dictionary.TryGetValue(context.ContextId, out instance))
+			//		return instance;
 
-			lock (context.ContextId.ToString())
-			{
-				lock (_dictionary)
-					if (_dictionary.TryGetValue(context.ContextId, out instance))
-						return instance;
+			//lock (context.ContextId.ToString())
+			//{
+			//	lock (_dictionary)
+			//		if (_dictionary.TryGetValue(context.ContextId, out instance))
+			//			return instance;
 
-				instance = pipeline.Execute();
+			//	instance = pipeline.Execute();
 
-				lock (_dictionary)
-				{
-					_dictionary.Add(context.ContextId, instance);
-					context.Disposed += () => Remove(context.ContextId);
-					return instance;
-				}
-			}
+			//	lock (_dictionary)
+			//	{
+			//		_dictionary.Add(context.ContextId, instance);
+			//		context.Disposed += () => Remove(context.ContextId);
+			//		return instance;
+			//	}
+			//}
 		}
 
 		private void Remove(long contextId)

@@ -9,7 +9,7 @@ namespace Maestro.Tests
       [Fact]
       public void Using_disposed_context_should_throw()
       {
-         var container = new Container(x => x.For<Factory>().Use(ctx => new Factory(ctx.Get)));
+         var container = new Container(x => x.For<Factory>().Use.Factory(ctx => new Factory(ctx.Get)));
          var factory = container.Get<Factory>();
          Should.Throw<ObjectDisposedException>(() => factory.Create(typeof(object)));
       }

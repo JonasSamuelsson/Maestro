@@ -5,18 +5,16 @@ namespace Maestro
 {
 	public interface IContext
 	{
-		int ConfigVersion { get; }
-		long ContextId { get; }
-		string Name { get; }
-		ITypeStack TypeStack { get; }
-
-		bool CanGet(Type type);
 		bool CanGet<T>();
-		object Get(Type type);
-		T Get<T>();
-		IEnumerable<object> GetAll(Type type);
-		IEnumerable<T> GetAll<T>();
+		bool CanGet(Type type);
 
-		event Action Disposed;
+		T Get<T>();
+		object Get(Type type);
+
+		bool TryGet<T>(out T instance);
+		bool TryGet(Type type, out object instance);
+
+		IEnumerable<T> GetAll<T>();
+		IEnumerable<object> GetAll(Type type);
 	}
 }

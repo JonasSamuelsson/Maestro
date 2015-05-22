@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using Maestro.FactoryProviders;
 using Maestro.Internals;
-using Maestro.Internals.FactoryProviders;
 using Shouldly;
 using Xunit;
 
@@ -13,7 +12,7 @@ namespace Maestro.Tests.Internals
 		public void TryGet_unconfigured_abstract_type_should_fail()
 		{
 			var kernel = new KernelBuilder().GetKernel();
-			var context = new Maestro.Internals.Context(Container.DefaultName, kernel);
+			var context = new Context(PluginLookup.DefaultName, kernel);
 
 			object instance;
 			kernel.TryGet(typeof(IDisposable), context, out instance).ShouldBe(false);
@@ -27,7 +26,7 @@ namespace Maestro.Tests.Internals
 			var kernel = new KernelBuilder()
 				.Add(typeof(object), new InstanceFactoryProvider(expectedInstance))
 				.GetKernel();
-			var context = new Maestro.Internals.Context(Container.DefaultName, kernel);
+			var context = new Context(PluginLookup.DefaultName, kernel);
 
 			object instance;
 			kernel.TryGet(typeof(object), context, out instance).ShouldBe(true);
@@ -38,7 +37,7 @@ namespace Maestro.Tests.Internals
 		public void TryGet_unconfigured_concrete_closed_class_instance_should_fail()
 		{
 			var kernel = new KernelBuilder().GetKernel();
-			var context = new Maestro.Internals.Context(Container.DefaultName, kernel);
+			var context = new Context(PluginLookup.DefaultName, kernel);
 
 			object instance;
 			kernel.TryGet(typeof(object), context, out instance).ShouldBe(true);
@@ -56,7 +55,7 @@ namespace Maestro.Tests.Internals
 				.Add(typeof(object), "foo", new InstanceFactoryProvider(instance2))
 				.Add(typeof(object), null, new InstanceFactoryProvider(instance3))
 				.GetKernel();
-			var context = new Maestro.Internals.Context(Container.DefaultName, kernel);
+			var context = new Context(PluginLookup.DefaultName, kernel);
 
 			kernel.GetAll(typeof(object), context).ShouldBe(new[] { instance1, instance2, instance3 });
 		}
@@ -67,7 +66,7 @@ namespace Maestro.Tests.Internals
 			var kernel = new KernelBuilder()
 				.Add(typeof(CyclicDependency), new TypeFactoryProvider(typeof(CyclicDependency)))
 				.GetKernel();
-			var context = new Maestro.Internals.Context(string.Empty, kernel);
+			var context = new Context(string.Empty, kernel);
 
 			object instance;
 			Should.Throw<Exception>(() => kernel.TryGet(typeof(CyclicDependency), context, out instance));
@@ -87,7 +86,7 @@ namespace Maestro.Tests.Internals
 
 			public KernelBuilder Add(Type type, IFactoryProvider factoryProvider)
 			{
-				return Add(type, Container.DefaultName, factoryProvider);
+				return Add(type, PluginLookup.DefaultName, factoryProvider);
 			}
 
 			public KernelBuilder Add(Type type, string name, IFactoryProvider factoryProvider)

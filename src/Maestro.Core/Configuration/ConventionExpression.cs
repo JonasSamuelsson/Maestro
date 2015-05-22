@@ -1,8 +1,8 @@
-﻿using Maestro.Conventions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Maestro.Conventions;
 
 namespace Maestro.Configuration
 {
@@ -63,11 +63,12 @@ namespace Maestro.Configuration
 
 		public void AddConcreteSubClassesOf<T>(Action<IInstanceBuilderExpression<T>> action = null)
 		{
-			AddConcreteSubClassesOf(typeof(T), expression =>
-														  {
-															  action = action ?? delegate { };
-															  action(new InstanceBuilderExpression<T>(((InstanceBuilderExpression<object>)expression).InstanceBuilder));
-														  });
+			throw new NotImplementedException();
+			//AddConcreteSubClassesOf(typeof(T), expression =>
+			//											  {
+			//												  action = action ?? delegate { };
+			//												  action(new InstanceBuilderExpression<T>(((InstanceBuilderExpression<object>)expression).InstanceBuilder));
+			//											  });
 		}
 
 		public void AddConcreteSubClassesOf(Type type, Action<IInstanceBuilderExpression<object>> action = null)

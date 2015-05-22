@@ -4,7 +4,6 @@ using Castle.DynamicProxy;
 using FluentAssertions;
 using Maestro.Configuration;
 using Xunit;
-using IInterceptor = Maestro.Interceptors.IInterceptor;
 
 namespace Maestro.Tests.Interception
 {
@@ -61,7 +60,7 @@ namespace Maestro.Tests.Interception
 
 		private class Target : ITarget { }
 
-		public class DynamicProxyInterceptor : Castle.DynamicProxy.IInterceptor
+		public class DynamicProxyInterceptor : IInterceptor
 		{
 			public void Intercept(IInvocation invocation)
 			{
@@ -72,7 +71,7 @@ namespace Maestro.Tests.Interception
 			public bool Executed { get; private set; }
 		}
 
-		private class Interceptor : IInterceptor
+		private class Interceptor : Interceptors.IInterceptor
 		{
 			private readonly Action _action;
 
@@ -84,7 +83,7 @@ namespace Maestro.Tests.Interception
 
 			public int ExecuteCount { get; private set; }
 
-			public IInterceptor Clone()
+			public Interceptors.IInterceptor Clone()
 			{
 				throw new NotImplementedException();
 			}

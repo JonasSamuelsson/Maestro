@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Maestro.FactoryProviders.Factories;
+using Maestro.Internals;
 
-namespace Maestro.Internals.FactoryProviders
+namespace Maestro.FactoryProviders
 {
 	class TypeFactoryProvider : IFactoryProvider
 	{
@@ -15,11 +17,12 @@ namespace Maestro.Internals.FactoryProviders
 		public Type Type { get; }
 		public ConstructorInfo Constructor { get; set; }
 
-		public Func<Context, object> GetFactory(Context context)
+		public IFactory GetFactory(Context context)
 		{
-			var types = Constructor?.GetParameters().Select(p => p.ParameterType)
-			            ?? GetTypes(context);
-			return types == null ? delegate { throw new InvalidOperationException(); } : GetFactory(types);
+			var ctorParameterTypes = Constructor?.GetParameters().Select(p => p.ParameterType)
+			                         ?? GetTypes(context);
+			if(ctorParameterTypes == null)throw new InvalidOperationException("Can't find approproate constructor to invoke.");
+			return new TypeFactory(Type, ctorParameterTypes);
 		}
 
 		private IEnumerable<Type> GetTypes(Context context)
@@ -30,15 +33,6 @@ namespace Maestro.Internals.FactoryProviders
 			           .Where(x => x.parameterTypes.All(t => context.Kernel.CanGetDependency(t, context)))
 			           .Select(x => x.parameterTypes)
 			           .FirstOrDefault();
-		}
-
-		private Func<Context, object> GetFactory(IEnumerable<Type> types)
-		{
-			return ctx =>
-			       {
-				       var dependencies = types.Select(t => ctx.Kernel.GetDependency(t, ctx)).ToArray();
-				       return Activator.CreateInstance(Type, dependencies);
-			       };
 		}
 	}
 }

@@ -18,6 +18,9 @@ namespace Maestro.Internals
 			_parent = parent;
 		}
 
+		internal static string DefaultName { get; } = string.Empty;
+		internal static string AnonymousName { get; } = null;
+
 		public void Add(Type type, string name, IPlugin plugin)
 		{
 			if (_entries.Any(x => x.Type == type && x.Name != null && x.Name == name))
@@ -41,8 +44,8 @@ namespace Maestro.Internals
 		{
 			return _entries.FirstOrDefault(x => x.Type == type && x.Name == name)?.Plugin
 					 ?? _parent?.GetPluginOrNull(type, name)
-					 ?? _entries.FirstOrDefault(x => x.Type == type && x.Name == Container.DefaultName)?.Plugin
-					 ?? _parent?.GetPluginOrNull(type, Container.DefaultName);
+					 ?? _entries.FirstOrDefault(x => x.Type == type && x.Name == PluginLookup.DefaultName)?.Plugin
+					 ?? _parent?.GetPluginOrNull(type, PluginLookup.DefaultName);
 		}
 
 		public IEnumerable<IPlugin> GetAll(Type type)

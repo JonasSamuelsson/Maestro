@@ -7,7 +7,7 @@ namespace Maestro.Interceptors
 	{
 		private readonly string _propertyName;
 		private readonly Func<IContext, object> _factory;
-		private Setter _setter;
+		//private Setter _setter;
 
 		public SetPropertyInterceptor(string propertyName, Func<IContext, object> factory = null)
 		{
@@ -22,24 +22,25 @@ namespace Maestro.Interceptors
 
 		public object Execute(object instance, IContext context)
 		{
-			var setter = _setter;
+			throw new NotImplementedException();
+			//var setter = _setter;
 
-			if (setter == null || setter.ConfigVersion != context.ConfigVersion)
-			{
-				var instanceType = instance.GetType();
-				var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
+			//if (setter == null || setter.ConfigVersion != context.ConfigVersion)
+			//{
+			//	var instanceType = instance.GetType();
+			//	var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
 
-				setter = new Setter
-							{
-								ConfigVersion = context.ConfigVersion,
-								Get = _factory ?? Reflector.GetPropertyValueProvider(propertyType, context),
-								Set = Reflector.GetPropertySetter(instanceType, _propertyName)
-							};
-				_setter = setter;
-			}
+			//	setter = new Setter
+			//				{
+			//					ConfigVersion = context.ConfigVersion,
+			//					Get = _factory ?? Reflector.GetPropertyValueProvider(propertyType, context),
+			//					Set = Reflector.GetPropertySetter(instanceType, _propertyName)
+			//				};
+			//	_setter = setter;
+			//}
 
-			setter.Set(instance, setter.Get(context));
-			return instance;
+			//setter.Set(instance, setter.Get(context));
+			//return instance;
 		}
 
 		public override string ToString()
