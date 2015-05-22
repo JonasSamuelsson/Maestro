@@ -18,11 +18,12 @@ namespace Maestro.Conventions
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
-			foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
-			{
-				var instanceBuilderExpression = containerExpression.For(_baseType).Add(type);
-				_instanceConfiguration(instanceBuilderExpression);
-			}
+			throw new NotImplementedException();
+			//foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
+			//{
+			//	var instanceBuilderExpression = containerExpression.For(_baseType).Add();
+			//	_instanceConfiguration(instanceBuilderExpression);
+			//}
 		}
 	}
 }

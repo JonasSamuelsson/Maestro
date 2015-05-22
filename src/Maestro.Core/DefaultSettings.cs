@@ -1,7 +1,7 @@
-﻿using Maestro.Configuration;
+﻿using System.Collections.Generic;
+using Maestro.Configuration;
 using Maestro.Conventions;
 using Maestro.Lifetimes;
-using System.Collections.Generic;
 
 namespace Maestro
 {

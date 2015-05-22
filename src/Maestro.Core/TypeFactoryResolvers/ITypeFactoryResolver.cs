@@ -2,7 +2,7 @@
 
 namespace Maestro.Internals
 {
-	interface IPipelineFactory
+	interface ITypeFactoryResolver
 	{
 		bool TryGet(Type type, Context context, out IPipeline pipeline);
 	}

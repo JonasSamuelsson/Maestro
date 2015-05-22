@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using Xunit;
 
 namespace Maestro.Tests
@@ -8,16 +9,17 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_get_instance_with_single_ctor_dependency()
 		{
-			var container = new Container(x =>
-			{
-				x.For(typeof(TypeWithDefaultCtor)).Use(typeof(TypeWithDefaultCtor));
-				x.For(typeof(TypeWithCtorDependency)).Use(typeof(TypeWithCtorDependency));
-			});
+			throw new NotImplementedException();
+			//var container = new Container(x =>
+			//{
+			//	x.For(typeof(TypeWithDefaultCtor)).Use(typeof(TypeWithDefaultCtor));
+			//	x.For(typeof(TypeWithCtorDependency)).Use(typeof(TypeWithCtorDependency));
+			//});
 
-			var o = container.Get<TypeWithCtorDependency>();
+			//var o = container.Get<TypeWithCtorDependency>();
 
-			o.Should().NotBeNull();
-			o.Dependency.Should().NotBeNull();
+			//o.Should().NotBeNull();
+			//o.Dependency.Should().NotBeNull();
 		}
 
 		private class TypeWithDefaultCtor { }

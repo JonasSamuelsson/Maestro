@@ -24,7 +24,7 @@ namespace Maestro.Tests.Internals
 		{
 			var exptectedPlugin = new TestPlugin();
 			var lookup = new PluginLookup();
-			lookup.Add(typeof(object), Container.DefaultName, exptectedPlugin);
+			lookup.Add(typeof(object), PluginLookup.DefaultName, exptectedPlugin);
 
 			IPlugin plugin;
 			lookup.TryGet(typeof(object), "not-found", out plugin).ShouldBe(true);
@@ -38,7 +38,7 @@ namespace Maestro.Tests.Internals
 			var parentLookup = new PluginLookup();
 			parentLookup.Add(typeof(object), "foo", exptectedPlugin);
 			var lookup = new PluginLookup(parentLookup);
-			lookup.Add(typeof(object), Container.DefaultName, new TestPlugin());
+			lookup.Add(typeof(object), PluginLookup.DefaultName, new TestPlugin());
 
 			IPlugin plugin;
 			lookup.TryGet(typeof(object), "foo", out plugin).ShouldBe(true);
@@ -50,7 +50,7 @@ namespace Maestro.Tests.Internals
 		{
 			var exptectedPlugin = new TestPlugin();
 			var parentLookup = new PluginLookup();
-			parentLookup.Add(typeof(object), Container.DefaultName, exptectedPlugin);
+			parentLookup.Add(typeof(object), PluginLookup.DefaultName, exptectedPlugin);
 			var lookup = new PluginLookup(parentLookup);
 			IPlugin plugin;
 			lookup.TryGet(typeof(object), "foo", out plugin).ShouldBe(true);
@@ -64,7 +64,7 @@ namespace Maestro.Tests.Internals
 			var plugin2 = new TestPlugin();
 			var plugin3 = new TestPlugin();
 			var lookup = new PluginLookup();
-			lookup.Add(typeof(object), Container.DefaultName, plugin1);
+			lookup.Add(typeof(object), PluginLookup.DefaultName, plugin1);
 			lookup.Add(typeof(object), "foo", plugin2);
 			lookup.Add(typeof(object), null, plugin3);
 			lookup.Add(typeof(string), null, new TestPlugin());
@@ -108,7 +108,7 @@ namespace Maestro.Tests.Internals
 			lookup.Add(typeof(object), null, null);
 		}
 
-		class TestPlugin : Maestro.Internals.Plugin
+		class TestPlugin : Plugin
 		{
 			public override string ToString()
 			{

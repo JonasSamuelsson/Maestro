@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using Maestro.Internals.FactoryProviders;
+using Maestro.FactoryProviders;
 
 namespace Maestro.Internals
 {
-	internal class ConcreteClosedClassPipelineFactory : IPipelineFactory
+	internal class ConcreteClosedClassTypeFactoryResolver : ITypeFactoryResolver
 	{
 		public bool TryGet(Type type, Context context, out IPipeline pipeline)
 		{

@@ -1,7 +1,7 @@
-﻿using Maestro.Configuration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.Configuration;
 
 namespace Maestro.Conventions
 {
@@ -16,20 +16,21 @@ namespace Maestro.Conventions
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
-			types = types as IList<Type> ?? types.ToList();
+			throw new NotImplementedException();
+			//types = types as IList<Type> ?? types.ToList();
 
-			var interfaces = types.Where(x => x.IsInterface);
-			var classes = types.Where(x => x.IsConcreteClass()).GroupBy(x => x.Namespace ?? string.Empty).ToDictionary(x => x.Key, x => x.ToList());
+			//var interfaces = types.Where(x => x.IsInterface);
+			//var classes = types.Where(x => x.IsConcreteClass()).GroupBy(x => x.Namespace ?? string.Empty).ToDictionary(x => x.Key, x => x.ToList());
 
-			foreach (var @interface in interfaces)
-			{
-				List<Type> list;
-				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
-				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
-				if (@class == null) continue;
-				var instanceBuilderExpression = containerExpression.For(@interface).Use(@class);
-				_instanceConfiguration(instanceBuilderExpression);
-			}
+			//foreach (var @interface in interfaces)
+			//{
+			//	List<Type> list;
+			//	if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
+			//	var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
+			//	if (@class == null) continue;
+			//	var instanceBuilderExpression = containerExpression.For(@interface).Use(@class);
+			//	_instanceConfiguration(instanceBuilderExpression);
+			//}
 		}
 	}
 }

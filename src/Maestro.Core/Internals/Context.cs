@@ -1,22 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro.Internals
 {
-	interface IContext
-	{
-		//bool CanGet(Type type);
-		//object Get(Type type);
-		bool TryGet(Type type, out object instance);
-
-		//bool CanGet<T>();
-		//T Get<T>();
-		//bool TryGet<T>(out T instance);
-
-		IEnumerable<object> GetAll(Type type);
-		//IEnumerable<T> GetAll<T>();
-	}
-
 	class Context : IContext, IDisposable
 	{
 		private readonly Stack<Type> _stack = new Stack<Type>();
@@ -31,23 +18,86 @@ namespace Maestro.Internals
 		public string Name { get; }
 		public Kernel Kernel { get; }
 
+		bool IContext.CanGet<T>()
+		{
+			return ((IContext)this).CanGet(typeof(T));
+		}
+
+		bool IContext.CanGet(Type type)
+		{
+			try
+			{
+				AssertNotDisposed();
+				return ((IContext)this).CanGet(type);
+			}
+			catch (Exception exception)
+			{
+				var message = $"Can't evaluate dependency of type '{type.FullName}'.";
+				throw new DependencyActivationException(message, exception);
+			}
+		}
+
+		T IContext.Get<T>()
+		{
+			return (T)((IContext)this).Get(typeof(T));
+		}
+
+		object IContext.Get(Type type)
+		{
+			object instance;
+			if (((IContext)this).TryGet(type, out instance))
+				return instance;
+
+			var message = $"Can't get dependency of type '{type.FullName}'.";
+			throw new DependencyActivationException(message);
+		}
+
+		bool IContext.TryGet<T>(out T instance)
+		{
+			object o;
+			var result = ((IContext)this).TryGet(typeof(T), out o);
+			instance = (T)o;
+			return result;
+		}
+
 		bool IContext.TryGet(Type type, out object instance)
 		{
-			AssertNotDisposed();
-			return Kernel.TryGet(type, this, out instance);
+			try
+			{
+				AssertNotDisposed();
+				return Kernel.TryGet(type, this, out instance);
+			}
+			catch (Exception exception)
+			{
+				var message = $"Can't get dependency of type '{type.FullName}'.";
+				throw new DependencyActivationException(message, exception);
+			}
+		}
+
+		IEnumerable<T> IContext.GetAll<T>()
+		{
+			return ((IContext)this).GetAll(typeof(T)).Cast<T>().ToArray();
 		}
 
 		IEnumerable<object> IContext.GetAll(Type type)
 		{
-			AssertNotDisposed();
-			return Kernel.GetAll(type, this);
+			try
+			{
+				AssertNotDisposed();
+				return Kernel.GetAll(type, this);
+			}
+			catch (Exception exception)
+			{
+				var message = $"Can't get dependencies of type '{type.FullName}'.";
+				throw new DependencyActivationException(message, exception);
+			}
 		}
 
 		public void PushStackFrame(Type type)
 		{
 			if (_stack.Contains(type))
 			{
-				throw new InvalidOperationException("Cyclic dependency");
+				throw new InvalidOperationException("Cyclic dependency.");
 			}
 
 			_stack.Push(type);

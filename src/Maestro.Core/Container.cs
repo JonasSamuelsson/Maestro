@@ -1,21 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Maestro.Configuration;
-using Maestro.Factories;
-using Maestro.Utils;
+using Maestro.Internals;
 
 namespace Maestro
 {
-	public class Container : IContainer, IContextContainer
+	public class Container : IContainer
 	{
 		private readonly Guid _id;
-		private readonly ThreadSafeDictionary<Type, Plugin> _plugins;
-		private readonly ThreadSafeDictionary<long, IInstanceBuilder> _instanceBuilderCache;
+		private readonly Kernel _kernel;
 		private readonly DefaultSettings _defaultSettings;
-		private long _contextId;
-		private int _configVersion;
 		private event Action<Guid> DisposedEvent;
 
 		/// <summary>
@@ -24,8 +19,7 @@ namespace Maestro
 		public Container()
 		{
 			_id = Guid.NewGuid();
-			_plugins = new ThreadSafeDictionary<Type, Plugin>();
-			_instanceBuilderCache = new ThreadSafeDictionary<long, IInstanceBuilder>();
+			_kernel = new Kernel();
 			_defaultSettings = new DefaultSettings();
 		}
 
@@ -38,29 +32,9 @@ namespace Maestro
 			Configure(action);
 		}
 
-		internal static string DefaultName
-		{
-			get { return string.Empty; }
-		}
-
 		public void Configure(Action<IContainerExpression> action)
 		{
-			action(new ContainerExpression(_plugins, _defaultSettings));
-			_instanceBuilderCache.Clear();
-			Interlocked.Increment(ref _configVersion);
-		}
-
-		public object Get(Type type, string name = null)
-		{
-			name = name ?? DefaultName;
-			object instance;
-			if (TryGet(type, name, out instance))
-				return instance;
-
-			var message = name == DefaultName
-									? string.Format("Can't get default instance of type {0}.", type.FullName)
-									: string.Format("Can't get instance named '{0}' of type {1}.", name, type.FullName);
-			throw new ActivationException(message);
+			action(new ContainerExpression(_kernel.Plugins, _defaultSettings));
 		}
 
 		public T Get<T>(string name = null)
@@ -68,78 +42,22 @@ namespace Maestro
 			return (T)Get(typeof(T), name);
 		}
 
-		public IEnumerable<object> GetAll(Type type)
+		public object Get(Type type, string name = null)
 		{
-			try
-			{
-				Plugin plugin;
-				if (!_plugins.TryGet(type, out plugin))
-					return Enumerable.Empty<object>();
+			name = name ?? PluginLookup.DefaultName;
+			object instance;
+			if (TryGet(type, name, out instance))
+				return instance;
 
-				var contextId = Interlocked.Increment(ref _contextId);
-				var configVersion = _configVersion;
-				using (var context = new Context(configVersion, contextId, DefaultName, this))
-				using (((TypeStack)context.TypeStack).Push(type))
-					// ReSharper disable once AccessToDisposedClosure
-					return plugin.Each(x => context.Name = x.Key)
-									 .Select(x => x.Value.Get(context))
-									 .ToList();
-			}
-			catch (ActivationException)
-			{
-				throw;
-			}
-			catch (Exception exception)
-			{
-				throw new ActivationException(string.Format("Can't get all instances of type {0}.", type.FullName), exception);
-			}
-		}
-
-		public IEnumerable<T> GetAll<T>()
-		{
-			return GetAll(typeof(T)).Cast<T>().ToList();
-		}
-
-		public bool TryGet(Type type, out object instance)
-		{
-			return TryGet(type, DefaultName, out instance);
-		}
-
-		public bool TryGet(Type type, string name, out object instance)
-		{
-			try
-			{
-				instance = null;
-				name = name ?? DefaultName;
-				var contextId = Interlocked.Increment(ref _contextId);
-				var configVersion = _configVersion;
-				using (var context = new Context(configVersion, contextId, name, this))
-				using (((TypeStack)context.TypeStack).Push(type))
-				{
-					IInstanceBuilder instanceBuilder;
-					if (!TryGetInstanceBuilder(type, context, out instanceBuilder) || !instanceBuilder.CanGet(context))
-						return false;
-
-					instance = instanceBuilder.Get(context);
-					return true;
-				}
-			}
-			catch (ActivationException)
-			{
-				throw;
-			}
-			catch (Exception exception)
-			{
-				var message = name == DefaultName
-										? string.Format("Can't get default instance of type {0}.", type.FullName)
-										: string.Format("Can't get instance named '{0}' of type {1}.", name, type.FullName);
-				throw new ActivationException(message, exception);
-			}
+			var message = name == PluginLookup.DefaultName
+								  ? $"Can't get default instance of type {type.FullName}."
+								  : $"Can't get '{name}' instance of type {type.FullName}.";
+			throw new ActivationException(message);
 		}
 
 		public bool TryGet<T>(out T instance)
 		{
-			return TryGet(DefaultName, out instance);
+			return TryGet(PluginLookup.DefaultName, out instance);
 		}
 
 		public bool TryGet<T>(string name, out T instance)
@@ -150,46 +68,19 @@ namespace Maestro
 			return result;
 		}
 
-		public string GetConfiguration()
+		public bool TryGet(Type type, out object instance)
 		{
-			var builder = new DiagnosticsBuilder();
-			foreach (var pair1 in _plugins.OrderBy(x => x.Key.FullName))
-			{
-				using (builder.Category(pair1.Key))
-					foreach (var pair2 in pair1.Value.OrderBy(x => x.Key))
-					{
-						var prefix = pair2.Key == DefaultName ? "{default}" : pair2.Key;
-						builder.Prefix(prefix + " : ");
-						pair2.Value.GetConfiguration(builder);
-					}
-				builder.Line();
-			}
-			return builder.ToString();
+			return TryGet(type, PluginLookup.DefaultName, out instance);
 		}
 
-		bool IContextContainer.CanGet(Type type, IContext context)
-		{
-			IInstanceBuilder instanceBuilder;
-			using (((TypeStack)context.TypeStack).Push(type))
-				if (TryGetInstanceBuilder(type, context, out instanceBuilder))
-					return instanceBuilder.CanGet(context);
-
-			return false;
-		}
-
-		object IContextContainer.Get(Type type, IContext context)
+		public bool TryGet(Type type, string name, out object instance)
 		{
 			try
 			{
-				IInstanceBuilder instanceBuilder;
-				using (((TypeStack)context.TypeStack).Push(type))
-					if (TryGetInstanceBuilder(type, context, out instanceBuilder))
-						return instanceBuilder.Get(context);
-
-				var message = context.Name == DefaultName
-										? string.Format("Can't get default dependency of type {0}.", type.FullName)
-										: string.Format("Can't get dependency named '{0} of type {1}.", context.Name, type.FullName);
-				throw new ActivationException(message);
+				instance = null;
+				name = name ?? PluginLookup.DefaultName;
+				var context = new Context(name, _kernel);
+				return _kernel.TryGet(type, context, out instance);
 			}
 			catch (ActivationException)
 			{
@@ -197,90 +88,24 @@ namespace Maestro
 			}
 			catch (Exception exception)
 			{
-				var message = context.Name == DefaultName
-										? string.Format("Can't get default dependency of type {0}.", type.FullName)
-										: string.Format("Can't get dependency named '{0} of type {1}.", context.Name, type.FullName);
+				var message = name == PluginLookup.DefaultName
+									  ? $"Can't get default instance of type {type.FullName}."
+									  : $"Can't get '{name}' instance of type {type.FullName}.";
 				throw new ActivationException(message, exception);
 			}
 		}
 
-		private bool TryGetInstanceBuilder(Type type, IContext context, out IInstanceBuilder instanceBuilder)
+		public IEnumerable<T> GetAll<T>()
 		{
-			var cacheKey = ((long)type.GetHashCode() << 32) + context.Name.GetHashCode();
-
-			if (_instanceBuilderCache.TryGet(cacheKey, out instanceBuilder))
-				return true;
-
-			lock (_instanceBuilderCache)
-			{
-				if (_instanceBuilderCache.TryGet(cacheKey, out instanceBuilder))
-					return true;
-
-				if (TryGetInstanceBuilder(_plugins, type, context, out instanceBuilder))
-				{
-					_instanceBuilderCache.Add(cacheKey, instanceBuilder);
-					return true;
-				}
-
-				if (type.IsConcreteClosedClass() && !type.IsArray)
-				{
-					instanceBuilder = new InstanceBuilder(new TypeInstanceFactory(type));
-					_instanceBuilderCache.Add(cacheKey, instanceBuilder);
-					return true;
-				}
-
-				return false;
-			}
+			return GetAll(typeof(T)).Cast<T>().ToList();
 		}
 
-		private static bool TryGetInstanceBuilder(ThreadSafeDictionary<Type, Plugin> plugins, Type type, IContext context,
-			 out IInstanceBuilder instanceBuilder)
-		{
-			Plugin plugin;
-			instanceBuilder = null;
-
-			if (plugins.TryGet(type, out plugin))
-				return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
-
-			if (!type.IsGenericType)
-				return false;
-
-			if (plugins.TryGet(type, out plugin))
-				return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
-
-			Plugin typeDefinitionPlugin;
-			var typeDefinition = type.GetGenericTypeDefinition();
-			if (!plugins.TryGet(typeDefinition, out typeDefinitionPlugin))
-				return false;
-
-			var genericArguments = type.GetGenericArguments();
-			plugin = new Plugin(typeDefinitionPlugin.Select(x => new KeyValuePair<string, IInstanceBuilder>(x.Key, x.Value.MakeGenericPipelineEngine(genericArguments))));
-			plugins.Add(type, plugin);
-			return TryGetInstanceBuilder(plugin, context, out instanceBuilder);
-		}
-
-		private static bool TryGetInstanceBuilder(Plugin plugin, IContext context, out IInstanceBuilder instanceBuilder)
-		{
-			if (plugin.TryGet(context.Name, out instanceBuilder))
-				return true;
-
-			if (context.Name != DefaultName && plugin.TryGet(DefaultName, out instanceBuilder))
-				return true;
-
-			return false;
-		}
-
-		IEnumerable<object> IContextContainer.GetAll(Type type, IContext context)
+		public IEnumerable<object> GetAll(Type type)
 		{
 			try
 			{
-				Plugin plugin;
-				if (!_plugins.TryGet(type, out plugin))
-					return Enumerable.Empty<object>();
-
-				using (((TypeStack)context.TypeStack).Push(type))
-					return plugin.Select(x => x.Value.Get(context))
-									 .ToList();
+				var context = new Context(PluginLookup.DefaultName, _kernel);
+				return _kernel.GetAll(type, context);
 			}
 			catch (ActivationException)
 			{
@@ -288,13 +113,27 @@ namespace Maestro
 			}
 			catch (Exception exception)
 			{
-				throw new ActivationException(string.Format("Can't get dependencies of type {0}.", type.FullName), exception);
+				var message = $"Can't get instances of type {type.FullName}.";
+				throw new ActivationException(message, exception);
 			}
 		}
 
-		Guid IContextContainer.Id
+		public string GetConfiguration()
 		{
-			get { return _id; }
+			throw new NotImplementedException();
+			//var builder = new DiagnosticsBuilder();
+			//foreach (var pair1 in _plugins.OrderBy(x => x.Key.FullName))
+			//{
+			//	using (builder.Category(pair1.Key))
+			//		foreach (var pair2 in pair1.Value.OrderBy(x => x.Key))
+			//		{
+			//			var prefix = pair2.Key == DefaultName ? "{default}" : pair2.Key;
+			//			builder.Prefix(prefix + " : ");
+			//			pair2.Value.GetConfiguration(builder);
+			//		}
+			//	builder.Line();
+			//}
+			//return builder.ToString();
 		}
 
 		public event Action<Guid> Disposed
@@ -305,9 +144,7 @@ namespace Maestro
 
 		public void Dispose()
 		{
-			var disposed = DisposedEvent;
-			if (disposed != null)
-				disposed(_id);
+			DisposedEvent?.Invoke(_id);
 		}
 	}
 }
