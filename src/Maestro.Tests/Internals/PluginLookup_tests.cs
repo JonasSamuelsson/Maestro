@@ -10,11 +10,11 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void Should_get_plugin_matching_type_and_name()
 		{
-			var expectedPlugin = new TestPlugin();
+			var expectedPlugin = new TestPlugin { Type = typeof(object), Name = "foo" };
 			var lookup = new PluginLookup();
-			lookup.Add(typeof(object), "foo", expectedPlugin);
+			lookup.Add(expectedPlugin);
 
-			IPlugin actualPlugin;
+			Plugin actualPlugin;
 			lookup.TryGet(typeof(object), "foo", out actualPlugin).ShouldBe(true);
 			actualPlugin.ShouldBe(expectedPlugin);
 		}
@@ -22,11 +22,11 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void Should_get_default_plugin_if_named_plugin_cant_be_found()
 		{
-			var exptectedPlugin = new TestPlugin();
+			var exptectedPlugin = new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName };
 			var lookup = new PluginLookup();
-			lookup.Add(typeof(object), PluginLookup.DefaultName, exptectedPlugin);
+			lookup.Add(exptectedPlugin);
 
-			IPlugin plugin;
+			Plugin plugin;
 			lookup.TryGet(typeof(object), "not-found", out plugin).ShouldBe(true);
 			plugin.ShouldBe(exptectedPlugin);
 		}
@@ -34,13 +34,13 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void Should_get_named_instance_from_parent_lookup()
 		{
-			var exptectedPlugin = new TestPlugin();
+			var exptectedPlugin = new TestPlugin { Type = typeof(object), Name = "foo" };
 			var parentLookup = new PluginLookup();
-			parentLookup.Add(typeof(object), "foo", exptectedPlugin);
+			parentLookup.Add(exptectedPlugin);
 			var lookup = new PluginLookup(parentLookup);
-			lookup.Add(typeof(object), PluginLookup.DefaultName, new TestPlugin());
+			lookup.Add(new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName });
 
-			IPlugin plugin;
+			Plugin plugin;
 			lookup.TryGet(typeof(object), "foo", out plugin).ShouldBe(true);
 			plugin.ShouldBe(exptectedPlugin);
 		}
@@ -48,11 +48,11 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void Should_get_default_instance_from_parent_lookup()
 		{
-			var exptectedPlugin = new TestPlugin();
+			var exptectedPlugin = new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName };
 			var parentLookup = new PluginLookup();
-			parentLookup.Add(typeof(object), PluginLookup.DefaultName, exptectedPlugin);
+			parentLookup.Add(exptectedPlugin);
 			var lookup = new PluginLookup(parentLookup);
-			IPlugin plugin;
+			Plugin plugin;
 			lookup.TryGet(typeof(object), "foo", out plugin).ShouldBe(true);
 			plugin.ShouldBe(exptectedPlugin);
 		}
@@ -60,14 +60,14 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void Should_get_all_plugins_matching_type()
 		{
-			var plugin1 = new TestPlugin();
-			var plugin2 = new TestPlugin();
-			var plugin3 = new TestPlugin();
+			var plugin1 = new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName };
+			var plugin2 = new TestPlugin { Type = typeof(object), Name = "foo" };
+			var plugin3 = new TestPlugin { Type = typeof(object), Name = PluginLookup.AnonymousName };
 			var lookup = new PluginLookup();
-			lookup.Add(typeof(object), PluginLookup.DefaultName, plugin1);
-			lookup.Add(typeof(object), "foo", plugin2);
-			lookup.Add(typeof(object), null, plugin3);
-			lookup.Add(typeof(string), null, new TestPlugin());
+			lookup.Add(plugin1);
+			lookup.Add(plugin2);
+			lookup.Add(plugin3);
+			lookup.Add(new TestPlugin { Type = typeof(string), Name = PluginLookup.DefaultName });
 
 			lookup.GetAll(typeof(object)).ShouldBe(new[] { plugin1, plugin2, plugin3 });
 		}
@@ -75,19 +75,20 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void GetAll_should_not_return_plugins_from_parent_lookup_with_same_name()
 		{
-			var parentPlugin = new TestPlugin();
-			var childPlugin1 = new TestPlugin();
-			var childPlugin2 = new TestPlugin();
+			var parentPlugin1 = new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName };
+			var parentPlugin2 = new TestPlugin { Type = typeof(object), Name = PluginLookup.AnonymousName };
+			var childPlugin1 = new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName };
+			var childPlugin2 = new TestPlugin { Type = typeof(object), Name = PluginLookup.AnonymousName };
 
 			var parentLookup = new PluginLookup();
-			parentLookup.Add(typeof(object), "foo", new TestPlugin());
-			parentLookup.Add(typeof(object), null, parentPlugin);
+			parentLookup.Add(parentPlugin1);
+			parentLookup.Add(parentPlugin2);
 
 			var lookup = new PluginLookup(parentLookup);
-			lookup.Add(typeof(object), "foo", childPlugin1);
-			lookup.Add(typeof(object), null, childPlugin2);
+			lookup.Add(childPlugin1);
+			lookup.Add(childPlugin2);
 
-			lookup.GetAll(typeof(object)).ShouldBe(new[] { childPlugin1, childPlugin2, parentPlugin });
+			lookup.GetAll(typeof(object)).ShouldBe(new[] { childPlugin1, childPlugin2, parentPlugin2 });
 		}
 
 		[Fact]
@@ -95,8 +96,8 @@ namespace Maestro.Tests.Internals
 		{
 			var lookup = new PluginLookup();
 
-			lookup.Add(typeof(object), string.Empty, null);
-			Should.Throw<InvalidOperationException>(() => lookup.Add(typeof(object), string.Empty, null));
+			lookup.Add(new Plugin { Type = typeof(object), Name = PluginLookup.DefaultName });
+			Should.Throw<InvalidOperationException>(() => lookup.Add(new Plugin { Type = typeof(object), Name = PluginLookup.DefaultName }));
 		}
 
 		[Fact]
@@ -104,8 +105,8 @@ namespace Maestro.Tests.Internals
 		{
 			var lookup = new PluginLookup();
 
-			lookup.Add(typeof(object), null, null);
-			lookup.Add(typeof(object), null, null);
+			lookup.Add(new Plugin { Type = typeof(object), Name = PluginLookup.AnonymousName });
+			lookup.Add(new Plugin { Type = typeof(object), Name = PluginLookup.AnonymousName });
 		}
 
 		class TestPlugin : Plugin

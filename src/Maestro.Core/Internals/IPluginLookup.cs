@@ -5,7 +5,7 @@ namespace Maestro.Internals
 {
 	interface IPluginLookup
 	{
-		bool TryGet(Type type, string name, out IPlugin plugin);
-		IEnumerable<IPlugin> GetAll(Type type);
+		bool TryGet(Type type, string name, out Plugin plugin);
+		IEnumerable<Plugin> GetAll(Type type);
 	}
 }

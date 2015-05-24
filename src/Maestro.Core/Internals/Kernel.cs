@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.TypeFactoryResolvers;
 
 /*
-IPlugin
+Plugin
 	IProvider : type/lambda/instance
 	IInterceptor
 	ILifetime
@@ -14,7 +15,7 @@ TypeProvider : IProvider
 	CtorParameterTypes
 	CtorParameterValues
 IBuilder / IPipeline
-	ctor(IPlugin)
+	ctor(Plugin)
 	object Execute(IContext)
 IProviderResolver
 	Concrete closed class
@@ -97,7 +98,7 @@ namespace Maestro.Internals
 				{
 					if (!_pipelines.TryGet(key, out pipeline))
 					{
-						IPlugin plugin;
+						Plugin plugin;
 						if (Plugins.TryGet(type, context.Name, out plugin))
 						{
 							pipeline = new Pipeline(plugin);

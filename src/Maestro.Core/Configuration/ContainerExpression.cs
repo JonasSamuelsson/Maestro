@@ -98,116 +98,118 @@ namespace Maestro.Configuration
 
 		public void Use(object instance)
 		{
-			var plugin = CreatePlugin(new InstanceFactoryProvider(instance));
-			Plugins.Add(Type, Name, plugin);
+			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
+			Plugins.Add(plugin);
 		}
 
 		public IFactoryInstanceExpression<object> Use(Func<object> factory)
 		{
-			var plugin = CreatePlugin(new LambdaFactoryProvider(_ => factory()));
-			Plugins.Add(Type, Name, plugin);
+			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(_ => factory()));
+			Plugins.Add(plugin);
 			return new FactoryInstanceExpression<object>(plugin);
 		}
 
 		public IFactoryInstanceExpression<object> Use(Func<IContext, object> factory)
 		{
-			var plugin = CreatePlugin(new LambdaFactoryProvider(factory));
-			Plugins.Add(Type, Name, plugin);
+			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(factory));
+			Plugins.Add(plugin);
 			return new FactoryInstanceExpression<object>(plugin);
 		}
 
 		public ITypeInstanceExpression<object> Use(Type type)
 		{
-			var plugin = CreatePlugin(new TypeFactoryProvider(type));
-			Plugins.Add(Type, Name, plugin);
+			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type));
+			Plugins.Add(plugin);
 			return new TypeInstanceExpression<object>(plugin);
 		}
 
 		public void Add(object instance)
 		{
-			var plugin = CreatePlugin(new InstanceFactoryProvider(instance));
-			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			var plugin = CreatePlugin(PluginLookup.AnonymousName, new InstanceFactoryProvider(instance));
+			Plugins.Add(plugin);
 		}
 
 		public IFactoryInstanceExpression<object> Add(Func<object> factory)
 		{
-			var plugin = CreatePlugin(new LambdaFactoryProvider(_ => factory()));
-			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			var plugin = CreatePlugin(PluginLookup.AnonymousName, new LambdaFactoryProvider(_ => factory()));
+			Plugins.Add(plugin);
 			return new FactoryInstanceExpression<object>(plugin);
 		}
 
 		public IFactoryInstanceExpression<object> Add(Func<IContext, object> factory)
 		{
-			var plugin = CreatePlugin(new LambdaFactoryProvider(factory));
-			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			var plugin = CreatePlugin(PluginLookup.AnonymousName, new LambdaFactoryProvider(factory));
+			Plugins.Add(plugin);
 			return new FactoryInstanceExpression<object>(plugin);
 		}
 
 		public ITypeInstanceExpression<object> Add(Type type)
 		{
-			var plugin = CreatePlugin(new TypeFactoryProvider(type));
-			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			var plugin = CreatePlugin(PluginLookup.AnonymousName, new TypeFactoryProvider(type));
+			Plugins.Add(plugin);
 			return new TypeInstanceExpression<object>(plugin);
 		}
 
 		public void Use(T instance)
 		{
-			var plugin = CreatePlugin(new InstanceFactoryProvider(instance));
-			Plugins.Add(Type, Name, plugin);
+			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
+			Plugins.Add(plugin);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<TInstance> factory)
 		{
-			var plugin = CreatePlugin(new LambdaFactoryProvider(_ => factory()));
-			Plugins.Add(Type, Name, plugin);
+			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(_ => factory()));
+			Plugins.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> factory)
 		{
-			var plugin = CreatePlugin(new LambdaFactoryProvider(ctx => factory(ctx)));
-			Plugins.Add(Type, Name, plugin);
+			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(ctx => factory(ctx)));
+			Plugins.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public ITypeInstanceExpression<TInstance> Use<TInstance>()
 		{
-			var plugin = CreatePlugin(new TypeFactoryProvider(typeof(TInstance)));
-			Plugins.Add(Type, Name, plugin);
+			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance)));
+			Plugins.Add(plugin);
 			return new TypeInstanceExpression<TInstance>(plugin);
 		}
 
 		public void Add(T instance)
 		{
-			var plugin = CreatePlugin(new InstanceFactoryProvider(instance));
-			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			var plugin = CreatePlugin(PluginLookup.AnonymousName, new InstanceFactoryProvider(instance));
+			Plugins.Add(plugin);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<TInstance> factory)
 		{
-			var plugin = CreatePlugin(new LambdaFactoryProvider(_ => factory()));
-			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			var plugin = CreatePlugin(PluginLookup.AnonymousName, new LambdaFactoryProvider(_ => factory()));
+			Plugins.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<IContext, TInstance> factory)
 		{
-			var plugin = CreatePlugin(new LambdaFactoryProvider(ctx => factory(ctx)));
-			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			var plugin = CreatePlugin(PluginLookup.AnonymousName, new LambdaFactoryProvider(ctx => factory(ctx)));
+			Plugins.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public ITypeInstanceExpression<TInstance> Add<TInstance>()
 		{
-			var plugin = CreatePlugin(new TypeFactoryProvider(typeof(TInstance)));
-			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			var plugin = CreatePlugin(PluginLookup.AnonymousName, new TypeFactoryProvider(typeof(TInstance)));
+			Plugins.Add(plugin);
 			return new TypeInstanceExpression<TInstance>(plugin);
 		}
 
-		private Plugin CreatePlugin(IFactoryProvider factoryProvider)
+		private Plugin CreatePlugin(string name, IFactoryProvider factoryProvider)
 		{
 			return new Plugin
 			{
+				Name = name,
+				Type = Type,
 				FactoryProvider = factoryProvider,
 				Lifetime = DefaultSettings.GetLifetime()
 			};
@@ -237,8 +239,10 @@ namespace Maestro.Configuration
 
 		public void Instance(T instance)
 		{
-			_plugins.Add(_type, _name, new Plugin
+			_plugins.Add(new Plugin
 			{
+				Type = _type,
+				Name = _name,
 				FactoryProvider = new InstanceFactoryProvider(instance)
 			});
 		}
@@ -252,9 +256,11 @@ namespace Maestro.Configuration
 		{
 			var plugin = new Plugin
 			{
+				Type = _type,
+				Name = _name,
 				FactoryProvider = new LambdaFactoryProvider(ctx => factory(ctx))
 			};
-			_plugins.Add(_type, _name, plugin);
+			_plugins.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
@@ -262,9 +268,11 @@ namespace Maestro.Configuration
 		{
 			var plugin = new Plugin
 			{
+				Type = _type,
+				Name = _name,
 				FactoryProvider = new TypeFactoryProvider(_type)
 			};
-			_plugins.Add(_type, _name, plugin);
+			_plugins.Add(plugin);
 			return new TypeInstanceExpression<TInstance>(plugin);
 		}
 	}

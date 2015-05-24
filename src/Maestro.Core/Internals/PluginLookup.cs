@@ -6,7 +6,7 @@ namespace Maestro.Internals
 {
 	internal class PluginLookup : IPluginLookup
 	{
-		readonly List<Entry> _entries = new List<Entry>();
+		readonly List<Plugin> _list = new List<Plugin>();
 		readonly PluginLookup _parent;
 
 		public PluginLookup()
@@ -21,57 +21,45 @@ namespace Maestro.Internals
 		internal static string DefaultName { get; } = string.Empty;
 		internal static string AnonymousName { get; } = null;
 
-		public void Add(Type type, string name, IPlugin plugin)
+		public void Add(Plugin plugin)
 		{
-			if (_entries.Any(x => x.Type == type && x.Name != null && x.Name == name))
+			if (_list.Any(x => x.Type == plugin.Type && x.Name != null && x.Name == plugin.Name))
 				throw new InvalidOperationException("Duplicate key");
 
-			_entries.Add(new Entry
-			{
-				Type = type,
-				Name = name,
-				Plugin = plugin
-			});
+			_list.Add(plugin);
 		}
 
-		public bool TryGet(Type type, string name, out IPlugin plugin)
+		public bool TryGet(Type type, string name, out Plugin plugin)
 		{
 			plugin = GetPluginOrNull(type, name);
 			return plugin != null;
 		}
 
-		private IPlugin GetPluginOrNull(Type type, string name)
+		private Plugin GetPluginOrNull(Type type, string name)
 		{
-			return _entries.FirstOrDefault(x => x.Type == type && x.Name == name)?.Plugin
+			return _list.FirstOrDefault(x => x.Type == type && x.Name == name)
 					 ?? _parent?.GetPluginOrNull(type, name)
-					 ?? _entries.FirstOrDefault(x => x.Type == type && x.Name == PluginLookup.DefaultName)?.Plugin
-					 ?? _parent?.GetPluginOrNull(type, PluginLookup.DefaultName);
+					 ?? _list.FirstOrDefault(x => x.Type == type && x.Name == DefaultName)
+					 ?? _parent?.GetPluginOrNull(type, DefaultName);
 		}
 
-		public IEnumerable<IPlugin> GetAll(Type type)
+		public IEnumerable<Plugin> GetAll(Type type)
 		{
 			var names = new HashSet<string>();
-			var plugins = new List<IPlugin>();
+			var plugins = new List<Plugin>();
 			GetAll(type, names, plugins);
 			return plugins;
 		}
 
-		private void GetAll(Type type, ISet<string> names, ICollection<IPlugin> plugins)
+		private void GetAll(Type type, ISet<string> names, ICollection<Plugin> plugins)
 		{
-			foreach (var entry in _entries.Where(x => x.Type == type))
+			foreach (var plugin in _list.Where(x => x.Type == type))
 			{
-				if (entry.Name != null) if (!names.Add(entry.Name)) continue;
-				plugins.Add(entry.Plugin);
+				if (plugin.Name != AnonymousName) if (!names.Add(plugin.Name)) continue;
+				plugins.Add(plugin);
 			}
 
 			_parent?.GetAll(type, names, plugins);
-		}
-
-		class Entry
-		{
-			public Type Type { get; set; }
-			public string Name { get; set; }
-			public IPlugin Plugin { get; set; }
 		}
 	}
 }

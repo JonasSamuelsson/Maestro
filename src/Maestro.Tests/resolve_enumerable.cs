@@ -45,7 +45,7 @@ namespace Maestro.Tests
 			var name = "yada yada";
 			var container = new Container(x =>
 			{
-				x.For<Foo>().Add<Foo>();
+				x.For<Foo>().Use<Foo>();
 				x.For<Foo>(name).Use<Foo>();
 
 				x.For<object>().Use(@defaultDependency);

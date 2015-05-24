@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Maestro.FactoryProviders;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
 
 namespace Maestro.Internals
 {
-	class Plugin : IPlugin
+	class Plugin
 	{
+		public Type Type { get; set; }
+		public string Name { get; set; }
 		public IFactoryProvider FactoryProvider { get; set; }
 		public List<IInterceptor> Interceptors { get; set; } = new List<IInterceptor>();
-		public ILifetime Lifetime { get; set; }
+		public ILifetime Lifetime { get; set; } = new TransientLifetime();
 	}
 }
