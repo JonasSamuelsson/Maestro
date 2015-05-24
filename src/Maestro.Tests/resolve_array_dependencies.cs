@@ -48,7 +48,7 @@ namespace Maestro.Tests
 
 			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
 
-			container.Configure(x => x.For<int>().Add());
+			container.Configure(x => x.For<int>().Add(0));
 			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
 
 			container.Configure(x => x.For<int[]>().Use(array));

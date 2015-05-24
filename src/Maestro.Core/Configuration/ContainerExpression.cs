@@ -18,14 +18,24 @@ namespace Maestro.Configuration
 			_defaultSettings = defaultSettings;
 		}
 
-		public ITypeExpression<object> For(Type type)
+		public IDefaultPluginExpression For(Type type)
 		{
-			return new KeyExpression<object>(type, _pluginLookup);
+			return new PluginExpression<object>(type, PluginLookup.DefaultName, _pluginLookup, _defaultSettings);
 		}
 
-		public ITypeExpression<T> For<T>()
+		public IPluginExpression<object> For(Type type, string name)
 		{
-			return new KeyExpression<T>(typeof(T), _pluginLookup);
+			return new PluginExpression<object>(type, name, _pluginLookup, _defaultSettings);
+		}
+
+		public IDefaultPluginExpression<T> For<T>()
+		{
+			return new PluginExpression<T>(typeof(T), PluginLookup.DefaultName, _pluginLookup, _defaultSettings);
+		}
+
+		public IPluginExpression<T> For<T>(string name)
+		{
+			return new PluginExpression<T>(typeof(T), name, _pluginLookup, _defaultSettings);
 		}
 
 		public IConventionExpression Scan
@@ -39,48 +49,168 @@ namespace Maestro.Configuration
 		}
 	}
 
-	public interface ITypeExpression<T>
+	public interface IPluginExpression
 	{
-		IFactoryExpression<T> Add { get; }
-		IFactoryExpression<T> Use { get; }
-		INameExpression<T> Named(string name);
+		void Use(object instance);
+		IFactoryInstanceExpression<object> Use(Func<object> factory);
+		IFactoryInstanceExpression<object> Use(Func<IContext, object> factory);
+		ITypeInstanceExpression<object> Use(Type type);
 	}
 
-	public interface INameExpression<T>
+	public interface IDefaultPluginExpression : IPluginExpression
 	{
-		IFactoryExpression<T> Use { get; }
+		void Add(object instance);
+		IFactoryInstanceExpression<object> Add(Func<object> factory);
+		IFactoryInstanceExpression<object> Add(Func<IContext, object> factory);
+		ITypeInstanceExpression<object> Add(Type type);
 	}
 
-	class KeyExpression<T> : ITypeExpression<T>
+	public interface IPluginExpression<T>
 	{
-		public KeyExpression(Type type, PluginLookup plugins)
+		void Use(T instance);
+		IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<TInstance> factory);
+		IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> factory);
+		ITypeInstanceExpression<TInstance> Use<TInstance>();
+	}
+
+	public interface IDefaultPluginExpression<T> : IPluginExpression<T>
+	{
+		void Add(T instance);
+		IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<TInstance> factory);
+		IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<IContext, TInstance> factory);
+		ITypeInstanceExpression<TInstance> Add<TInstance>();
+	}
+
+	class PluginExpression<T> : IDefaultPluginExpression, IPluginExpression, IDefaultPluginExpression<T>, IPluginExpression<T>
+	{
+		public PluginExpression(Type type, string name, PluginLookup plugins, DefaultSettings defaultSettings)
 		{
 			Type = type;
+			Name = name;
 			Plugins = plugins;
+			DefaultSettings = defaultSettings;
 		}
 
-		public Type Type { get; }
-		public PluginLookup Plugins { get; }
+		internal Type Type { get; }
+		internal string Name { get; set; }
+		internal PluginLookup Plugins { get; }
+		internal DefaultSettings DefaultSettings { get; set; }
 
-		IFactoryExpression<T> ITypeExpression<T>.Add => GetFactoryExpression(null);
-		IFactoryExpression<T> ITypeExpression<T>.Use => GetFactoryExpression(PluginLookup.DefaultName);
-
-		INameExpression<T> ITypeExpression<T>.Named(string name)
+		public void Use(object instance)
 		{
-			return new Temp { Name = name, Parent = this };
+			var plugin = CreatePlugin(new InstanceFactoryProvider(instance));
+			Plugins.Add(Type, Name, plugin);
 		}
 
-		private IFactoryExpression<T> GetFactoryExpression(string name)
+		public IFactoryInstanceExpression<object> Use(Func<object> factory)
 		{
-			return new FactoryExpression<T>(Type, name, Plugins);
+			var plugin = CreatePlugin(new LambdaFactoryProvider(_ => factory()));
+			Plugins.Add(Type, Name, plugin);
+			return new FactoryInstanceExpression<object>(plugin);
 		}
 
-		class Temp : INameExpression<T>
+		public IFactoryInstanceExpression<object> Use(Func<IContext, object> factory)
 		{
-			public string Name { get; set; }
-			public KeyExpression<T> Parent { get; set; }
+			var plugin = CreatePlugin(new LambdaFactoryProvider(factory));
+			Plugins.Add(Type, Name, plugin);
+			return new FactoryInstanceExpression<object>(plugin);
+		}
 
-			public IFactoryExpression<T> Use => Parent.GetFactoryExpression(Name);
+		public ITypeInstanceExpression<object> Use(Type type)
+		{
+			var plugin = CreatePlugin(new TypeFactoryProvider(type));
+			Plugins.Add(Type, Name, plugin);
+			return new TypeInstanceExpression<object>(plugin);
+		}
+
+		public void Add(object instance)
+		{
+			var plugin = CreatePlugin(new InstanceFactoryProvider(instance));
+			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+		}
+
+		public IFactoryInstanceExpression<object> Add(Func<object> factory)
+		{
+			var plugin = CreatePlugin(new LambdaFactoryProvider(_ => factory()));
+			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			return new FactoryInstanceExpression<object>(plugin);
+		}
+
+		public IFactoryInstanceExpression<object> Add(Func<IContext, object> factory)
+		{
+			var plugin = CreatePlugin(new LambdaFactoryProvider(factory));
+			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			return new FactoryInstanceExpression<object>(plugin);
+		}
+
+		public ITypeInstanceExpression<object> Add(Type type)
+		{
+			var plugin = CreatePlugin(new TypeFactoryProvider(type));
+			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			return new TypeInstanceExpression<object>(plugin);
+		}
+
+		public void Use(T instance)
+		{
+			var plugin = CreatePlugin(new InstanceFactoryProvider(instance));
+			Plugins.Add(Type, Name, plugin);
+		}
+
+		public IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<TInstance> factory)
+		{
+			var plugin = CreatePlugin(new LambdaFactoryProvider(_ => factory()));
+			Plugins.Add(Type, Name, plugin);
+			return new FactoryInstanceExpression<TInstance>(plugin);
+		}
+
+		public IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> factory)
+		{
+			var plugin = CreatePlugin(new LambdaFactoryProvider(ctx => factory(ctx)));
+			Plugins.Add(Type, Name, plugin);
+			return new FactoryInstanceExpression<TInstance>(plugin);
+		}
+
+		public ITypeInstanceExpression<TInstance> Use<TInstance>()
+		{
+			var plugin = CreatePlugin(new TypeFactoryProvider(typeof(TInstance)));
+			Plugins.Add(Type, Name, plugin);
+			return new TypeInstanceExpression<TInstance>(plugin);
+		}
+
+		public void Add(T instance)
+		{
+			var plugin = CreatePlugin(new InstanceFactoryProvider(instance));
+			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+		}
+
+		public IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<TInstance> factory)
+		{
+			var plugin = CreatePlugin(new LambdaFactoryProvider(_ => factory()));
+			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			return new FactoryInstanceExpression<TInstance>(plugin);
+		}
+
+		public IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<IContext, TInstance> factory)
+		{
+			var plugin = CreatePlugin(new LambdaFactoryProvider(ctx => factory(ctx)));
+			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			return new FactoryInstanceExpression<TInstance>(plugin);
+		}
+
+		public ITypeInstanceExpression<TInstance> Add<TInstance>()
+		{
+			var plugin = CreatePlugin(new TypeFactoryProvider(typeof(TInstance)));
+			Plugins.Add(Type, PluginLookup.AnonymousName, plugin);
+			return new TypeInstanceExpression<TInstance>(plugin);
+		}
+
+		private Plugin CreatePlugin(IFactoryProvider factoryProvider)
+		{
+			return new Plugin
+			{
+				FactoryProvider = factoryProvider,
+				Lifetime = DefaultSettings.GetLifetime()
+			};
 		}
 	}
 
@@ -335,7 +465,7 @@ namespace Maestro.Configuration
 			InstanceExpression = new InstanceExpression<T, ITypeInstanceExpression<T>>(plugin, this);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> InstanceExpression { get; set; }
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> InstanceExpression { get; }
 
 		public ILifetimeExpression<ITypeInstanceExpression<T>> Lifetime => InstanceExpression.Lifetime;
 

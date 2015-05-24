@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Maestro.FactoryProviders;
+using Maestro.Lifetimes;
 
 namespace Maestro.Internals
 {
@@ -16,7 +17,12 @@ namespace Maestro.Internals
 								 orderby parameters.Length descending
 								 where parameters.All(p => context.Kernel.CanGetDependency(p.ParameterType, context))
 								 let factoryProvider = new TypeFactoryProvider(type) { Constructor = ctor }
-								 select new Pipeline(new Plugin { FactoryProvider = factoryProvider });
+								 let plugin = new Plugin
+								 {
+									 FactoryProvider = factoryProvider,
+									 Lifetime = new TransientLifetime()
+								 }
+								 select new Pipeline(plugin);
 			pipeline = pipelines.FirstOrDefault();
 			return pipeline != null;
 		}

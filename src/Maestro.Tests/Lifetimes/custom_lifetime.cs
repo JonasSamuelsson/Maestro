@@ -27,10 +27,10 @@ namespace Maestro.Tests.Lifetimes
 				throw new NotImplementedException();
 			}
 
-			public object Execute(IContext context, IPipeline pipeline)
+			public object Execute(INextStep nextStep)
 			{
 				Executed = true;
-				return pipeline.Execute();
+				return nextStep.Execute();
 			}
 		}
 	}

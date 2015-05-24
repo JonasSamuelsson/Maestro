@@ -85,7 +85,7 @@ namespace Maestro.Tests
 		{
 			readonly Container _container = new Container(x =>
 																		 {
-																			 x.For<SingletonType>().Use.Type<SingletonType>().Lifetime.Singleton();
+																			 x.For<SingletonType>().Use<SingletonType>().Lifetime.Singleton();
 																		 });
 
 			public override T Get<T>()

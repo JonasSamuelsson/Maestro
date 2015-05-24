@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Maestro.Internals;
 
 namespace Maestro.Lifetimes
 {
 	internal class ContextSingletonLifetime : ILifetime
 	{
-		private readonly Dictionary<long, object> _dictionary;
+		private readonly Dictionary<Context, object> _dictionary;
 
 		public ContextSingletonLifetime()
 		{
-			_dictionary = new Dictionary<long, object>();
+			_dictionary = new Dictionary<Context, object>();
 		}
 
 		public ILifetime Clone()
@@ -17,36 +18,24 @@ namespace Maestro.Lifetimes
 			return new ContextSingletonLifetime();
 		}
 
-		public object Execute(IContext context, IPipeline pipeline)
+		public object Execute(INextStep nextStep)
 		{
-			throw new NotImplementedException();
-			//object instance;
+			object instance;
+			var context = ((Pipeline.NextStep)nextStep).Context;
 
-			//lock (_dictionary)
-			//	if (_dictionary.TryGetValue(context.ContextId, out instance))
-			//		return instance;
+			lock (_dictionary)
+			if (_dictionary.TryGetValue(context, out instance))
+					return instance;
 
-			//lock (context.ContextId.ToString())
-			//{
-			//	lock (_dictionary)
-			//		if (_dictionary.TryGetValue(context.ContextId, out instance))
-			//			return instance;
-
-			//	instance = pipeline.Execute();
-
-			//	lock (_dictionary)
-			//	{
-			//		_dictionary.Add(context.ContextId, instance);
-			//		context.Disposed += () => Remove(context.ContextId);
-			//		return instance;
-			//	}
-			//}
+			instance = nextStep.Execute();
+			context.Disposed += ContextOnDisposed;
+			lock (_dictionary) _dictionary.Add(context, instance);
+			return instance;
 		}
 
-		private void Remove(long contextId)
+		private void ContextOnDisposed(Context context)
 		{
-			lock (_dictionary)
-				_dictionary.Remove(contextId);
+			lock (_dictionary) _dictionary.Remove(context);
 		}
 
 		public override string ToString()

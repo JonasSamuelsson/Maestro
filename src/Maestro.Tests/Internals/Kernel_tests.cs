@@ -30,7 +30,7 @@ namespace Maestro.Tests.Internals
 
 			object instance;
 			kernel.TryGet(typeof(object), context, out instance).ShouldBe(true);
-			instance.ShouldBeTypeOf<object>();
+			instance.ShouldBeOfType<object>();
 		}
 
 		[Fact]
