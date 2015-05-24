@@ -32,8 +32,8 @@ namespace Maestro.Internals
 			}
 			catch (Exception exception)
 			{
-				var message = $"Can't evaluate dependency of type '{type.FullName}'.";
-				throw new DependencyActivationException(message, exception);
+				var message = $"Can't evaluate instance of type '{type.FullName}'.";
+				throw new ActivationException(message, exception);
 			}
 		}
 
@@ -48,8 +48,8 @@ namespace Maestro.Internals
 			if (((IContext)this).TryGet(type, out instance))
 				return instance;
 
-			var message = $"Can't get dependency of type '{type.FullName}'.";
-			throw new DependencyActivationException(message);
+			var message = $"Can't get instance of type '{type.FullName}'.";
+			throw new ActivationException(message);
 		}
 
 		bool IContext.TryGet<T>(out T instance)
@@ -69,8 +69,8 @@ namespace Maestro.Internals
 			}
 			catch (Exception exception)
 			{
-				var message = $"Can't get dependency of type '{type.FullName}'.";
-				throw new DependencyActivationException(message, exception);
+				var message = $"Can't get instance of type '{type.FullName}'.";
+				throw new ActivationException(message, exception);
 			}
 		}
 
@@ -88,8 +88,8 @@ namespace Maestro.Internals
 			}
 			catch (Exception exception)
 			{
-				var message = $"Can't get dependencies of type '{type.FullName}'.";
-				throw new DependencyActivationException(message, exception);
+				var message = $"Can't get instances of type '{type.FullName}'.";
+				throw new ActivationException(message, exception);
 			}
 		}
 

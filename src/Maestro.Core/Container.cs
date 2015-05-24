@@ -79,8 +79,8 @@ namespace Maestro
 			{
 				instance = null;
 				name = name ?? PluginLookup.DefaultName;
-				var context = new Context(name, _kernel);
-				return _kernel.TryGet(type, context, out instance);
+				using (var context = new Context(name, _kernel))
+					return _kernel.TryGet(type, context, out instance);
 			}
 			catch (ActivationException)
 			{
