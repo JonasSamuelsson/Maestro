@@ -8,22 +8,21 @@ namespace Maestro.Conventions
 	internal class AddConcreteSubClassesConvention : IConvention
 	{
 		private readonly Type _baseType;
-		private readonly Action<IInstanceBuilderExpression<object>> _instanceConfiguration;
+		private readonly Action<ITypeInstanceExpression<object>> _configureAction;
 
-		public AddConcreteSubClassesConvention(Type baseType, Action<IInstanceBuilderExpression<object>> instanceConfiguration)
+		public AddConcreteSubClassesConvention(Type baseType, Action<ITypeInstanceExpression<object>> configureAction)
 		{
 			_baseType = baseType;
-			_instanceConfiguration = instanceConfiguration;
+			_configureAction = configureAction;
 		}
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
-			throw new NotImplementedException();
-			//foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
-			//{
-			//	var instanceBuilderExpression = containerExpression.For(_baseType).Add();
-			//	_instanceConfiguration(instanceBuilderExpression);
-			//}
+			foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
+			{
+				var typeInstanceExpression = containerExpression.For(_baseType).Add(type);
+				_configureAction(typeInstanceExpression);
+			}
 		}
 	}
 }

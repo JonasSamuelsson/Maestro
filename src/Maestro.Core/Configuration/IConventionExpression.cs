@@ -68,27 +68,27 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="action"></param>
-		void AddConcreteSubClassesOf<T>(Action<IInstanceBuilderExpression<T>> action = null);
+		void AddConcreteSubClassesOf<T>(Action<ITypeInstanceExpression<T>> action = null);
 
 		/// <summary>
 		/// Adds concrete sub classes of <paramref name="type"/>.
 		/// </summary>
 		/// <param name="type"></param>
 		/// <param name="action"></param>
-		void AddConcreteSubClassesOf(Type type, Action<IInstanceBuilderExpression<object>> action = null);
+		void AddConcreteSubClassesOf(Type type, Action<ITypeInstanceExpression<object>> action = null);
 
 		/// <summary>
 		/// Adds implementations of <paramref name="genericTypeDefinition"/>.
 		/// </summary>
 		/// <param name="genericTypeDefinition"></param>
 		/// <param name="action"></param>
-		void AddConcreteClassesClosing(Type genericTypeDefinition, Action<IInstanceBuilderExpression<object>> action = null);
+		void AddConcreteClassesClosing(Type genericTypeDefinition, Action<ITypeInstanceExpression<object>> action = null);
 
 		/// <summary>
 		/// Adds default implementations.
 		/// </summary>
 		/// <param name="action"></param>
-		void UseDefaultImplementations(Action<IInstanceBuilderExpression<object>> action = null);
+		void UseDefaultImplementations(Action<ITypeInstanceExpression<object>> action = null);
 
 		/// <summary>
 		/// Uses <paramref name="convention"/> to configure the container.
