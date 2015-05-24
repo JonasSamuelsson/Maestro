@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Maestro.Conventions;
+using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
@@ -61,27 +62,27 @@ namespace Maestro.Configuration
 			return this;
 		}
 
-		public void AddConcreteSubClassesOf<T>(Action<IInstanceBuilderExpression<T>> action = null)
+		public void AddConcreteSubClassesOf<T>(Action<ITypeInstanceExpression<T>> action = null)
 		{
-			throw new NotImplementedException();
-			//AddConcreteSubClassesOf(typeof(T), expression =>
-			//											  {
-			//												  action = action ?? delegate { };
-			//												  action(new InstanceBuilderExpression<T>(((InstanceBuilderExpression<object>)expression).InstanceBuilder));
-			//											  });
+			AddConcreteSubClassesOf(typeof(T), expression =>
+														  {
+															  action = action ?? delegate { };
+															  var plugin = ((TypeInstanceExpression<object>)expression).Plugin;
+															  action(new TypeInstanceExpression<T>(plugin));
+														  });
 		}
 
-		public void AddConcreteSubClassesOf(Type type, Action<IInstanceBuilderExpression<object>> action = null)
+		public void AddConcreteSubClassesOf(Type type, Action<ITypeInstanceExpression<object>> action = null)
 		{
 			Using(new AddConcreteSubClassesConvention(type, action ?? delegate { }));
 		}
 
-		public void AddConcreteClassesClosing(Type genericTypeDefinition, Action<IInstanceBuilderExpression<object>> action = null)
+		public void AddConcreteClassesClosing(Type genericTypeDefinition, Action<ITypeInstanceExpression<object>> action = null)
 		{
 			Using(new AddConcreteClassesClosingConvention(genericTypeDefinition, action ?? delegate { }));
 		}
 
-		public void UseDefaultImplementations(Action<IInstanceBuilderExpression<object>> action = null)
+		public void UseDefaultImplementations(Action<ITypeInstanceExpression<object>> action = null)
 		{
 			Using(new UseDefaultImplementationsConvention(action ?? delegate { }));
 		}

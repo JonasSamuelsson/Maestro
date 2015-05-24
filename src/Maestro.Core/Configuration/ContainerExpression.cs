@@ -412,8 +412,8 @@ namespace Maestro.Configuration
 			Parent = parent;
 		}
 
-		public Plugin Plugin { get; set; }
-		public TParent Parent { get; set; }
+		internal Plugin Plugin { get; set; }
+		internal TParent Parent { get; set; }
 
 		public ILifetimeExpression<TParent> Lifetime
 		{
@@ -462,9 +462,11 @@ namespace Maestro.Configuration
 	{
 		public TypeInstanceExpression(Plugin plugin)
 		{
+			Plugin = plugin;
 			InstanceExpression = new InstanceExpression<T, ITypeInstanceExpression<T>>(plugin, this);
 		}
 
+		internal Plugin Plugin { get; }
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> InstanceExpression { get; }
 
 		public ILifetimeExpression<ITypeInstanceExpression<T>> Lifetime => InstanceExpression.Lifetime;
