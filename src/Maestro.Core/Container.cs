@@ -82,10 +82,6 @@ namespace Maestro
 				using (var context = new Context(name, _kernel))
 					return _kernel.TryGet(type, context, out instance);
 			}
-			catch (ActivationException)
-			{
-				throw;
-			}
 			catch (Exception exception)
 			{
 				var message = name == PluginLookup.DefaultName
@@ -106,10 +102,6 @@ namespace Maestro
 			{
 				var context = new Context(PluginLookup.DefaultName, _kernel);
 				return _kernel.GetAll(type, context);
-			}
-			catch (ActivationException)
-			{
-				throw;
 			}
 			catch (Exception exception)
 			{
