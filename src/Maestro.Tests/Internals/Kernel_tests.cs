@@ -91,8 +91,10 @@ namespace Maestro.Tests.Internals
 
 			public KernelBuilder Add(Type type, string name, IFactoryProvider factoryProvider)
 			{
-				_plugins.Add(type, name, new Maestro.Internals.Plugin
+				_plugins.Add(new Plugin
 				{
+					Type = type,
+					Name = name,
 					FactoryProvider = factoryProvider
 				});
 				return this;

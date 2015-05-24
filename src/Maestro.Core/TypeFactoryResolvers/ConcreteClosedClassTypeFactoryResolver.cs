@@ -2,13 +2,13 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Maestro.FactoryProviders;
-using Maestro.Lifetimes;
+using Maestro.Internals;
 
-namespace Maestro.Internals
+namespace Maestro.TypeFactoryResolvers
 {
 	internal class ConcreteClosedClassTypeFactoryResolver : ITypeFactoryResolver
 	{
-		public bool TryGet(Type type, Context context, out IPipeline pipeline)
+		public bool TryGet(Type type, Context context, out Internals.IPipeline pipeline)
 		{
 			pipeline = null;
 			if (!type.IsConcreteClosedClass()) return false;
@@ -19,8 +19,7 @@ namespace Maestro.Internals
 								 let factoryProvider = new TypeFactoryProvider(type) { Constructor = ctor }
 								 let plugin = new Plugin
 								 {
-									 FactoryProvider = factoryProvider,
-									 Lifetime = new TransientLifetime()
+									 FactoryProvider = factoryProvider
 								 }
 								 select new Pipeline(plugin);
 			pipeline = pipelines.FirstOrDefault();

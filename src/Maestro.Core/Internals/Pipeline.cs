@@ -9,12 +9,12 @@ namespace Maestro.Internals
 		{
 		}
 
-		public Pipeline(IPlugin plugin)
+		public Pipeline(Plugin plugin)
 		{
 			Plugin = plugin;
 		}
 
-		public IPlugin Plugin { get; set; }
+		public Plugin Plugin { get; set; }
 
 		public object Execute(Context context)
 		{
