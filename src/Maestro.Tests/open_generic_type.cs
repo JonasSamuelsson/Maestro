@@ -69,10 +69,10 @@ namespace Maestro.Tests
 				return Clone;
 			}
 
-			public object Execute(IContext context, IPipeline pipeline)
+			public object Execute(INextStep nextStep)
 			{
 				Executed = true;
-				return pipeline.Execute();
+				return nextStep.Execute();
 			}
 		}
 	}

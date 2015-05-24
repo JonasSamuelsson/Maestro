@@ -11,15 +11,26 @@ namespace Maestro.Internals
 
 		public Pipeline(IPlugin plugin)
 		{
-			FactoryProvider = plugin.FactoryProvider;
+			Plugin = plugin;
 		}
 
-		public IFactoryProvider FactoryProvider { get; set; }
-		public ILifetime Lifetime { get; set; }
+		public IPlugin Plugin { get; set; }
 
 		public object Execute(Context context)
 		{
-			return FactoryProvider.GetFactory(context).GetInstance(context);
+			var temp = new NextStep { Context = context, Pipeline = this };
+			return Plugin.Lifetime.Execute(temp);
+		}
+
+		internal struct NextStep : INextStep
+		{
+			public Pipeline Pipeline { get; set; }
+			public Context Context { get; set; }
+
+			public object Execute()
+			{
+				return Pipeline.Plugin.FactoryProvider.GetFactory(Context).GetInstance(Context);
+			}
 		}
 	}
 }

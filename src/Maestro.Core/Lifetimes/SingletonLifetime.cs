@@ -9,12 +9,12 @@
 			return new SingletonLifetime();
 		}
 
-		public object Execute(IContext context, IPipeline pipeline)
+		public object Execute(INextStep nextStep)
 		{
 			if (_instance == null)
 				lock (this)
 					if (_instance == null)
-						_instance = pipeline.Execute();
+						_instance = nextStep.Execute();
 
 			return _instance;
 		}

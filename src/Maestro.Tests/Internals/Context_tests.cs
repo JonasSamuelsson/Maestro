@@ -15,8 +15,10 @@ namespace Maestro.Tests.Internals
 			context.Dispose();
 
 			object instance;
-			Should.Throw<ObjectDisposedException>(() => ((IContext)context).TryGet(typeof(object), out instance));
-			Should.Throw<ObjectDisposedException>(() => ((IContext)context).GetAll(typeof(object)));
+			Should.Throw<DependencyActivationException>(() => ((IContext)context).TryGet(typeof(object), out instance))
+				.InnerException.ShouldBeOfType<ObjectDisposedException>();
+			Should.Throw<DependencyActivationException>(() => ((IContext)context).GetAll(typeof(object)))
+				.InnerException.ShouldBeOfType<ObjectDisposedException>();
 		}
 	}
 }

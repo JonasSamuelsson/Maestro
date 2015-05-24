@@ -4,10 +4,13 @@ namespace Maestro.Configuration
 {
 	public interface IContainerExpression
 	{
-		ITypeExpression<object> For(Type type);
-		ITypeExpression<T> For<T>();
+		IDefaultPluginExpression For(Type type);
+		IDefaultPluginExpression<T> For<T>();
 
-			///// <summary>
+		IPluginExpression<object> For(Type type, string name);
+		IPluginExpression<T> For<T>(string name);
+
+		///// <summary>
 		///// Used to configure instance, lifetime, interception etc for default instance of type <paramref name="type"/>.
 		///// </summary>
 		///// <param name="type"></param>

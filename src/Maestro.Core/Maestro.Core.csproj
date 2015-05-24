@@ -61,6 +61,7 @@
     <Compile Include="FactoryProviders\Factories\InstanceFactory.cs" />
     <Compile Include="FactoryProviders\Factories\LambdaFactory.cs" />
     <Compile Include="FactoryProviders\Factories\TypeFactory.cs" />
+    <Compile Include="Lifetimes\INextStep.cs" />
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassTypeFactoryResolver.cs" />
     <Compile Include="Internals\Context.cs" />
     <Compile Include="FactoryProviders\InstanceFactoryProvider.cs" />

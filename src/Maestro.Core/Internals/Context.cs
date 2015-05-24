@@ -116,6 +116,9 @@ namespace Maestro.Internals
 		public void Dispose()
 		{
 			_disposed = true;
+			Disposed?.Invoke(this);
 		}
+
+		public event Action<Context> Disposed;
 	}
 }

@@ -7,8 +7,6 @@
 			Instance = new TransientLifetime();
 		}
 
-		private TransientLifetime() { }
-
 		public static ILifetime Instance { get; private set; }
 
 		public ILifetime Clone()
@@ -16,9 +14,9 @@
 			return Instance;
 		}
 
-		public object Execute(IContext context, IPipeline pipeline)
+		public object Execute(INextStep nextStep)
 		{
-			return pipeline.Execute();
+			return nextStep.Execute();
 		}
 
 		public override string ToString()
