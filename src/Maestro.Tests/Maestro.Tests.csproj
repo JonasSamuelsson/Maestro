@@ -75,7 +75,7 @@
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CommonServiceLocator.cs" />
-    <Compile Include="Context_disposed.cs" />
+    <Compile Include="Context_tests.cs" />
     <Compile Include="Conventions\add_concrete_classes_closing_convention.cs" />
     <Compile Include="Conventions\add_concrete_sub_classes_convention.cs" />
     <Compile Include="Conventions\conventional_registration.cs" />
@@ -90,7 +90,6 @@
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="Interception\intercept_instance.cs" />
     <Compile Include="Interception\property_injection.cs" />
-    <Compile Include="Internals\Context_tests.cs" />
     <Compile Include="Internals\Kernel_tests.cs" />
     <Compile Include="Internals\PipelineLookup_tests.cs" />
     <Compile Include="Internals\PluginLookup_tests.cs" />
