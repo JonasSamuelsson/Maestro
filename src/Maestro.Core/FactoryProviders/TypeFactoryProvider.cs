@@ -20,19 +20,19 @@ namespace Maestro.FactoryProviders
 		public IFactory GetFactory(Context context)
 		{
 			var ctorParameterTypes = Constructor?.GetParameters().Select(p => p.ParameterType)
-			                         ?? GetTypes(context);
-			if(ctorParameterTypes == null)throw new InvalidOperationException("Can't find approproate constructor to invoke.");
+											 ?? GetTypes(context);
+			if (ctorParameterTypes == null) throw new InvalidOperationException("Can't find appropriate constructor to invoke.");
 			return new TypeFactory(Type, ctorParameterTypes);
 		}
 
 		private IEnumerable<Type> GetTypes(Context context)
 		{
 			return Type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
-			           .Select(x => new { ctor = x, parameterTypes = x.GetParameters().Select(p => p.ParameterType).ToList() })
-			           .OrderByDescending(x => x.parameterTypes.Count)
-			           .Where(x => x.parameterTypes.All(t => context.Kernel.CanGetDependency(t, context)))
-			           .Select(x => x.parameterTypes)
-			           .FirstOrDefault();
+						  .Select(x => new { ctor = x, parameterTypes = x.GetParameters().Select(p => p.ParameterType).ToList() })
+						  .OrderByDescending(x => x.parameterTypes.Count)
+						  .Where(x => x.parameterTypes.All(t => context.Kernel.CanGetDependency(t, context)))
+						  .Select(x => x.parameterTypes)
+						  .FirstOrDefault();
 		}
 	}
 }

@@ -1,4 +1,3 @@
-using Maestro.FactoryProviders;
 using Maestro.Lifetimes;
 
 namespace Maestro.Internals
