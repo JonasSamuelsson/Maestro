@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Factories
@@ -9,31 +9,31 @@ namespace Maestro.Tests.Factories
 		public void should_delegate_instantiation_to_provided_lambda()
 		{
 			var o = new object();
-			var instantiator = new Instantiator(o);
 
-			var container = new Container(x => x.For<object>().Use(instantiator.Get));
+			var container = new Container(x => x.For<object>().Use(() => o));
 			var instance = container.Get<object>();
 
-			instance.Should().NotBeNull();
-			instantiator.Executed.Should().BeTrue();
+			instance.ShouldBe(o);
 		}
 
-		private class Instantiator
+		[Fact]
+		public void should_be_able_to_retrieve_dependencies()
 		{
-			private readonly object _o;
-
-			public Instantiator(object o)
+			var o = new object();
+			var container = new Container(x =>
 			{
-				_o = o;
-			}
+				x.For<object>().Use(o);
+				x.For<ClassWithDependency>().Use(ctx => new ClassWithDependency { Dependency = ctx.Get<object>() });
+			});
 
-			public bool Executed { get; private set; }
+			var instance = container.Get<ClassWithDependency>();
 
-			public object Get()
-			{
-				Executed = true;
-				return _o;
-			}
+			instance.Dependency.ShouldBe(o);
+		}
+
+		class ClassWithDependency
+		{
+			public object Dependency { get; set; }
 		}
 	}
 }
