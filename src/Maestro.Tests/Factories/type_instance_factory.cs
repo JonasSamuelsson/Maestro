@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Factories
@@ -6,66 +8,94 @@ namespace Maestro.Tests.Factories
 	public class type_instance_factory
 	{
 		[Fact]
-		public void should_use_constructor_with_most_resolvable_parameters()
+		public void should_instantiate_type_without_dependencies()
+		{
+			var container = new Container(x => x.For<IZeroDependencies>().Use<ZeroDependencies>());
+			container.Get<IZeroDependencies>();
+		}
+
+		[Fact]
+		public void should_instantiate_type_with_dependencies()
 		{
 			var container = new Container(x =>
-													{
-														x.For<object>().Use<object>();
-														x.For<TypeWithOptionalObjectDependency>().Use<TypeWithOptionalObjectDependency>();
-														x.For<TypeWithOptionalStringDependency>().Use<TypeWithOptionalStringDependency>();
-													});
+			{
+				x.For<IZeroDependencies>().Use<ZeroDependencies>();
+				x.For<IOneDependency>().Use<OneRequiredDependency>();
+			});
 
-			container.Get<TypeWithOptionalObjectDependency>().Object.Should().NotBeNull();
-			container.Get<TypeWithOptionalStringDependency>().String.Should().BeNull();
+			var instance = container.Get<IOneDependency>();
+
+			instance.Dependency.ShouldNotBe(null);
+		}
+
+		[Fact]
+		public void should_use_constructor_with_most_resolvable_dependencies()
+		{
+			var container = new Container(x =>
+			{
+				x.For<IZeroDependencies>().Use<ZeroDependencies>();
+				x.For<IOneDependency>().Use<OneOptionalDependency>();
+			});
+
+			var instance = container.Get<IOneDependency>();
+
+			instance.Dependency.ShouldNotBe(null);
 		}
 
 		[Fact]
 		public void should_reevaluate_constructor_to_use_when_config_changes()
 		{
-			var @string = "string";
-			var container = new Container(x => x.For<TypeWithOptionalStringDependency>().Use<TypeWithOptionalStringDependency>());
+			var container = new Container(x => x.For<IOneDependency>().Use<OneOptionalDependency>());
+			var instance = container.Get<IOneDependency>();
+			instance.Dependency.ShouldBe(null);
 
-			container.Get<TypeWithOptionalStringDependency>().String.Should().BeNull();
-
-			container.Configure(x => x.For<string>().Use(@string));
-
-			container.Get<TypeWithOptionalStringDependency>().String.Should().Be(@string);
+			container.Configure(x => x.For<IZeroDependencies>().Use<ZeroDependencies>());
+			instance = container.Get<IOneDependency>();
+			instance.Dependency.ShouldNotBe(null);
 		}
 
 		[Fact]
 		public void should_instantiate_open_generic_type()
 		{
-			var container = new Container(x => x.For(typeof(GenericType<>)).Use(typeof(GenericType<>)));
-
-			var instance = container.Get<GenericType<int>>();
-
-			instance.Should().BeOfType<GenericType<int>>();
+			var container = new Container(x => x.For(typeof(IZeroDependencies<>)).Use(typeof(ZeroDependencies)));
+			container.Get<IZeroDependencies<object>>();
 		}
 
-		private class TypeWithOptionalObjectDependency
+		interface IZeroDependencies
 		{
-			public TypeWithOptionalObjectDependency() { }
+		}
 
-			public TypeWithOptionalObjectDependency(object @object)
+		interface IOneDependency
+		{
+			IZeroDependencies Dependency { get; }
+		}
+
+		class ZeroDependencies : IZeroDependencies
+		{ }
+
+		class OneOptionalDependency : IOneDependency
+		{
+			public OneOptionalDependency() { }
+
+			public OneOptionalDependency(IZeroDependencies dependency)
 			{
-				Object = @object;
+				Dependency = dependency;
 			}
 
-			public object Object { get; private set; }
+			public IZeroDependencies Dependency { get; }
 		}
 
-		private class TypeWithOptionalStringDependency
+		class OneRequiredDependency : OneOptionalDependency
 		{
-			public TypeWithOptionalStringDependency() { }
-
-			public TypeWithOptionalStringDependency(string @string)
+			public OneRequiredDependency(IZeroDependencies dependency) : base(dependency)
 			{
-				String = @string;
 			}
-
-			public object String { get; private set; }
 		}
 
-		private class GenericType<T> { }
+		interface IZeroDependencies<T>
+		{ }
+
+		class ZeroDependencies<T> : IZeroDependencies<T>
+		{ }
 	}
 }
