@@ -65,7 +65,6 @@
     <Compile Include="Internals\Context.cs" />
     <Compile Include="FactoryProviders\InstanceFactoryProvider.cs" />
     <Compile Include="IContext.cs" />
-    <Compile Include="Internals\IPipeline.cs" />
     <Compile Include="Internals\IPipelineLookup.cs" />
     <Compile Include="Internals\IPluginLookup.cs" />
     <Compile Include="FactoryProviders\IFactoryProvider.cs" />
@@ -104,7 +103,6 @@
     <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
     <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
     <Compile Include="Lifetimes\ILifetime.cs" />
-    <Compile Include="IPipeline.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="Configuration\IContainerExpression.cs" />
     <Compile Include="ITypeStack.cs" />

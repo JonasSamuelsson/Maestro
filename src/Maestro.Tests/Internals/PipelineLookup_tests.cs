@@ -16,7 +16,7 @@ namespace Maestro.Tests.Internals
 
 			lookup.Add("key", expectedPipeline);
 
-			Maestro.Internals.IPipeline pipeline;
+			Pipeline pipeline;
 			lookup.TryGet("key", out pipeline).ShouldBe(true);
 			pipeline.ShouldBe(expectedPipeline);
 		}
@@ -30,7 +30,7 @@ namespace Maestro.Tests.Internals
 
 			lookup.Add("key", new[] { pipeline1, pipeline2 });
 
-			IEnumerable<Maestro.Internals.IPipeline> pipelines;
+			IEnumerable<Pipeline> pipelines;
 			lookup.TryGet("key", out pipelines).ShouldBe(true);
 			pipelines.ShouldBe(new[] { pipeline1, pipeline2 });
 		}
@@ -42,7 +42,7 @@ namespace Maestro.Tests.Internals
 
 			lookup.Add("key", new[] { new Pipeline(), new Pipeline() });
 
-			Maestro.Internals.IPipeline pipeline;
+			Pipeline pipeline;
 			Should.Throw<InvalidOperationException>(() => lookup.TryGet("key", out pipeline));
 		}
 	}

@@ -5,6 +5,6 @@ namespace Maestro.TypeFactoryResolvers
 {
 	interface ITypeFactoryResolver
 	{
-		bool TryGet(Type type, Context context, out Internals.IPipeline pipeline);
+		bool TryGet(Type type, Context context, out Pipeline pipeline);
 	}
 }

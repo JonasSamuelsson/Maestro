@@ -2,7 +2,7 @@ using Maestro.Lifetimes;
 
 namespace Maestro.Internals
 {
-	class Pipeline : IPipeline
+	class Pipeline
 	{
 		public Pipeline()
 		{

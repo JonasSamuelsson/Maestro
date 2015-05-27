@@ -64,7 +64,7 @@ namespace Maestro.Internals
 
 			try
 			{
-				IPipeline pipeline;
+				Pipeline pipeline;
 				return TryGetPipeline(type, context, out pipeline);
 			}
 			finally
@@ -79,7 +79,7 @@ namespace Maestro.Internals
 
 			try
 			{
-				IPipeline pipeline;
+				Pipeline pipeline;
 				instance = TryGetPipeline(type, context, out pipeline) ? pipeline.Execute(context) : null;
 				return instance != null;
 			}
@@ -89,7 +89,7 @@ namespace Maestro.Internals
 			}
 		}
 
-		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
+		private bool TryGetPipeline(Type type, Context context, out Pipeline pipeline)
 		{
 			var key = GetKey(type, context);
 			if (!_pipelines.TryGet(key, out pipeline))
@@ -134,7 +134,7 @@ namespace Maestro.Internals
 			try
 			{
 				var key = type.FullName;
-				IEnumerable<IPipeline> builders;
+				IEnumerable<Pipeline> builders;
 				if (!_pipelines.TryGet(key, out builders))
 				{
 					lock (_pipelines)

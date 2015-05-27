@@ -5,28 +5,28 @@ namespace Maestro.Internals
 {
 	class PipelineLookup : IPipelineLookup
 	{
-		private readonly Dictionary<string, IEnumerable<IPipeline>> _dictionary = new Dictionary<string, IEnumerable<IPipeline>>();
+		private readonly Dictionary<string, IEnumerable<Pipeline>> _dictionary = new Dictionary<string, IEnumerable<Pipeline>>();
 
-		public void Add(string key, IPipeline pipeline)
+		public void Add(string key, Pipeline pipeline)
 		{
 			Add(key, new[] { pipeline });
 		}
 
-		public void Add(string key, IEnumerable<IPipeline> pipelines)
+		public void Add(string key, IEnumerable<Pipeline> pipelines)
 		{
 			_dictionary.Add(key, pipelines);
 		}
 
-		public bool TryGet(string key, out IPipeline pipeline)
+		public bool TryGet(string key, out Pipeline pipeline)
 		{
-			IEnumerable<IPipeline> pipelines;
+			IEnumerable<Pipeline> pipelines;
 			pipeline = _dictionary.TryGetValue(key, out pipelines)
 				           ? pipelines.Single()
 				           : null;
 			return pipeline != null;
 		}
 
-		public bool TryGet(string key, out IEnumerable<IPipeline> pipelines)
+		public bool TryGet(string key, out IEnumerable<Pipeline> pipelines)
 		{
 			return _dictionary.TryGetValue(key, out pipelines);
 		}
