@@ -1,5 +1,4 @@
 ﻿using System;
-using FluentAssertions;
 using Shouldly;
 using Xunit;
 
@@ -59,6 +58,18 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container(x => x.For(typeof(IZeroDependencies<>)).Use(typeof(ZeroDependencies)));
 			container.Get<IZeroDependencies<object>>();
+		}
+
+		[Fact]
+		public void should_use_specified_constructor()
+		{
+			throw new NotImplementedException();
+		}
+
+		[Fact]
+		public void should_use_provided_dependency()
+		{
+			throw new NotImplementedException();
 		}
 
 		interface IZeroDependencies
