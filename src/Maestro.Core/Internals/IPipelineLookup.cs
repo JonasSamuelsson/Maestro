@@ -4,9 +4,9 @@ namespace Maestro.Internals
 {
 	interface IPipelineLookup
 	{
-		void Add(string key, IPipeline pipeline);
-		void Add(string key, IEnumerable<IPipeline> pipelines);
-		bool TryGet(string key, out IPipeline pipeline);
-		bool TryGet(string key, out IEnumerable<IPipeline> pipelines);
+		void Add(string key, Pipeline pipeline);
+		void Add(string key, IEnumerable<Pipeline> pipelines);
+		bool TryGet(string key, out Pipeline pipeline);
+		bool TryGet(string key, out IEnumerable<Pipeline> pipelines);
 	}
 }

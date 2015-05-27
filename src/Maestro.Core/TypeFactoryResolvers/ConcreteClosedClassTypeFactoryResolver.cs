@@ -8,7 +8,7 @@ namespace Maestro.TypeFactoryResolvers
 {
 	internal class ConcreteClosedClassTypeFactoryResolver : ITypeFactoryResolver
 	{
-		public bool TryGet(Type type, Context context, out Internals.IPipeline pipeline)
+		public bool TryGet(Type type, Context context, out Pipeline pipeline)
 		{
 			pipeline = null;
 			if (!type.IsConcreteClosedClass()) return false;
