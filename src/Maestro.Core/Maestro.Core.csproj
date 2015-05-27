@@ -74,6 +74,7 @@
     <Compile Include="Internals\PipelineLookup.cs" />
     <Compile Include="Internals\Plugin.cs" />
     <Compile Include="Internals\PluginLookup.cs" />
+    <Compile Include="TypeFactoryResolvers\FuncFactoryResolver.cs" />
     <Compile Include="TypeFactoryResolvers\ITypeFactoryResolver.cs" />
     <Compile Include="FactoryProviders\TypeFactoryProvider.cs" />
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
