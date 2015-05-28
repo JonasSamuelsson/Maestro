@@ -464,7 +464,10 @@ namespace Maestro.Configuration
 	}
 
 	public interface ITypeInstanceExpression<T> : IInstanceExpression<T, ITypeInstanceExpression<T>>
-	{ }
+	{
+		ITypeInstanceExpression<T> ConstructorDependency<TDependency>(TDependency dependency);
+		ITypeInstanceExpression<T> ConstructorDependency(Type type, object dependency);
+	}
 
 	class TypeInstanceExpression<T> : ITypeInstanceExpression<T>
 	{
@@ -487,6 +490,17 @@ namespace Maestro.Configuration
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(IInterceptor interceptor)
 		{
 			return InstanceExpression.Intercept(interceptor);
+		}
+
+		public ITypeInstanceExpression<T> ConstructorDependency<TDependency>(TDependency dependency)
+		{
+			return ConstructorDependency(typeof(TDependency), dependency);
+		}
+
+		public ITypeInstanceExpression<T> ConstructorDependency(Type type, object dependency)
+		{
+			((TypeFactoryProvider)Plugin.FactoryProvider).Dependencies.Add(type, dependency);
+			return this;
 		}
 	}
 }

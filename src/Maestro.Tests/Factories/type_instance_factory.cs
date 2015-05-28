@@ -61,20 +61,16 @@ namespace Maestro.Tests.Factories
 		}
 
 		[Fact]
-		public void should_use_specified_constructor()
-		{
-			throw new NotImplementedException();
-		}
-
-		[Fact]
 		public void should_use_provided_dependency()
 		{
-			throw new NotImplementedException();
+			var zeroDependencies = new ZeroDependencies();
+			var container = new Container(x => x.For<IOneDependency>().Use<OneRequiredDependency>().ConstructorDependency<IZeroDependencies>(zeroDependencies));
+			var instance = container.Get<IOneDependency>();
+			instance.Dependency.ShouldBe(zeroDependencies);
 		}
 
 		interface IZeroDependencies
-		{
-		}
+		{ }
 
 		interface IOneDependency
 		{
@@ -99,8 +95,7 @@ namespace Maestro.Tests.Factories
 		class OneRequiredDependency : OneOptionalDependency
 		{
 			public OneRequiredDependency(IZeroDependencies dependency) : base(dependency)
-			{
-			}
+			{ }
 		}
 
 		interface IZeroDependencies<T>
