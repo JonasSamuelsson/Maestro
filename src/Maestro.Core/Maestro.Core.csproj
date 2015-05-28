@@ -61,7 +61,7 @@
     <Compile Include="FactoryProviders\Factories\LambdaFactory.cs" />
     <Compile Include="FactoryProviders\Factories\TypeFactory.cs" />
     <Compile Include="Lifetimes\INextStep.cs" />
-    <Compile Include="TypeFactoryResolvers\ConcreteClosedClassTypeFactoryResolver.cs" />
+    <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryProviderResolver.cs" />
     <Compile Include="Internals\Context.cs" />
     <Compile Include="FactoryProviders\InstanceFactoryProvider.cs" />
     <Compile Include="IContext.cs" />
@@ -74,10 +74,10 @@
     <Compile Include="Internals\PipelineLookup.cs" />
     <Compile Include="Internals\Plugin.cs" />
     <Compile Include="Internals\PluginLookup.cs" />
-    <Compile Include="TypeFactoryResolvers\FuncFactoryResolver.cs" />
-    <Compile Include="TypeFactoryResolvers\ITypeFactoryResolver.cs" />
+    <Compile Include="TypeFactoryResolvers\FuncFactoryProviderResolver.cs" />
+    <Compile Include="TypeFactoryResolvers\IFactoryProviderResolver.cs" />
     <Compile Include="FactoryProviders\TypeFactoryProvider.cs" />
-    <Compile Include="TypeFactoryResolvers\LazyFactoryResolver.cs" />
+    <Compile Include="TypeFactoryResolvers\LazyFactoryProviderResolver.cs" />
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
     <Compile Include="Conventions\AddConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />

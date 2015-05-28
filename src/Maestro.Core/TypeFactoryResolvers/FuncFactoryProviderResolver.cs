@@ -5,11 +5,11 @@ using Maestro.Internals;
 
 namespace Maestro.TypeFactoryResolvers
 {
-	class FuncFactoryResolver : ITypeFactoryResolver
+	class FuncFactoryProviderResolver : IFactoryProviderResolver
 	{
-		public bool TryGet(Type type, Context context, out Pipeline pipeline)
+		public bool TryGet(Type type, Context context, out IFactoryProvider factoryProvider)
 		{
-			pipeline = null;
+			factoryProvider = null;
 			if (!type.IsConcreteClassClosing(typeof(Func<>))) return false;
 			var typeArgument = type.GetGenericArguments().Single();
 			if (!context.Kernel.CanGetDependency(typeArgument, context)) return false;
@@ -18,15 +18,7 @@ namespace Maestro.TypeFactoryResolvers
 			var wrapper = Activator.CreateInstance(wrapperType, context.Name, context.Kernel);
 			var getFuncMethod = wrapperType.GetMethod("GetFunc");
 			var lambda = new Func<IContext, object>(_ => getFuncMethod.Invoke(wrapper, null));
-			pipeline = new Pipeline
-			{
-				Plugin = new Plugin
-				{
-					Type = type,
-					Name = context.Name,
-					FactoryProvider = new LambdaFactoryProvider(lambda)
-				}
-			};
+			factoryProvider = new LambdaFactoryProvider(lambda);
 			return true;
 		}
 
