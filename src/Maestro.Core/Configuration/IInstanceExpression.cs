@@ -1,81 +1,140 @@
 ﻿using System;
+using Maestro.Interceptors;
 
 namespace Maestro.Configuration
 {
-	public interface IInstanceExpression<TPlugin>
+	public interface IInstanceExpression<TInstance, TParent>
 	{
-		/// <summary>
-		/// Setup a constant instance.
-		/// </summary>
-		/// <typeparam name="TInstance"></typeparam>
-		/// <param name="instance"></param>
-		void Use<TInstance>(TInstance instance) where TInstance : TPlugin;
+		ILifetimeExpression<TParent> Lifetime { get; }
 
 		/// <summary>
-		/// Setup <paramref name="lambda"/> to provide the instance.
+		/// Adds an action to execute against the instance.
 		/// </summary>
-		/// <typeparam name="TInstance"></typeparam>
-		/// <param name="lambda"></param>
+		/// <param name="action"></param>
 		/// <returns></returns>
-		IInstanceBuilderExpression<TInstance> Use<TInstance>(Func<TInstance> lambda) where TInstance : TPlugin;
+		IInstanceExpression<TInstance, TParent> Execute(Action<TInstance> action);
 
 		/// <summary>
-		/// Setup <paramref name="lambda"/> to provide the instance.
+		/// Adds an action to execute against the instance.
 		/// </summary>
-		/// <typeparam name="TInstance"></typeparam>
-		/// <param name="lambda"></param>
+		/// <param name = "action" ></param>
 		/// <returns></returns>
-		IInstanceBuilderExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> lambda) where TInstance : TPlugin;
+		IInstanceExpression<TInstance, TParent> Execute(Action<TInstance, IContext> action);
 
 		/// <summary>
-		/// Setup type <typeparamref name="TInstance"/>.
+		/// Adds <paramref name="interceptor"/> to the pipeline.
 		/// </summary>
-		/// <typeparam name="TInstance"></typeparam>
+		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		IInstanceBuilderExpression<TInstance> Use<TInstance>() where TInstance : TPlugin;
+		IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor);
 
-		/// <summary>
-		/// Setup type <paramref name="type"/>
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		IInstanceBuilderExpression<TPlugin> Use(Type type);
+		///// <summary>
+		///// Adds <paramref name="interceptor"/> to the pipeline.
+		///// </summary>
+		///// <typeparam name="TOut"></typeparam>
+		///// <param name="interceptor"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TOut, TParent> Intercept<TOut>(IInterceptor<TInstance, TOut> interceptor);
 
-		/// <summary>
-		/// Setup a constant instance.
-		/// </summary>
-		/// <typeparam name="TInstance"></typeparam>
-		/// <param name="instance"></param>
-		void Add<TInstance>(TInstance instance) where TInstance : TPlugin;
+		///// <summary>
+		///// Adds <paramref name="lambda"/> to the pipeline.
+		///// </summary>
+		///// <typeparam name="TOut"></typeparam>
+		///// <param name="lambda"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TOut, TParent> Intercept<TOut>(Func<TInstance, TOut> lambda);
 
-		/// <summary>
-		/// Setup <paramref name="lambda"/> to provide the instance.
-		/// </summary>
-		/// <typeparam name="TInstance"></typeparam>
-		/// <param name="lambda"></param>
-		/// <returns></returns>
-		IInstanceBuilderExpression<TInstance> Add<TInstance>(Func<TInstance> lambda) where TInstance : TPlugin;
+		///// <summary>
+		///// Adds <paramref name="lambda"/> to the pipeline.
+		///// </summary>
+		///// <typeparam name="TOut"></typeparam>
+		///// <param name="lambda"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TOut, TParent> Intercept<TOut>(Func<TInstance, IContext, TOut> lambda);
 
-		/// <summary>
-		/// Setup <paramref name="lambda"/> to provide the instance.
-		/// </summary>
-		/// <typeparam name="TInstance"></typeparam>
-		/// <param name="lambda"></param>
-		/// <returns></returns>
-		IInstanceBuilderExpression<TInstance> Add<TInstance>(Func<IContext, TInstance> lambda) where TInstance : TPlugin;
+		///// <summary>
+		///// Set property <paramref name="property"/>.
+		///// </summary>
+		///// <param name="property"></param>
+		///// <returns></returns>
+		///// <remarks>Throws if the property type can't be resolved.</remarks>
+		//IInstanceExpression<TInstance, TParent> Set(string property);
 
-		/// <summary>
-		/// Setup type <typeparamref name="TInstance"/>.
-		/// </summary>
-		/// <typeparam name="TInstance"></typeparam>
-		/// <returns></returns>
-		IInstanceBuilderExpression<TInstance> Add<TInstance>() where TInstance : TPlugin;
+		///// <summary>
+		///// Set property <paramref name="property"/> with value <paramref name="value"/>.
+		///// </summary>
+		///// <param name="property"></param>
+		///// <param name="value"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TInstance, TParent> Set(string property, object value);
 
-		/// <summary>
-		/// Setup type <paramref name="type"/>
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		IInstanceBuilderExpression<TPlugin> Add(Type type);
+		///// <summary>
+		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
+		///// </summary>
+		///// <param name="property"></param>
+		///// <param name="factory"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TInstance, TParent> Set(string property, Func<object> factory);
+
+		///// <summary>
+		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
+		///// </summary>
+		///// <param name="property"></param>
+		///// <param name="factory"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TInstance, TParent> Set(string property, Func<IContext, object> factory);
+
+		///// <summary>
+		///// Set property <paramref name="property"/>.
+		///// </summary>
+		///// <typeparam name="TValue"></typeparam>
+		///// <param name="property"></param>
+		///// <returns></returns>
+		///// <remarks>Throws if the property type can't be resolved.</remarks>
+		//IInstanceExpression<TInstance, TParent> Set<TValue>(Expression<Func<TInstance, TValue>> property);
+
+		///// <summary>
+		///// Set property <paramref name="property"/> with value <paramref name="value"/>.
+		///// </summary>
+		///// <typeparam name="TValue"></typeparam>
+		///// <param name="property"></param>
+		///// <param name="value"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TInstance, TParent> Set<TValue>(Expression<Func<TInstance, TValue>> property, TValue value);
+
+		///// <summary>
+		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
+		///// </summary>
+		///// <typeparam name="TValue"></typeparam>
+		///// <param name="property"></param>
+		///// <param name="factory"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TInstance, TParent> Set<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory);
+
+		///// <summary>
+		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
+		///// </summary>
+		///// <typeparam name="TValue"></typeparam>
+		///// <param name="property"></param>
+		///// <param name="factory"></param>
+		///// <returns></returns>
+		//IInstanceExpression<TInstance, TParent> Set<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
+
+		///// <summary>
+		///// Set property <paramref name="property"/> if the property type can be resolved.
+		///// </summary>
+		///// <param name="property"></param>
+		///// <returns></returns>
+		///// <remarks>Does not throw if the property type can't be resolved.</remarks>
+		//IInstanceExpression<TInstance, TParent> TrySet(string property);
+
+		///// <summary>
+		///// Set property <paramref name="property"/> if the property type can be resolved.
+		///// </summary>
+		///// <typeparam name="TValue"></typeparam>
+		///// <param name="property"></param>
+		///// <returns></returns>
+		///// <remarks>Does not throw if the property type can't be resolved.</remarks>
+		//IInstanceExpression<TInstance, TParent> TrySet<TValue>(Expression<Func<TInstance, TValue>> property);
 	}
 }

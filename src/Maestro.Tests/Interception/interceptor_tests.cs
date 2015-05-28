@@ -2,22 +2,30 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using Maestro.Utils;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Interception
 {
-	public abstract class property_injection
+	public class interceptor_tests
 	{
-		//[Fact]
-		//public void set_property_using_injected_action()
-		//{
-		//	var dependency = new object();
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Execute(y => y.ResolvableDependency = dependency));
+		[Fact]
+		public void should_execute_provided_action()
+		{
+			var container = new Container(x =>
+			{
+				x.For<NumberWrapper>("1").Use<NumberWrapper>().Execute(instance => instance.Number = 1);
+				x.For<NumberWrapper>("2").Use<NumberWrapper>().Execute((instance, ctx) => instance.Number = 2);
+			});
 
-		//	var instance = container.Get<Foobar>();
+			container.Get<NumberWrapper>("1").Number.ShouldBe(1);
+			container.Get<NumberWrapper>("2").Number.ShouldBe(2);
+		}
 
-		//	instance.ResolvableDependency.Should().Be(dependency);
-		//}
+		class NumberWrapper
+		{
+			public int Number { get; set; }
+		}
 
 		//[Fact]
 		//public void set_property_with_provided_value()
