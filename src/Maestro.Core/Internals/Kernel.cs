@@ -242,5 +242,10 @@ namespace Maestro.Internals
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
 		}
+
+		public Kernel GetChildKernel()
+		{
+			return new Kernel(new PluginLookup(Plugins));
+		}
 	}
 }
