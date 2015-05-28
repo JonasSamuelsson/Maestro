@@ -77,6 +77,7 @@
     <Compile Include="..\Maestro.Core\Properties\VersioningAssemblyInfo.cs">
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="child_container.cs" />
     <Compile Include="CommonServiceLocator.cs" />
     <Compile Include="Context_tests.cs" />
     <Compile Include="Conventions\add_concrete_classes_closing_convention.cs" />

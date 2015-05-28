@@ -16,12 +16,8 @@ namespace Maestro
 		/// <summary>
 		/// Instantiates a new empty container.
 		/// </summary>
-		public Container()
-		{
-			_id = Guid.NewGuid();
-			_kernel = new Kernel();
-			_defaultSettings = new DefaultSettings();
-		}
+		public Container() : this(new Kernel())
+		{ }
 
 		/// <summary>
 		/// Instantiates a new container with configuration.
@@ -32,9 +28,28 @@ namespace Maestro
 			Configure(action);
 		}
 
+		private Container(Kernel kernel)
+		{
+			_id = Guid.NewGuid();
+			_kernel = kernel;
+			_defaultSettings = new DefaultSettings();
+		}
+
 		public void Configure(Action<IContainerExpression> action)
 		{
 			action(new ContainerExpression(_kernel.Plugins, _defaultSettings));
+		}
+
+		public IContainer GetChildContainer()
+		{
+			return GetChildContainer(delegate { });
+		}
+
+		public IContainer GetChildContainer(Action<IContainerExpression> action)
+		{
+			var childContainer = new Container(_kernel.GetChildKernel());
+			childContainer.Configure(action);
+			return childContainer;
 		}
 
 		public T Get<T>(string name = null)

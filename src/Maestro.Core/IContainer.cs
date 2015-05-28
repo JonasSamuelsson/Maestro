@@ -12,6 +12,9 @@ namespace Maestro
 		/// <param name="action"></param>
 		void Configure(Action<IContainerExpression> action);
 
+		IContainer GetChildContainer();
+		IContainer GetChildContainer(Action<IContainerExpression> action);
+
 		/// <summary>
 		/// Gets an instance of type <paramref name="type"/> named <paramref name="name"/>.
 		/// </summary>
