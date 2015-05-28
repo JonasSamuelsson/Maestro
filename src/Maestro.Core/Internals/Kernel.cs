@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 
 /*
@@ -40,7 +41,7 @@ namespace Maestro.Internals
 	internal class Kernel
 	{
 		private readonly IPipelineLookup _pipelines;
-		private readonly IEnumerable<ITypeFactoryResolver> _typeFactoryResolvers;
+		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
 
 		public Kernel() : this(new PluginLookup())
 		{ }
@@ -49,11 +50,11 @@ namespace Maestro.Internals
 		{
 			Plugins = plugins;
 			_pipelines = new PipelineLookup();
-			_typeFactoryResolvers = new ITypeFactoryResolver[]
+			_factoryProviderResolvers = new IFactoryProviderResolver[]
 											{
-												new FuncFactoryResolver(),
-												new LazyFactoryResolver(),
-												new ConcreteClosedClassTypeFactoryResolver()
+												new FuncFactoryProviderResolver(),
+												new LazyFactoryProviderResolver(),
+												new ConcreteClosedClassFactoryProviderResolver()
 											};
 		}
 
@@ -206,9 +207,19 @@ namespace Maestro.Internals
 							return true;
 						}
 
-						foreach (var typeFactoryResolver in _typeFactoryResolvers)
+						foreach (var factoryProviderResolver in _factoryProviderResolvers)
 						{
-							if (!typeFactoryResolver.TryGet(type, context, out pipeline)) continue;
+							IFactoryProvider factoryProvider;
+							if (!factoryProviderResolver.TryGet(type, context, out factoryProvider)) continue;
+							pipeline = new Pipeline
+							           {
+								           Plugin = new Plugin
+								                    {
+									                    Type = type,
+									                    Name = context.Name,
+									                    FactoryProvider = factoryProvider
+								                    }
+							           };
 							_pipelines.Add(key, pipeline);
 							return true;
 						}
