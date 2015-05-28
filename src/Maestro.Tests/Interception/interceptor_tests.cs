@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
+using Maestro.Interceptors;
 using Maestro.Utils;
 using Shouldly;
 using Xunit;
@@ -9,6 +10,41 @@ namespace Maestro.Tests.Interception
 {
 	public class interceptor_tests
 	{
+		[Fact]
+		public void should_execute_provided_interceptor()
+		{
+			var i = new Instance();
+			var container = new Container(x =>
+			{
+				x.For<Instance>().Use(() => i).Intercept(new InstanceInterceptor());
+			});
+
+			var instance = container.Get<Instance>();
+
+			instance.ShouldNotBe(i);
+			instance.InnerInstance.ShouldBe(i);
+		}
+
+		class Instance
+		{
+			public Instance() { }
+
+			public Instance(Instance innerInstance)
+			{
+				InnerInstance = innerInstance;
+			}
+
+			public Instance InnerInstance { get; set; }
+		}
+
+		class InstanceInterceptor : IInterceptor
+		{
+			public object Execute(object instance, IContext context)
+			{
+				return new Instance((Instance)instance);
+			}
+		}
+
 		[Fact]
 		public void should_execute_provided_action()
 		{
