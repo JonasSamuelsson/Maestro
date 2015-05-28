@@ -17,7 +17,7 @@ namespace Maestro.FactoryProviders
 
 		public Type Type { get; }
 		public ConstructorInfo Constructor { get; set; }
-		public Dictionary<Type, object> Dependencies { get; }
+		public Dictionary<Type, object> Dependencies { get; set; }
 
 		public IFactory GetFactory(Context context)
 		{

@@ -114,6 +114,7 @@
     <Compile Include="TypeExtensions_IsConcreteSubClassOf.cs" />
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryResolver_tests.cs" />
     <Compile Include="TypeFactoryResolvers\FuncFactoryResolver_tests.cs" />
+    <Compile Include="TypeFactoryResolvers\LazyFactoryResolver_tests.cs" />
     <Compile Include="v1_vs_v2_performance.cs" />
     <Compile Include="FluentAssertionsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
