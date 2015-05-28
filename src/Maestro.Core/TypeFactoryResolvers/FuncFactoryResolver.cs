@@ -10,8 +10,7 @@ namespace Maestro.TypeFactoryResolvers
 		public bool TryGet(Type type, Context context, out Pipeline pipeline)
 		{
 			pipeline = null;
-			if (!type.IsGenericType) return false;
-			if (type.GetGenericTypeDefinition() != typeof(Func<>)) return false;
+			if (!type.IsConcreteClassClosing(typeof(Func<>))) return false;
 			var typeArgument = type.GetGenericArguments().Single();
 			if (!context.Kernel.CanGetDependency(typeArgument, context)) return false;
 

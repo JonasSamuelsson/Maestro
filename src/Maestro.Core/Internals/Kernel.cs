@@ -52,6 +52,7 @@ namespace Maestro.Internals
 			_typeFactoryResolvers = new ITypeFactoryResolver[]
 											{
 												new FuncFactoryResolver(),
+												new LazyFactoryResolver(),
 												new ConcreteClosedClassTypeFactoryResolver()
 											};
 		}
