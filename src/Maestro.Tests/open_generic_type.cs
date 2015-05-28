@@ -40,11 +40,11 @@ namespace Maestro.Tests
 				get { return Clone != null; }
 			}
 
-			IInterceptor IInterceptor.Clone()
-			{
-				Clone = new Interceptor();
-				return Clone;
-			}
+			//IInterceptor IInterceptor.Clone()
+			//{
+			//	Clone = new Interceptor();
+			//	return Clone;
+			//}
 
 			public object Execute(object instance, IContext context)
 			{
