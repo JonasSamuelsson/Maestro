@@ -65,7 +65,6 @@
     <Compile Include="Internals\Context.cs" />
     <Compile Include="FactoryProviders\InstanceFactoryProvider.cs" />
     <Compile Include="IContext.cs" />
-    <Compile Include="Internals\IPipelineLookup.cs" />
     <Compile Include="Internals\IPluginLookup.cs" />
     <Compile Include="FactoryProviders\IFactoryProvider.cs" />
     <Compile Include="Internals\Kernel.cs" />

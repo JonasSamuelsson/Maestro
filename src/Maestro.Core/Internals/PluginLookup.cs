@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Maestro.Internals
 {
-	internal class PluginLookup : IPluginLookup
+	internal class PluginLookup : IPluginLookup, IDisposable
 	{
 		readonly List<Plugin> _list = new List<Plugin>();
 		readonly PluginLookup _parent;
@@ -16,10 +16,18 @@ namespace Maestro.Internals
 		public PluginLookup(PluginLookup parent)
 		{
 			_parent = parent;
+			_parent.PluginAdded += ParentOnPluginAdded;
+		}
+
+		private void ParentOnPluginAdded()
+		{
+			PluginAdded();
 		}
 
 		internal static string DefaultName { get; } = string.Empty;
 		internal static string AnonymousName { get; } = null;
+
+		public event Action PluginAdded = delegate { };
 
 		public void Add(Plugin plugin)
 		{
@@ -27,6 +35,8 @@ namespace Maestro.Internals
 				throw new InvalidOperationException("Duplicate key");
 
 			_list.Add(plugin);
+
+			PluginAdded();
 		}
 
 		public bool TryGet(Type type, string name, out Plugin plugin)
@@ -60,6 +70,12 @@ namespace Maestro.Internals
 			}
 
 			_parent?.GetAll(type, names, plugins);
+		}
+
+		public void Dispose()
+		{
+			if (_parent == null) return;
+			_parent.PluginAdded -= ParentOnPluginAdded;
 		}
 	}
 }
