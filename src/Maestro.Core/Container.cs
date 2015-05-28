@@ -37,7 +37,7 @@ namespace Maestro
 
 		public void Configure(Action<IContainerExpression> action)
 		{
-			action(new ContainerExpression(_kernel.Plugins, _defaultSettings));
+			action(new ContainerExpression(_kernel, _defaultSettings));
 		}
 
 		public IContainer GetChildContainer()

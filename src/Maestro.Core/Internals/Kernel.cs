@@ -4,61 +4,41 @@ using System.Linq;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 
-/*
-Plugin
-	IProvider : type/lambda/instance
-	IInterceptor
-	ILifetime
-IProvider
-	Func<Context,object> GetProviderMethod()
-TypeProvider : IProvider
-	ctor(type)
-	CtorParameterTypes
-	CtorParameterValues
-IBuilder / IPipeline
-	ctor(Plugin)
-	object Execute(IContext)
-IProviderResolver
-	Concrete closed class
-	Func<T>
-	Lacy<T>
-Kernel
-	ctor(plugins)
-	GetBuilder(type,name)
-	GetBuilders(type)
-IContext
-	CanGet(type)
-	TryGet(type)
-	Get(type)
-	GetAll(type)
-Context : IContext
-	ctor(Kernel)
-	Kernel
-*/
-
 namespace Maestro.Internals
 {
 	internal class Kernel
 	{
-		private readonly IPipelineLookup _pipelines;
+		private readonly PluginLookup _pluginLookup;
+		private readonly PipelineLookup _pipelineLookup;
 		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
 
 		public Kernel() : this(new PluginLookup())
 		{ }
 
-		public Kernel(PluginLookup plugins)
+		public Kernel(PluginLookup pluginLookup)
 		{
-			Plugins = plugins;
-			_pipelines = new PipelineLookup();
+			_pluginLookup = pluginLookup;
+			_pipelineLookup = new PipelineLookup();
 			_factoryProviderResolvers = new IFactoryProviderResolver[]
 											{
 												new FuncFactoryProviderResolver(),
 												new LazyFactoryProviderResolver(),
 												new ConcreteClosedClassFactoryProviderResolver()
 											};
+
+			_pluginLookup.PluginAdded += () => _pipelineLookup.Clear();
 		}
 
-		public PluginLookup Plugins { get; }
+		public void Add(Plugin plugin)
+		{
+			lock (_pipelineLookup)
+				_pluginLookup.Add(plugin);
+		}
+
+		public Kernel GetChildKernel()
+		{
+			return new Kernel(new PluginLookup(_pluginLookup));
+		}
 
 		public object Get(Type type, string name)
 		{
@@ -143,21 +123,21 @@ namespace Maestro.Internals
 			try
 			{
 				var key = type.FullName;
-				IEnumerable<Pipeline> builders;
-				if (!_pipelines.TryGet(key, out builders))
+				IEnumerable<Pipeline> pipelines;
+				if (!_pipelineLookup.TryGet(key, out pipelines))
 				{
-					lock (_pipelines)
+					lock (_pipelineLookup)
 					{
-						if (!_pipelines.TryGet(key, out builders))
+						if (!_pipelineLookup.TryGet(key, out pipelines))
 						{
-							var plugins = Plugins.GetAll(type);
-							builders = plugins.Select(x => new Pipeline(x)).ToList();
-							_pipelines.Add(key, builders);
+							var plugins = _pluginLookup.GetAll(type);
+							pipelines = plugins.Select(x => new Pipeline(x)).ToList();
+							_pipelineLookup.Add(key, pipelines);
 						}
 					}
 				}
 
-				return builders.Select(x => x.Execute(context)).ToList();
+				return pipelines.Select(x => x.Execute(context)).ToList();
 			}
 			finally
 			{
@@ -193,17 +173,17 @@ namespace Maestro.Internals
 		private bool TryGetPipeline(Type type, Context context, out Pipeline pipeline)
 		{
 			var key = GetKey(type, context);
-			if (!_pipelines.TryGet(key, out pipeline))
+			if (!_pipelineLookup.TryGet(key, out pipeline))
 			{
-				lock (_pipelines)
+				lock (_pipelineLookup)
 				{
-					if (!_pipelines.TryGet(key, out pipeline))
+					if (!_pipelineLookup.TryGet(key, out pipeline))
 					{
 						Plugin plugin;
-						if (Plugins.TryGet(type, context.Name, out plugin))
+						if (_pluginLookup.TryGet(type, context.Name, out plugin))
 						{
 							pipeline = new Pipeline(plugin);
-							_pipelines.Add(key, pipeline);
+							_pipelineLookup.Add(key, pipeline);
 							return true;
 						}
 
@@ -212,15 +192,15 @@ namespace Maestro.Internals
 							IFactoryProvider factoryProvider;
 							if (!factoryProviderResolver.TryGet(type, context, out factoryProvider)) continue;
 							pipeline = new Pipeline
-							           {
-								           Plugin = new Plugin
-								                    {
-									                    Type = type,
-									                    Name = context.Name,
-									                    FactoryProvider = factoryProvider
-								                    }
-							           };
-							_pipelines.Add(key, pipeline);
+							{
+								Plugin = new Plugin
+								{
+									Type = type,
+									Name = context.Name,
+									FactoryProvider = factoryProvider
+								}
+							};
+							_pipelineLookup.Add(key, pipeline);
 							return true;
 						}
 
@@ -241,11 +221,6 @@ namespace Maestro.Internals
 		private static bool IsEnumerable(Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
-		}
-
-		public Kernel GetChildKernel()
-		{
-			return new Kernel(new PluginLookup(Plugins));
 		}
 	}
 }

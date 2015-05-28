@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Maestro.Internals
 {
-	class PipelineLookup : IPipelineLookup
+	class PipelineLookup
 	{
 		private readonly Dictionary<string, IEnumerable<Pipeline>> _dictionary = new Dictionary<string, IEnumerable<Pipeline>>();
 
@@ -17,12 +17,17 @@ namespace Maestro.Internals
 			_dictionary.Add(key, pipelines);
 		}
 
+		public void Clear()
+		{
+			_dictionary.Clear();
+		}
+
 		public bool TryGet(string key, out Pipeline pipeline)
 		{
 			IEnumerable<Pipeline> pipelines;
 			pipeline = _dictionary.TryGetValue(key, out pipelines)
-				           ? pipelines.Single()
-				           : null;
+							  ? pipelines.Single()
+							  : null;
 			return pipeline != null;
 		}
 

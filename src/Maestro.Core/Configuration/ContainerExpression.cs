@@ -9,33 +9,33 @@ namespace Maestro.Configuration
 {
 	internal class ContainerExpression : IContainerExpression
 	{
-		private readonly PluginLookup _pluginLookup;
+		private readonly Kernel _kernel;
 		private readonly DefaultSettings _defaultSettings;
 
-		public ContainerExpression(PluginLookup pluginLookup, DefaultSettings defaultSettings)
+		public ContainerExpression(Kernel kernel, DefaultSettings defaultSettings)
 		{
-			_pluginLookup = pluginLookup;
+			_kernel = kernel;
 			_defaultSettings = defaultSettings;
 		}
 
 		public IDefaultPluginExpression For(Type type)
 		{
-			return new PluginExpression<object>(type, PluginLookup.DefaultName, _pluginLookup, _defaultSettings);
+			return new PluginExpression<object>(type, PluginLookup.DefaultName, _kernel, _defaultSettings);
 		}
 
 		public IPluginExpression<object> For(Type type, string name)
 		{
-			return new PluginExpression<object>(type, name, _pluginLookup, _defaultSettings);
+			return new PluginExpression<object>(type, name, _kernel, _defaultSettings);
 		}
 
 		public IDefaultPluginExpression<T> For<T>()
 		{
-			return new PluginExpression<T>(typeof(T), PluginLookup.DefaultName, _pluginLookup, _defaultSettings);
+			return new PluginExpression<T>(typeof(T), PluginLookup.DefaultName, _kernel, _defaultSettings);
 		}
 
 		public IPluginExpression<T> For<T>(string name)
 		{
-			return new PluginExpression<T>(typeof(T), name, _pluginLookup, _defaultSettings);
+			return new PluginExpression<T>(typeof(T), name, _kernel, _defaultSettings);
 		}
 
 		public IConventionExpression Scan
@@ -83,124 +83,124 @@ namespace Maestro.Configuration
 
 	class PluginExpression<T> : IDefaultPluginExpression, IPluginExpression, IDefaultPluginExpression<T>, IPluginExpression<T>
 	{
-		public PluginExpression(Type type, string name, PluginLookup plugins, DefaultSettings defaultSettings)
+		public PluginExpression(Type type, string name, Kernel kernel, DefaultSettings defaultSettings)
 		{
 			Type = type;
 			Name = name;
-			Plugins = plugins;
+			Kernel = kernel;
 			DefaultSettings = defaultSettings;
 		}
 
 		internal Type Type { get; }
 		internal string Name { get; set; }
-		internal PluginLookup Plugins { get; }
+		internal Kernel Kernel { get; }
 		internal DefaultSettings DefaultSettings { get; set; }
 
 		public void Use(object instance)
 		{
 			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 		}
 
 		public IFactoryInstanceExpression<object> Use(Func<object> factory)
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(_ => factory()));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new FactoryInstanceExpression<object>(plugin);
 		}
 
 		public IFactoryInstanceExpression<object> Use(Func<IContext, object> factory)
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(factory));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new FactoryInstanceExpression<object>(plugin);
 		}
 
 		public ITypeInstanceExpression<object> Use(Type type)
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new TypeInstanceExpression<object>(plugin);
 		}
 
 		public void Add(object instance)
 		{
 			var plugin = CreatePlugin(PluginLookup.AnonymousName, new InstanceFactoryProvider(instance));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 		}
 
 		public IFactoryInstanceExpression<object> Add(Func<object> factory)
 		{
 			var plugin = CreatePlugin(PluginLookup.AnonymousName, new LambdaFactoryProvider(_ => factory()));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new FactoryInstanceExpression<object>(plugin);
 		}
 
 		public IFactoryInstanceExpression<object> Add(Func<IContext, object> factory)
 		{
 			var plugin = CreatePlugin(PluginLookup.AnonymousName, new LambdaFactoryProvider(factory));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new FactoryInstanceExpression<object>(plugin);
 		}
 
 		public ITypeInstanceExpression<object> Add(Type type)
 		{
 			var plugin = CreatePlugin(PluginLookup.AnonymousName, new TypeFactoryProvider(type));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new TypeInstanceExpression<object>(plugin);
 		}
 
 		public void Use(T instance)
 		{
 			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<TInstance> factory)
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(_ => factory()));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> factory)
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(ctx => factory(ctx)));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public ITypeInstanceExpression<TInstance> Use<TInstance>()
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance)));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new TypeInstanceExpression<TInstance>(plugin);
 		}
 
 		public void Add(T instance)
 		{
 			var plugin = CreatePlugin(PluginLookup.AnonymousName, new InstanceFactoryProvider(instance));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<TInstance> factory)
 		{
 			var plugin = CreatePlugin(PluginLookup.AnonymousName, new LambdaFactoryProvider(_ => factory()));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<IContext, TInstance> factory)
 		{
 			var plugin = CreatePlugin(PluginLookup.AnonymousName, new LambdaFactoryProvider(ctx => factory(ctx)));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public ITypeInstanceExpression<TInstance> Add<TInstance>()
 		{
 			var plugin = CreatePlugin(PluginLookup.AnonymousName, new TypeFactoryProvider(typeof(TInstance)));
-			Plugins.Add(plugin);
+			Kernel.Add(plugin);
 			return new TypeInstanceExpression<TInstance>(plugin);
 		}
 
