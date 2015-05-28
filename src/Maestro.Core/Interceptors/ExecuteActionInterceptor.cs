@@ -2,11 +2,11 @@
 
 namespace Maestro.Interceptors
 {
-	internal class ActionInterceptor<T> : InterceptorBase<T, T>
+	internal class ExecuteActionInterceptor<T> : InterceptorBase<T, T>
 	{
 		private readonly Action<T, IContext> _action;
 
-		public ActionInterceptor(Action<T, IContext> action)
+		public ExecuteActionInterceptor(Action<T, IContext> action)
 		{
 			_action = action;
 		}
