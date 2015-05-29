@@ -79,6 +79,55 @@ namespace Maestro.Tests.Interception
 			public int Number { get; set; }
 		}
 
+		[Fact]
+		public void interceptors_should_be_executed_in_the_same_order_as_they_are_configured()
+		{
+			var container = new Container(x => x.For<TextWrapper>().Use<TextWrapper>()
+				.Intercept(y => y.Text += 1)
+				.Intercept(y =>
+				{
+					y.Text += 2;
+					return y;
+				})
+				.Intercept(new TextWrapperInterceptor())
+				.Intercept(y =>
+				{
+					y.Text += 4;
+					return y;
+				})
+				.Intercept(y => y.Text += 5));
+
+			var instance = container.Get<TextWrapper>();
+
+			instance.Text.ShouldBe("12345");
+		}
+
+		class TextWrapper
+		{
+			public string Text { get; set; }
+		}
+
+		class TextWrapperInterceptor : Interceptor<TextWrapper>
+		{
+			public override TextWrapper Execute(TextWrapper instance, IContext context)
+			{
+				instance.Text += 3;
+				return instance;
+			}
+		}
+
+		[Fact]
+		public void interceptors_should_not_be_executed_if_instance_is_cached()
+		{
+			var counter = 0;
+			var container = new Container(x => x.For<object>().Use<object>().Intercept(_ => counter++).Lifetime.Singleton());
+
+			container.Get<object>();
+			counter.ShouldBe(1);
+			container.Get<object>();
+			counter.ShouldBe(1);
+		}
+
 		//[Fact]
 		//public void set_property_with_provided_value()
 		//{
