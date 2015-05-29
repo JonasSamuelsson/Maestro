@@ -15,14 +15,11 @@ namespace Maestro.Interceptors
 			_factory = factory;
 		}
 
-		public IInterceptor Clone()
-		{
-			return new SetPropertyInterceptor(_propertyName);
-		}
-
 		public object Execute(object instance, IContext context)
 		{
-			throw new NotImplementedException();
+			instance.GetType().GetProperty(_propertyName).SetValue(instance, _factory(context), null);
+			return instance;
+
 			//var setter = _setter;
 
 			//if (setter == null || setter.ConfigVersion != context.ConfigVersion)

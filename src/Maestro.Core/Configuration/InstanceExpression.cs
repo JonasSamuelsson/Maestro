@@ -45,5 +45,10 @@ namespace Maestro.Configuration
 			Plugin.Interceptors.Add(interceptor);
 			return this;
 		}
+
+		public IInstanceExpression<TInstance, TParent> SetProperty(string property, object value)
+		{
+			return Intercept(new SetPropertyInterceptor(property, _ => value));
+		}
 	}
 }

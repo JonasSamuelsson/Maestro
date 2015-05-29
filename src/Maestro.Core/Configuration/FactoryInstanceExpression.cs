@@ -39,5 +39,10 @@ namespace Maestro.Configuration
 		{
 			return InstanceExpression.Intercept(interceptor);
 		}
+
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> SetProperty(string property, object value)
+		{
+			return InstanceExpression.SetProperty(property, value);
+		}
 	}
 }

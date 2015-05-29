@@ -53,5 +53,10 @@ namespace Maestro.Configuration
 			((TypeFactoryProvider)Plugin.FactoryProvider).Dependencies.Add(type, dependency);
 			return this;
 		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, object value)
+		{
+			return InstanceExpression.SetProperty(property, value);
+		}
 	}
 }
