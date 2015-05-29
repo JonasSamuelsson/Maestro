@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentAssertions;
-using Maestro.Interceptors;
-using Maestro.Utils;
+﻿using Maestro.Interceptors;
 using Shouldly;
 using Xunit;
 
@@ -16,13 +12,33 @@ namespace Maestro.Tests.Interception
 			var i = new Instance();
 			var container = new Container(x =>
 			{
-				x.For<Instance>().Use(() => i).Intercept(new InstanceInterceptor());
+				x.For<Instance>().Use(() => i).Execute(new InstanceInterceptor());
 			});
 
 			var instance = container.Get<Instance>();
 
 			instance.ShouldNotBe(i);
 			instance.InnerInstance.ShouldBe(i);
+		}
+
+		[Fact]
+		public void should_execute_provided_func()
+		{
+			var i = new Instance();
+			var container = new Container(x =>
+			{
+				x.For<Instance>("1").Use(() => i).Execute(instance => new Instance(instance));
+				x.For<Instance>("2").Use(() => i).Execute((instance, ctx) => new Instance(instance));
+			});
+
+			var instance1 = container.Get<Instance>("1");
+			var instance2 = container.Get<Instance>("2");
+
+			instance1.ShouldNotBe(i);
+			instance1.InnerInstance.ShouldBe(i);
+
+			instance2.ShouldNotBe(i);
+			instance2.InnerInstance.ShouldBe(i);
 		}
 
 		class Instance
@@ -34,14 +50,14 @@ namespace Maestro.Tests.Interception
 				InnerInstance = innerInstance;
 			}
 
-			public Instance InnerInstance { get; set; }
+			public Instance InnerInstance { get; }
 		}
 
-		class InstanceInterceptor : IInterceptor
+		class InstanceInterceptor : Interceptor<Instance>
 		{
-			public object Execute(object instance, IContext context)
+			public override Instance Execute(Instance instance, IContext context)
 			{
-				return new Instance((Instance)instance);
+				return new Instance(instance);
 			}
 		}
 

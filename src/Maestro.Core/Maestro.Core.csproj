@@ -70,6 +70,7 @@
     <Compile Include="FactoryProviders\Factories\InstanceFactory.cs" />
     <Compile Include="FactoryProviders\Factories\LambdaFactory.cs" />
     <Compile Include="FactoryProviders\Factories\TypeFactory.cs" />
+    <Compile Include="Interceptors\FuncInterceptor.cs" />
     <Compile Include="Lifetimes\INextStep.cs" />
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryProviderResolver.cs" />
     <Compile Include="Internals\Context.cs" />
@@ -107,10 +108,9 @@
     <Compile Include="Configuration\LifetimeExpression.cs" />
     <Compile Include="Conventions\IConventionFilter.cs" />
     <Compile Include="Conventions\IConvention.cs" />
-    <Compile Include="Interceptors\ExecuteActionInterceptor.cs" />
+    <Compile Include="Interceptors\ActionInterceptor.cs" />
     <Compile Include="Interceptors\IInterceptor.cs" />
     <Compile Include="Interceptors\InterceptorBase.cs" />
-    <Compile Include="Interceptors\LambdaInterceptor.cs" />
     <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
     <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
     <Compile Include="Lifetimes\ILifetime.cs" />

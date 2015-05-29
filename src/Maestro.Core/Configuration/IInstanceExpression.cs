@@ -22,11 +22,25 @@ namespace Maestro.Configuration
 		IInstanceExpression<TInstance, TParent> Execute(Action<TInstance, IContext> action);
 
 		/// <summary>
+		/// Adds a func to execute against the instance.
+		/// </summary>
+		/// <param name="func"></param>
+		/// <returns></returns>
+		IInstanceExpression<TInstance, TParent> Execute(Func<TInstance, TInstance> func);
+
+		/// <summary>
+		/// Adds a func to execute against the instance.
+		/// </summary>
+		/// <param name = "func" ></param>
+		/// <returns></returns>
+		IInstanceExpression<TInstance, TParent> Execute(Func<TInstance, IContext, TInstance> func);
+
+		/// <summary>
 		/// Adds <paramref name="interceptor"/> to the pipeline.
 		/// </summary>
 		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor);
+		IInstanceExpression<TInstance, TParent> Execute(IInterceptor interceptor);
 
 		///// <summary>
 		///// Adds <paramref name="interceptor"/> to the pipeline.
