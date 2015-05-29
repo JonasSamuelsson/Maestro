@@ -27,10 +27,20 @@ namespace Maestro.Configuration
 
 		public IInstanceExpression<TInstance, TParent> Execute(Action<TInstance, IContext> action)
 		{
-			return Intercept(new ExecuteActionInterceptor<TInstance>(action));
+			return Execute(new ActionInterceptor<TInstance>(action));
 		}
 
-		public IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor)
+		public IInstanceExpression<TInstance, TParent> Execute(Func<TInstance, TInstance> func)
+		{
+			return Execute((instance, ctx) => func(instance));
+		}
+
+		public IInstanceExpression<TInstance, TParent> Execute(Func<TInstance, IContext, TInstance> func)
+		{
+			return Execute(new FuncInterceptor<TInstance>(func));
+		}
+
+		public IInstanceExpression<TInstance, TParent> Execute(IInterceptor interceptor)
 		{
 			Plugin.Interceptors.Add(interceptor);
 			return this;

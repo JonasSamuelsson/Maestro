@@ -28,9 +28,19 @@ namespace Maestro.Configuration
 			return InstanceExpression.Execute(action);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(IInterceptor interceptor)
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> Execute(Func<T, T> func)
 		{
-			return InstanceExpression.Intercept(interceptor);
+			return InstanceExpression.Execute(func);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> Execute(Func<T, IContext, T> func)
+		{
+			return InstanceExpression.Execute(func);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> Execute(IInterceptor interceptor)
+		{
+			return InstanceExpression.Execute(interceptor);
 		}
 
 		public ITypeInstanceExpression<T> ConstructorDependency<TDependency>(TDependency dependency)

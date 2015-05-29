@@ -2,18 +2,13 @@
 
 namespace Maestro.Interceptors
 {
-	internal class ExecuteActionInterceptor<T> : InterceptorBase<T, T>
+	 class ActionInterceptor<T> : Interceptor<T>
 	{
 		private readonly Action<T, IContext> _action;
 
-		public ExecuteActionInterceptor(Action<T, IContext> action)
+		public ActionInterceptor(Action<T, IContext> action)
 		{
 			_action = action;
-		}
-
-		public override IInterceptor Clone()
-		{
-			return this;
 		}
 
 		public override T Execute(T instance, IContext context)

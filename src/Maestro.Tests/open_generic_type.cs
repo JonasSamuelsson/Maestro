@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
@@ -11,23 +12,24 @@ namespace Maestro.Tests
 		[Fact]
 		public void configured_interceptors_and_lifetimes_should_be_cloned_and_clone_should_be_executed()
 		{
-			var lifetime = new Lifetime();
-			var interceptor = new Interceptor();
+			throw new NotImplementedException();
+			//var lifetime = new Lifetime();
+			//var interceptor = new Interceptor();
 
-			new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>))
-				.Lifetime.Use(lifetime)
-				.Intercept(interceptor))
-				.Get<IList<int>>();
+			//new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>))
+			//	.Lifetime.Use(lifetime)
+			//	.Intercept(interceptor))
+			//	.Get<IList<int>>();
 
-			lifetime.IsCloned.Should().BeTrue();
-			lifetime.Executed.Should().BeFalse();
-			lifetime.Clone.IsCloned.Should().BeFalse();
-			lifetime.Clone.Executed.Should().BeTrue();
+			//lifetime.IsCloned.Should().BeTrue();
+			//lifetime.Executed.Should().BeFalse();
+			//lifetime.Clone.IsCloned.Should().BeFalse();
+			//lifetime.Clone.Executed.Should().BeTrue();
 
-			interceptor.IsCloned.Should().BeTrue();
-			interceptor.Executed.Should().BeFalse();
-			interceptor.Clone.IsCloned.Should().BeFalse();
-			interceptor.Clone.Executed.Should().BeTrue();
+			//interceptor.IsCloned.Should().BeTrue();
+			//interceptor.Executed.Should().BeFalse();
+			//interceptor.Clone.IsCloned.Should().BeFalse();
+			//interceptor.Clone.Executed.Should().BeTrue();
 		}
 
 		private class Interceptor : IInterceptor

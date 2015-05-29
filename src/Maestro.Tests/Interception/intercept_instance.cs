@@ -12,32 +12,34 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void interceptors_should_be_executed_in_the_same_order_they_are_configured()
 		{
-			var list = new List<string>();
+			throw new NotImplementedException();
+			//var list = new List<string>();
 
-			new Container(x => x.For<object>().Use<object>()
-				.Intercept(new Interceptor(() => list.Add("create1")))
-				.Intercept(new Interceptor(() => list.Add("create2")))
-				.Intercept(new Interceptor(() => list.Add("activate1")))
-				.Intercept(new Interceptor(() => list.Add("activate2"))))
-			.Get<object>();
+			//new Container(x => x.For<object>().Use<object>()
+			//	.Intercept(new Interceptor(() => list.Add("create1")))
+			//	.Intercept(new Interceptor(() => list.Add("create2")))
+			//	.Intercept(new Interceptor(() => list.Add("activate1")))
+			//	.Intercept(new Interceptor(() => list.Add("activate2"))))
+			//.Get<object>();
 
-			list.Should().ContainInOrder(new[] { "create1", "create2", "activate1", "activate2" });
+			//list.Should().ContainInOrder(new[] { "create1", "create2", "activate1", "activate2" });
 		}
 
 		[Fact]
 		public void interceptors_should_not_be_executed_if_instance_is_chached()
 		{
-			var interceptor = new Interceptor();
+			throw new NotImplementedException();
+			//var interceptor = new Interceptor();
 
-			var container = new Container(x => x.For<object>().Use<object>()
-				.Intercept(interceptor)
-				.Lifetime.Singleton());
+			//var container = new Container(x => x.For<object>().Use<object>()
+			//	.Intercept(interceptor)
+			//	.Lifetime.Singleton());
 
-			interceptor.ExecuteCount.Should().Be(0);
-			container.Get<object>();
-			interceptor.ExecuteCount.Should().Be(1);
-			container.Get<object>();
-			interceptor.ExecuteCount.Should().Be(1);
+			//interceptor.ExecuteCount.Should().Be(0);
+			//container.Get<object>();
+			//interceptor.ExecuteCount.Should().Be(1);
+			//container.Get<object>();
+			//interceptor.ExecuteCount.Should().Be(1);
 		}
 
 		[Fact]
