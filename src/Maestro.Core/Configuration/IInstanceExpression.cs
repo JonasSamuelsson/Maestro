@@ -74,13 +74,13 @@ namespace Maestro.Configuration
 		///// <remarks>Throws if the property type can't be resolved.</remarks>
 		//IInstanceExpression<TInstance, TParent> Set(string property);
 
-		///// <summary>
-		///// Set property <paramref name="property"/> with value <paramref name="value"/>.
-		///// </summary>
-		///// <param name="property"></param>
-		///// <param name="value"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TInstance, TParent> Set(string property, object value);
+		/// <summary>
+		/// Set property <paramref name="property"/> with value <paramref name="value"/>.
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		IInstanceExpression<TInstance, TParent> SetProperty(string property, object value);
 
 		///// <summary>
 		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.

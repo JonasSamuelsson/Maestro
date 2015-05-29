@@ -128,16 +128,15 @@ namespace Maestro.Tests.Interception
 			counter.ShouldBe(1);
 		}
 
-		//[Fact]
-		//public void set_property_with_provided_value()
-		//{
-		//	var dependency = new object();
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set(y => y.ResolvableDependency, dependency));
+		[Fact]
+		public void set_property_with_provided_value()
+		{
+			var container = new Container(x => x.For<TextWrapper>().Use<TextWrapper>().SetProperty("Text", "success"));
 
-		//	var instance = container.Get<Foobar>();
+			var instance = container.Get<TextWrapper>();
 
-		//	instance.ResolvableDependency.Should().Be(dependency);
-		//}
+			instance.Text.ShouldBe("success");
+		}
 
 		//[Fact]
 		//public void set_property_with_value_from_provided_func()
