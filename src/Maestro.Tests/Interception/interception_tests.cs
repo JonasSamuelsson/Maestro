@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Maestro.Tests.Interception
 {
-	public class interceptor_tests
+	public class interception_tests
 	{
 		[Fact]
 		public void should_execute_provided_interceptor()
@@ -12,7 +12,7 @@ namespace Maestro.Tests.Interception
 			var i = new Instance();
 			var container = new Container(x =>
 			{
-				x.For<Instance>().Use(() => i).Execute(new InstanceInterceptor());
+				x.For<Instance>().Use(() => i).Intercept(new InstanceInterceptor());
 			});
 
 			var instance = container.Get<Instance>();
@@ -27,8 +27,8 @@ namespace Maestro.Tests.Interception
 			var i = new Instance();
 			var container = new Container(x =>
 			{
-				x.For<Instance>("1").Use(() => i).Execute(instance => new Instance(instance));
-				x.For<Instance>("2").Use(() => i).Execute((instance, ctx) => new Instance(instance));
+				x.For<Instance>("1").Use(() => i).Intercept(instance => new Instance(instance));
+				x.For<Instance>("2").Use(() => i).Intercept((instance, ctx) => new Instance(instance));
 			});
 
 			var instance1 = container.Get<Instance>("1");
@@ -66,8 +66,8 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 			{
-				x.For<NumberWrapper>("1").Use<NumberWrapper>().Execute(instance => instance.Number = 1);
-				x.For<NumberWrapper>("2").Use<NumberWrapper>().Execute((instance, ctx) => instance.Number = 2);
+				x.For<NumberWrapper>("1").Use<NumberWrapper>().Intercept(instance => instance.Number = 1);
+				x.For<NumberWrapper>("2").Use<NumberWrapper>().Intercept((instance, ctx) => instance.Number = 2);
 			});
 
 			container.Get<NumberWrapper>("1").Number.ShouldBe(1);
