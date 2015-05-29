@@ -12,35 +12,35 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="action"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Execute(Action<TInstance> action);
+		IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance> action);
 
 		/// <summary>
 		/// Adds an action to execute against the instance.
 		/// </summary>
 		/// <param name = "action" ></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Execute(Action<TInstance, IContext> action);
+		IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance, IContext> action);
 
 		/// <summary>
 		/// Adds a func to execute against the instance.
 		/// </summary>
 		/// <param name="func"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Execute(Func<TInstance, TInstance> func);
+		IInstanceExpression<TInstance, TParent> Intercept(Func<TInstance, TInstance> func);
 
 		/// <summary>
 		/// Adds a func to execute against the instance.
 		/// </summary>
 		/// <param name = "func" ></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Execute(Func<TInstance, IContext, TInstance> func);
+		IInstanceExpression<TInstance, TParent> Intercept(Func<TInstance, IContext, TInstance> func);
 
 		/// <summary>
 		/// Adds <paramref name="interceptor"/> to the pipeline.
 		/// </summary>
 		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Execute(IInterceptor interceptor);
+		IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor);
 
 		///// <summary>
 		///// Adds <paramref name="interceptor"/> to the pipeline.

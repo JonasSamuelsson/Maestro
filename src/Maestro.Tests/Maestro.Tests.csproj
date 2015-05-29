@@ -93,7 +93,7 @@
     <Compile Include="Factories\type_instance_factory_constructor_dependency_resolution.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="Interception\intercept_instance.cs" />
-    <Compile Include="Interception\interceptor_tests.cs" />
+    <Compile Include="Interception\interception_tests.cs" />
     <Compile Include="Internals\Kernel_tests.cs" />
     <Compile Include="Internals\PipelineLookup_tests.cs" />
     <Compile Include="Internals\PluginLookup_tests.cs" />

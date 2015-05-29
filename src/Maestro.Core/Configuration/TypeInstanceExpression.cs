@@ -18,29 +18,29 @@ namespace Maestro.Configuration
 
 		public ILifetimeExpression<ITypeInstanceExpression<T>> Lifetime => InstanceExpression.Lifetime;
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Execute(Action<T> action)
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Action<T> action)
 		{
-			return InstanceExpression.Execute(action);
+			return InstanceExpression.Intercept(action);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Execute(Action<T, IContext> action)
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Action<T, IContext> action)
 		{
-			return InstanceExpression.Execute(action);
+			return InstanceExpression.Intercept(action);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Execute(Func<T, T> func)
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Func<T, T> func)
 		{
-			return InstanceExpression.Execute(func);
+			return InstanceExpression.Intercept(func);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Execute(Func<T, IContext, T> func)
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Func<T, IContext, T> func)
 		{
-			return InstanceExpression.Execute(func);
+			return InstanceExpression.Intercept(func);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Execute(IInterceptor interceptor)
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(IInterceptor interceptor)
 		{
-			return InstanceExpression.Execute(interceptor);
+			return InstanceExpression.Intercept(interceptor);
 		}
 
 		public ITypeInstanceExpression<T> ConstructorDependency<TDependency>(TDependency dependency)

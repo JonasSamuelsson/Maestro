@@ -15,29 +15,29 @@ namespace Maestro.Configuration
 
 		public ILifetimeExpression<IFactoryInstanceExpression<T>> Lifetime => InstanceExpression.Lifetime;
 
-		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Execute(Action<T> action)
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Intercept(Action<T> action)
 		{
-			return InstanceExpression.Execute(action);
+			return InstanceExpression.Intercept(action);
 		}
 
-		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Execute(Action<T, IContext> action)
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Intercept(Action<T, IContext> action)
 		{
-			return InstanceExpression.Execute(action);
+			return InstanceExpression.Intercept(action);
 		}
 
-		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Execute(Func<T, T> func)
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Intercept(Func<T, T> func)
 		{
-			return InstanceExpression.Execute(func);
+			return InstanceExpression.Intercept(func);
 		}
 
-		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Execute(Func<T, IContext, T> func)
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Intercept(Func<T, IContext, T> func)
 		{
-			return InstanceExpression.Execute(func);
+			return InstanceExpression.Intercept(func);
 		}
 
-		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Execute(IInterceptor interceptor)
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Intercept(IInterceptor interceptor)
 		{
-			return InstanceExpression.Execute(interceptor);
+			return InstanceExpression.Intercept(interceptor);
 		}
 	}
 }

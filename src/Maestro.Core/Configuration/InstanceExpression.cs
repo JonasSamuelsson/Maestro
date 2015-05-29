@@ -20,27 +20,27 @@ namespace Maestro.Configuration
 			get { return new LifetimeExpression<TParent>(Parent, lifetime => Plugin.Lifetime = lifetime); }
 		}
 
-		public IInstanceExpression<TInstance, TParent> Execute(Action<TInstance> action)
+		public IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance> action)
 		{
-			return Execute((instance, ctx) => action(instance));
+			return Intercept((instance, ctx) => action(instance));
 		}
 
-		public IInstanceExpression<TInstance, TParent> Execute(Action<TInstance, IContext> action)
+		public IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance, IContext> action)
 		{
-			return Execute(new ActionInterceptor<TInstance>(action));
+			return Intercept(new ActionInterceptor<TInstance>(action));
 		}
 
-		public IInstanceExpression<TInstance, TParent> Execute(Func<TInstance, TInstance> func)
+		public IInstanceExpression<TInstance, TParent> Intercept(Func<TInstance, TInstance> func)
 		{
-			return Execute((instance, ctx) => func(instance));
+			return Intercept((instance, ctx) => func(instance));
 		}
 
-		public IInstanceExpression<TInstance, TParent> Execute(Func<TInstance, IContext, TInstance> func)
+		public IInstanceExpression<TInstance, TParent> Intercept(Func<TInstance, IContext, TInstance> func)
 		{
-			return Execute(new FuncInterceptor<TInstance>(func));
+			return Intercept(new FuncInterceptor<TInstance>(func));
 		}
 
-		public IInstanceExpression<TInstance, TParent> Execute(IInterceptor interceptor)
+		public IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor)
 		{
 			Plugin.Interceptors.Add(interceptor);
 			return this;
