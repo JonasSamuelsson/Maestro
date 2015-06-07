@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 
@@ -163,7 +164,11 @@ namespace Maestro.Internals
 
 			if (IsEnumerable(type))
 			{
-				instance = GetAll(type.GetGenericArguments().Single(), context);
+				var elementType = type.GetGenericArguments().Single();
+				var instances = GetAll(elementType, context);
+				var castMethod = typeof(Enumerable).GetMethod("Cast", BindingFlags.Public | BindingFlags.Static);
+				var genericCastMethod = castMethod.MakeGenericMethod(elementType);
+				instance = genericCastMethod.Invoke(null, new object[] { instances });
 				return true;
 			}
 
@@ -220,7 +225,11 @@ namespace Maestro.Internals
 
 		private static bool IsEnumerable(Type type)
 		{
-			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>);
+			if (!type.IsGenericType) return false;
+			var genericTypeDefinition = type.GetGenericTypeDefinition();
+			if (genericTypeDefinition != typeof(IEnumerable<>)) return false;
+			var genericArgument = type.GetGenericArguments().Single();
+			return genericArgument != typeof(string) && !genericArgument.IsValueType;
 		}
 	}
 }

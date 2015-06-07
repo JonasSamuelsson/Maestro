@@ -68,7 +68,7 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_resolve_registered_reference_type_enumerable()
 		{
-			var dependencies = new[] { new Dependency(), new Dependency() };
+			var dependencies = new[] { new Dependency1(), new Dependency1() };
 			var container = new Container(x => x.For<IEnumerable<Dependency>>().Use(dependencies));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
 			instance.Dependency.Should().BeEquivalentTo(dependencies);
@@ -77,10 +77,15 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_resolve_reference_type_enumerable_with_registered_item()
 		{
-			var dependency = new Dependency();
-			var container = new Container(x => x.For<Dependency>().Use(dependency));
+			var dependency1 = new Dependency1();
+			var dependency2 = new Dependency2();
+			var container = new Container(x =>
+													{
+														x.For<Dependency>("1").Use(dependency1);
+														x.For<Dependency>("2").Use(dependency2);
+													});
 			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
-			instance.Dependency.Should().BeEquivalentTo(new[] { dependency });
+			instance.Dependency.Should().BeEquivalentTo(new object[] { dependency1, dependency2 });
 		}
 
 		[Fact]
@@ -184,5 +189,7 @@ namespace Maestro.Tests.Factories
 		}
 
 		private class Dependency { }
+		private class Dependency1 : Dependency { }
+		private class Dependency2 : Dependency { }
 	}
 }

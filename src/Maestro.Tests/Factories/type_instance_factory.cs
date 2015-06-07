@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Shouldly;
 using Xunit;
 
@@ -7,10 +8,10 @@ namespace Maestro.Tests.Factories
 	public class type_instance_factory
 	{
 		[Fact]
-		public void should_instantiate_type_without_dependencies()
+		public void should_instantiate_type_with_no_dependencies()
 		{
-			var container = new Container(x => x.For<IZeroDependencies>().Use<ZeroDependencies>());
-			container.Get<IZeroDependencies>();
+			var container = new Container(x => x.For<INoDependencies>().Use<NoDependencies>());
+			container.Get<INoDependencies>();
 		}
 
 		[Fact]
@@ -18,8 +19,8 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.For<IZeroDependencies>().Use<ZeroDependencies>();
-				x.For<IOneDependency>().Use<OneRequiredDependency>();
+				x.For<INoDependencies>().Use<NoDependencies>();
+				x.For<IOneDependency>().Use<RequiredDependency>();
 			});
 
 			var instance = container.Get<IOneDependency>();
@@ -32,8 +33,8 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.For<IZeroDependencies>().Use<ZeroDependencies>();
-				x.For<IOneDependency>().Use<OneOptionalDependency>();
+				x.For<INoDependencies>().Use<NoDependencies>();
+				x.For<IOneDependency>().Use<OptionalDependency>();
 			});
 
 			var instance = container.Get<IOneDependency>();
@@ -44,11 +45,11 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_reevaluate_constructor_to_use_when_config_changes()
 		{
-			var container = new Container(x => x.For<IOneDependency>().Use<OneOptionalDependency>());
+			var container = new Container(x => x.For<IOneDependency>().Use<OptionalDependency>());
 			var instance = container.Get<IOneDependency>();
 			instance.Dependency.ShouldBe(null);
 
-			container.Configure(x => x.For<IZeroDependencies>().Use<ZeroDependencies>());
+			container.Configure(x => x.For<INoDependencies>().Use<NoDependencies>());
 			instance = container.Get<IOneDependency>();
 			instance.Dependency.ShouldNotBe(null);
 		}
@@ -56,52 +57,121 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_instantiate_open_generic_type()
 		{
-			var container = new Container(x => x.For(typeof(IZeroDependencies<>)).Use(typeof(ZeroDependencies)));
-			container.Get<IZeroDependencies<object>>();
+			var container = new Container(x => x.For(typeof(INoDependencies<>)).Use(typeof(NoDependencies)));
+			container.Get<INoDependencies<object>>();
 		}
 
 		[Fact]
 		public void should_use_provided_dependency()
 		{
-			var zeroDependencies = new ZeroDependencies();
-			var container = new Container(x => x.For<IOneDependency>().Use<OneRequiredDependency>().ConstructorDependency<IZeroDependencies>(zeroDependencies));
+			var zeroDependencies = new NoDependencies();
+			var container = new Container(x => x.For<IOneDependency>().Use<RequiredDependency>().ConstructorDependency<INoDependencies>(zeroDependencies));
 			var instance = container.Get<IOneDependency>();
 			instance.Dependency.ShouldBe(zeroDependencies);
 		}
 
-		interface IZeroDependencies
+		[Fact]
+		public void should_get_type_with_empty_enumerable_dependency()
+		{
+			var container = new Container();
+
+			var instance = container.Get<OptionalDependency<IEnumerable<INoDependencies>>>();
+
+			instance.Dependency.ShouldBeEmpty();
+		}
+
+		[Fact]
+		public void should_get_type_with_enumerable_dependency()
+		{
+			var dependency = new NoDependencies();
+			var container = new Container(x => x.For<INoDependencies>().Use(dependency));
+
+			var instance = container.Get<OptionalDependency<IEnumerable<INoDependencies>>>();
+
+			instance.Dependency.ShouldBe(new INoDependencies[] { dependency });
+		}
+
+		[Fact]
+		public void should_use_constructor_with_enumerable_struct_or_string_dependency_if_dependency_is_explicitly_configured()
+		{
+			var ints = new[] { 1, 2, 3 };
+			var strings = new[] { "1", "2", "3" };
+			var container = new Container(x =>
+													{
+														x.For<IEnumerable<int>>().Use(ints);
+														x.For<IEnumerable<string>>().Use(strings);
+													});
+
+			var instanceWithInts = container.Get<OptionalDependency<IEnumerable<int>>>();
+			var instanceWithStrings = container.Get<OptionalDependency<IEnumerable<string>>>();
+
+			instanceWithInts.Dependency.ShouldBe(ints);
+			instanceWithStrings.Dependency.ShouldBe(strings);
+		}
+
+		[Fact]
+		public void should_not_use_constructor_with_enumerable_struct_or_string_dependency_if_dependency_is_not_explicitly_configured()
+		{
+			var container = new Container();
+
+			var instanceWithInts = container.Get<OptionalDependency<IEnumerable<int>>>();
+			var instanceWithStrings = container.Get<OptionalDependency<IEnumerable<string>>>();
+
+			instanceWithInts.Dependency.ShouldBe(null);
+			instanceWithStrings.Dependency.ShouldBe(null);
+		}
+
+		interface INoDependencies
 		{ }
 
 		interface IOneDependency
 		{
-			IZeroDependencies Dependency { get; }
+			INoDependencies Dependency { get; }
 		}
 
-		class ZeroDependencies : IZeroDependencies
-		{ }
+		class NoDependencies : INoDependencies { }
+		class NoDependencies1 : NoDependencies { }
+		class NoDependencies2 : NoDependencies { }
 
-		class OneOptionalDependency : IOneDependency
+		class OptionalDependency : IOneDependency
 		{
-			public OneOptionalDependency() { }
+			public OptionalDependency() { }
 
-			public OneOptionalDependency(IZeroDependencies dependency)
+			public OptionalDependency(INoDependencies dependency)
 			{
 				Dependency = dependency;
 			}
 
-			public IZeroDependencies Dependency { get; }
+			public INoDependencies Dependency { get; }
 		}
 
-		class OneRequiredDependency : OneOptionalDependency
+		class RequiredDependency : OptionalDependency
 		{
-			public OneRequiredDependency(IZeroDependencies dependency) : base(dependency)
+			public RequiredDependency(INoDependencies dependency) : base(dependency)
 			{ }
 		}
 
-		interface IZeroDependencies<T>
+		interface INoDependencies<T>
 		{ }
 
-		class ZeroDependencies<T> : IZeroDependencies<T>
+		class NoDependencies<T> : INoDependencies<T>
 		{ }
+
+		interface IOneDependency<T>
+		{
+			T Dependency { get; }
+		}
+
+		class OptionalDependency<T> : IOneDependency<T>
+		{
+			public OptionalDependency() { }
+
+			public OptionalDependency(T dependency)
+			{
+				Dependency = dependency;
+			}
+
+			public T Dependency { get; }
+		}
 	}
 }
