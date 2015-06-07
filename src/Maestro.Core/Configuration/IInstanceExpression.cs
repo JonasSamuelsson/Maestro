@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Maestro.Interceptors;
 
 namespace Maestro.Configuration
@@ -66,13 +67,22 @@ namespace Maestro.Configuration
 		///// <returns></returns>
 		//IInstanceExpression<TOut, TParent> Intercept<TOut>(Func<TInstance, IContext, TOut> lambda);
 
-		///// <summary>
-		///// Set property <paramref name="property"/>.
-		///// </summary>
-		///// <param name="property"></param>
-		///// <returns></returns>
-		///// <remarks>Throws if the property type can't be resolved.</remarks>
-		//IInstanceExpression<TInstance, TParent> Set(string property);
+		/// <summary>
+		/// Set property <paramref name="property"/>.
+		/// </summary>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="property"></param>
+		/// <returns></returns>
+		/// <remarks>Throws if the property type can't be resolved.</remarks>
+		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
+
+		/// <summary>
+		/// Set property <paramref name="property"/>.
+		/// </summary>
+		/// <param name="property"></param>
+		/// <returns></returns>
+		/// <remarks>Throws if the property type can't be resolved.</remarks>
+		IInstanceExpression<TInstance, TParent> SetProperty(string property);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value <paramref name="value"/>.
@@ -97,15 +107,6 @@ namespace Maestro.Configuration
 		///// <param name="factory"></param>
 		///// <returns></returns>
 		//IInstanceExpression<TInstance, TParent> Set(string property, Func<IContext, object> factory);
-
-		///// <summary>
-		///// Set property <paramref name="property"/>.
-		///// </summary>
-		///// <typeparam name="TValue"></typeparam>
-		///// <param name="property"></param>
-		///// <returns></returns>
-		///// <remarks>Throws if the property type can't be resolved.</remarks>
-		//IInstanceExpression<TInstance, TParent> Set<TValue>(Expression<Func<TInstance, TValue>> property);
 
 		///// <summary>
 		///// Set property <paramref name="property"/> with value <paramref name="value"/>.

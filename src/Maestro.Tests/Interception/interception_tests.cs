@@ -138,6 +138,29 @@ namespace Maestro.Tests.Interception
 			instance.Text.ShouldBe("success");
 		}
 
+		class Parent
+		{
+			public Child Child  { get; set; }
+		}
+
+		class Child { }
+
+		[Fact]
+		public void should_auto_inject_selected_property()
+		{
+			var container = new Container(x =>
+			                              {
+				                              x.For<Parent>("1").Use<Parent>().SetProperty("Child");
+				                              x.For<Parent>("2").Use<Parent>().SetProperty(y => y.Child);
+			                              });
+
+			var instance1 = container.Get<Parent>("1");
+			var instance2 = container.Get<Parent>("2");
+
+			instance1.Child.ShouldNotBe(null);
+			instance2.Child.ShouldNotBe(null);
+		}
+
 		//[Fact]
 		//public void set_property_with_value_from_provided_func()
 		//{
