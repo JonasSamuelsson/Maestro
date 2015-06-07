@@ -28,5 +28,17 @@ namespace Maestro.Tests.TypeFactoryResolvers
 			Should.Throw<ActivationException>(() => container.Get<int>())
 				.Message.ShouldBe("Can't get default instance of type System.Int32.");
 		}
+
+		[Fact]
+		public void should_not_get_array()
+		{
+			var container = new Container();
+			Should.Throw<ActivationException>(() => container.Get<int[]>())
+				.Message.ShouldBe("Can't get default instance of type System.Int32[].");
+
+			container.Configure(x => x.For<int>().Use(1));
+			Should.Throw<ActivationException>(() => container.Get<int[]>())
+				.Message.ShouldBe("Can't get default instance of type System.Int32[].");
+		}
 	}
 }
