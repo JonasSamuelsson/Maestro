@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using Maestro.Interceptors;
 using Maestro.Internals;
 
@@ -38,6 +39,16 @@ namespace Maestro.Configuration
 		public IInstanceExpression<T, IFactoryInstanceExpression<T>> Intercept(IInterceptor interceptor)
 		{
 			return InstanceExpression.Intercept(interceptor);
+		}
+
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property)
+		{
+			return InstanceExpression.SetProperty(property);
+		}
+
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> SetProperty(string property)
+		{
+			return InstanceExpression.SetProperty(property);
 		}
 
 		public IInstanceExpression<T, IFactoryInstanceExpression<T>> SetProperty(string property, object value)
