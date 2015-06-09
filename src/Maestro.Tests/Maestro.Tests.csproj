@@ -103,6 +103,7 @@
     <Compile Include="Lifetimes\transient_lifetime.cs" />
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />
     <Compile Include="open_generic_type.cs" />
+    <Compile Include="Performance\performance_tests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="resolve_array_dependencies.cs" />
     <Compile Include="resolve_dependencies.cs" />
