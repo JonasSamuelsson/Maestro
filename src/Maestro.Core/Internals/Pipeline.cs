@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Maestro.FactoryProviders.Factories;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
 
@@ -16,6 +17,7 @@ namespace Maestro.Internals
 		}
 
 		public Plugin Plugin { get; set; }
+		public IFactory Factory { get; set; }
 
 		public object Execute(Context context)
 		{
@@ -30,7 +32,12 @@ namespace Maestro.Internals
 
 			public object Execute()
 			{
-				var instance = Pipeline.Plugin.FactoryProvider.GetFactory(Context).GetInstance(Context);
+				if (Pipeline.Factory == null)
+				{
+					Pipeline.Factory = Pipeline.Plugin.FactoryProvider.GetFactory(Context);
+				}
+
+            var instance = Pipeline.Factory.GetInstance(Context);
 
 				var interceptors = Pipeline.Plugin.Interceptors;
 				for (var i = 0; i < interceptors.Count; i++)
