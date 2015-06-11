@@ -13,6 +13,8 @@ namespace Maestro.TypeFactoryResolvers
 			factoryProvider = null;
 			if (!type.IsConcreteClosedClass()) return false;
 			if (type.IsArray) return false;
+			if (type.IsConcreteClassClosing(typeof(Func<>))) return false;
+			if (type.IsConcreteClassClosing(typeof(Lazy<>))) return false;
 
 			factoryProvider = (from ctor in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 									 let parameters = ctor.GetParameters()

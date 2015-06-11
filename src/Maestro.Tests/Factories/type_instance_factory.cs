@@ -62,15 +62,6 @@ namespace Maestro.Tests.Factories
 		}
 
 		[Fact]
-		public void should_use_provided_dependency()
-		{
-			var zeroDependencies = new NoDependencies();
-			var container = new Container(x => x.For<IOneDependency>().Use<RequiredDependency>().ConstructorDependency<INoDependencies>(zeroDependencies));
-			var instance = container.Get<IOneDependency>();
-			instance.Dependency.ShouldBe(zeroDependencies);
-		}
-
-		[Fact]
 		public void should_get_type_with_empty_enumerable_dependency()
 		{
 			var container = new Container();

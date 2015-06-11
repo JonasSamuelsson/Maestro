@@ -1,6 +1,5 @@
 using System;
 using System.Linq.Expressions;
-using Maestro.FactoryProviders;
 using Maestro.Interceptors;
 using Maestro.Internals;
 
@@ -52,17 +51,6 @@ namespace Maestro.Configuration
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property)
 		{
 			return InstanceExpression.SetProperty(property);
-		}
-
-		public ITypeInstanceExpression<T> ConstructorDependency<TDependency>(TDependency dependency)
-		{
-			return ConstructorDependency(typeof(TDependency), dependency);
-		}
-
-		public ITypeInstanceExpression<T> ConstructorDependency(Type type, object dependency)
-		{
-			((TypeFactoryProvider)Plugin.FactoryProvider).Dependencies.Add(type, dependency);
-			return this;
 		}
 
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, object value)
