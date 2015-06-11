@@ -16,12 +16,16 @@ namespace Maestro.TypeFactoryResolvers
 			if (!context.Kernel.CanGetDependency(typeArgument, context)) return false;
 
 			var funcType = typeof(Func<>).MakeGenericType(typeArgument);
-			var mode = LazyThreadSafetyMode.ExecutionAndPublication;
-			factoryProvider = new LambdaFactoryProvider(ctx =>
-			                                            {
-				                                            var func = ctx.Get(funcType);
-				                                            return Activator.CreateInstance(type, func, mode); // todo perf
-			                                            });
+			var constructor = (from ctor in type.GetConstructors()
+									 let parameters = ctor.GetParameters()
+									 where parameters.Length == 2
+									 where parameters[0].ParameterType == funcType
+									 where parameters[1].ParameterType == typeof(LazyThreadSafetyMode)
+									 select ctor).First();
+			var param1 = new Func<Context, object>(ctx => ctx.Kernel.GetDependency(funcType, ctx));
+			var param2 = new Func<Context, object>(_ => LazyThreadSafetyMode.ExecutionAndPublication);
+			var activator = ConstructorInvokation.Get(constructor, new[] { param1, param2 });
+			factoryProvider = new LambdaFactoryProvider(ctx => activator((Context)ctx));
 			return true;
 		}
 	}
