@@ -15,7 +15,7 @@ namespace Maestro.FactoryProviders
 
 		public IFactory GetFactory(Context context)
 		{
-			return new InstanceFactory(_instance);
+			return new Factory(_ => _instance);
 		}
 	}
 }
