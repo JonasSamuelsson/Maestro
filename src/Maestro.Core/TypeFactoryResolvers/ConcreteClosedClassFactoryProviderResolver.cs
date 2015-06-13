@@ -11,6 +11,7 @@ namespace Maestro.TypeFactoryResolvers
 		public bool TryGet(Type type, Context context, out IFactoryProvider factoryProvider)
 		{
 			factoryProvider = null;
+			if (type == typeof(object)) return false;
 			if (!type.IsConcreteClosedClass()) return false;
 			if (type.IsArray) return false;
 			if (type.IsConcreteClassClosing(typeof(Func<>))) return false;

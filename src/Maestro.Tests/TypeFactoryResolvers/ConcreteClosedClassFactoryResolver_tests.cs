@@ -10,7 +10,15 @@ namespace Maestro.Tests.TypeFactoryResolvers
 		public void should_get_unregistered_concrete_closed_class()
 		{
 			var container = new Container();
-			container.Get<object>();
+			container.Get<EventArgs>();
+		}
+
+		[Fact]
+		public void should_not_get_object()
+		{
+			var container = new Container();
+			Should.Throw<ActivationException>(() => container.Get<object>())
+				.Message.ShouldBe("Can't get default instance of type System.Object.");
 		}
 
 		[Fact]
