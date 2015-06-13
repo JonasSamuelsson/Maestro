@@ -6,10 +6,9 @@ namespace Maestro.Tests
 {
 	public class default_type_instance_with_configured_dependencies
 	{
-		[Fact]
+		[Fact(Skip = "todo")]
 		public void should_get_instance_with_single_ctor_dependency()
 		{
-			throw new NotImplementedException();
 			//var container = new Container(x =>
 			//{
 			//	x.For(typeof(TypeWithDefaultCtor)).Use(typeof(TypeWithDefaultCtor));

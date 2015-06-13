@@ -117,7 +117,6 @@
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryResolver_tests.cs" />
     <Compile Include="TypeFactoryResolvers\FuncFactoryResolver_tests.cs" />
     <Compile Include="TypeFactoryResolvers\LazyFactoryResolver_tests.cs" />
-    <Compile Include="v1_vs_v2_performance.cs" />
     <Compile Include="FluentAssertionsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -133,10 +132,6 @@
     <ProjectReference Include="..\Maestro.Interception.DynamicProxy\Maestro.Interception.DynamicProxy.csproj">
       <Project>{f74c9100-d385-4573-b973-0b534e1fb976}</Project>
       <Name>Maestro.Interception.DynamicProxy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\v1perf\v1perf.csproj">
-      <Project>{5c8ee26d-fc28-4d94-9254-6e9bd0f707ae}</Project>
-      <Name>v1perf</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

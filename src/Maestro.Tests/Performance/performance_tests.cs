@@ -8,7 +8,7 @@ namespace Maestro.Tests.Performance
 	{
 		const int Iterations = 100 * 1000;
 
-		[Fact]
+		[Fact(Skip = "performance")]
 		public void new_container()
 		{
 			Warmup(Baseline);
@@ -17,7 +17,7 @@ namespace Maestro.Tests.Performance
 			Console.WriteLine(Measure(() => GetConfiguredContainer().Get<C3>()) / Measure(Baseline));
 		}
 
-		[Fact]
+		[Fact(Skip = "performance")]
 		public void child_container()
 		{
 			Warmup(Baseline);
@@ -27,7 +27,7 @@ namespace Maestro.Tests.Performance
 			Console.WriteLine(Measure(() => container.GetChildContainer().Get<C3>()) / Measure(Baseline));
 		}
 
-		[Fact]
+		[Fact(Skip = "performance")]
 		public void reuse_container()
 		{
 			Warmup(Baseline);
@@ -37,7 +37,7 @@ namespace Maestro.Tests.Performance
 			Console.WriteLine(Measure(() => container.Get<C3>()) / Measure(Baseline));
 		}
 
-		[Fact]
+		[Fact(Skip = "performance")]
 		public void property_injection()
 		{
 			Action baseline = () => new P { O = new object() };
