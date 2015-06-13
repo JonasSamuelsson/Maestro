@@ -7,10 +7,9 @@ namespace Maestro.Tests
 {
 	public class resolve_dependencies
 	{
-		[Fact]
+		[Fact(Skip = "todo")]
 		public void should_get_instances_with_same_name_as_requested_instance_or_fall_back_to_default_instance()
 		{
-			throw new NotImplementedException();
 			//var @default = "default";
 			//var name1 = "name1";
 			//var name2 = "name2";
@@ -63,10 +62,9 @@ namespace Maestro.Tests
 			//}
 		}
 
-		[Fact]
+		[Fact(Skip = "todo")]
 		public void should_get_dependencies_with_same_name_as_top_instance_or_fall_back_to_default_instance()
 		{
-			throw new NotImplementedException();
 			//var name1 = "abc";
 			//var name2 = "xyz";
 			//var grandChild = new GrandChild();

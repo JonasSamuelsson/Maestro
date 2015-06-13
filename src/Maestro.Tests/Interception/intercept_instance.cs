@@ -9,10 +9,9 @@ namespace Maestro.Tests.Interception
 {
 	public class intercept_instance
 	{
-		[Fact]
+		[Fact(Skip = "todo")]
 		public void interceptors_should_be_executed_in_the_same_order_they_are_configured()
 		{
-			throw new NotImplementedException();
 			//var list = new List<string>();
 
 			//new Container(x => x.For<object>().Use<object>()
@@ -25,10 +24,9 @@ namespace Maestro.Tests.Interception
 			//list.Should().ContainInOrder(new[] { "create1", "create2", "activate1", "activate2" });
 		}
 
-		[Fact]
+		[Fact(Skip = "todo")]
 		public void interceptors_should_not_be_executed_if_instance_is_chached()
 		{
-			throw new NotImplementedException();
 			//var interceptor = new Interceptor();
 
 			//var container = new Container(x => x.For<object>().Use<object>()
@@ -42,10 +40,9 @@ namespace Maestro.Tests.Interception
 			//interceptor.ExecuteCount.Should().Be(1);
 		}
 
-		[Fact]
+		[Fact(Skip = "todo")]
 		public void dynamic_proxy_interception()
 		{
-			throw new NotImplementedException();
 			//var interceptor = new DynamicProxyInterceptor();
 			//var container = new Container(x => x.For<ITarget>()
 			//												.Use<Target>()
