@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
+using Maestro.Internals;
 using Maestro.Utils;
 
 namespace Maestro.Interceptors
@@ -7,7 +11,6 @@ namespace Maestro.Interceptors
 	{
 		private readonly string _propertyName;
 		private Func<IContext, object> _factory;
-		//private Setter _setter;
 
 		public SetPropertyInterceptor(string propertyName, Func<IContext, object> factory = null)
 		{
@@ -17,45 +20,46 @@ namespace Maestro.Interceptors
 
 		public object Execute(object instance, IContext context)
 		{
-			if (_factory == null)
-			{
-				var type = instance.GetType().GetProperty(_propertyName).PropertyType;
-				_factory = ctx => ctx.Get(type);
-			}
-
-			instance.GetType().GetProperty(_propertyName).SetValue(instance, _factory(context), null);
+			var property = instance.GetType().GetProperty(_propertyName);
+			var action = PropertyAssignment.Get(property, _factory);
+			action.Invoke(instance, (Context)context);
 			return instance;
-
-			//var setter = _setter;
-
-			//if (setter == null || setter.ConfigVersion != context.ConfigVersion)
-			//{
-			//	var instanceType = instance.GetType();
-			//	var propertyType = instanceType.GetProperty(_propertyName).PropertyType;
-
-			//	setter = new Setter
-			//				{
-			//					ConfigVersion = context.ConfigVersion,
-			//					Get = _factory ?? Reflector.GetPropertyValueProvider(propertyType, context),
-			//					Set = Reflector.GetPropertySetter(instanceType, _propertyName)
-			//				};
-			//	_setter = setter;
-			//}
-
-			//setter.Set(instance, setter.Get(context));
-			//return instance;
 		}
 
 		public override string ToString()
 		{
 			return string.Format("set property {0}", _propertyName);
 		}
+	}
 
-		private class Setter
+	class PropertyAssignment
+	{
+		static readonly Dictionary<PropertyInfo, Action<object, Context>> Cache = new Dictionary<PropertyInfo, Action<object, Context>>();
+
+		public static Action<object, Context> Get(PropertyInfo property, Func<IContext, object> dependencyProvider = null)
 		{
-			public int ConfigVersion { get; set; }
-			public Func<IContext, object> Get { get; set; }
-			public Action<object, object> Set { get; set; }
+			Action<object, Context> action;
+			if (Cache.TryGetValue(property, out action))
+				return action;
+
+			var target = Expression.Parameter(typeof(object), "target");
+			var context = Expression.Parameter(typeof(Context), "ctx");
+			var func = dependencyProvider == null ? GetFunc(property.PropertyType) : GetFunc(dependencyProvider);
+			var value = Expression.Convert(Expression.Invoke(func, context), property.PropertyType);
+			var assignment = Expression.Assign(Expression.Property(Expression.Convert(target, property.ReflectedType), property), value);
+			return Cache[property] = Expression.Lambda<Action<object, Context>>(assignment, target, context).Compile();
+		}
+
+		static Expression<Func<Context, object>> GetFunc(Type type)
+		{
+			Expression<Func<Context, object>> func = ctx => ctx.Kernel.GetDependency(type, ctx);
+			return func;
+		}
+
+		static Expression<Func<Context, object>> GetFunc(Func<IContext, object> dependencyProvider)
+		{
+			Expression<Func<Context, object>> func = ctx => dependencyProvider(ctx);
+			return func;
 		}
 	}
 }

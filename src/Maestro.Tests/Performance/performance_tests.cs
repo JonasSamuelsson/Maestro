@@ -6,7 +6,7 @@ namespace Maestro.Tests.Performance
 {
 	public class performance_tests
 	{
-		const int Iterations = 10 * 1000;
+		const int Iterations = 100 * 1000;
 
 		[Fact]
 		public void new_container()
@@ -35,6 +35,19 @@ namespace Maestro.Tests.Performance
 
 			var container = GetConfiguredContainer();
 			Console.WriteLine(Measure(() => container.Get<C3>()) / Measure(Baseline));
+		}
+
+		[Fact]
+		public void property_injection()
+		{
+			Action baseline = () => new P { O = new object() };
+			var container = new Container(x => x.For<P>().Use<P>().SetProperty(y => y.O));
+			Action work = () => container.Get<P>();
+
+			Warmup(baseline);
+			Warmup(work);
+
+			Console.WriteLine(Measure(() => work()) / Measure(() => baseline()));
 		}
 
 		private static void Baseline()
@@ -70,5 +83,6 @@ namespace Maestro.Tests.Performance
 		class C1 { public C1(C0 c0) { } }
 		class C2 { public C2(C1 c1, C0 c0) { } }
 		class C3 { public C3(C2 c2, C1 c1, C0 c0) { } }
+		class P { public object O { get; set; } }
 	}
 }
