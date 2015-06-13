@@ -8,7 +8,7 @@ namespace Maestro.Tests
 {
 	public class CommonServiceLocator
 	{
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_get_instance_via_common_service_locator_interface()
 		{
 			//var container = new Container(x => x.For<IFoo>().Use<Foo>());
@@ -17,7 +17,7 @@ namespace Maestro.Tests
 			//instance.Should().NotBeNull();
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_get_all_instances_via_common_service_locator_interface()
 		{
 			//var foo = new Foo();

@@ -25,7 +25,7 @@ namespace Maestro.Tests
 			disposable.ShouldBe(null);
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_return_true_and_instance_should_not_be_null_if_provided_type_can_be_resolved()
 		{
 			var container = new Container();

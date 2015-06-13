@@ -9,7 +9,7 @@ namespace Maestro.Tests
 {
 	public class open_generic_type
 	{
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void configured_interceptors_and_lifetimes_should_be_cloned_and_clone_should_be_executed()
 		{
 			//var lifetime = new Lifetime();
