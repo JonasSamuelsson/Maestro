@@ -6,7 +6,7 @@ namespace Maestro.Tests
 {
 	public class default_type_instance_with_configured_dependencies
 	{
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_get_instance_with_single_ctor_dependency()
 		{
 			//var container = new Container(x =>

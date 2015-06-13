@@ -105,7 +105,7 @@ namespace Maestro.Tests.Factories
 			instance.Dependency.Should().BeEquivalentTo(dependencies);
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_resolve_reference_type_array_with_registered_item()
 		{
 			var dependency = new Dependency();
@@ -114,7 +114,7 @@ namespace Maestro.Tests.Factories
 			instance.Dependency.Should().BeEquivalentTo(new[] { dependency });
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_resolve_unregistered_reference_type_array()
 		{
 			var container = new Container();

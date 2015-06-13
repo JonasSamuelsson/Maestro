@@ -7,7 +7,7 @@ namespace Maestro.Tests
 {
 	public class resolve_dependencies
 	{
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_get_instances_with_same_name_as_requested_instance_or_fall_back_to_default_instance()
 		{
 			//var @default = "default";
@@ -62,7 +62,7 @@ namespace Maestro.Tests
 			//}
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_get_dependencies_with_same_name_as_top_instance_or_fall_back_to_default_instance()
 		{
 			//var name1 = "abc";

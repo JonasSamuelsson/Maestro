@@ -54,7 +54,7 @@ namespace Maestro.Tests.Factories
 			instance.Dependency.ShouldNotBe(null);
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_instantiate_open_generic_type()
 		{
 			var container = new Container(x => x.For(typeof(INoDependencies<>)).Use(typeof(NoDependencies)));

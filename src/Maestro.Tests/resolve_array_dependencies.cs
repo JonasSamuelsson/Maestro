@@ -7,7 +7,7 @@ namespace Maestro.Tests
 {
 	public class resolve_array_dependencies
 	{
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_use_all_registered_instances_of_the_enumerated_type()
 		{
 			var container = new Container(x =>
@@ -24,7 +24,7 @@ namespace Maestro.Tests
 			instance.Objects.Should().Contain(x => x.GetType() == typeof(EventArgs));
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_use_empty_enumerable_if_enumerated_type_is_not_registered_and_not_value_type()
 		{
 			var container = new Container(x => x.For<TypeWithArrayOfObjectDependency>().Use<TypeWithArrayOfObjectDependency>());

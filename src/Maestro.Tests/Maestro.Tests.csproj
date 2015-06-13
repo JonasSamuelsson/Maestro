@@ -111,6 +111,7 @@
     <Compile Include="resolve_enumerable_dependencies.cs" />
     <Compile Include="resolve_from_multiple_threads_simultaneously.cs" />
     <Compile Include="resolve_type_with_cyclic_dependencies.cs" />
+    <Compile Include="TodoAttribute.cs" />
     <Compile Include="try_get_instance.cs" />
     <Compile Include="TypeExtensions_IsConcreteClassClosing.cs" />
     <Compile Include="TypeExtensions_IsConcreteSubClassOf.cs" />

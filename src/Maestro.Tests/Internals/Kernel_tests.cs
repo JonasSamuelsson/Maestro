@@ -33,7 +33,7 @@ namespace Maestro.Tests.Internals
 			instance.ShouldBeOfType<object>();
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void TryGet_unconfigured_concrete_closed_class_instance_should_fail()
 		{
 			var kernel = new KernelBuilder().GetKernel();

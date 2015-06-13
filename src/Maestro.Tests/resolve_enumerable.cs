@@ -36,7 +36,7 @@ namespace Maestro.Tests
 			strings.Should().BeEquivalentTo(new[] { @string });
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void should_try_to_get_dependencies_with_same_name_as_top_instance()
 		{
 			var @defaultDependency = "default";

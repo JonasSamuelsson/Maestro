@@ -5,7 +5,7 @@ namespace Maestro.Tests
 {
 	public class resolve_type_with_cyclic_dependencies
 	{
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void Get_should_throw_ActivationException()
 		{
 			Should.Throw<ActivationException>(() => new Container().Get<Alpha>())
@@ -17,7 +17,7 @@ namespace Maestro.Tests
   Maestro.Tests.resolve_type_with_cyclic_dependencies+Alpha");
 		}
 
-		[Fact(Skip = "todo")]
+		[Todo]
 		public void GetAll_should_throw_ActivationException()
 		{
 			var container = new Container(x => x.For<Alpha>().Use<Alpha>());
