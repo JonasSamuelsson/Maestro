@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using Maestro.FactoryProviders.Factories;
 using Maestro.Internals;
@@ -23,6 +21,12 @@ namespace Maestro.FactoryProviders
 			var constructor = Constructor ?? GetConstructor(context);
 			var activator = ConstructorInvokation.Get(constructor);
 			return new Factory(activator);
+		}
+
+		public IFactoryProvider MakeGeneric(Type[] genericArguments)
+		{
+			var type = Type.MakeGenericType(genericArguments);
+			return new TypeFactoryProvider(type);
 		}
 
 		private ConstructorInfo GetConstructor(Context context)
