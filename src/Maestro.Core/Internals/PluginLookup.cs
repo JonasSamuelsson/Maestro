@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.FactoryProviders;
+using Maestro.Interceptors;
+using Maestro.Lifetimes;
 
 namespace Maestro.Internals
 {
@@ -47,10 +50,47 @@ namespace Maestro.Internals
 
 		private Plugin GetPluginOrNull(Type type, string name)
 		{
-			return _list.FirstOrDefault(x => x.Type == type && x.Name == name)
-					 ?? _parent?.GetPluginOrNull(type, name)
-					 ?? _list.FirstOrDefault(x => x.Type == type && x.Name == DefaultName)
-					 ?? _parent?.GetPluginOrNull(type, DefaultName);
+			start:
+			var lookup = this;
+			do
+			{
+				var plugin = lookup._list.FirstOrDefault(x => x.Type == type && x.Name == name);
+				if (plugin != null) return plugin;
+
+				if (type.IsGenericType)
+				{
+					var genericTypeDefinition = type.GetGenericTypeDefinition();
+					plugin = lookup._list.FirstOrDefault(x => x.Type == genericTypeDefinition && x.Name == name);
+
+					if (plugin != null)
+					{
+						var genericArguments = type.GetGenericArguments();
+						var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
+						plugin = new Plugin
+						{
+							FactoryProvider = factoryProvider,
+							Interceptors = new List<IInterceptor>(),
+							Lifetime = new TransientLifetime(),
+							Name = name,
+							Type = type
+						};
+						lookup._list.Add(plugin);
+						return plugin;
+					}
+				}
+
+				lookup = lookup._parent;
+			} while (lookup != null);
+
+			if (name != DefaultName)
+			{
+				name = DefaultName;
+				goto start;
+			}
+
+			//if (type)
+
+			return null;
 		}
 
 		public IEnumerable<Plugin> GetAll(Type type)
