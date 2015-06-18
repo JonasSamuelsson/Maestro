@@ -20,6 +20,27 @@ namespace Maestro.Tests
 			instance.ShouldBeOfType<Instance<int>>();
 		}
 
+		[Fact]
+		public void should_execute_configured_interceptors()
+		{
+			var container = new Container(x => x.For(typeof(Instance<>)).Use(typeof(Instance<>)).SetProperty("Value", "foobar"));
+
+			var instance = container.Get<Instance<string>>();
+
+			instance.Value.ShouldBe("foobar");
+		}
+
+		[Fact]
+		public void child_container_config_should_be_considered_over_parent_container()
+		{
+			var parent = new Container(x => x.For<Instance<string>>().Use(() => new Instance<string> { Value = "root" }));
+			var child = parent.GetChildContainer(x => x.For(typeof(Instance<>)).Use(typeof(Instance<>)));
+
+			var instance = child.Get<Instance<string>>();
+
+			instance.Value.ShouldBe(null);
+		}
+
 		[Todo]
 		public void configured_interceptors_and_lifetimes_should_be_cloned_and_clone_should_be_executed()
 		{
@@ -42,6 +63,9 @@ namespace Maestro.Tests
 			//interceptor.Clone.Executed.Should().BeTrue();
 		}
 
-		class Instance<T> { }
+		class Instance<T>
+		{
+			public T Value { get; set; }
+		}
 	}
 }

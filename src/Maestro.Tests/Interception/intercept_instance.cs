@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Castle.DynamicProxy;
 using FluentAssertions;
 using Maestro.Configuration;
+using Maestro.Interceptors;
 using Xunit;
+using IInterceptor = Castle.DynamicProxy.IInterceptor;
 
 namespace Maestro.Tests.Interception
 {
@@ -71,7 +73,7 @@ namespace Maestro.Tests.Interception
 			public bool Executed { get; private set; }
 		}
 
-		private class Interceptor : Interceptors.IInterceptor
+		private class Interceptor : Interceptor<object>
 		{
 			private readonly Action _action;
 
@@ -83,12 +85,7 @@ namespace Maestro.Tests.Interception
 
 			public int ExecuteCount { get; private set; }
 
-			public Interceptors.IInterceptor Clone()
-			{
-				throw new NotImplementedException();
-			}
-
-			public object Execute(object instance, IContext context)
+			public override object Execute(object instance, IContext context)
 			{
 				_action();
 				ExecuteCount++;

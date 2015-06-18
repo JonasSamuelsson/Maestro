@@ -7,7 +7,7 @@ using Maestro.Utils;
 
 namespace Maestro.Interceptors
 {
-	internal class SetPropertyInterceptor : IInterceptor
+	internal class SetPropertyInterceptor : Interceptor<object>
 	{
 		private readonly string _propertyName;
 		private Func<IContext, object> _factory;
@@ -18,12 +18,17 @@ namespace Maestro.Interceptors
 			_factory = factory;
 		}
 
-		public object Execute(object instance, IContext context)
+		public override object Execute(object instance, IContext context)
 		{
 			var property = instance.GetType().GetProperty(_propertyName);
 			var action = PropertyAssignment.Get(property, _factory);
 			action.Invoke(instance, (Context)context);
 			return instance;
+		}
+
+		public override IInterceptor MakeGeneric(Type[] genericArguments)
+		{
+			return this;
 		}
 
 		public override string ToString()
