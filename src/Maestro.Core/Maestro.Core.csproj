@@ -109,9 +109,8 @@
     <Compile Include="Conventions\IConvention.cs" />
     <Compile Include="Interceptors\ActionInterceptor.cs" />
     <Compile Include="Interceptors\IInterceptor.cs" />
-    <Compile Include="Interceptors\InterceptorBase.cs" />
+    <Compile Include="Interceptors\Interceptor.cs" />
     <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
-    <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
     <Compile Include="Lifetimes\ILifetime.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="Configuration\IContainerExpression.cs" />
