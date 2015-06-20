@@ -1,13 +1,10 @@
-﻿namespace Maestro.Lifetimes
+﻿using System;
+
+namespace Maestro.Lifetimes
 {
 	internal class SingletonLifetime : ILifetime
 	{
 		private object _instance;
-
-		public ILifetime Clone()
-		{
-			return new SingletonLifetime();
-		}
 
 		public object Execute(INextStep nextStep)
 		{
@@ -17,6 +14,11 @@
 						_instance = nextStep.Execute();
 
 			return _instance;
+		}
+
+		public ILifetime MakeGeneric(Type[] genericArguments)
+		{
+			return new SingletonLifetime();
 		}
 
 		public override string ToString()

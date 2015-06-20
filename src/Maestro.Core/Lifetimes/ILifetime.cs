@@ -1,8 +1,10 @@
-﻿namespace Maestro.Lifetimes
+﻿using System;
+
+namespace Maestro.Lifetimes
 {
 	public interface ILifetime
 	{
-		ILifetime Clone();
 		object Execute(INextStep nextStep);
+		ILifetime MakeGeneric(Type[] genericArguments);
 	}
 }

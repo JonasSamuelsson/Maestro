@@ -67,11 +67,12 @@ namespace Maestro.Internals
 						var genericArguments = type.GetGenericArguments();
 						var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
 						var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
+						var lifetime = plugin.Lifetime.MakeGeneric(genericArguments);
 						plugin = new Plugin
 						{
 							FactoryProvider = factoryProvider,
 							Interceptors = interceptors,
-							Lifetime = new TransientLifetime(),
+							Lifetime = lifetime,
 							Name = name,
 							Type = type
 						};

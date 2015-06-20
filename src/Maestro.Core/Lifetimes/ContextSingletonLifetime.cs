@@ -13,11 +13,6 @@ namespace Maestro.Lifetimes
 			_dictionary = new Dictionary<Context, object>();
 		}
 
-		public ILifetime Clone()
-		{
-			return new ContextSingletonLifetime();
-		}
-
 		public object Execute(INextStep nextStep)
 		{
 			object instance;
@@ -31,6 +26,11 @@ namespace Maestro.Lifetimes
 			context.Disposed += ContextOnDisposed;
 			lock (_dictionary) _dictionary.Add(context, instance);
 			return instance;
+		}
+
+		public ILifetime MakeGeneric(Type[] genericArguments)
+		{
+			return new ContextSingletonLifetime();
 		}
 
 		private void ContextOnDisposed(Context context)
