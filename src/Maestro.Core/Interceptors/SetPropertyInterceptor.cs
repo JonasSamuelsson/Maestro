@@ -10,7 +10,8 @@ namespace Maestro.Interceptors
 	internal class SetPropertyInterceptor : Interceptor<object>
 	{
 		private readonly string _propertyName;
-		private Func<IContext, object> _factory;
+		private readonly Func<IContext, object> _factory;
+		private Action<object, Context> _assignment;
 
 		public SetPropertyInterceptor(string propertyName, Func<IContext, object> factory = null)
 		{
@@ -20,15 +21,19 @@ namespace Maestro.Interceptors
 
 		public override object Execute(object instance, IContext context)
 		{
-			var property = instance.GetType().GetProperty(_propertyName);
-			var action = PropertyAssignment.Get(property, _factory);
-			action.Invoke(instance, (Context)context);
+			if (_assignment == null)
+			{
+				var property = instance.GetType().GetProperty(_propertyName);
+				_assignment = PropertyAssignment.Get(property, _factory);
+			}
+
+			_assignment.Invoke(instance, (Context)context);
 			return instance;
 		}
 
 		public override IInterceptor MakeGeneric(Type[] genericArguments)
 		{
-			return this;
+			return new SetPropertyInterceptor(_propertyName, _factory);
 		}
 
 		public override string ToString()
