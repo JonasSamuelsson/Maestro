@@ -38,6 +38,25 @@ namespace Maestro.Tests
 		}
 
 		[Fact]
+		public void should_use_configured_lifetime()
+		{
+			var container = new Container(x =>
+			{
+				x.For<int>().Use(1);
+				x.For<string>().Use("foobar");
+				x.For(typeof(Instance<>)).Use(typeof(Instance<>)).Lifetime.Singleton();
+			});
+
+			var instance1 = container.Get<Instance<int>>();
+			var instance2 = container.Get<Instance<int>>();
+			var instance3 = container.Get<Instance<string>>();
+			var instance4 = container.Get<Instance<string>>();
+
+			instance1.Value.ShouldBe(instance2.Value);
+			instance3.Value.ShouldBe(instance4.Value);
+		}
+
+		[Fact]
 		public void child_container_config_should_be_considered_over_parent_container()
 		{
 			var parent = new Container(x => x.For<Instance<string>>().Use(() => new Instance<string> { Value = "root" }));

@@ -22,15 +22,15 @@ namespace Maestro.Tests.Lifetimes
 		{
 			public bool Executed { get; private set; }
 
-			public ILifetime Clone()
-			{
-				throw new NotImplementedException();
-			}
-
 			public object Execute(INextStep nextStep)
 			{
 				Executed = true;
 				return nextStep.Execute();
+			}
+
+			public ILifetime MakeGeneric(Type[] genericArguments)
+			{
+				throw new NotImplementedException();
 			}
 		}
 	}

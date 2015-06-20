@@ -66,6 +66,7 @@
     <Compile Include="Configuration\PluginExpression.cs" />
     <Compile Include="Configuration\TypeInstanceExpression.cs" />
     <Compile Include="ConstructorInvokation.cs" />
+    <Compile Include="DefaultLifetimeExpression.cs" />
     <Compile Include="EnumerableExtensions.cs" />
     <Compile Include="FactoryProviders\Factories\IFactory.cs" />
     <Compile Include="FactoryProviders\Factories\Factory.cs" />
