@@ -23,11 +23,18 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_execute_configured_interceptors()
 		{
-			var container = new Container(x => x.For(typeof(Instance<>)).Use(typeof(Instance<>)).SetProperty("Value", "foobar"));
+			var container = new Container(x =>
+			{
+				x.For<int>().Use(1);
+				x.For<string>().Use("foobar");
+				x.For(typeof(Instance<>)).Use(typeof(Instance<>)).SetProperty("Value");
+			});
 
-			var instance = container.Get<Instance<string>>();
+			var instance1 = container.Get<Instance<int>>();
+			var instance2 = container.Get<Instance<string>>();
 
-			instance.Value.ShouldBe("foobar");
+			instance1.Value.ShouldBe(1);
+			instance2.Value.ShouldBe("foobar");
 		}
 
 		[Fact]
