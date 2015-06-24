@@ -13,8 +13,8 @@ namespace Maestro.Configuration
 	public interface IPluginExpression<T>
 	{
 		void Use(T instance);
-		IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<TInstance> factory);
-		IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> factory);
-		ITypeInstanceExpression<TInstance> Use<TInstance>();
+		IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<TInstance> factory) where TInstance : T;
+		IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> factory) where TInstance : T;
+		ITypeInstanceExpression<TInstance> Use<TInstance>() where TInstance : T;
 	}
 }

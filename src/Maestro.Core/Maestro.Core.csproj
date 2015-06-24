@@ -71,6 +71,8 @@
     <Compile Include="FactoryProviders\Factories\IFactory.cs" />
     <Compile Include="FactoryProviders\Factories\Factory.cs" />
     <Compile Include="Interceptors\FuncInterceptor.cs" />
+    <Compile Include="Interceptors\SetPropertyAction.cs" />
+    <Compile Include="Interceptors\SetPropertyActionFactory.cs" />
     <Compile Include="Lifetimes\INextStep.cs" />
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryProviderResolver.cs" />
     <Compile Include="Internals\Context.cs" />

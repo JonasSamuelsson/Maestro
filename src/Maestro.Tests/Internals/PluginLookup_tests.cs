@@ -62,7 +62,7 @@ namespace Maestro.Tests.Internals
 		{
 			var plugin1 = new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName };
 			var plugin2 = new TestPlugin { Type = typeof(object), Name = "foo" };
-			var plugin3 = new TestPlugin { Type = typeof(object), Name = PluginLookup.AnonymousName };
+			var plugin3 = new TestPlugin { Type = typeof(object), Name = PluginLookup.GetRandomName() };
 			var lookup = new PluginLookup();
 			lookup.Add(plugin1);
 			lookup.Add(plugin2);
@@ -76,9 +76,9 @@ namespace Maestro.Tests.Internals
 		public void GetAll_should_not_return_plugins_from_parent_lookup_with_same_name()
 		{
 			var parentPlugin1 = new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName };
-			var parentPlugin2 = new TestPlugin { Type = typeof(object), Name = PluginLookup.AnonymousName };
+			var parentPlugin2 = new TestPlugin { Type = typeof(object), Name = PluginLookup.GetRandomName() };
 			var childPlugin1 = new TestPlugin { Type = typeof(object), Name = PluginLookup.DefaultName };
-			var childPlugin2 = new TestPlugin { Type = typeof(object), Name = PluginLookup.AnonymousName };
+			var childPlugin2 = new TestPlugin { Type = typeof(object), Name = PluginLookup.GetRandomName() };
 
 			var parentLookup = new PluginLookup();
 			parentLookup.Add(parentPlugin1);
@@ -105,8 +105,8 @@ namespace Maestro.Tests.Internals
 		{
 			var lookup = new PluginLookup();
 
-			lookup.Add(new Plugin { Type = typeof(object), Name = PluginLookup.AnonymousName });
-			lookup.Add(new Plugin { Type = typeof(object), Name = PluginLookup.AnonymousName });
+			lookup.Add(new Plugin { Type = typeof(object), Name = PluginLookup.GetRandomName() });
+			lookup.Add(new Plugin { Type = typeof(object), Name = PluginLookup.GetRandomName() });
 		}
 
 		class TestPlugin : Plugin
