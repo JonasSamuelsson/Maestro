@@ -7,7 +7,7 @@ namespace Maestro.Configuration
 		IDefaultPluginExpression For(Type type);
 		IDefaultPluginExpression<T> For<T>();
 
-		IPluginExpression<object> For(Type type, string name);
+		IPluginExpression For(Type type, string name);
 		IPluginExpression<T> For<T>(string name);
 
 		///// <summary>

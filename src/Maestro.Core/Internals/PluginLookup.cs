@@ -28,7 +28,11 @@ namespace Maestro.Internals
 		}
 
 		internal static string DefaultName { get; } = string.Empty;
-		internal static string AnonymousName { get; } = null;
+
+		public static string GetRandomName()
+		{
+			return Guid.NewGuid().ToString();
+		}
 
 		public event Action PluginAdded = delegate { };
 
@@ -90,28 +94,51 @@ namespace Maestro.Internals
 				goto start;
 			}
 
-			//if (type)
-
 			return null;
 		}
 
 		public IEnumerable<Plugin> GetAll(Type type)
 		{
+			var lookup = this;
 			var names = new HashSet<string>();
 			var plugins = new List<Plugin>();
-			GetAll(type, names, plugins);
-			return plugins;
-		}
+			var isGenericType = type.IsGenericType;
+			var genericTypeDefinition = isGenericType ? type.GetGenericTypeDefinition() : null;
 
-		private void GetAll(Type type, ISet<string> names, ICollection<Plugin> plugins)
-		{
-			foreach (var plugin in _list.Where(x => x.Type == type))
+			do
 			{
-				if (plugin.Name != AnonymousName) if (!names.Add(plugin.Name)) continue;
-				plugins.Add(plugin);
-			}
+				foreach (var plugin in lookup._list.ToList())
+				{
+					if (type != plugin.Type) continue;
+					if (names.Contains(plugin.Name)) continue;
+					plugins.Add(plugin);
+					names.Add(plugin.Name);
+				}
 
-			_parent?.GetAll(type, names, plugins);
+				foreach (var plugin in lookup._list.ToList())
+				{
+					if (genericTypeDefinition != plugin.Type) continue;
+					if (names.Contains(plugin.Name)) continue;
+					var genericArguments = type.GetGenericArguments();
+					var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
+					var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
+					var newPlugin = new Plugin
+					{
+						FactoryProvider = factoryProvider,
+						Interceptors = interceptors,
+						Lifetime = new TransientLifetime(),
+						Name = plugin.Name,
+						Type = type
+					};
+					lookup._list.Add(newPlugin);
+					plugins.Add(newPlugin);
+					names.Add(newPlugin.Name);
+				}
+
+				lookup = lookup._parent;
+			} while (lookup != null);
+
+			return plugins;
 		}
 
 		public void Dispose()

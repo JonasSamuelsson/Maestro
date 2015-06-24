@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using FluentAssertions;
-using Maestro.Interceptors;
-using Maestro.Lifetimes;
+﻿using System.Linq;
 using Shouldly;
 using Xunit;
 
@@ -67,26 +63,46 @@ namespace Maestro.Tests
 			instance.Value.ShouldBe(null);
 		}
 
-		[Todo]
-		public void configured_interceptors_and_lifetimes_should_be_cloned_and_clone_should_be_executed()
+		[Fact]
+		public void get_all_should_handle_child_parent_container_configurations()
 		{
-			//var lifetime = new Lifetime();
-			//var interceptor = new Interceptor();
+			var container = new Container(x =>
+													{
+														x.For(typeof(Instance<>)).Use(typeof(Instance<>)).SetProperty("Value", "parent-default");
+														x.For(typeof(Instance<>), "1").Use(typeof(Instance<>)).SetProperty("Value", "parent-1");
+														x.For<Instance<string>>("2").Use<Instance<string>>().SetProperty("Value", "parent-2");
+														x.For(typeof(Instance<>), "3").Use(typeof(Instance<>)).SetProperty("Value", "parent-3");
+														x.For(typeof(Instance<>)).Add(typeof(Instance<>)).SetProperty("Value", "parent");
+													})
+				.GetChildContainer(x =>
+										 {
+											 x.For(typeof(Instance<>)).Use(typeof(Instance<>)).SetProperty("Value", "child-default");
+											 x.For(typeof(Instance<>), "1").Use(typeof(Instance<>)).SetProperty("Value", "child-1");
+											 x.For(typeof(Instance<>), "2").Use(typeof(Instance<>)).SetProperty("Value", "child-2");
+											 x.For<Instance<string>>("3").Use<Instance<string>>().SetProperty("Value", "child-3");
+											 x.For(typeof(Instance<>)).Add(typeof(Instance<>)).SetProperty("Value", "child");
+										 });
 
-			//new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>))
-			//	.Lifetime.Use(lifetime)
-			//	.Intercept(interceptor))
-			//	.Get<IList<int>>();
+			var instances = container.GetAll<Instance<string>>().ToList();
 
-			//lifetime.IsCloned.Should().BeTrue();
-			//lifetime.Executed.Should().BeFalse();
-			//lifetime.Clone.IsCloned.Should().BeFalse();
-			//lifetime.Clone.Executed.Should().BeTrue();
+			instances.Count.ShouldBe(6);
+			instances[0].Value.ShouldBe("child-3");
+			instances[1].Value.ShouldBe("child-default");
+			instances[2].Value.ShouldBe("child-1");
+			instances[3].Value.ShouldBe("child-2");
+			instances[4].Value.ShouldBe("child");
+			instances[5].Value.ShouldBe("parent");
+		}
 
-			//interceptor.IsCloned.Should().BeTrue();
-			//interceptor.Executed.Should().BeFalse();
-			//interceptor.Clone.IsCloned.Should().BeFalse();
-			//interceptor.Clone.Executed.Should().BeTrue();
+		[Fact]
+		public void get_all_should_not_evaluate_open_generic_type_multiple_times_on_consecutive_calls()
+		{
+			var container = new Container(x => x.For(typeof(Instance<>)).Add(typeof(Instance<>)));
+
+			var instances1 = container.GetAll<Instance<string>>();
+			var instances2 = container.GetAll<Instance<string>>();
+
+			instances1.Count().ShouldBe(instances2.Count());
 		}
 
 		class Instance<T>

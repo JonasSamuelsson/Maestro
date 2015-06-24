@@ -19,7 +19,7 @@ namespace Maestro.Configuration
 			return new PluginExpression<object>(type, PluginLookup.DefaultName, _kernel, _defaultSettings);
 		}
 
-		public IPluginExpression<object> For(Type type, string name)
+		public IPluginExpression For(Type type, string name)
 		{
 			return new PluginExpression<object>(type, name, _kernel, _defaultSettings);
 		}

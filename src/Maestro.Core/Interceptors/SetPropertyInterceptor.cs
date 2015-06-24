@@ -1,75 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Reflection;
 using Maestro.Internals;
-using Maestro.Utils;
 
 namespace Maestro.Interceptors
 {
 	internal class SetPropertyInterceptor : Interceptor<object>
 	{
 		private readonly string _propertyName;
-		private readonly Func<IContext, object> _factory;
-		private Action<object, Context> _assignment;
+		private Func<IContext, object> _valueFactory;
+		private SetPropertyAction _setPropertyAction;
 
-		public SetPropertyInterceptor(string propertyName, Func<IContext, object> factory = null)
+		public SetPropertyInterceptor(string propertyName, Func<IContext, object> valueFactory = null)
 		{
 			_propertyName = propertyName;
-			_factory = factory;
+			_valueFactory = valueFactory;
 		}
 
 		public override object Execute(object instance, IContext context)
 		{
-			if (_assignment == null)
+			var property = instance.GetType().GetProperty(_propertyName);
+
+			if (_setPropertyAction == null)
 			{
-				var property = instance.GetType().GetProperty(_propertyName);
-				_assignment = PropertyAssignment.Get(property, _factory);
+				if (_valueFactory == null)
+				{
+					_valueFactory = GetValueFactory(property.PropertyType);
+				}
+
+				_setPropertyAction = SetPropertyActionFactory.Get(property);
 			}
 
-			_assignment.Invoke(instance, (Context)context);
+			var value = _valueFactory.Invoke(context);
+			_setPropertyAction.Invoke(instance, value);
 			return instance;
+		}
+
+		private static Func<IContext, object> GetValueFactory(Type propertyType)
+		{
+			return ctx =>
+					 {
+						 var context = ((Context)ctx);
+						 return context.Kernel.GetDependency(propertyType, context);
+					 };
 		}
 
 		public override IInterceptor MakeGeneric(Type[] genericArguments)
 		{
-			return new SetPropertyInterceptor(_propertyName, _factory);
+			return new SetPropertyInterceptor(_propertyName, _valueFactory);
 		}
 
 		public override string ToString()
 		{
 			return string.Format("set property {0}", _propertyName);
-		}
-	}
-
-	class PropertyAssignment
-	{
-		static readonly Dictionary<PropertyInfo, Action<object, Context>> Cache = new Dictionary<PropertyInfo, Action<object, Context>>();
-
-		public static Action<object, Context> Get(PropertyInfo property, Func<IContext, object> dependencyProvider = null)
-		{
-			Action<object, Context> action;
-			if (Cache.TryGetValue(property, out action))
-				return action;
-
-			var target = Expression.Parameter(typeof(object), "target");
-			var context = Expression.Parameter(typeof(Context), "ctx");
-			var func = dependencyProvider == null ? GetFunc(property.PropertyType) : GetFunc(dependencyProvider);
-			var value = Expression.Convert(Expression.Invoke(func, context), property.PropertyType);
-			var assignment = Expression.Assign(Expression.Property(Expression.Convert(target, property.ReflectedType), property), value);
-			return Cache[property] = Expression.Lambda<Action<object, Context>>(assignment, target, context).Compile();
-		}
-
-		static Expression<Func<Context, object>> GetFunc(Type type)
-		{
-			Expression<Func<Context, object>> func = ctx => ctx.Kernel.GetDependency(type, ctx);
-			return func;
-		}
-
-		static Expression<Func<Context, object>> GetFunc(Func<IContext, object> dependencyProvider)
-		{
-			Expression<Func<Context, object>> func = ctx => dependencyProvider(ctx);
-			return func;
 		}
 	}
 }
