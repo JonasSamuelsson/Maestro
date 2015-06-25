@@ -43,11 +43,6 @@ namespace Maestro.Configuration
 			return InstanceExpression.Intercept(interceptor);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property)
-		{
-			return InstanceExpression.SetProperty(property);
-		}
-
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property)
 		{
 			return InstanceExpression.SetProperty(property);
@@ -56,6 +51,36 @@ namespace Maestro.Configuration
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, object value)
 		{
 			return InstanceExpression.SetProperty(property, value);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, Func<object> factory)
+		{
+			return InstanceExpression.SetProperty(property, factory);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, Func<IContext, object> factory)
+		{
+			return InstanceExpression.SetProperty(property, factory);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property)
+		{
+			return InstanceExpression.SetProperty(property);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property, TValue value)
+		{
+			return InstanceExpression.SetProperty(property, value);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property, Func<TValue> factory)
+		{
+			return InstanceExpression.SetProperty(property, factory);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property, Func<IContext, TValue> factory)
+		{
+			return InstanceExpression.SetProperty(property, factory);
 		}
 	}
 }

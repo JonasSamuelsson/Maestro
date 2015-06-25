@@ -131,11 +131,31 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void set_property_with_provided_value()
 		{
-			var container = new Container(x => x.For<TextWrapper>().Use<TextWrapper>().SetProperty("Text", "success"));
+			var container = new Container(x =>
+			                              {
+				                              x.For<TextWrapper>().Add<TextWrapper>().SetProperty("Text", "success");
+				                              x.For<TextWrapper>().Add<TextWrapper>().SetProperty(y => y.Text, "success");
+			                              });
 
-			var instance = container.Get<TextWrapper>();
+			var instances = container.GetAll<TextWrapper>();
 
-			instance.Text.ShouldBe("success");
+			instances.ShouldAllBe(x => x.Text == "success");
+		}
+
+		[Fact]
+		public void set_property_using_provided_factory()
+		{
+			var container = new Container(x =>
+			                              {
+														x.For<TextWrapper>().Add<TextWrapper>().SetProperty("Text", () => "success");
+														x.For<TextWrapper>().Add<TextWrapper>().SetProperty("Text", ctx => "success");
+														x.For<TextWrapper>().Add<TextWrapper>().SetProperty(y => y.Text, () => "success");
+														x.For<TextWrapper>().Add<TextWrapper>().SetProperty(y => y.Text, ctx => "success");
+													});
+
+			var instances = container.GetAll<TextWrapper>();
+
+			instances.ShouldAllBe(x => x.Text == "success");
 		}
 
 		class Parent
