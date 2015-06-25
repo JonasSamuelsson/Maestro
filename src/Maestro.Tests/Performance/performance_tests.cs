@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Xunit;
 
@@ -8,6 +9,7 @@ namespace Maestro.Tests.Performance
 	{
 		const int Iterations = 100 * 1000;
 
+		//[Fact]
 		[Fact(Skip = "performance")]
 		public void new_container()
 		{
@@ -17,6 +19,7 @@ namespace Maestro.Tests.Performance
 			Console.WriteLine(Measure(() => GetConfiguredContainer().Get<C3>()) / Measure(Baseline));
 		}
 
+		//[Fact]
 		[Fact(Skip = "performance")]
 		public void child_container()
 		{
@@ -27,6 +30,7 @@ namespace Maestro.Tests.Performance
 			Console.WriteLine(Measure(() => container.GetChildContainer().Get<C3>()) / Measure(Baseline));
 		}
 
+		//[Fact]
 		[Fact(Skip = "performance")]
 		public void reuse_container()
 		{
@@ -37,17 +41,46 @@ namespace Maestro.Tests.Performance
 			Console.WriteLine(Measure(() => container.Get<C3>()) / Measure(Baseline));
 		}
 
+		//[Fact]
 		[Fact(Skip = "performance")]
 		public void property_injection()
 		{
+			var container = new Container(x => x.For<P>().Use<P>().SetProperty("O", new object()));
 			Action baseline = () => new P { O = new object() };
-			var container = new Container(x => x.For<P>().Use<P>().SetProperty(y => y.O));
 			Action work = () => container.Get<P>();
+			Compare(baseline, work);
+		}
 
+		//[Fact]
+		[Fact(Skip = "performance")]
+		public void get_generics()
+		{
+			var container = new Container(x => x.For(typeof(IList<>)).Use(typeof(List<>)));
+			Action baseline = () => new List<string>();
+			Action work = () => container.Get<IList<string>>();
+			Compare(baseline, work);
+		}
+
+		//[Fact]
+		[Fact(Skip = "performance")]
+		public void get_all_generics()
+		{
+			var container = new Container(x =>
+													{
+														x.For(typeof(IList<>)).Add(typeof(List<>));
+														x.For(typeof(IList<>)).Add(typeof(List<>));
+													});
+			Action baseline = delegate { var temp = new[] { new List<string>(), new List<string>() }; };
+			Action work = () => container.GetAll<IList<string>>();
+			Compare(baseline, work);
+		}
+
+		static void Compare(Action baseline, Action work)
+		{
 			Warmup(baseline);
 			Warmup(work);
 
-			Console.WriteLine(Measure(() => work()) / Measure(() => baseline()));
+			Console.WriteLine(Measure(work) / Measure(baseline));
 		}
 
 		private static void Baseline()
