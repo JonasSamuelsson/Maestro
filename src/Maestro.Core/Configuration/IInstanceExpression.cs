@@ -70,15 +70,6 @@ namespace Maestro.Configuration
 		/// <summary>
 		/// Set property <paramref name="property"/>.
 		/// </summary>
-		/// <typeparam name="TValue"></typeparam>
-		/// <param name="property"></param>
-		/// <returns></returns>
-		/// <remarks>Throws if the property type can't be resolved.</remarks>
-		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
-
-		/// <summary>
-		/// Set property <paramref name="property"/>.
-		/// </summary>
 		/// <param name="property"></param>
 		/// <returns></returns>
 		/// <remarks>Throws if the property type can't be resolved.</remarks>
@@ -92,48 +83,57 @@ namespace Maestro.Configuration
 		/// <returns></returns>
 		IInstanceExpression<TInstance, TParent> SetProperty(string property, object value);
 
-		///// <summary>
-		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
-		///// </summary>
-		///// <param name="property"></param>
-		///// <param name="factory"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TInstance, TParent> Set(string property, Func<object> factory);
+		/// <summary>
+		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="factory"></param>
+		/// <returns></returns>
+		IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<object> factory);
 
-		///// <summary>
-		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
-		///// </summary>
-		///// <param name="property"></param>
-		///// <param name="factory"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TInstance, TParent> Set(string property, Func<IContext, object> factory);
+		/// <summary>
+		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
+		/// </summary>
+		/// <param name="property"></param>
+		/// <param name="factory"></param>
+		/// <returns></returns>
+		IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, object> factory);
 
-		///// <summary>
-		///// Set property <paramref name="property"/> with value <paramref name="value"/>.
-		///// </summary>
-		///// <typeparam name="TValue"></typeparam>
-		///// <param name="property"></param>
-		///// <param name="value"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TInstance, TParent> Set<TValue>(Expression<Func<TInstance, TValue>> property, TValue value);
+		/// <summary>
+		/// Set property <paramref name="property"/>.
+		/// </summary>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="property"></param>
+		/// <returns></returns>
+		/// <remarks>Throws if the property type can't be resolved.</remarks>
+		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
 
-		///// <summary>
-		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
-		///// </summary>
-		///// <typeparam name="TValue"></typeparam>
-		///// <param name="property"></param>
-		///// <param name="factory"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TInstance, TParent> Set<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory);
+		/// <summary>
+		/// Set property <paramref name="property"/> with value <paramref name="value"/>.
+		/// </summary>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, TValue value);
 
-		///// <summary>
-		///// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
-		///// </summary>
-		///// <typeparam name="TValue"></typeparam>
-		///// <param name="property"></param>
-		///// <param name="factory"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TInstance, TParent> Set<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
+		/// <summary>
+		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
+		/// </summary>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="property"></param>
+		/// <param name="factory"></param>
+		/// <returns></returns>
+		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory);
+
+		/// <summary>
+		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
+		/// </summary>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="property"></param>
+		/// <param name="factory"></param>
+		/// <returns></returns>
+		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
 
 		///// <summary>
 		///// Set property <paramref name="property"/> if the property type can be resolved.
