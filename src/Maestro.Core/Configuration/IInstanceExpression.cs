@@ -43,30 +43,6 @@ namespace Maestro.Configuration
 		/// <returns></returns>
 		IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor);
 
-		///// <summary>
-		///// Adds <paramref name="interceptor"/> to the pipeline.
-		///// </summary>
-		///// <typeparam name="TOut"></typeparam>
-		///// <param name="interceptor"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TOut, TParent> Intercept<TOut>(IInterceptor<TInstance, TOut> interceptor);
-
-		///// <summary>
-		///// Adds <paramref name="lambda"/> to the pipeline.
-		///// </summary>
-		///// <typeparam name="TOut"></typeparam>
-		///// <param name="lambda"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TOut, TParent> Intercept<TOut>(Func<TInstance, TOut> lambda);
-
-		///// <summary>
-		///// Adds <paramref name="lambda"/> to the pipeline.
-		///// </summary>
-		///// <typeparam name="TOut"></typeparam>
-		///// <param name="lambda"></param>
-		///// <returns></returns>
-		//IInstanceExpression<TOut, TParent> Intercept<TOut>(Func<TInstance, IContext, TOut> lambda);
-
 		/// <summary>
 		/// Set property <paramref name="property"/>.
 		/// </summary>
@@ -134,22 +110,5 @@ namespace Maestro.Configuration
 		/// <param name="factory"></param>
 		/// <returns></returns>
 		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
-
-		///// <summary>
-		///// Set property <paramref name="property"/> if the property type can be resolved.
-		///// </summary>
-		///// <param name="property"></param>
-		///// <returns></returns>
-		///// <remarks>Does not throw if the property type can't be resolved.</remarks>
-		//IInstanceExpression<TInstance, TParent> TrySet(string property);
-
-		///// <summary>
-		///// Set property <paramref name="property"/> if the property type can be resolved.
-		///// </summary>
-		///// <typeparam name="TValue"></typeparam>
-		///// <param name="property"></param>
-		///// <returns></returns>
-		///// <remarks>Does not throw if the property type can't be resolved.</remarks>
-		//IInstanceExpression<TInstance, TParent> TrySet<TValue>(Expression<Func<TInstance, TValue>> property);
 	}
 }
