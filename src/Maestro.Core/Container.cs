@@ -59,7 +59,15 @@ namespace Maestro
 
 		public object Get(Type type, string name = null)
 		{
-			return _kernel.Get(type, name);
+			object instance;
+			if (TryGet(type, name, out instance))
+				return instance;
+
+			var template = PluginLookup.EqualsDefaultName(name)
+									? "Can't get default instance of type '{0}'."
+									: "Can't get '{1}' instance of type '{0}'.";
+			var message = string.Format(template, type.FullName, name);
+			throw new ActivationException(message);
 		}
 
 		public bool TryGet<T>(out T instance)
@@ -82,7 +90,18 @@ namespace Maestro
 
 		public bool TryGet(Type type, string name, out object instance)
 		{
-			return _kernel.TryGet(type, name, out instance);
+			try
+			{
+				return _kernel.TryGet(type, name, out instance);
+			}
+			catch (Exception exception)
+			{
+				var template = PluginLookup.EqualsDefaultName(name)
+										? "Can't get default instance of type '{0}'."
+										: "Can't get '{1}' instance of type '{0}'.";
+				var message = string.Format(template, type.FullName, name);
+				throw new ActivationException(message, exception);
+			}
 		}
 
 		public IEnumerable<T> GetAll<T>()
@@ -92,7 +111,15 @@ namespace Maestro
 
 		public IEnumerable<object> GetAll(Type type)
 		{
-			return _kernel.GetAll(type);
+			try
+			{
+				return _kernel.GetAll(type);
+			}
+			catch (Exception exception)
+			{
+				var message = $"Can't get all instances of type '{type.FullName}'.";
+				throw new ActivationException(message, exception);
+			}
 		}
 
 		public string GetConfiguration()

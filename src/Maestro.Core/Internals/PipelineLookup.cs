@@ -5,14 +5,14 @@ namespace Maestro.Internals
 {
 	class PipelineLookup
 	{
-		private readonly Dictionary<string, IEnumerable<Pipeline>> _dictionary = new Dictionary<string, IEnumerable<Pipeline>>();
+		private readonly Dictionary<string, IEnumerable<IPipeline>> _dictionary = new Dictionary<string, IEnumerable<IPipeline>>();
 
-		public void Add(string key, Pipeline pipeline)
+		public void Add(string key, IPipeline pipeline)
 		{
 			Add(key, new[] { pipeline });
 		}
 
-		public void Add(string key, IEnumerable<Pipeline> pipelines)
+		public void Add(string key, IEnumerable<IPipeline> pipelines)
 		{
 			_dictionary.Add(key, pipelines);
 		}
@@ -22,16 +22,16 @@ namespace Maestro.Internals
 			_dictionary.Clear();
 		}
 
-		public bool TryGet(string key, out Pipeline pipeline)
+		public bool TryGet(string key, out IPipeline pipeline)
 		{
-			IEnumerable<Pipeline> pipelines;
+			IEnumerable<IPipeline> pipelines;
 			pipeline = _dictionary.TryGetValue(key, out pipelines)
 							  ? pipelines.Single()
 							  : null;
 			return pipeline != null;
 		}
 
-		public bool TryGet(string key, out IEnumerable<Pipeline> pipelines)
+		public bool TryGet(string key, out IEnumerable<IPipeline> pipelines)
 		{
 			return _dictionary.TryGetValue(key, out pipelines);
 		}
