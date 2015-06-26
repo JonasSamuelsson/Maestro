@@ -17,36 +17,31 @@ namespace Maestro.Tests.TypeFactoryResolvers
 		public void should_not_get_object()
 		{
 			var container = new Container();
-			Should.Throw<ActivationException>(() => container.Get<object>())
-				.Message.ShouldBe("Can't get default instance of type System.Object.");
+			Should.Throw<ActivationException>(() => container.Get<object>());
 		}
 
 		[Fact]
 		public void should_not_get_interface()
 		{
 			var container = new Container();
-			Should.Throw<ActivationException>(() => container.Get<IDisposable>())
-				.Message.ShouldBe("Can't get default instance of type System.IDisposable.");
+			Should.Throw<ActivationException>(() => container.Get<IDisposable>());
 		}
 
 		[Fact]
 		public void should_not_get_struct()
 		{
 			var container = new Container();
-			Should.Throw<ActivationException>(() => container.Get<int>())
-				.Message.ShouldBe("Can't get default instance of type System.Int32.");
+			Should.Throw<ActivationException>(() => container.Get<int>());
 		}
 
 		[Fact]
 		public void should_not_get_array()
 		{
 			var container = new Container();
-			Should.Throw<ActivationException>(() => container.Get<int[]>())
-				.Message.ShouldBe("Can't get default instance of type System.Int32[].");
+			Should.Throw<ActivationException>(() => container.Get<int[]>());
 
 			container.Configure(x => x.For<int>().Use(1));
-			Should.Throw<ActivationException>(() => container.Get<int[]>())
-				.Message.ShouldBe("Can't get default instance of type System.Int32[].");
+			Should.Throw<ActivationException>(() => container.Get<int[]>());
 		}
 	}
 }

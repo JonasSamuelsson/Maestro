@@ -73,6 +73,8 @@
     <Compile Include="Interceptors\FuncInterceptor.cs" />
     <Compile Include="Interceptors\SetPropertyAction.cs" />
     <Compile Include="Interceptors\SetPropertyActionFactory.cs" />
+    <Compile Include="Internals\EnumerablePipeline.cs" />
+    <Compile Include="Internals\IPipeline.cs" />
     <Compile Include="Lifetimes\INextStep.cs" />
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryProviderResolver.cs" />
     <Compile Include="Internals\Context.cs" />
@@ -117,7 +119,6 @@
     <Compile Include="Lifetimes\ILifetime.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="Configuration\IContainerExpression.cs" />
-    <Compile Include="ITypeStack.cs" />
     <Compile Include="Lifetimes\ContextSingletonLifetime.cs" />
     <Compile Include="Lifetimes\SingletonLifetime.cs" />
     <Compile Include="Lifetimes\TransientLifetime.cs" />
@@ -127,7 +128,6 @@
     <Compile Include="Utils\Reflector.cs" />
     <Compile Include="Utils\ThreadSafeDictionary.cs" />
     <Compile Include="TypeExtensions.cs" />
-    <Compile Include="Utils\TypeStack.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

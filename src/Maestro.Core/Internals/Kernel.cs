@@ -48,42 +48,20 @@ namespace Maestro.Internals
 			if (TryGet(type, name, out instance))
 				return instance;
 
-			var message = name == PluginLookup.DefaultName
-								  ? $"Can't get default instance of type {type.FullName}."
-								  : $"Can't get '{name}' instance of type {type.FullName}.";
-			throw new ActivationException(message);
+			throw new NotImplementedException("foobar");
 		}
 
 		public bool TryGet(Type type, string name, out object instance)
 		{
-			try
-			{
-				instance = null;
-				name = name ?? PluginLookup.DefaultName;
-				using (var context = new Context(name, this))
-					return TryGet(type, context, out instance);
-			}
-			catch (Exception exception)
-			{
-				var message = name == PluginLookup.DefaultName
-									  ? $"Can't get default instance of type {type.FullName}."
-									  : $"Can't get '{name}' instance of type {type.FullName}.";
-				throw new ActivationException(message, exception);
-			}
+			name = name ?? PluginLookup.DefaultName;
+			using (var context = new Context(name, this))
+				return TryGet(type, context, out instance);
 		}
 
 		public IEnumerable<object> GetAll(Type type)
 		{
-			try
-			{
-				var context = new Context(PluginLookup.DefaultName, this);
-				return GetAll(type, context);
-			}
-			catch (Exception exception)
-			{
-				var message = $"Can't get instances of type {type.FullName}.";
-				throw new ActivationException(message, exception);
-			}
+			var context = new Context(PluginLookup.DefaultName, this);
+			return GetAll(type, context);
 		}
 
 		public bool CanGet(Type type, Context context)
@@ -92,7 +70,7 @@ namespace Maestro.Internals
 
 			try
 			{
-				Pipeline pipeline;
+				IPipeline pipeline;
 				return TryGetPipeline(type, context, out pipeline);
 			}
 			finally
@@ -107,7 +85,7 @@ namespace Maestro.Internals
 
 			try
 			{
-				Pipeline pipeline;
+				IPipeline pipeline;
 				instance = TryGetPipeline(type, context, out pipeline) ? pipeline.Execute(context) : null;
 				return instance != null;
 			}
@@ -124,7 +102,7 @@ namespace Maestro.Internals
 			try
 			{
 				var key = type.FullName;
-				IEnumerable<Pipeline> pipelines;
+				IEnumerable<IPipeline> pipelines;
 				if (!_pipelineLookup.TryGet(key, out pipelines))
 				{
 					lock (_pipelineLookup)
@@ -175,7 +153,7 @@ namespace Maestro.Internals
 			return false;
 		}
 
-		private bool TryGetPipeline(Type type, Context context, out Pipeline pipeline)
+		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
 		{
 			var key = GetKey(type, context);
 			if (!_pipelineLookup.TryGet(key, out pipeline))
@@ -190,6 +168,23 @@ namespace Maestro.Internals
 							pipeline = new Pipeline(plugin);
 							_pipelineLookup.Add(key, pipeline);
 							return true;
+						}
+
+						if (type.IsGenericType)
+						{
+							var genericTypeDefinition = type.GetGenericTypeDefinition();
+							if (genericTypeDefinition == typeof(IEnumerable<>))
+							{
+								var elementType = type.GetGenericArguments().Single();
+								var isPrimitive = elementType.IsValueType || elementType == typeof (string) || elementType == typeof (object);
+								var pipelines = GetPipelines(elementType).ToList();
+								if (!isPrimitive || pipelines.Count != 0)
+								{
+									pipeline = new EnumerablePipeline(elementType, pipelines);
+									_pipelineLookup.Add(key, pipeline);
+									return true;
+								}
+							}
 						}
 
 						foreach (var factoryProviderResolver in _factoryProviderResolvers)
@@ -215,6 +210,26 @@ namespace Maestro.Internals
 			}
 
 			return true;
+		}
+
+		private IEnumerable<IPipeline> GetPipelines(Type type)
+		{
+			var key = type.FullName;
+			IEnumerable<IPipeline> pipelines;
+
+			if (_pipelineLookup.TryGet(key, out pipelines))
+				return pipelines;
+
+			lock (_pipelineLookup)
+			{
+				if (_pipelineLookup.TryGet(key, out pipelines))
+					return pipelines;
+
+				var plugins = _pluginLookup.GetAll(type);
+				pipelines = plugins.Select(x => new Pipeline(x)).ToList();
+				_pipelineLookup.Add(key, pipelines);
+				return pipelines;
+			}
 		}
 
 		private static string GetKey(Type type, Context context)

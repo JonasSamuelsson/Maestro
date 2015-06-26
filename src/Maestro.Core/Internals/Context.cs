@@ -25,16 +25,8 @@ namespace Maestro.Internals
 
 		bool IContext.CanGet(Type type)
 		{
-			try
-			{
-				AssertNotDisposed();
-				return Kernel.CanGetDependency(type, this);
-			}
-			catch (Exception exception)
-			{
-				var message = $"Can't evaluate instance of type '{type.FullName}'.";
-				throw new ActivationException(message, exception);
-			}
+			AssertNotDisposed();
+			return Kernel.CanGetDependency(type, this);
 		}
 
 		T IContext.Get<T>()
@@ -48,8 +40,7 @@ namespace Maestro.Internals
 			if (((IContext)this).TryGet(type, out instance))
 				return instance;
 
-			var message = $"Can't get instance of type '{type.FullName}'.";
-			throw new ActivationException(message);
+			throw new NotImplementedException("foobar");
 		}
 
 		bool IContext.TryGet<T>(out T instance)
@@ -62,16 +53,8 @@ namespace Maestro.Internals
 
 		bool IContext.TryGet(Type type, out object instance)
 		{
-			try
-			{
-				AssertNotDisposed();
-				return Kernel.TryGet(type, this, out instance);
-			}
-			catch (Exception exception)
-			{
-				var message = $"Can't get instance of type '{type.FullName}'.";
-				throw new ActivationException(message, exception);
-			}
+			AssertNotDisposed();
+			return Kernel.TryGet(type, this, out instance);
 		}
 
 		IEnumerable<T> IContext.GetAll<T>()
@@ -81,23 +64,15 @@ namespace Maestro.Internals
 
 		IEnumerable<object> IContext.GetAll(Type type)
 		{
-			try
-			{
-				AssertNotDisposed();
-				return Kernel.GetAll(type, this);
-			}
-			catch (Exception exception)
-			{
-				var message = $"Can't get instances of type '{type.FullName}'.";
-				throw new ActivationException(message, exception);
-			}
+			AssertNotDisposed();
+			return Kernel.GetAll(type, this);
 		}
 
 		public void PushStackFrame(Type type)
 		{
 			if (_stack.Contains(type))
 			{
-				throw new InvalidOperationException("Cyclic dependency.");
+				throw new InvalidOperationException($"Cyclic dependency, '{type.FullName}'.");
 			}
 
 			_stack.Push(type);

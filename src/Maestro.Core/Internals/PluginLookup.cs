@@ -146,5 +146,10 @@ namespace Maestro.Internals
 			if (_parent == null) return;
 			_parent.PluginAdded -= ParentOnPluginAdded;
 		}
+
+		public static bool EqualsDefaultName(string name)
+		{
+			return string.IsNullOrEmpty(name);
+		}
 	}
 }

@@ -11,8 +11,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x => x.For<Factory>().Use(ctx => new Factory(ctx.Get)));
 			var factory = container.Get<Factory>();
-			Should.Throw<ActivationException>(() => factory.Get(typeof(object)))
-				.InnerException.ShouldBeOfType<ObjectDisposedException>();
+			Should.Throw<ObjectDisposedException>(() => factory.Get(typeof(object)));
 		}
 
 		class Factory
