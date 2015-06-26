@@ -79,6 +79,7 @@
     </Compile>
     <Compile Include="child_container.cs" />
     <Compile Include="CommonServiceLocator.cs" />
+    <Compile Include="context_can_get_tests.cs" />
     <Compile Include="Context_tests.cs" />
     <Compile Include="Conventions\add_concrete_classes_closing_convention.cs" />
     <Compile Include="Conventions\add_concrete_sub_classes_convention.cs" />

@@ -28,7 +28,7 @@ namespace Maestro.Internals
 			try
 			{
 				AssertNotDisposed();
-				return ((IContext)this).CanGet(type);
+				return Kernel.CanGetDependency(type, this);
 			}
 			catch (Exception exception)
 			{
