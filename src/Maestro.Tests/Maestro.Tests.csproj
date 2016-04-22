@@ -108,7 +108,7 @@
     <Compile Include="Interception\intercept_instance.cs" />
     <Compile Include="Interception\interception_tests.cs" />
     <Compile Include="Internals\Kernel_tests.cs" />
-    <Compile Include="Internals\PipelineLookup_tests.cs" />
+    <Compile Include="Internals\PipelineCache_tests.cs" />
     <Compile Include="Internals\PluginLookup_tests.cs" />
     <Compile Include="Lifetimes\context_lifetime.cs" />
     <Compile Include="Lifetimes\custom_lifetime.cs" />

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Maestro.Internals
 {
-	class PipelineLookup
+	class PipelineCache
 	{
 		private readonly Dictionary<string, IEnumerable<IPipeline>> _dictionary = new Dictionary<string, IEnumerable<IPipeline>>();
 

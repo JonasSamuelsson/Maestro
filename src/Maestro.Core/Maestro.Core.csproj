@@ -85,7 +85,7 @@
     <Compile Include="Internals\Kernel.cs" />
     <Compile Include="FactoryProviders\LambdaFactoryProvider.cs" />
     <Compile Include="Internals\Pipeline.cs" />
-    <Compile Include="Internals\PipelineLookup.cs" />
+    <Compile Include="Internals\PipelineCache.cs" />
     <Compile Include="Internals\Plugin.cs" />
     <Compile Include="Internals\PluginLookup.cs" />
     <Compile Include="TypeFactoryResolvers\FuncFactoryProviderResolver.cs" />
