@@ -10,7 +10,7 @@ namespace Maestro.Internals
 	internal class Kernel
 	{
 		private readonly PluginLookup _pluginLookup;
-		private readonly PipelineLookup _pipelineLookup;
+		private readonly PipelineCache _pipelineCache;
 		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
 
 		public Kernel() : this(new PluginLookup())
@@ -19,7 +19,7 @@ namespace Maestro.Internals
 		public Kernel(PluginLookup pluginLookup)
 		{
 			_pluginLookup = pluginLookup;
-			_pipelineLookup = new PipelineLookup();
+			_pipelineCache = new PipelineCache();
 			_factoryProviderResolvers = new IFactoryProviderResolver[]
 											{
 												new FuncFactoryProviderResolver(),
@@ -27,12 +27,12 @@ namespace Maestro.Internals
 												new ConcreteClosedClassFactoryProviderResolver()
 											};
 
-			_pluginLookup.PluginAdded += () => _pipelineLookup.Clear();
+			_pluginLookup.PluginAdded += () => _pipelineCache.Clear();
 		}
 
 		public void Add(Plugin plugin)
 		{
-			lock (_pipelineLookup)
+			lock (_pipelineCache)
 				_pluginLookup.Add(plugin);
 		}
 
@@ -103,15 +103,15 @@ namespace Maestro.Internals
 			{
 				var key = type.FullName;
 				IEnumerable<IPipeline> pipelines;
-				if (!_pipelineLookup.TryGet(key, out pipelines))
+				if (!_pipelineCache.TryGet(key, out pipelines))
 				{
-					lock (_pipelineLookup)
+					lock (_pipelineCache)
 					{
-						if (!_pipelineLookup.TryGet(key, out pipelines))
+						if (!_pipelineCache.TryGet(key, out pipelines))
 						{
 							var plugins = _pluginLookup.GetAll(type);
 							pipelines = plugins.Select(x => new Pipeline(x)).ToList();
-							_pipelineLookup.Add(key, pipelines);
+							_pipelineCache.Add(key, pipelines);
 						}
 					}
 				}
@@ -156,17 +156,17 @@ namespace Maestro.Internals
 		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
 		{
 			var key = GetKey(type, context);
-			if (!_pipelineLookup.TryGet(key, out pipeline))
+			if (!_pipelineCache.TryGet(key, out pipeline))
 			{
-				lock (_pipelineLookup)
+				lock (_pipelineCache)
 				{
-					if (!_pipelineLookup.TryGet(key, out pipeline))
+					if (!_pipelineCache.TryGet(key, out pipeline))
 					{
 						Plugin plugin;
 						if (_pluginLookup.TryGet(type, context.Name, out plugin))
 						{
 							pipeline = new Pipeline(plugin);
-							_pipelineLookup.Add(key, pipeline);
+							_pipelineCache.Add(key, pipeline);
 							return true;
 						}
 
@@ -176,12 +176,12 @@ namespace Maestro.Internals
 							if (genericTypeDefinition == typeof(IEnumerable<>))
 							{
 								var elementType = type.GetGenericArguments().Single();
-								var isPrimitive = elementType.IsValueType || elementType == typeof (string) || elementType == typeof (object);
+								var isPrimitive = elementType.IsValueType || elementType == typeof(string) || elementType == typeof(object);
 								var pipelines = GetPipelines(elementType).ToList();
 								if (!isPrimitive || pipelines.Count != 0)
 								{
 									pipeline = new EnumerablePipeline(elementType, pipelines);
-									_pipelineLookup.Add(key, pipeline);
+									_pipelineCache.Add(key, pipeline);
 									return true;
 								}
 							}
@@ -200,7 +200,7 @@ namespace Maestro.Internals
 									FactoryProvider = factoryProvider
 								}
 							};
-							_pipelineLookup.Add(key, pipeline);
+							_pipelineCache.Add(key, pipeline);
 							return true;
 						}
 
@@ -217,17 +217,17 @@ namespace Maestro.Internals
 			var key = type.FullName;
 			IEnumerable<IPipeline> pipelines;
 
-			if (_pipelineLookup.TryGet(key, out pipelines))
+			if (_pipelineCache.TryGet(key, out pipelines))
 				return pipelines;
 
-			lock (_pipelineLookup)
+			lock (_pipelineCache)
 			{
-				if (_pipelineLookup.TryGet(key, out pipelines))
+				if (_pipelineCache.TryGet(key, out pipelines))
 					return pipelines;
 
 				var plugins = _pluginLookup.GetAll(type);
 				pipelines = plugins.Select(x => new Pipeline(x)).ToList();
-				_pipelineLookup.Add(key, pipelines);
+				_pipelineCache.Add(key, pipelines);
 				return pipelines;
 			}
 		}
