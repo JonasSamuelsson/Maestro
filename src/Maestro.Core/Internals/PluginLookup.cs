@@ -2,23 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Maestro.Lifetimes;
+using Maestro.Utils;
 
 namespace Maestro.Internals
 {
 	internal class PluginLookup : IPluginLookup, IDisposable
 	{
 		readonly List<Plugin> _list = new List<Plugin>();
-		readonly PluginLookup _parent;
-
-		public PluginLookup()
-		{
-		}
-
-		public PluginLookup(PluginLookup parent)
-		{
-			_parent = parent;
-			_parent.PluginAdded += ParentOnPluginAdded;
-		}
 
 		private void ParentOnPluginAdded()
 		{
@@ -52,44 +42,31 @@ namespace Maestro.Internals
 
 		private Plugin GetPluginOrNull(Type type, string name)
 		{
-			start:
-			var lookup = this;
-			do
-			{
-				var plugin = lookup._list.FirstOrDefault(x => x.Type == type && x.Name == name);
-				if (plugin != null) return plugin;
+			var plugin = _list.FirstOrDefault(x => x.Type == type && x.Name == name);
+			if (plugin != null) return plugin;
 
-				if (type.IsGenericType)
+			if (type.IsGenericType)
+			{
+				var genericTypeDefinition = type.GetGenericTypeDefinition();
+				plugin = _list.FirstOrDefault(x => x.Type == genericTypeDefinition && x.Name == name);
+
+				if (plugin != null)
 				{
-					var genericTypeDefinition = type.GetGenericTypeDefinition();
-					plugin = lookup._list.FirstOrDefault(x => x.Type == genericTypeDefinition && x.Name == name);
-
-					if (plugin != null)
+					var genericArguments = type.GetGenericArguments();
+					var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
+					var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
+					var lifetime = plugin.Lifetime.MakeGeneric(genericArguments);
+					plugin = new Plugin
 					{
-						var genericArguments = type.GetGenericArguments();
-						var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
-						var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
-						var lifetime = plugin.Lifetime.MakeGeneric(genericArguments);
-						plugin = new Plugin
-						{
-							FactoryProvider = factoryProvider,
-							Interceptors = interceptors,
-							Lifetime = lifetime,
-							Name = name,
-							Type = type
-						};
-						lookup._list.Add(plugin);
-						return plugin;
-					}
+						FactoryProvider = factoryProvider,
+						Interceptors = interceptors,
+						Lifetime = lifetime,
+						Name = name,
+						Type = type
+					};
+					_list.Add(plugin);
+					return plugin;
 				}
-
-				lookup = lookup._parent;
-			} while (lookup != null);
-
-			if (name != DefaultName)
-			{
-				name = DefaultName;
-				goto start;
 			}
 
 			return null;
@@ -97,53 +74,43 @@ namespace Maestro.Internals
 
 		public IEnumerable<Plugin> GetAll(Type type)
 		{
-			var lookup = this;
 			var names = new HashSet<string>();
 			var plugins = new List<Plugin>();
 			var isGenericType = type.IsGenericType;
 			var genericTypeDefinition = isGenericType ? type.GetGenericTypeDefinition() : null;
 
-			do
+			foreach (var plugin in _list.ToList())
 			{
-				foreach (var plugin in lookup._list.ToList())
-				{
-					if (type != plugin.Type) continue;
-					if (names.Contains(plugin.Name)) continue;
-					plugins.Add(plugin);
-					names.Add(plugin.Name);
-				}
+				if (type != plugin.Type) continue;
+				if (names.Contains(plugin.Name)) continue;
+				plugins.Add(plugin);
+				names.Add(plugin.Name);
+			}
 
-				foreach (var plugin in lookup._list.ToList())
+			foreach (var plugin in _list.ToList())
+			{
+				if (genericTypeDefinition != plugin.Type) continue;
+				if (names.Contains(plugin.Name)) continue;
+				var genericArguments = type.GetGenericArguments();
+				var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
+				var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
+				var newPlugin = new Plugin
 				{
-					if (genericTypeDefinition != plugin.Type) continue;
-					if (names.Contains(plugin.Name)) continue;
-					var genericArguments = type.GetGenericArguments();
-					var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
-					var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
-					var newPlugin = new Plugin
-					{
-						FactoryProvider = factoryProvider,
-						Interceptors = interceptors,
-						Lifetime = new TransientLifetime(),
-						Name = plugin.Name,
-						Type = type
-					};
-					lookup._list.Add(newPlugin);
-					plugins.Add(newPlugin);
-					names.Add(newPlugin.Name);
-				}
-
-				lookup = lookup._parent;
-			} while (lookup != null);
+					FactoryProvider = factoryProvider,
+					Interceptors = interceptors,
+					Lifetime = new TransientLifetime(),
+					Name = plugin.Name,
+					Type = type
+				};
+				_list.Add(newPlugin);
+				plugins.Add(newPlugin);
+				names.Add(newPlugin.Name);
+			}
 
 			return plugins;
 		}
 
-		public void Dispose()
-		{
-			if (_parent == null) return;
-			_parent.PluginAdded -= ParentOnPluginAdded;
-		}
+		public void Dispose() { }
 
 		public static bool EqualsDefaultName(string name)
 		{
