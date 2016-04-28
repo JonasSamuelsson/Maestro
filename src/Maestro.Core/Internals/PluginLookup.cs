@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Maestro.FactoryProviders;
-using Maestro.Interceptors;
 using Maestro.Lifetimes;
 
 namespace Maestro.Internals
