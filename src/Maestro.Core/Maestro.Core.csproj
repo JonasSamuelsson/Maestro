@@ -128,6 +128,7 @@
     <Compile Include="Utils\Reflector.cs" />
     <Compile Include="Utils\ThreadSafeDictionary.cs" />
     <Compile Include="TypeExtensions.cs" />
+    <Compile Include="Utils\ThreadSafeList.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

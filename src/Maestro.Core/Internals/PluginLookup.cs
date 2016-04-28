@@ -8,7 +8,7 @@ namespace Maestro.Internals
 {
 	internal class PluginLookup : IPluginLookup, IDisposable
 	{
-		readonly List<Plugin> _list = new List<Plugin>();
+		readonly ThreadSafeList<Plugin> _list = new ThreadSafeList<Plugin>();
 
 		private void ParentOnPluginAdded()
 		{
