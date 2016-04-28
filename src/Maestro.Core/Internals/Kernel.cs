@@ -12,6 +12,7 @@ namespace Maestro.Internals
 		private readonly PluginLookup _pluginLookup;
 		private readonly PipelineCache _pipelineCache;
 		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
+		private readonly Kernel _parent;
 
 		public Kernel() : this(new PluginLookup())
 		{ }
@@ -30,6 +31,11 @@ namespace Maestro.Internals
 			_pluginLookup.PluginAdded += () => _pipelineCache.Clear();
 		}
 
+		private Kernel(Kernel kernel) : this()
+		{
+			_parent = kernel;
+		}
+
 		public void Add(Plugin plugin)
 		{
 			lock (_pipelineCache)
@@ -38,7 +44,7 @@ namespace Maestro.Internals
 
 		public Kernel GetChildKernel()
 		{
-			return new Kernel(new PluginLookup(_pluginLookup));
+			return new Kernel(this);
 		}
 
 		public object Get(Type type, string name)
@@ -155,35 +161,47 @@ namespace Maestro.Internals
 
 		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
 		{
-			var key = GetKey(type, context);
-			if (!_pipelineCache.TryGet(key, out pipeline))
+			var pipelineKey = GetPipelineKey(type, context);
+			if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
 			{
 				lock (_pipelineCache)
 				{
-					if (!_pipelineCache.TryGet(key, out pipeline))
+					if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
 					{
-						Plugin plugin;
-						if (_pluginLookup.TryGet(type, context.Name, out plugin))
-						{
-							pipeline = new Pipeline(plugin);
-							_pipelineCache.Add(key, pipeline);
-							return true;
-						}
+						var name = context.Name;
 
-						if (type.IsGenericType)
+						tryGetPlugin:
+						for (var kernel = this; kernel != null; kernel = kernel._parent)
 						{
-							var genericTypeDefinition = type.GetGenericTypeDefinition();
-							if (genericTypeDefinition == typeof(IEnumerable<>))
+							Plugin plugin;
+							if (kernel._pluginLookup.TryGet(type, name, out plugin))
 							{
-								var elementType = type.GetGenericArguments().Single();
-								var isPrimitive = elementType.IsValueType || elementType == typeof(string) || elementType == typeof(object);
-								var pipelines = GetPipelines(elementType).ToList();
-								if (!isPrimitive || pipelines.Count != 0)
+								pipeline = new Pipeline(plugin);
+								_pipelineCache.Add(pipelineKey, pipeline);
+								return true;
+							}
+
+							if (type.IsGenericType)
+							{
+								var genericTypeDefinition = type.GetGenericTypeDefinition();
+								if (genericTypeDefinition == typeof(IEnumerable<>))
 								{
-									pipeline = new EnumerablePipeline(elementType, pipelines);
-									_pipelineCache.Add(key, pipeline);
-									return true;
+									var elementType = type.GetGenericArguments().Single();
+									var isPrimitive = elementType.IsValueType || elementType == typeof(string) || elementType == typeof(object);
+									var pipelines = GetPipelines(elementType).ToList();
+									if (!isPrimitive || pipelines.Count != 0)
+									{
+										pipeline = new EnumerablePipeline(elementType, pipelines);
+										_pipelineCache.Add(pipelineKey, pipeline);
+										return true;
+									}
 								}
+							}
+
+							if (name != PluginLookup.DefaultName)
+							{
+								name = PluginLookup.DefaultName;
+								goto tryGetPlugin;
 							}
 						}
 
@@ -200,7 +218,7 @@ namespace Maestro.Internals
 									FactoryProvider = factoryProvider
 								}
 							};
-							_pipelineCache.Add(key, pipeline);
+							_pipelineCache.Add(pipelineKey, pipeline);
 							return true;
 						}
 
@@ -232,10 +250,9 @@ namespace Maestro.Internals
 			}
 		}
 
-		private static string GetKey(Type type, Context context)
+		private static string GetPipelineKey(Type type, Context context)
 		{
-			var key = $"{type.FullName}-{context.Name}";
-			return key;
+			return $"{type.FullName}-{context.Name}";
 		}
 
 		private static bool IsEnumerable(Type type)
