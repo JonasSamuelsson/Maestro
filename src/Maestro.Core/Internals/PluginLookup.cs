@@ -74,7 +74,6 @@ namespace Maestro.Internals
 
 		public IEnumerable<Plugin> GetAll(Type type)
 		{
-			var names = new HashSet<string>();
 			var plugins = new List<Plugin>();
 			var isGenericType = type.IsGenericType;
 			var genericTypeDefinition = isGenericType ? type.GetGenericTypeDefinition() : null;
@@ -82,15 +81,12 @@ namespace Maestro.Internals
 			foreach (var plugin in _list.ToList())
 			{
 				if (type != plugin.Type) continue;
-				if (names.Contains(plugin.Name)) continue;
 				plugins.Add(plugin);
-				names.Add(plugin.Name);
 			}
 
 			foreach (var plugin in _list.ToList())
 			{
 				if (genericTypeDefinition != plugin.Type) continue;
-				if (names.Contains(plugin.Name)) continue;
 				var genericArguments = type.GetGenericArguments();
 				var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
 				var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
@@ -104,7 +100,6 @@ namespace Maestro.Internals
 				};
 				_list.Add(newPlugin);
 				plugins.Add(newPlugin);
-				names.Add(newPlugin.Name);
 			}
 
 			return plugins;

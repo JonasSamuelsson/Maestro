@@ -115,8 +115,19 @@ namespace Maestro.Internals
 					{
 						if (!_pipelineCache.TryGet(key, out pipelines))
 						{
-							var plugins = _pluginLookup.GetAll(type);
-							pipelines = plugins.Select(x => new Pipeline(x)).ToList();
+							var names = new HashSet<string>();
+							var list = new List<IPipeline>();
+							for (var kernel = this; kernel != null; kernel = kernel._parent)
+							{
+								var plugins = kernel._pluginLookup.GetAll(type).ToList();
+								for (var i = 0; i < plugins.Count; i++)
+								{
+									var plugin = plugins[i];
+									if (!names.Add(plugin.Name)) continue;
+									list.Add(new Pipeline(plugin));
+								}
+							}
+							pipelines = list;
 							_pipelineCache.Add(key, pipelines);
 						}
 					}
@@ -232,7 +243,7 @@ namespace Maestro.Internals
 
 		private IEnumerable<IPipeline> GetPipelines(Type type)
 		{
-			var key = type.FullName;
+			var key = $"{type.FullName}[]";
 			IEnumerable<IPipeline> pipelines;
 
 			if (_pipelineCache.TryGet(key, out pipelines))
@@ -252,7 +263,7 @@ namespace Maestro.Internals
 
 		private static string GetPipelineKey(Type type, Context context)
 		{
-			return $"{type.FullName}-{context.Name}";
+			return $"{type.FullName}:{context.Name}";
 		}
 
 		private static bool IsEnumerable(Type type)
