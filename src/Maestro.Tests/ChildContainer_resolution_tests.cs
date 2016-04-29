@@ -17,5 +17,23 @@ namespace Maestro.Tests
 
 			collection.ShouldBeOfType<List<object>>();
 		}
+
+		[Fact]
+		public void GetAll_should_get_instances_from_parent_container_if_name_is_different()
+		{
+			var parentContainer = new Container(x =>
+			{
+				x.For<object>().Use("default parent");
+				x.For<object>().Add("parent");
+			});
+
+			var childContainer = parentContainer.GetChildContainer(x =>
+			{
+				x.For<object>().Use("default child");
+				x.For<object>().Add("child");
+			});
+
+			childContainer.GetAll<object>().ShouldBe(new[] { "default child", "child", "parent" });
+		}
 	}
 }
