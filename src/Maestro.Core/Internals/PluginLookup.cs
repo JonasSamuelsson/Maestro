@@ -24,14 +24,19 @@ namespace Maestro.Internals
 
 		public event Action PluginAdded = delegate { };
 
-		public void Add(Plugin plugin)
+		public bool Add(Plugin plugin, bool throwIfDuplicate = true)
 		{
 			if (_list.Any(x => x.Type == plugin.Type && x.Name != null && x.Name == plugin.Name))
-				throw new InvalidOperationException("Duplicate key");
+			{
+				if (throwIfDuplicate) throw new InvalidOperationException("Duplicate key");
+				return false;
+			}
 
 			_list.Add(plugin);
 
 			PluginAdded();
+
+			return true;
 		}
 
 		public bool TryGet(Type type, string name, out Plugin plugin)
