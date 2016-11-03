@@ -128,6 +128,7 @@
     <Compile Include="cyclic_dependencies.cs" />
     <Compile Include="TodoAttribute.cs" />
     <Compile Include="try_get_instance.cs" />
+    <Compile Include="try_use.cs" />
     <Compile Include="TypeExtensions_IsConcreteClassClosing.cs" />
     <Compile Include="TypeExtensions_IsConcreteSubClassOf.cs" />
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryResolver_tests.cs" />

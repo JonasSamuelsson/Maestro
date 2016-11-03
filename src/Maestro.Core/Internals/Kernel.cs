@@ -36,10 +36,10 @@ namespace Maestro.Internals
 			_parent = kernel;
 		}
 
-		public void Add(Plugin plugin)
+		public bool Add(Plugin plugin, bool throwIfDuplicate)
 		{
 			lock (_pipelineCache)
-				_pluginLookup.Add(plugin);
+				return _pluginLookup.Add(plugin, throwIfDuplicate);
 		}
 
 		public Kernel GetChildKernel()
