@@ -7,12 +7,14 @@ using Maestro.TypeFactoryResolvers;
 
 namespace Maestro.Internals
 {
-	internal class Kernel
+	internal class Kernel : IDisposable
 	{
 		private readonly PluginLookup _pluginLookup;
 		private readonly PipelineCache _pipelineCache;
 		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
 		private readonly Kernel _parent;
+
+		public event EventHandler ConfigurationChanged;
 
 		public Kernel() : this(new PluginLookup())
 		{ }
@@ -28,12 +30,23 @@ namespace Maestro.Internals
 												new ConcreteClosedClassFactoryProviderResolver()
 											};
 
-			_pluginLookup.PluginAdded += () => _pipelineCache.Clear();
+			_pluginLookup.PluginAdded += () =>
+			{
+				_pipelineCache.Clear();
+				ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+			};
 		}
 
 		private Kernel(Kernel kernel) : this()
 		{
 			_parent = kernel;
+			_parent.ConfigurationChanged += ParentConfigurationChanged;
+		}
+
+		private void ParentConfigurationChanged(object sender, EventArgs e)
+		{
+			lock (_pipelineCache)
+				_pipelineCache.Clear();
 		}
 
 		public bool Add(Plugin plugin, bool throwIfDuplicate)
@@ -273,6 +286,12 @@ namespace Maestro.Internals
 			if (genericTypeDefinition != typeof(IEnumerable<>)) return false;
 			var genericArgument = type.GetGenericArguments().Single();
 			return genericArgument != typeof(string) && !genericArgument.IsValueType;
+		}
+
+		public void Dispose()
+		{
+			if (_parent == null) return;
+			_parent.ConfigurationChanged -= ParentConfigurationChanged;
 		}
 	}
 }

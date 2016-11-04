@@ -14,6 +14,16 @@ namespace Maestro.Configuration
 			_defaultSettings = defaultSettings;
 		}
 
+		public IConventionExpression Scan
+		{
+			get { return new ConventionExpression(this, _defaultSettings); }
+		}
+
+		public IDefaultSettingsExpression Default
+		{
+			get { return _defaultSettings; }
+		}
+
 		public IDefaultPluginExpression For(Type type)
 		{
 			return new PluginExpression<object>(type, PluginLookup.DefaultName, _kernel, _defaultSettings);
@@ -32,16 +42,6 @@ namespace Maestro.Configuration
 		public IPluginExpression<T> For<T>(string name)
 		{
 			return new PluginExpression<T>(typeof(T), name, _kernel, _defaultSettings);
-		}
-
-		public IConventionExpression Scan
-		{
-			get { return new ConventionExpression(this, _defaultSettings); }
-		}
-
-		public IDefaultSettingsExpression Default
-		{
-			get { return _defaultSettings; }
 		}
 	}
 }
