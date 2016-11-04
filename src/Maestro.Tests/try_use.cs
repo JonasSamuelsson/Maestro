@@ -32,5 +32,15 @@ namespace Maestro.Tests
 
 			container.Get(typeof(string), "foobar").ShouldBe("success");
 		}
+
+		[Fact]
+		public void TryUse_should_return_null_when_service_is_already_registered()
+		{
+			new Container(x =>
+			{
+				x.For<object>().TryUse<object>().ShouldNotBeNull();
+				x.For<object>().TryUse<object>().ShouldBeNull();
+			});
+		}
 	}
 }
