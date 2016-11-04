@@ -37,7 +37,8 @@ namespace Maestro
 
 		public void Configure(Action<IContainerExpression> action)
 		{
-			action(new ContainerExpression(_kernel, _defaultSettings));
+			var containerExpression = new ContainerExpression(_kernel, _defaultSettings);
+			action(containerExpression);
 		}
 
 		public IContainer GetChildContainer()
@@ -149,6 +150,7 @@ namespace Maestro
 		public void Dispose()
 		{
 			DisposedEvent?.Invoke(_id);
+			_kernel.Dispose();
 		}
 	}
 }
