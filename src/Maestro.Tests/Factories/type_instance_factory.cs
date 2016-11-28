@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Shouldly;
 using Xunit;
 
@@ -10,7 +9,7 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_instantiate_type_with_no_dependencies()
 		{
-			var container = new Container(x => x.For<INoDependencies>().Use<NoDependencies>());
+			var container = new Container(x => x.Service<INoDependencies>().Use.Type<NoDependencies>());
 			container.Get<INoDependencies>();
 		}
 
@@ -19,8 +18,8 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.For<INoDependencies>().Use<NoDependencies>();
-				x.For<IOneDependency>().Use<RequiredDependency>();
+				x.Service<INoDependencies>().Use.Type<NoDependencies>();
+				x.Service<IOneDependency>().Use.Type<RequiredDependency>();
 			});
 
 			var instance = container.Get<IOneDependency>();
@@ -33,8 +32,8 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.For<INoDependencies>().Use<NoDependencies>();
-				x.For<IOneDependency>().Use<OptionalDependency>();
+				x.Service<INoDependencies>().Use.Type<NoDependencies>();
+				x.Service<IOneDependency>().Use.Type<OptionalDependency>();
 			});
 
 			var instance = container.Get<IOneDependency>();
@@ -45,11 +44,11 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_reevaluate_constructor_to_use_when_config_changes()
 		{
-			var container = new Container(x => x.For<IOneDependency>().Use<OptionalDependency>());
+			var container = new Container(x => x.Service<IOneDependency>().Use.Type<OptionalDependency>());
 			var instance = container.Get<IOneDependency>();
 			instance.Dependency.ShouldBe(null);
 
-			container.Configure(x => x.For<INoDependencies>().Use<NoDependencies>());
+			container.Configure(x => x.Service<INoDependencies>().Use.Type<NoDependencies>());
 			instance = container.Get<IOneDependency>();
 			instance.Dependency.ShouldNotBe(null);
 		}
@@ -57,7 +56,7 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_instantiate_open_generic_type()
 		{
-			var container = new Container(x => x.For(typeof(INoDependencies<>)).Use(typeof(NoDependencies<>)));
+			var container = new Container(x => x.Service(typeof(INoDependencies<>)).Use.Type(typeof(NoDependencies<>)));
 			container.Get<INoDependencies<NoDependencies>>();
 		}
 
@@ -75,7 +74,7 @@ namespace Maestro.Tests.Factories
 		public void should_get_type_with_enumerable_dependency()
 		{
 			var dependency = new NoDependencies();
-			var container = new Container(x => x.For<INoDependencies>().Use(dependency));
+			var container = new Container(x => x.Service<INoDependencies>().Use.Instance(dependency));
 
 			var instance = container.Get<OptionalDependency<IEnumerable<INoDependencies>>>();
 
@@ -89,8 +88,8 @@ namespace Maestro.Tests.Factories
 			var strings = new[] { "1", "2", "3" };
 			var container = new Container(x =>
 													{
-														x.For<IEnumerable<int>>().Use(ints);
-														x.For<IEnumerable<string>>().Use(strings);
+														x.Service<IEnumerable<int>>().Use.Instance(ints);
+														x.Service<IEnumerable<string>>().Use.Instance(strings);
 													});
 
 			var instanceWithInts = container.Get<OptionalDependency<IEnumerable<int>>>();

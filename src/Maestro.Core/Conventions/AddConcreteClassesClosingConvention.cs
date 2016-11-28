@@ -21,7 +21,7 @@ namespace Maestro.Conventions
 			{
 				Type genericType;
 				if (!type.IsConcreteClassClosing(_genericTypeDefinition, out genericType)) continue;
-				var typeInstanceExpression = containerExpression.For(genericType).Add(type);
+				var typeInstanceExpression = containerExpression.Services(genericType).Add.Type(type);
 				_configureAction(typeInstanceExpression);
 			}
 		}

@@ -25,8 +25,8 @@ namespace Maestro.Tests
 			var @string = "foobar";
 			var container = new Container(x =>
 													{
-														x.For<int>().Use(@int);
-														x.For<string>().Use(@string);
+														x.Service<int>().Use.Instance(@int);
+														x.Service<string>().Use.Instance(@string);
 													});
 
 			var ints = container.GetAll<int>();
@@ -45,11 +45,11 @@ namespace Maestro.Tests
 			var name = "yada yada";
 			var container = new Container(x =>
 			{
-				x.For<Foo>().Use<Foo>();
-				x.For<Foo>(name).Use<Foo>();
+				x.Service<Foo>().Use.Type<Foo>();
+				x.Service<Foo>(name).Use.Type<Foo>();
 
-				x.For<object>().Use(@defaultDependency);
-				x.For<object>(name).Use(namedDependency);
+				x.Service<object>().Use.Instance(@defaultDependency);
+				x.Service<object>(name).Use.Instance(namedDependency);
 			});
 
 			var foos = container.GetAll<Foo>().ToList();

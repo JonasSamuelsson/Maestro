@@ -19,7 +19,7 @@ namespace Maestro.Tests
 			container.TryGet(out disposable).ShouldBe(false);
 			disposable.ShouldBe(null);
 
-			container.Configure(x => x.For<IDisposable>("xyz").Use<Disposable>());
+			container.Configure(x => x.Service<IDisposable>("xyz").Use.Type<Disposable>());
 
 			container.TryGet(out disposable).ShouldBe(false);
 			disposable.ShouldBe(null);
@@ -37,7 +37,7 @@ namespace Maestro.Tests
 			container.TryGet(out o).ShouldBe(true);
 			o.ShouldNotBe(null);
 
-			container.Configure(x => x.For<IDisposable>().Use<Disposable>());
+			container.Configure(x => x.Service<IDisposable>().Use.Type<Disposable>());
 
 			container.TryGet(typeof(IDisposable), out o).ShouldBe(true);
 			o.ShouldNotBe(null);
@@ -47,7 +47,7 @@ namespace Maestro.Tests
 			disposable.ShouldNotBe(null);
 
 			var namedDisposable = new Disposable();
-			container.Configure(x => x.For<IDisposable>("xyz").Use(namedDisposable));
+			container.Configure(x => x.Service<IDisposable>("xyz").Use.Instance(namedDisposable));
 
 			TestClassWithDisposable testClassWithDisposable;
 			container.TryGet(out testClassWithDisposable).ShouldBe(true);

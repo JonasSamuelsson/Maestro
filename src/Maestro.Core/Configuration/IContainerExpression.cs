@@ -4,11 +4,14 @@ namespace Maestro.Configuration
 {
 	public interface IContainerExpression
 	{
-		IDefaultPluginExpression For(Type type);
-		IDefaultPluginExpression<T> For<T>();
+		IServiceExpression Service(Type type);
+		IServiceExpression<T> Service<T>();
 
-		IPluginExpression For(Type type, string name);
-		IPluginExpression<T> For<T>(string name);
+		IServiceExpression Service(Type type, string name);
+		IServiceExpression<T> Service<T>(string name);
+
+		IServicesExpression Services(Type type);
+		IServicesExpression<T> Services<T>();
 
 		/// <summary>
 		/// Used for conventional configuration.
