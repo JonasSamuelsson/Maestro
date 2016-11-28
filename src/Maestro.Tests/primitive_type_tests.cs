@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Shouldly;
 using Xunit;
 
@@ -16,7 +12,7 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_resolve_registered_instance()
 		{
-			var container = new Container(x => x.For(PrimitiveType).Use(ExpectedValue));
+			var container = new Container(x => x.Service(PrimitiveType).Use.Instance(ExpectedValue));
 
 			var instance = container.Get(PrimitiveType);
 
@@ -44,7 +40,7 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_resolve_all_with_registered_instance()
 		{
-			var container = new Container(x => x.For(PrimitiveType).Use(ExpectedValue));
+			var container = new Container(x => x.Service(PrimitiveType).Use.Instance(ExpectedValue));
 
 			var instance = container.GetAll(PrimitiveType);
 

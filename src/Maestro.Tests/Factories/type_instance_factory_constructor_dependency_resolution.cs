@@ -27,7 +27,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_registered_reference_type()
 		{
 			var dependency = new Dependency();
-			var container = new Container(x => x.For<Dependency>().Use(dependency));
+			var container = new Container(x => x.Service<Dependency>().Use.Instance(dependency));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency>>();
 			instance.Dependency.Should().Be(dependency);
 		}
@@ -52,7 +52,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_registered_value_type()
 		{
 			var @int = 987;
-			var container = new Container(x => x.For<int>().Use(@int));
+			var container = new Container(x => x.Service<int>().Use.Instance(@int));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<int>>();
 			instance.Dependency.Should().Be(@int);
 		}
@@ -69,7 +69,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_registered_reference_type_enumerable()
 		{
 			var dependencies = new[] { new Dependency1(), new Dependency1() };
-			var container = new Container(x => x.For<IEnumerable<Dependency>>().Use(dependencies));
+			var container = new Container(x => x.Service<IEnumerable<Dependency>>().Use.Instance(dependencies));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
 			instance.Dependency.Should().BeEquivalentTo(dependencies);
 		}
@@ -81,8 +81,8 @@ namespace Maestro.Tests.Factories
 			var dependency2 = new Dependency2();
 			var container = new Container(x =>
 													{
-														x.For<Dependency>("1").Use(dependency1);
-														x.For<Dependency>("2").Use(dependency2);
+														x.Service<Dependency>("1").Use.Instance(dependency1);
+														x.Service<Dependency>("2").Use.Instance(dependency2);
 													});
 			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
 			instance.Dependency.Should().BeEquivalentTo(new object[] { dependency1, dependency2 });
@@ -100,7 +100,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_registered_reference_type_array()
 		{
 			var dependencies = new[] { new Dependency(), new Dependency() };
-			var container = new Container(x => x.For<Dependency[]>().Use(dependencies));
+			var container = new Container(x => x.Service<Dependency[]>().Use.Instance(dependencies));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency[]>>();
 			instance.Dependency.Should().BeEquivalentTo(dependencies);
 		}
@@ -109,7 +109,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_reference_type_array_with_registered_item()
 		{
 			var dependency = new Dependency();
-			var container = new Container(x => x.For<Dependency>().Use(dependency));
+			var container = new Container(x => x.Service<Dependency>().Use.Instance(dependency));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency[]>>();
 			instance.Dependency.Should().BeEquivalentTo(new[] { dependency });
 		}
@@ -126,7 +126,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_registered_value_type_enumerable()
 		{
 			var ints = new[] { 1, 2, 3 };
-			var container = new Container(x => x.For<IEnumerable<int>>().Use(ints));
+			var container = new Container(x => x.Service<IEnumerable<int>>().Use.Instance(ints));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<int>>>();
 			instance.Dependency.Should().BeEquivalentTo(ints);
 		}
@@ -143,7 +143,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_registered_value_type_array()
 		{
 			var ints = new[] { 1, 2, 3 };
-			var container = new Container(x => x.For<int[]>().Use(ints));
+			var container = new Container(x => x.Service<int[]>().Use.Instance(ints));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<int[]>>();
 			instance.Dependency.Should().BeEquivalentTo(ints);
 		}
@@ -152,7 +152,7 @@ namespace Maestro.Tests.Factories
 		public void should_not_resolve_value_type_array_with_registered_item()
 		{
 			var @int = 159;
-			var container = new Container(x => x.For<int>().Use(@int));
+			var container = new Container(x => x.Service<int>().Use.Instance(@int));
 			var instance = container.Get<TypeWithOptionalConstructorDependency<int[]>>();
 			instance.Dependency.Should().BeNull();
 		}

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Shouldly;
 using Xunit;
 
@@ -18,9 +14,9 @@ namespace Maestro.Tests
 			var o3 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add(o1);
-														x.For<object>().Add(o2);
-														x.For<IEnumerable<object>>().Use(new[] { o3 });
+														x.Services<object>().Add.Instance(o1);
+														x.Services<object>().Add.Instance(o2);
+														x.Service<IEnumerable<object>>().Use.Instance(new[] { o3 });
 													});
 
 			var objects = container.Get<IEnumerable<object>>();
@@ -35,8 +31,8 @@ namespace Maestro.Tests
 			var o2 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add(o1);
-														x.For<object>().Add(o2);
+														x.Services<object>().Add.Instance(o1);
+														x.Services<object>().Add.Instance(o2);
 													});
 
 			var objects = container.Get<IEnumerable<object>>();
@@ -52,9 +48,9 @@ namespace Maestro.Tests
 			var o3 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add(o1);
-														x.For<object>().Add(o2);
-														x.For<IEnumerable<object>>().Use(new[] { o3 });
+														x.Services<object>().Add.Instance(o1);
+														x.Services<object>().Add.Instance(o2);
+														x.Service<IEnumerable<object>>().Use.Instance(new[] { o3 });
 													});
 
 			var objects = container.GetAll<object>();
@@ -70,10 +66,10 @@ namespace Maestro.Tests
 			var o3 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add(o1);
-														x.For<object>().Add(o2);
-														x.For<IEnumerable<object>>().Use(new[] { o3 });
-														x.For<Instance>().Use<Instance>().SetProperty(y => y.Objects, ctx => ctx.Get<IEnumerable<object>>());
+														x.Services<object>().Add.Instance(o1);
+														x.Services<object>().Add.Instance(o2);
+														x.Service<IEnumerable<object>>().Use.Instance(new[] { o3 });
+														x.Service<Instance>().Use.Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.Get<IEnumerable<object>>());
 													});
 
 			var instance = container.Get<Instance>();
@@ -88,9 +84,9 @@ namespace Maestro.Tests
 			var o2 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add(o1);
-														x.For<object>().Add(o2);
-														x.For<Instance>().Use<Instance>().SetProperty(y => y.Objects, ctx => ctx.Get<IEnumerable<object>>());
+														x.Services<object>().Add.Instance(o1);
+														x.Services<object>().Add.Instance(o2);
+														x.Service<Instance>().Use.Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.Get<IEnumerable<object>>());
 													});
 
 			var instance = container.Get<Instance>();
@@ -106,10 +102,10 @@ namespace Maestro.Tests
 			var o3 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add(o1);
-														x.For<object>().Add(o2);
-														x.For<IEnumerable<object>>().Use(new[] { o3 });
-														x.For<Instance>().Use<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetAll<object>());
+														x.Services<object>().Add.Instance(o1);
+														x.Services<object>().Add.Instance(o2);
+														x.Service<IEnumerable<object>>().Use.Instance(new[] { o3 });
+														x.Service<Instance>().Use.Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetAll<object>());
 													});
 
 			var instance = container.Get<Instance>();

@@ -10,7 +10,7 @@ namespace Maestro.Tests.TypeFactoryResolvers
 		public void should_get_unregistered_closed_func_of_resolvable_type()
 		{
 			var o = new object();
-			var container = new Container(x => x.For<object>().Use(o));
+			var container = new Container(x => x.Service<object>().Use.Instance(o));
 			var func = container.Get<Func<object>>();
 			func().ShouldBe(o);
 		}

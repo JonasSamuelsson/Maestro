@@ -24,24 +24,34 @@ namespace Maestro.Configuration
 			get { return _defaultSettings; }
 		}
 
-		public IDefaultPluginExpression For(Type type)
+		public IServiceExpression Service(Type type)
 		{
-			return new PluginExpression<object>(type, PluginLookup.DefaultName, _kernel, _defaultSettings);
+			return new ServiceExpression<object>(type, PluginLookup.DefaultName, _kernel, _defaultSettings);
 		}
 
-		public IPluginExpression For(Type type, string name)
+		public IServiceExpression Service(Type type, string name)
 		{
-			return new PluginExpression<object>(type, name, _kernel, _defaultSettings);
+			return new ServiceExpression<object>(type, name, _kernel, _defaultSettings);
 		}
 
-		public IDefaultPluginExpression<T> For<T>()
+		public IServiceExpression<T> Service<T>()
 		{
-			return new PluginExpression<T>(typeof(T), PluginLookup.DefaultName, _kernel, _defaultSettings);
+			return new ServiceExpression<T>(typeof(T), PluginLookup.DefaultName, _kernel, _defaultSettings);
 		}
 
-		public IPluginExpression<T> For<T>(string name)
+		public IServiceExpression<T> Service<T>(string name)
 		{
-			return new PluginExpression<T>(typeof(T), name, _kernel, _defaultSettings);
+			return new ServiceExpression<T>(typeof(T), name, _kernel, _defaultSettings);
+		}
+
+		public IServicesExpression Services(Type type)
+		{
+			return new ServiceExpression<object>(type, PluginLookup.GetRandomName(), _kernel, _defaultSettings);
+		}
+
+		public IServicesExpression<T> Services<T>()
+		{
+			return new ServiceExpression<T>(typeof(T), PluginLookup.GetRandomName(), _kernel, _defaultSettings);
 		}
 	}
 }

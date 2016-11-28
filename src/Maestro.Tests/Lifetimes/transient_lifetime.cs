@@ -9,10 +9,10 @@ namespace Maestro.Tests.Lifetimes
 		public void transient_should_be_the_default_lifetime_and_always_result_in_a_new_instance()
 		{
 			var container = new Container(x =>
-			                              {
-				                              x.For<object>().Use<object>();
-				                              x.For<Parent>().Use<Parent>();
-			                              });
+													{
+														x.Service<object>().Use.Type<object>();
+														x.Service<Parent>().Use.Type<Parent>();
+													});
 
 			var instance = container.Get<Parent>();
 

@@ -16,7 +16,7 @@ namespace Maestro.Tests.Interception
 		{
 			//var list = new List<string>();
 
-			//new Container(x => x.For<object>().Use<object>()
+			//new Container(x => x.Service<object>().Use<object>()
 			//	.Intercept(new Interceptor(() => list.Add("create1")))
 			//	.Intercept(new Interceptor(() => list.Add("create2")))
 			//	.Intercept(new Interceptor(() => list.Add("activate1")))
@@ -31,7 +31,7 @@ namespace Maestro.Tests.Interception
 		{
 			//var interceptor = new Interceptor();
 
-			//var container = new Container(x => x.For<object>().Use<object>()
+			//var container = new Container(x => x.Service<object>().Use<object>()
 			//	.Intercept(interceptor)
 			//	.Lifetime.Singleton());
 
@@ -46,7 +46,7 @@ namespace Maestro.Tests.Interception
 		public void dynamic_proxy_interception()
 		{
 			//var interceptor = new DynamicProxyInterceptor();
-			//var container = new Container(x => x.For<ITarget>()
+			//var container = new Container(x => x.Service<ITarget>()
 			//												.Use<Target>()
 			//												.Proxy((o, pg) => pg.CreateInterfaceProxyWithTarget((ITarget)o, interceptor)));
 

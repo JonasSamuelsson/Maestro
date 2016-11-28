@@ -11,8 +11,8 @@ namespace Maestro.Tests
 		{
 			//var container = new Container(x =>
 			//{
-			//	x.For(typeof(TypeWithDefaultCtor)).Use(typeof(TypeWithDefaultCtor));
-			//	x.For(typeof(TypeWithCtorDependency)).Use(typeof(TypeWithCtorDependency));
+			//	x.Service(typeof(TypeWithDefaultCtor)).Use(typeof(TypeWithDefaultCtor));
+			//	x.Service(typeof(TypeWithCtorDependency)).Use(typeof(TypeWithCtorDependency));
 			//});
 
 			//var o = container.Get<TypeWithCtorDependency>();

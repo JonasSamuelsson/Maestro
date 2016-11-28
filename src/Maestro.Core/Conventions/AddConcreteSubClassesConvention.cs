@@ -20,7 +20,7 @@ namespace Maestro.Conventions
 		{
 			foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
 			{
-				var typeInstanceExpression = containerExpression.For(_baseType).Add(type);
+				var typeInstanceExpression = containerExpression.Services(_baseType).Add.Type(type);
 				_configureAction(typeInstanceExpression);
 			}
 		}
