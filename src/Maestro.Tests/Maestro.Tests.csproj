@@ -105,6 +105,7 @@
     <Compile Include="Factories\type_instance_factory.cs" />
     <Compile Include="Factories\type_instance_factory_constructor_dependency_resolution.cs" />
     <Compile Include="get_enumerable.cs" />
+    <Compile Include="get_fallback_strategy_tests.cs" />
     <Compile Include="get_unregistered_concrete_class.cs" />
     <Compile Include="Interception\intercept_instance.cs" />
     <Compile Include="Interception\interception_tests.cs" />
