@@ -10,8 +10,8 @@ namespace Maestro.Tests.Lifetimes
 		{
 			var container = new Container(x => x.Service<object>().Use.Type<object>().Lifetime.Context());
 
-			var foo1 = container.Get<Foo>();
-			var foo2 = container.Get<Foo>();
+			var foo1 = container.GetService<Foo>();
+			var foo2 = container.GetService<Foo>();
 
 			foo1.Object.Should().Be(foo1.Bar.Object);
 			foo2.Object.Should().Be(foo2.Bar.Object);

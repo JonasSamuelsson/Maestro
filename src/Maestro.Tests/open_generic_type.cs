@@ -11,7 +11,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x => x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)));
 
-			var instance = container.Get<Instance<int>>();
+			var instance = container.GetService<Instance<int>>();
 
 			instance.ShouldBeOfType<Instance<int>>();
 		}
@@ -26,8 +26,8 @@ namespace Maestro.Tests
 				x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)).SetProperty("Value");
 			});
 
-			var instance1 = container.Get<Instance<int>>();
-			var instance2 = container.Get<Instance<string>>();
+			var instance1 = container.GetService<Instance<int>>();
+			var instance2 = container.GetService<Instance<string>>();
 
 			instance1.Value.ShouldBe(1);
 			instance2.Value.ShouldBe("foobar");
@@ -43,10 +43,10 @@ namespace Maestro.Tests
 				x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)).Lifetime.Singleton();
 			});
 
-			var instance1 = container.Get<Instance<int>>();
-			var instance2 = container.Get<Instance<int>>();
-			var instance3 = container.Get<Instance<string>>();
-			var instance4 = container.Get<Instance<string>>();
+			var instance1 = container.GetService<Instance<int>>();
+			var instance2 = container.GetService<Instance<int>>();
+			var instance3 = container.GetService<Instance<string>>();
+			var instance4 = container.GetService<Instance<string>>();
 
 			instance1.Value.ShouldBe(instance2.Value);
 			instance3.Value.ShouldBe(instance4.Value);
@@ -58,7 +58,7 @@ namespace Maestro.Tests
 			var parent = new Container(x => x.Service<Instance<string>>().Use.Factory(() => new Instance<string> { Value = "root" }));
 			var child = parent.GetChildContainer(x => x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)));
 
-			var instance = child.Get<Instance<string>>();
+			var instance = child.GetService<Instance<string>>();
 
 			instance.Value.ShouldBe(null);
 		}
@@ -83,7 +83,7 @@ namespace Maestro.Tests
 											 x.Services(typeof(Instance<>)).Add.Type(typeof(Instance<>)).SetProperty("Value", "child");
 										 });
 
-			var instances = container.GetAll<Instance<string>>().ToList();
+			var instances = container.GetServices<Instance<string>>().ToList();
 
 			instances.Count.ShouldBe(6);
 			instances[0].Value.ShouldBe("child-3");
@@ -99,8 +99,8 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x => x.Services(typeof(Instance<>)).Add.Type(typeof(Instance<>)));
 
-			var instances1 = container.GetAll<Instance<string>>();
-			var instances2 = container.GetAll<Instance<string>>();
+			var instances1 = container.GetServices<Instance<string>>();
+			var instances2 = container.GetServices<Instance<string>>();
 
 			instances1.Count().ShouldBe(instances2.Count());
 		}

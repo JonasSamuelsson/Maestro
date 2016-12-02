@@ -53,15 +53,15 @@ namespace Maestro
 			return childContainer;
 		}
 
-		public T Get<T>(string name = null)
+		public T GetService<T>(string name = null)
 		{
-			return (T)Get(typeof(T), name);
+			return (T)GetService(typeof(T), name);
 		}
 
-		public object Get(Type type, string name = null)
+		public object GetService(Type type, string name = null)
 		{
 			object instance;
-			if (TryGet(type, name, out instance))
+			if (TryGetService(type, name, out instance))
 				return instance;
 
 			var template = PluginLookup.EqualsDefaultName(name)
@@ -71,25 +71,25 @@ namespace Maestro
 			throw new ActivationException(message);
 		}
 
-		public bool TryGet<T>(out T instance)
+		public bool TryGetService<T>(out T instance)
 		{
-			return TryGet(PluginLookup.DefaultName, out instance);
+			return TryGetService(PluginLookup.DefaultName, out instance);
 		}
 
-		public bool TryGet<T>(string name, out T instance)
+		public bool TryGetService<T>(string name, out T instance)
 		{
 			object temp;
-			var result = TryGet(typeof(T), name, out temp);
+			var result = TryGetService(typeof(T), name, out temp);
 			instance = (T)temp;
 			return result;
 		}
 
-		public bool TryGet(Type type, out object instance)
+		public bool TryGetService(Type type, out object instance)
 		{
-			return TryGet(type, PluginLookup.DefaultName, out instance);
+			return TryGetService(type, PluginLookup.DefaultName, out instance);
 		}
 
-		public bool TryGet(Type type, string name, out object instance)
+		public bool TryGetService(Type type, string name, out object instance)
 		{
 			try
 			{
@@ -105,12 +105,12 @@ namespace Maestro
 			}
 		}
 
-		public IEnumerable<T> GetAll<T>()
+		public IEnumerable<T> GetServices<T>()
 		{
-			return GetAll(typeof(T)).Cast<T>().ToList();
+			return GetServices(typeof(T)).Cast<T>().ToList();
 		}
 
-		public IEnumerable<object> GetAll(Type type)
+		public IEnumerable<object> GetServices(Type type)
 		{
 			try
 			{

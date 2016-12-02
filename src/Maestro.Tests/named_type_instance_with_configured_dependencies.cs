@@ -16,7 +16,7 @@ namespace Maestro.Tests
 				x.Service<object>(name).Use.Type<object>();
 			});
 
-			var o = container.Get<ClassWithDependency>(name);
+			var o = container.GetService<ClassWithDependency>(name);
 
 			o.Dependency.Should().BeOfType<object>();
 		}
@@ -31,7 +31,7 @@ namespace Maestro.Tests
 				x.Service<object>().Use.Type<EventArgs>();
 			});
 
-			var o = container.Get<ClassWithDependency>(name);
+			var o = container.GetService<ClassWithDependency>(name);
 
 			o.Dependency.Should().BeOfType<EventArgs>();
 		}

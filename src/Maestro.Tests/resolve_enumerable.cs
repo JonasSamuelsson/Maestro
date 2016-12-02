@@ -11,8 +11,8 @@ namespace Maestro.Tests
 		{
 			var container = new Container();
 
-			var ints = container.GetAll<int>();
-			var strings = container.GetAll<string>();
+			var ints = container.GetServices<int>();
+			var strings = container.GetServices<string>();
 
 			ints.Should().BeEmpty();
 			strings.Should().BeEmpty();
@@ -29,8 +29,8 @@ namespace Maestro.Tests
 														x.Service<string>().Use.Instance(@string);
 													});
 
-			var ints = container.GetAll<int>();
-			var strings = container.GetAll<string>();
+			var ints = container.GetServices<int>();
+			var strings = container.GetServices<string>();
 
 			ints.Should().BeEquivalentTo(new[] { @int });
 			strings.Should().BeEquivalentTo(new[] { @string });
@@ -52,7 +52,7 @@ namespace Maestro.Tests
 				x.Service<object>(name).Use.Instance(namedDependency);
 			});
 
-			var foos = container.GetAll<Foo>().ToList();
+			var foos = container.GetServices<Foo>().ToList();
 
 			foos.Should().Contain(x => (string)x.Object == defaultDependency);
 			foos.Should().Contain(x => (string)x.Object == namedDependency);

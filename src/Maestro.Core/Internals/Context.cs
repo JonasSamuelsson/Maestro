@@ -18,51 +18,51 @@ namespace Maestro.Internals
 		public string Name { get; }
 		public Kernel Kernel { get; }
 
-		bool IContext.CanGet<T>()
+		bool IContext.CanGetService<T>()
 		{
-			return ((IContext)this).CanGet(typeof(T));
+			return ((IContext)this).CanGetService(typeof(T));
 		}
 
-		bool IContext.CanGet(Type type)
+		bool IContext.CanGetService(Type type)
 		{
 			AssertNotDisposed();
 			return Kernel.CanGetDependency(type, this);
 		}
 
-		T IContext.Get<T>()
+		T IContext.GetService<T>()
 		{
-			return (T)((IContext)this).Get(typeof(T));
+			return (T)((IContext)this).GetService(typeof(T));
 		}
 
-		object IContext.Get(Type type)
+		object IContext.GetService(Type type)
 		{
 			object instance;
-			if (((IContext)this).TryGet(type, out instance))
+			if (((IContext)this).TryGetService(type, out instance))
 				return instance;
 
 			throw new NotImplementedException("foobar");
 		}
 
-		bool IContext.TryGet<T>(out T instance)
+		bool IContext.TryGetService<T>(out T instance)
 		{
 			object o;
-			var result = ((IContext)this).TryGet(typeof(T), out o);
+			var result = ((IContext)this).TryGetService(typeof(T), out o);
 			instance = (T)o;
 			return result;
 		}
 
-		bool IContext.TryGet(Type type, out object instance)
+		bool IContext.TryGetService(Type type, out object instance)
 		{
 			AssertNotDisposed();
 			return Kernel.TryGet(type, this, out instance);
 		}
 
-		IEnumerable<T> IContext.GetAll<T>()
+		IEnumerable<T> IContext.GetServices<T>()
 		{
-			return ((IContext)this).GetAll(typeof(T)).Cast<T>().ToArray();
+			return ((IContext)this).GetServices(typeof(T)).Cast<T>().ToArray();
 		}
 
-		IEnumerable<object> IContext.GetAll(Type type)
+		IEnumerable<object> IContext.GetServices(Type type)
 		{
 			AssertNotDisposed();
 			return Kernel.GetAll(type, this);

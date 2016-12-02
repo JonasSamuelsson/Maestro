@@ -11,7 +11,7 @@ namespace Maestro.Tests.TypeFactoryResolvers
 		{
 			var o = new object();
 			var container = new Container(x => x.Service<object>().Use.Instance(o));
-			var func = container.Get<Func<object>>();
+			var func = container.GetService<Func<object>>();
 			func().ShouldBe(o);
 		}
 
@@ -19,7 +19,7 @@ namespace Maestro.Tests.TypeFactoryResolvers
 		public void should_not_get_unregistered_closed_func_of_unresolvable_type()
 		{
 			var container = new Container();
-			Should.Throw<ActivationException>(() => container.Get<Func<IInterface>>());
+			Should.Throw<ActivationException>(() => container.GetService<Func<IInterface>>());
 		}
 
 		interface IInterface { }

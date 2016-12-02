@@ -13,7 +13,7 @@ namespace Maestro.Tests
 				x.Service<object>().Use.Instance("success");
 			});
 
-			container.Get<object>("test").ShouldBe("success");
+			container.GetService<object>("test").ShouldBe("success");
 		}
 
 		[Fact(Skip = "feature missing")]
@@ -22,7 +22,7 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_fallback_to_instantiating_concrete_closed_classes()
 		{
-			new Container().Get<Foo<string>>().ShouldNotBeNull();
+			new Container().GetService<Foo<string>>().ShouldNotBeNull();
 		}
 
 		[Fact]
@@ -31,17 +31,17 @@ namespace Maestro.Tests
 			var parentContainer = new Container();
 			var childContainer = parentContainer.GetChildContainer();
 
-			childContainer.Get<Foo<string>>("test").ShouldNotBeNull();
+			childContainer.GetService<Foo<string>>("test").ShouldNotBeNull();
 
 			// parent type provider
 
 			// child type provider
 
 			parentContainer.Configure(x => x.Service<Foo<string>>().Use.Type<Foo<string>>().SetProperty(y => y.Value, "parent"));
-			childContainer.Get<Foo<string>>("test").Value.ShouldBe("parent");
+			childContainer.GetService<Foo<string>>("test").Value.ShouldBe("parent");
 
 			childContainer.Configure(x => x.Service<Foo<string>>().Use.Type<Foo<string>>().SetProperty(y => y.Value, "child"));
-			childContainer.Get<Foo<string>>("test").Value.ShouldBe("child");
+			childContainer.GetService<Foo<string>>("test").Value.ShouldBe("child");
 		}
 
 		class Foo<T>

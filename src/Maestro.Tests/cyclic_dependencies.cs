@@ -9,7 +9,7 @@ namespace Maestro.Tests
 		[Todo]
 		public void Get_should_throw_ActivationException()
 		{
-			Should.Throw<ActivationException>(() => new Container().Get<Alpha>())
+			Should.Throw<ActivationException>(() => new Container().GetService<Alpha>())
 					.InnerException.Message.ShouldBe(@"Cyclic dependency.
   Maestro.Tests.resolve_type_with_cyclic_dependencies+Alpha
   Maestro.Tests.resolve_type_with_cyclic_dependencies+Delta
@@ -22,7 +22,7 @@ namespace Maestro.Tests
 		public void GetAll_should_throw_ActivationException()
 		{
 			var container = new Container(x => x.Service<Alpha>().Use.Type<Alpha>());
-			Should.Throw<ActivationException>(() => container.GetAll<Alpha>())
+			Should.Throw<ActivationException>(() => container.GetServices<Alpha>())
 					.InnerException.Message.ShouldBe(@"Cyclic dependency.
   Maestro.Tests.resolve_type_with_cyclic_dependencies+Alpha
   Maestro.Tests.resolve_type_with_cyclic_dependencies+Delta
@@ -39,9 +39,9 @@ namespace Maestro.Tests
 		[Todo]
 		public void CanGet_should_throw()
 		{
-			var container = new Container(x => x.Service<object>().Use.Type<object>().Intercept((_, ctx) => ctx.CanGet<Alpha>()));
+			var container = new Container(x => x.Service<object>().Use.Type<object>().Intercept((_, ctx) => ctx.CanGetService<Alpha>()));
 
-			container.Get<object>();
+			container.GetService<object>();
 		}
 
 		[Fact]
@@ -49,11 +49,11 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 													{
-														x.Service<A>().Use.Factory(ctx => new A { B = ctx.Get<B>() });
-														x.Service<B>().Use.Factory(ctx => new B { A = ctx.Get<A>() });
+														x.Service<A>().Use.Factory(ctx => new A { B = ctx.GetService<B>() });
+														x.Service<B>().Use.Factory(ctx => new B { A = ctx.GetService<A>() });
 													});
 
-			var exception = Should.Throw<ActivationException>(() => container.Get<A>());
+			var exception = Should.Throw<ActivationException>(() => container.GetService<A>());
 
 			exception.Message.ShouldBe("Can't get default instance of type 'Maestro.Tests.cyclic_dependencies+A'.");
 			exception.InnerException.ShouldBeOfType<InvalidOperationException>();

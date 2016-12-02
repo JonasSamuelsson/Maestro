@@ -13,7 +13,7 @@ namespace Maestro.Tests.Lifetimes
 			var lifetime = new Lifetime();
 			var container = new Container(x => x.Service<object>().Use.Type<object>().Lifetime.Use(lifetime));
 
-			container.Get<object>();
+			container.GetService<object>();
 
 			lifetime.Executed.ShouldBe(true);
 		}

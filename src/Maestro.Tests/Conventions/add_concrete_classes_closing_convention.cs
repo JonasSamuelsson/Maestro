@@ -15,9 +15,9 @@ namespace Maestro.Tests.Conventions
 			var types = new[] { typeof(Class<IDisposable>), typeof(ClassOfObject) };
 			var container = new Container(x => x.Scan.Types(types).AddConcreteClassesClosing(typeof(IInterface<>)));
 
-			container.Invoking(x => x.GetAll<IList<IDisposable>>()).ShouldNotThrow("IInterface<IDisposable>");
-			container.Invoking(x => x.GetAll<IList<object>>()).ShouldNotThrow("IInterface<object>");
-			container.Invoking(x => x.Get<IList<string>>()).ShouldThrow<ActivationException>();
+			container.Invoking(x => x.GetServices<IList<IDisposable>>()).ShouldNotThrow("IInterface<IDisposable>");
+			container.Invoking(x => x.GetServices<IList<object>>()).ShouldNotThrow("IInterface<object>");
+			container.Invoking(x => x.GetService<IList<string>>()).ShouldThrow<ActivationException>();
 		}
 
 		[Fact]
@@ -26,8 +26,8 @@ namespace Maestro.Tests.Conventions
 			var types = new[] { typeof(Class<IDisposable>) };
 			var container = new Container(x => x.Scan.Types(types).AddConcreteClassesClosing(typeof(IInterface<>), y => y.Lifetime.Singleton()));
 
-			var instances1 = container.GetAll<IInterface<IDisposable>>();
-			var instances2 = container.GetAll<IInterface<IDisposable>>();
+			var instances1 = container.GetServices<IInterface<IDisposable>>();
+			var instances2 = container.GetServices<IInterface<IDisposable>>();
 
 			instances1.Single().ShouldBe(instances2.Single());
 		}

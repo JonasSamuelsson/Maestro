@@ -28,7 +28,7 @@ namespace Maestro.Tests.Factories
 		{
 			var dependency = new Dependency();
 			var container = new Container(x => x.Service<Dependency>().Use.Instance(dependency));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency>>();
 			instance.Dependency.Should().Be(dependency);
 		}
 
@@ -36,7 +36,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_unregistered_but_instantiatable_reference_type()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency>>();
 			instance.Dependency.Should().NotBeNull();
 		}
 
@@ -44,7 +44,7 @@ namespace Maestro.Tests.Factories
 		public void should_not_resolve_unregistered_and_uninstantiatable_reference_type()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IDisposable>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<IDisposable>>();
 			instance.Dependency.Should().BeNull();
 		}
 
@@ -53,7 +53,7 @@ namespace Maestro.Tests.Factories
 		{
 			var @int = 987;
 			var container = new Container(x => x.Service<int>().Use.Instance(@int));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<int>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<int>>();
 			instance.Dependency.Should().Be(@int);
 		}
 
@@ -61,7 +61,7 @@ namespace Maestro.Tests.Factories
 		public void should_not_resolve_unregistered_value_type()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<int>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<int>>();
 			instance.Dependency.Should().Be(default(int));
 		}
 
@@ -70,7 +70,7 @@ namespace Maestro.Tests.Factories
 		{
 			var dependencies = new[] { new Dependency1(), new Dependency1() };
 			var container = new Container(x => x.Service<IEnumerable<Dependency>>().Use.Instance(dependencies));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
 			instance.Dependency.Should().BeEquivalentTo(dependencies);
 		}
 
@@ -84,7 +84,7 @@ namespace Maestro.Tests.Factories
 														x.Service<Dependency>("1").Use.Instance(dependency1);
 														x.Service<Dependency>("2").Use.Instance(dependency2);
 													});
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
 			instance.Dependency.Should().BeEquivalentTo(new object[] { dependency1, dependency2 });
 		}
 
@@ -92,7 +92,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_unregistered_reference_type_enumerable()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
 			instance.Dependency.Should().BeEmpty();
 		}
 
@@ -101,7 +101,7 @@ namespace Maestro.Tests.Factories
 		{
 			var dependencies = new[] { new Dependency(), new Dependency() };
 			var container = new Container(x => x.Service<Dependency[]>().Use.Instance(dependencies));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency[]>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency[]>>();
 			instance.Dependency.Should().BeEquivalentTo(dependencies);
 		}
 
@@ -110,7 +110,7 @@ namespace Maestro.Tests.Factories
 		{
 			var dependency = new Dependency();
 			var container = new Container(x => x.Service<Dependency>().Use.Instance(dependency));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency[]>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency[]>>();
 			instance.Dependency.Should().BeEquivalentTo(new[] { dependency });
 		}
 
@@ -118,7 +118,7 @@ namespace Maestro.Tests.Factories
 		public void should_resolve_unregistered_reference_type_array()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<Dependency[]>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency[]>>();
 			instance.Dependency.Should().BeEmpty();
 		}
 
@@ -127,7 +127,7 @@ namespace Maestro.Tests.Factories
 		{
 			var ints = new[] { 1, 2, 3 };
 			var container = new Container(x => x.Service<IEnumerable<int>>().Use.Instance(ints));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<int>>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<int>>>();
 			instance.Dependency.Should().BeEquivalentTo(ints);
 		}
 
@@ -135,7 +135,7 @@ namespace Maestro.Tests.Factories
 		public void should_not_resolve_unregistered_value_type_enumerable()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<IEnumerable<int>>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<int>>>();
 			instance.Dependency.Should().BeNull();
 		}
 
@@ -144,7 +144,7 @@ namespace Maestro.Tests.Factories
 		{
 			var ints = new[] { 1, 2, 3 };
 			var container = new Container(x => x.Service<int[]>().Use.Instance(ints));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<int[]>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<int[]>>();
 			instance.Dependency.Should().BeEquivalentTo(ints);
 		}
 
@@ -153,7 +153,7 @@ namespace Maestro.Tests.Factories
 		{
 			var @int = 159;
 			var container = new Container(x => x.Service<int>().Use.Instance(@int));
-			var instance = container.Get<TypeWithOptionalConstructorDependency<int[]>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<int[]>>();
 			instance.Dependency.Should().BeNull();
 		}
 
@@ -161,7 +161,7 @@ namespace Maestro.Tests.Factories
 		public void should_not_resolve_unregistered_value_type_array()
 		{
 			var container = new Container();
-			var instance = container.Get<TypeWithOptionalConstructorDependency<int[]>>();
+			var instance = container.GetService<TypeWithOptionalConstructorDependency<int[]>>();
 			instance.Dependency.Should().BeNull();
 		}
 

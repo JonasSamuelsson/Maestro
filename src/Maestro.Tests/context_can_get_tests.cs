@@ -1,5 +1,4 @@
-﻿using System;
-using Shouldly;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -18,14 +17,14 @@ namespace Maestro.Tests
 														{
 															Flags = new[]
 																											 {
-																												 ctx.CanGet<A>(),
-																												 ctx.CanGet<B>(),
-																												 ctx.CanGet<C>()
+																												 ctx.CanGetService<A>(),
+																												 ctx.CanGetService<B>(),
+																												 ctx.CanGetService<C>()
 																											 }
 														});
 													});
 
-			var instance = container.Get<Instance>();
+			var instance = container.GetService<Instance>();
 
 			instance.Flags.ShouldBe(new[] { true, true, true });
 		}
@@ -36,10 +35,10 @@ namespace Maestro.Tests
 			var container = new Container(x =>
 													{
 														x.Service<object>().Use.Type<object>();
-														x.Service<Instance>().Use.Factory(ctx => new Instance { Flags = new[] { ctx.CanGet<object>() } });
+														x.Service<Instance>().Use.Factory(ctx => new Instance { Flags = new[] { ctx.CanGetService<object>() } });
 													});
 
-			var instance = container.Get<Instance>();
+			var instance = container.GetService<Instance>();
 
 			instance.Flags.ShouldBe(new[] { true });
 		}

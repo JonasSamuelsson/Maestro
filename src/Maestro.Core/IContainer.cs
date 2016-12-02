@@ -21,7 +21,7 @@ namespace Maestro
 		/// <param name="type"></param>
 		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
 		/// <returns></returns>
-		object Get(Type type, string name = null);
+		object GetService(Type type, string name = null);
 
 		/// <summary>
 		/// Gets an instance of type <typeparamref name="T"/> named <paramref name="name"/>.
@@ -29,21 +29,21 @@ namespace Maestro
 		/// <typeparam name="T"></typeparam>
 		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
 		/// <returns></returns>
-		T Get<T>(string name = null);
+		T GetService<T>(string name = null);
 
 		/// <summary>
 		/// Gets all instances of type <paramref name="type"/>.
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		IEnumerable<object> GetAll(Type type);
+		IEnumerable<object> GetServices(Type type);
 
 		/// <summary>
 		/// Gets all instances of type <typeparamref name="T"/>.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		IEnumerable<T> GetAll<T>();
+		IEnumerable<T> GetServices<T>();
 
 		/// <summary>
 		/// Tries to get instance of type <paramref name="type"/>.
@@ -52,7 +52,7 @@ namespace Maestro
 		/// <param name="instance"></param>
 		/// <returns></returns>
 		/// <remarks>Does not swallow any exceptions.</remarks>
-		bool TryGet(Type type, out object instance);
+		bool TryGetService(Type type, out object instance);
 
 		/// <summary>
 		/// Tries to get instance of type <paramref name="type"/> named <paramref name="name"/>.
@@ -62,7 +62,7 @@ namespace Maestro
 		/// <param name="instance"></param>
 		/// <returns></returns>
 		/// <remarks>Does not swallow any exceptions.</remarks>
-		bool TryGet(Type type, string name, out object instance);
+		bool TryGetService(Type type, string name, out object instance);
 
 		/// <summary>
 		/// Tries to get instance of type <typeparam name="T"/>.
@@ -70,7 +70,7 @@ namespace Maestro
 		/// <param name="instance"></param>
 		/// <returns></returns>
 		/// <remarks>Does not swallow any exceptions.</remarks>
-		bool TryGet<T>(out T instance);
+		bool TryGetService<T>(out T instance);
 
 		/// <summary>
 		/// Tries to get instance of type <typeparam name="T"/> named <paramref name="name"/>.
@@ -79,7 +79,7 @@ namespace Maestro
 		/// <param name="instance"></param>
 		/// <returns></returns>
 		/// <remarks>Does not swallow any exceptions.</remarks>
-		bool TryGet<T>(string name, out T instance);
+		bool TryGetService<T>(string name, out T instance);
 
 		/// <summary>
 		/// Gets a report of the complete container configuration.

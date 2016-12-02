@@ -25,7 +25,7 @@ namespace Maestro.Utils
 
 		private static Func<IContext, object> GetValueProviderOrNull(Type type, IContext context, bool resolveValueTypeArrays)
 		{
-			if (context.CanGet(type))
+			if (context.CanGetService(type))
 				return GetValueProvider(type);
 
 			if (type.IsArray && (resolveValueTypeArrays || !type.GetElementType().IsValueType))
@@ -71,7 +71,7 @@ namespace Maestro.Utils
 		{
 			MethodInfo compiler;
 			if (!TryGetExpressionCompiler<Func<IContext, object>>(out compiler))
-				return ctx => ctx.Get(type);
+				return ctx => ctx.GetService(type);
 
 			var context = Expression.Parameter(typeof(IContext), "context");
 			var getMethod = typeof(IContext).GetMethod("Get", new[] { typeof(Type) });
@@ -100,7 +100,7 @@ namespace Maestro.Utils
 
 		public static Func<IContext, object> GetPropertyValueProvider(Type type, IContext context)
 		{
-			return GetValueProviderOrNull(type, context, true) ?? (ctx => ctx.Get(type));
+			return GetValueProviderOrNull(type, context, true) ?? (ctx => ctx.GetService(type));
 		}
 
 		public static Func<IContext, object> GetInstantiatorOrNull(Type type, IContext context)

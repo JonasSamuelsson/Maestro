@@ -12,7 +12,7 @@ namespace Maestro.Tests.Conventions
 			var types = new[] { typeof(Implementation1), typeof(Implementation2) };
 			var container = new Container(x => x.Scan.Types(types).AddConcreteSubClassesOf<IBaseType>());
 
-			var instances = container.GetAll<IBaseType>().ToList();
+			var instances = container.GetServices<IBaseType>().ToList();
 
 			instances.Count.ShouldBe(2);
 			instances.OfType<Implementation1>().Count().ShouldBe(1);
@@ -25,13 +25,13 @@ namespace Maestro.Tests.Conventions
 			var types = new[] { typeof(Implementation1) };
 
 			var container1 = new Container(x => x.Scan.Types(types).AddConcreteSubClassesOf(typeof(IBaseType), y => y.Lifetime.Singleton()));
-			var instance1 = container1.GetAll<IBaseType>().Single();
-			var instance2 = container1.GetAll<IBaseType>().Single();
+			var instance1 = container1.GetServices<IBaseType>().Single();
+			var instance2 = container1.GetServices<IBaseType>().Single();
 			instance1.ShouldBe(instance2);
 
 			var container2 = new Container(x => x.Scan.Types(types).AddConcreteSubClassesOf<IBaseType>(y => y.Lifetime.Singleton()));
-			var instance3 = container2.GetAll<IBaseType>().Single();
-			var instance4 = container2.GetAll<IBaseType>().Single();
+			var instance3 = container2.GetServices<IBaseType>().Single();
+			var instance4 = container2.GetServices<IBaseType>().Single();
 			instance3.ShouldBe(instance4);
 		}
 

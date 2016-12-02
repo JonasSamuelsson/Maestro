@@ -11,7 +11,7 @@ namespace Maestro.Tests.Factories
 			var instance = "default instance";
 			var container = new Container(x => x.Service<object>().Use.Instance(instance));
 
-			var o = container.Get<object>();
+			var o = container.GetService<object>();
 
 			o.Should().Be(instance);
 		}

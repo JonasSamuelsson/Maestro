@@ -10,7 +10,7 @@ namespace Maestro.Tests.Factories
 		public void should_instantiate_type_with_no_dependencies()
 		{
 			var container = new Container(x => x.Service<INoDependencies>().Use.Type<NoDependencies>());
-			container.Get<INoDependencies>();
+			container.GetService<INoDependencies>();
 		}
 
 		[Fact]
@@ -22,7 +22,7 @@ namespace Maestro.Tests.Factories
 				x.Service<IOneDependency>().Use.Type<RequiredDependency>();
 			});
 
-			var instance = container.Get<IOneDependency>();
+			var instance = container.GetService<IOneDependency>();
 
 			instance.Dependency.ShouldNotBe(null);
 		}
@@ -36,7 +36,7 @@ namespace Maestro.Tests.Factories
 				x.Service<IOneDependency>().Use.Type<OptionalDependency>();
 			});
 
-			var instance = container.Get<IOneDependency>();
+			var instance = container.GetService<IOneDependency>();
 
 			instance.Dependency.ShouldNotBe(null);
 		}
@@ -45,11 +45,11 @@ namespace Maestro.Tests.Factories
 		public void should_reevaluate_constructor_to_use_when_config_changes()
 		{
 			var container = new Container(x => x.Service<IOneDependency>().Use.Type<OptionalDependency>());
-			var instance = container.Get<IOneDependency>();
+			var instance = container.GetService<IOneDependency>();
 			instance.Dependency.ShouldBe(null);
 
 			container.Configure(x => x.Service<INoDependencies>().Use.Type<NoDependencies>());
-			instance = container.Get<IOneDependency>();
+			instance = container.GetService<IOneDependency>();
 			instance.Dependency.ShouldNotBe(null);
 		}
 
@@ -57,7 +57,7 @@ namespace Maestro.Tests.Factories
 		public void should_instantiate_open_generic_type()
 		{
 			var container = new Container(x => x.Service(typeof(INoDependencies<>)).Use.Type(typeof(NoDependencies<>)));
-			container.Get<INoDependencies<NoDependencies>>();
+			container.GetService<INoDependencies<NoDependencies>>();
 		}
 
 		[Fact]
@@ -65,7 +65,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 
-			var instance = container.Get<OptionalDependency<IEnumerable<INoDependencies>>>();
+			var instance = container.GetService<OptionalDependency<IEnumerable<INoDependencies>>>();
 
 			instance.Dependency.ShouldBeEmpty();
 		}
@@ -76,7 +76,7 @@ namespace Maestro.Tests.Factories
 			var dependency = new NoDependencies();
 			var container = new Container(x => x.Service<INoDependencies>().Use.Instance(dependency));
 
-			var instance = container.Get<OptionalDependency<IEnumerable<INoDependencies>>>();
+			var instance = container.GetService<OptionalDependency<IEnumerable<INoDependencies>>>();
 
 			instance.Dependency.ShouldBe(new INoDependencies[] { dependency });
 		}
@@ -92,8 +92,8 @@ namespace Maestro.Tests.Factories
 														x.Service<IEnumerable<string>>().Use.Instance(strings);
 													});
 
-			var instanceWithInts = container.Get<OptionalDependency<IEnumerable<int>>>();
-			var instanceWithStrings = container.Get<OptionalDependency<IEnumerable<string>>>();
+			var instanceWithInts = container.GetService<OptionalDependency<IEnumerable<int>>>();
+			var instanceWithStrings = container.GetService<OptionalDependency<IEnumerable<string>>>();
 
 			instanceWithInts.Dependency.ShouldBe(ints);
 			instanceWithStrings.Dependency.ShouldBe(strings);
@@ -104,8 +104,8 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 
-			var instanceWithInts = container.Get<OptionalDependency<IEnumerable<int>>>();
-			var instanceWithStrings = container.Get<OptionalDependency<IEnumerable<string>>>();
+			var instanceWithInts = container.GetService<OptionalDependency<IEnumerable<int>>>();
+			var instanceWithStrings = container.GetService<OptionalDependency<IEnumerable<string>>>();
 
 			instanceWithInts.Dependency.ShouldBe(null);
 			instanceWithStrings.Dependency.ShouldBe(null);

@@ -10,8 +10,8 @@ namespace Maestro.Tests.Lifetimes
 		{
 			var container = new Container(x => x.Service<object>().Use.Type<object>().Lifetime.Singleton());
 
-			var o1 = container.Get<object>();
-			var o2 = container.Get<object>();
+			var o1 = container.GetService<object>();
+			var o2 = container.GetService<object>();
 
 			o1.Should().Be(o2);
 		}

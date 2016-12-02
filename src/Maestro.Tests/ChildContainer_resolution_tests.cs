@@ -13,7 +13,7 @@ namespace Maestro.Tests
 			var parentContainer = new Container(x => x.Service<ICollection<object>>().Use.Type<Collection<object>>());
 			var childContainer = parentContainer.GetChildContainer(x => x.Service(typeof(ICollection<>)).Use.Type(typeof(List<>)));
 
-			var collection = childContainer.Get<ICollection<object>>();
+			var collection = childContainer.GetService<ICollection<object>>();
 
 			collection.ShouldBeOfType<List<object>>();
 		}
@@ -33,7 +33,7 @@ namespace Maestro.Tests
 				x.Services<object>().Add.Instance("child");
 			});
 
-			childContainer.GetAll<object>().ShouldBe(new[] { "default child", "child", "parent" });
+			childContainer.GetServices<object>().ShouldBe(new[] { "default child", "child", "parent" });
 		}
 	}
 }

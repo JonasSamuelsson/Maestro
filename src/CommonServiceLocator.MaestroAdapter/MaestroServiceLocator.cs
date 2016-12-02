@@ -16,12 +16,12 @@ namespace CommonServiceLocator.MaestroAdapter
 
 		protected override object DoGetInstance(Type serviceType, string key)
 		{
-			return _container.Get(serviceType, key);
+			return _container.GetService(serviceType, key);
 		}
 
 		protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
 		{
-			return _container.GetAll(serviceType);
+			return _container.GetServices(serviceType);
 		}
 	}
 }
