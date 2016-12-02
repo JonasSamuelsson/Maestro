@@ -26,7 +26,7 @@ namespace Maestro.Internals
 		bool IContext.CanGetService(Type type)
 		{
 			AssertNotDisposed();
-			return Kernel.CanGetDependency(type, this);
+			return Kernel.CanGetService(type, this);
 		}
 
 		T IContext.GetService<T>()

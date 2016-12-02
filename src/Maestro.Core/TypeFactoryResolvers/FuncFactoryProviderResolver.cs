@@ -12,7 +12,7 @@ namespace Maestro.TypeFactoryResolvers
 			factoryProvider = null;
 			if (!type.IsConcreteClassClosing(typeof(Func<>))) return false;
 			var typeArgument = type.GetGenericArguments().Single();
-			if (!context.Kernel.CanGetDependency(typeArgument, context)) return false;
+			if (!context.Kernel.CanGetService(typeArgument, context)) return false;
 
 			var wrapperType = typeof(Wrapper<>).MakeGenericType(typeArgument);
 			var wrapper = Activator.CreateInstance(wrapperType, context.Name, context.Kernel);

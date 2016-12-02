@@ -13,7 +13,7 @@ namespace Maestro.TypeFactoryResolvers
 			factoryProvider = null;
 			if (!type.IsConcreteClassClosing(typeof(Lazy<>))) return false;
 			var typeArgument = type.GetGenericArguments().Single();
-			if (!context.Kernel.CanGetDependency(typeArgument, context)) return false;
+			if (!context.Kernel.CanGetService(typeArgument, context)) return false;
 
 			var funcType = typeof(Func<>).MakeGenericType(typeArgument);
 			var constructor = (from ctor in type.GetConstructors()

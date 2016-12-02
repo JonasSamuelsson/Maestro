@@ -34,7 +34,7 @@ namespace Maestro.FactoryProviders
 			var constructor = (from ctor in Type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 									 let parameterTypes = ctor.GetParameters().Select(x => x.ParameterType)
 									 orderby parameterTypes.Count() descending
-									 where parameterTypes.All(t => context.Kernel.CanGetDependency(t, context))
+									 where parameterTypes.All(t => context.Kernel.CanGetService(t, context))
 									 select ctor).FirstOrDefault();
 
 			if (constructor == null)
