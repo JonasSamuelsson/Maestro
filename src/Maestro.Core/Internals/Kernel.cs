@@ -67,7 +67,7 @@ namespace Maestro.Internals
 			if (TryGet(type, name, out instance))
 				return instance;
 
-			throw new NotImplementedException("foobar");
+			throw new NotImplementedException("error handling");
 		}
 
 		public bool TryGet(Type type, string name, out object instance)
