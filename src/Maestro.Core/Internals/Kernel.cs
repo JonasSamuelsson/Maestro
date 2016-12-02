@@ -37,7 +37,7 @@ namespace Maestro.Internals
 			};
 		}
 
-		private Kernel(Kernel kernel) : this()
+		public Kernel(Kernel kernel) : this()
 		{
 			_parent = kernel;
 			_parent.ConfigurationChanged += ParentConfigurationChanged;
@@ -53,11 +53,6 @@ namespace Maestro.Internals
 		{
 			lock (_pipelineCache)
 				return _pluginLookup.Add(plugin, throwIfDuplicate);
-		}
-
-		public Kernel GetChildKernel()
-		{
-			return new Kernel(this);
 		}
 
 		public object Get(Type type, string name)
