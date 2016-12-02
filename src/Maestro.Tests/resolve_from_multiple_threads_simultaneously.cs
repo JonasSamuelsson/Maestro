@@ -20,6 +20,9 @@ namespace Maestro.Tests
 			var tasks = new[]
 							{
 								new Task(() => container.GetService<IGrandParent>(), TaskCreationOptions.LongRunning),
+								new Task(() => container.GetService<IGrandParent>(), TaskCreationOptions.LongRunning),
+								new Task(() => container.GetService<IGrandParent>(), TaskCreationOptions.LongRunning),
+								new Task(() => container.GetService<IGrandParent>(), TaskCreationOptions.LongRunning),
 								new Task(() => container.GetService<IGrandParent>(), TaskCreationOptions.LongRunning)
 							};
 			tasks.ForEach(x => x.Start());
@@ -33,10 +36,13 @@ namespace Maestro.Tests
 
 		class GrandParent : IGrandParent
 		{
-			public GrandParent(IParent parent, IChild child) { }
+			public GrandParent(IParent parent, IChild child, IGrandChild grandChild) { }
 		}
 
-		class Parent : IParent { }
+		class Parent : IParent
+		{
+			public Parent(IChild child, IGrandChild grandChild) { }
+		}
 
 		class Child : IChild
 		{
