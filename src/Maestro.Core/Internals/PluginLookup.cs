@@ -15,7 +15,7 @@ namespace Maestro.Internals
 			PluginAdded();
 		}
 
-		internal static string DefaultName { get; } = string.Empty;
+		internal const string DefaultName = "";
 
 		public static string GetRandomName()
 		{
