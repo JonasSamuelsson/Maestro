@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
+using Maestro.Utils;
 
 namespace Maestro.Internals
 {
@@ -151,7 +152,7 @@ namespace Maestro.Internals
 
 		public bool CanGetDependency(Type type, Context context)
 		{
-			return CanGet(type, context) || IsEnumerable(type);
+			return CanGet(type, context) || Reflector.IsEnumerable(type);
 		}
 
 		public object GetDependency(Type type, Context context)
@@ -165,7 +166,7 @@ namespace Maestro.Internals
 		{
 			if (TryGet(type, context, out instance)) return true;
 
-			if (IsEnumerable(type))
+			if (Reflector.IsEnumerable(type))
 			{
 				var elementType = type.GetGenericArguments().Single();
 				var instances = GetAll(elementType, context);
@@ -272,15 +273,6 @@ namespace Maestro.Internals
 		private static string GetPipelineKey(Type type, Context context)
 		{
 			return $"{type.FullName}:{context.Name}";
-		}
-
-		private static bool IsEnumerable(Type type)
-		{
-			if (!type.IsGenericType) return false;
-			var genericTypeDefinition = type.GetGenericTypeDefinition();
-			if (genericTypeDefinition != typeof(IEnumerable<>)) return false;
-			var genericArgument = type.GetGenericArguments().Single();
-			return genericArgument != typeof(string) && !genericArgument.IsValueType;
 		}
 
 		public void Dispose()

@@ -136,5 +136,14 @@ namespace Maestro.Utils
 		{
 			return ((MemberExpression)property.Body).Member.Name;
 		}
+
+		public static bool IsEnumerable(Type type)
+		{
+			if (!type.IsGenericType) return false;
+			var genericTypeDefinition = type.GetGenericTypeDefinition();
+			if (genericTypeDefinition != typeof(IEnumerable<>)) return false;
+			var genericArgument = type.GetGenericArguments().Single();
+			return genericArgument != typeof(string) && !genericArgument.IsValueType;
+		}
 	}
 }

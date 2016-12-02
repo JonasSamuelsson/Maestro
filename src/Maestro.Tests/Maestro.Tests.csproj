@@ -122,6 +122,7 @@
     <Compile Include="Performance\performance_tests.cs" />
     <Compile Include="primitive_type_tests.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Utils\Reflector_tests.cs" />
     <Compile Include="resolve_array_dependencies.cs" />
     <Compile Include="resolve_dependencies.cs" />
     <Compile Include="resolve_enumerable.cs" />
