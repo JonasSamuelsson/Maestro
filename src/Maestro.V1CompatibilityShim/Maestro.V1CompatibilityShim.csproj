@@ -38,6 +38,8 @@
     <Compile Include="Configuration\IDefaultPluginExpression.cs" />
     <Compile Include="Configuration\IPluginExpression.cs" />
     <Compile Include="Configuration\PluginExpression.cs" />
+    <Compile Include="ContainerExtensions.cs" />
+    <Compile Include="ContextExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
