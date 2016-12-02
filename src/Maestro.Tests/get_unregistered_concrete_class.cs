@@ -9,16 +9,16 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_be_able_to_instantiate_top_level_EventArgs()
 		{
-			Action act = () => new Container().Get<EventArgs>();
+			Action act = () => new Container().GetService<EventArgs>();
 			act.ShouldNotThrow();
 		}
 
 		[Fact]
 		public void should_be_able_to_instantiate_with_dependency()
 		{
-			Func<Foobar> func = () => new Container().Get<Foobar>();
+			Func<Foobar> func = () => new Container().GetService<Foobar>();
 			Action act = () => func();
-			
+
 			act.ShouldNotThrow();
 
 			var foobar = func();

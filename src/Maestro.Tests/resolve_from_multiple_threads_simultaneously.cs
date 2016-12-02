@@ -18,10 +18,10 @@ namespace Maestro.Tests
 															});
 
 			var tasks = new[]
-			            {
-				            new Task(() => container.Get<IGrandParent>(), TaskCreationOptions.LongRunning),
-				            new Task(() => container.Get<IGrandParent>(), TaskCreationOptions.LongRunning)
-			            };
+							{
+								new Task(() => container.GetService<IGrandParent>(), TaskCreationOptions.LongRunning),
+								new Task(() => container.GetService<IGrandParent>(), TaskCreationOptions.LongRunning)
+							};
 			tasks.ForEach(x => x.Start());
 			Task.WaitAll(tasks);
 		}

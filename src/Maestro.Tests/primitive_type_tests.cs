@@ -14,7 +14,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x => x.Service(PrimitiveType).Use.Instance(ExpectedValue));
 
-			var instance = container.Get(PrimitiveType);
+			var instance = container.GetService(PrimitiveType);
 
 			instance.ShouldBe(ExpectedValue);
 		}
@@ -24,7 +24,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container();
 
-			Should.Throw<ActivationException>(() => container.Get(PrimitiveType));
+			Should.Throw<ActivationException>(() => container.GetService(PrimitiveType));
 		}
 
 		[Fact]
@@ -32,7 +32,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container();
 
-			var instance = container.GetAll(PrimitiveType);
+			var instance = container.GetServices(PrimitiveType);
 
 			instance.ShouldBe(new object[] { });
 		}
@@ -42,7 +42,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x => x.Service(PrimitiveType).Use.Instance(ExpectedValue));
 
-			var instance = container.GetAll(PrimitiveType);
+			var instance = container.GetServices(PrimitiveType);
 
 			instance.ShouldBe(new[] { ExpectedValue });
 		}

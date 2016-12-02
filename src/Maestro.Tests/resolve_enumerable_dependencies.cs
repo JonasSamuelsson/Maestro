@@ -17,7 +17,7 @@ namespace Maestro.Tests
 				x.Services<IChild>().Add.Type<Child3>();
 			});
 
-			var parent = container.Get<Parent>();
+			var parent = container.GetService<Parent>();
 
 			parent.Children.Should().HaveCount(3);
 			parent.Children.Should().Contain(x => x.GetType() == typeof(Child1));
@@ -30,7 +30,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container();
 
-			var foobar = container.Get<Parent>();
+			var foobar = container.GetService<Parent>();
 
 			foobar.Children.Should().NotBeNull();
 			foobar.Children.Should().HaveCount(0);

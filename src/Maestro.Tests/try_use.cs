@@ -16,7 +16,7 @@ namespace Maestro.Tests
 				x.Service<string>().TryUse.Instance("fail");
 			});
 
-			container.Get<string>().ShouldBe("success");
+			container.GetService<string>().ShouldBe("success");
 		}
 
 		[Fact]
@@ -30,7 +30,7 @@ namespace Maestro.Tests
 				x.Service(typeof(string), "foobar").TryUse.Instance("fail");
 			});
 
-			container.Get(typeof(string), "foobar").ShouldBe("success");
+			container.GetService(typeof(string), "foobar").ShouldBe("success");
 		}
 
 		[Fact]

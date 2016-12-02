@@ -12,8 +12,8 @@ namespace Maestro.Tests
 			var rootContainer = new Container(x => x.Service<object>().Use.Instance(expectedInstance));
 			var childContainer = rootContainer.GetChildContainer();
 
-			var rootInstance = rootContainer.Get<object>();
-			var childInstance = childContainer.Get<object>();
+			var rootInstance = rootContainer.GetService<object>();
+			var childInstance = childContainer.GetService<object>();
 
 			rootInstance.ShouldBe(expectedInstance);
 			rootInstance.ShouldBe(childInstance);
@@ -25,7 +25,7 @@ namespace Maestro.Tests
 			var rootContainer = new Container();
 			var childContainer = rootContainer.GetChildContainer(x => x.Service<IDependency>().Use.Type<Dependency>());
 
-			var rootInstance = rootContainer.Get<ClassWithOptionalDependency>();
+			var rootInstance = rootContainer.GetService<ClassWithOptionalDependency>();
 
 			rootInstance.Dependency.ShouldBe(null);
 		}
@@ -35,9 +35,9 @@ namespace Maestro.Tests
 		{
 			var rootContainer = new Container();
 			var childContainer = rootContainer.GetChildContainer(x => x.Service<IDependency>().Use.Type<Dependency>());
-			
-			var childInstance = childContainer.Get<ClassWithOptionalDependency>();
-			
+
+			var childInstance = childContainer.GetService<ClassWithOptionalDependency>();
+
 			childInstance.Dependency.ShouldNotBe(null);
 		}
 
@@ -67,8 +67,8 @@ namespace Maestro.Tests
 																					  x.Services<object>().Add.Instance(childInstance4);
 																				  });
 
-			var rootInstances = rootContainer.GetAll<object>();
-			var childInstances = childContainer.GetAll<object>();
+			var rootInstances = rootContainer.GetServices<object>();
+			var childInstances = childContainer.GetServices<object>();
 
 			rootInstances.ShouldBe(new[] { rootInstance1, rootInstance2, rootInstance3, rootInstance4 });
 			childInstances.ShouldBe(new[] { childInstance1, childInstance2, childInstance3, childInstance4, rootInstance3, rootInstance4 });
@@ -80,9 +80,9 @@ namespace Maestro.Tests
 			var rootContainer = new Container();
 			var childContainer = rootContainer.GetChildContainer();
 
-			var instance1 = childContainer.Get<ClassWithOptionalDependency>();
+			var instance1 = childContainer.GetService<ClassWithOptionalDependency>();
 			rootContainer.Configure(x => x.Service<IDependency>().Use.Type<Dependency>());
-			var instance2 = childContainer.Get<ClassWithOptionalDependency>();
+			var instance2 = childContainer.GetService<ClassWithOptionalDependency>();
 
 			instance1.Dependency.ShouldBe(null);
 			instance2.Dependency.ShouldNotBe(null);

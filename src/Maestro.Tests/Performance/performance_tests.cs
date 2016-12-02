@@ -14,9 +14,9 @@ namespace Maestro.Tests.Performance
 		public void new_container()
 		{
 			Warmup(Baseline);
-			Warmup(() => GetConfiguredContainer().Get<C3>());
+			Warmup(() => GetConfiguredContainer().GetService<C3>());
 
-			Console.WriteLine(Measure(() => GetConfiguredContainer().Get<C3>()) / Measure(Baseline));
+			Console.WriteLine(Measure(() => GetConfiguredContainer().GetService<C3>()) / Measure(Baseline));
 		}
 
 		//[Fact]
@@ -24,10 +24,10 @@ namespace Maestro.Tests.Performance
 		public void child_container()
 		{
 			Warmup(Baseline);
-			Warmup(() => GetConfiguredContainer().GetChildContainer().Get<C3>());
+			Warmup(() => GetConfiguredContainer().GetChildContainer().GetService<C3>());
 
 			var container = GetConfiguredContainer();
-			Console.WriteLine(Measure(() => container.GetChildContainer().Get<C3>()) / Measure(Baseline));
+			Console.WriteLine(Measure(() => container.GetChildContainer().GetService<C3>()) / Measure(Baseline));
 		}
 
 		//[Fact]
@@ -35,10 +35,10 @@ namespace Maestro.Tests.Performance
 		public void reuse_container()
 		{
 			Warmup(Baseline);
-			Warmup(() => GetConfiguredContainer().Get<C3>());
+			Warmup(() => GetConfiguredContainer().GetService<C3>());
 
 			var container = GetConfiguredContainer();
-			Console.WriteLine(Measure(() => container.Get<C3>()) / Measure(Baseline));
+			Console.WriteLine(Measure(() => container.GetService<C3>()) / Measure(Baseline));
 		}
 
 		//[Fact]
@@ -47,7 +47,7 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x => x.Service<P>().Use.Type<P>().SetProperty("O", new object()));
 			Action baseline = () => new P { O = new object() };
-			Action work = () => container.Get<P>();
+			Action work = () => container.GetService<P>();
 			Compare(baseline, work);
 		}
 
@@ -57,7 +57,7 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x => x.Service(typeof(IList<>)).Use.Type(typeof(List<>)));
 			Action baseline = () => new List<string>();
-			Action work = () => container.Get<IList<string>>();
+			Action work = () => container.GetService<IList<string>>();
 			Compare(baseline, work);
 		}
 
@@ -71,7 +71,7 @@ namespace Maestro.Tests.Performance
 														x.Services(typeof(IList<>)).Add.Instance(typeof(List<>));
 													});
 			Action baseline = delegate { var temp = new[] { new List<string>(), new List<string>() }; };
-			Action work = () => container.GetAll<IList<string>>();
+			Action work = () => container.GetServices<IList<string>>();
 			Compare(baseline, work);
 		}
 

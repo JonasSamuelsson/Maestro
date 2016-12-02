@@ -15,7 +15,7 @@ namespace Maestro.Tests.Interception
 				x.Service<Instance>().Use.Factory(() => i).Intercept(new InstanceInterceptor());
 			});
 
-			var instance = container.Get<Instance>();
+			var instance = container.GetService<Instance>();
 
 			instance.ShouldNotBe(i);
 			instance.InnerInstance.ShouldBe(i);
@@ -31,8 +31,8 @@ namespace Maestro.Tests.Interception
 				x.Service<Instance>("2").Use.Factory(() => i).Intercept((instance, ctx) => new Instance(instance));
 			});
 
-			var instance1 = container.Get<Instance>("1");
-			var instance2 = container.Get<Instance>("2");
+			var instance1 = container.GetService<Instance>("1");
+			var instance2 = container.GetService<Instance>("2");
 
 			instance1.ShouldNotBe(i);
 			instance1.InnerInstance.ShouldBe(i);
@@ -70,8 +70,8 @@ namespace Maestro.Tests.Interception
 				x.Service<NumberWrapper>("2").Use.Type<NumberWrapper>().Intercept((instance, ctx) => instance.Number = 2);
 			});
 
-			container.Get<NumberWrapper>("1").Number.ShouldBe(1);
-			container.Get<NumberWrapper>("2").Number.ShouldBe(2);
+			container.GetService<NumberWrapper>("1").Number.ShouldBe(1);
+			container.GetService<NumberWrapper>("2").Number.ShouldBe(2);
 		}
 
 		class NumberWrapper
@@ -97,7 +97,7 @@ namespace Maestro.Tests.Interception
 				})
 				.Intercept(y => y.Text += 5));
 
-			var instance = container.Get<TextWrapper>();
+			var instance = container.GetService<TextWrapper>();
 
 			instance.Text.ShouldBe("12345");
 		}
@@ -122,9 +122,9 @@ namespace Maestro.Tests.Interception
 			var counter = 0;
 			var container = new Container(x => x.Service<object>().Use.Type<object>().Intercept(_ => counter++).Lifetime.Singleton());
 
-			container.Get<object>();
+			container.GetService<object>();
 			counter.ShouldBe(1);
-			container.Get<object>();
+			container.GetService<object>();
 			counter.ShouldBe(1);
 		}
 
@@ -137,7 +137,7 @@ namespace Maestro.Tests.Interception
 														x.Services<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, "success");
 													});
 
-			var instances = container.GetAll<TextWrapper>();
+			var instances = container.GetServices<TextWrapper>();
 
 			instances.ShouldAllBe(x => x.Text == "success");
 		}
@@ -153,7 +153,7 @@ namespace Maestro.Tests.Interception
 														x.Services<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, ctx => "success");
 													});
 
-			var instances = container.GetAll<TextWrapper>();
+			var instances = container.GetServices<TextWrapper>();
 
 			instances.ShouldAllBe(x => x.Text == "success");
 		}
@@ -174,8 +174,8 @@ namespace Maestro.Tests.Interception
 														x.Service<Parent>("2").Use.Type<Parent>().SetProperty(y => y.Child);
 													});
 
-			var instance1 = container.Get<Parent>("1");
-			var instance2 = container.Get<Parent>("2");
+			var instance1 = container.GetService<Parent>("1");
+			var instance2 = container.GetService<Parent>("2");
 
 			instance1.Child.ShouldNotBe(null);
 			instance2.Child.ShouldNotBe(null);

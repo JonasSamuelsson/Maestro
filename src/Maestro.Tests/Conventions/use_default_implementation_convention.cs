@@ -13,19 +13,19 @@ namespace Maestro.Tests.Conventions
 
 			var container = new Container(x => x.Scan.AssemblyContainingTypeOf(this).Where(y => y.Namespace != null && y.Namespace.StartsWith(ns)).UseDefaultImplementations());
 
-			container.Invoking(x => x.Get<IFoobar1>()).ShouldNotThrow();
-			container.Invoking(x => x.Get<IFoobar2>()).ShouldNotThrow();
-			container.Invoking(x => x.Get<IFoobar3>()).ShouldThrow<ActivationException>();
-			container.Invoking(x => x.Get<IFoobar4>()).ShouldThrow<ActivationException>();
+			container.Invoking(x => x.GetService<IFoobar1>()).ShouldNotThrow();
+			container.Invoking(x => x.GetService<IFoobar2>()).ShouldNotThrow();
+			container.Invoking(x => x.GetService<IFoobar3>()).ShouldThrow<ActivationException>();
+			container.Invoking(x => x.GetService<IFoobar4>()).ShouldThrow<ActivationException>();
 		}
 
 		[Fact]
 		public void should_support_instance_configuration()
 		{
-			var container = new Container(x => x.Scan.Types(new[]{typeof(IFoobar1), typeof(Foobar1)}).UseDefaultImplementations(y => y.Lifetime.Singleton()));
+			var container = new Container(x => x.Scan.Types(new[] { typeof(IFoobar1), typeof(Foobar1) }).UseDefaultImplementations(y => y.Lifetime.Singleton()));
 
-			var instance1 = container.Get<IFoobar1>();
-			var instance2 = container.Get<IFoobar1>();
+			var instance1 = container.GetService<IFoobar1>();
+			var instance2 = container.GetService<IFoobar1>();
 
 			instance1.Should().Be(instance2);
 		}

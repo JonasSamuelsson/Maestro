@@ -1,5 +1,4 @@
 ﻿using Shouldly;
-using Xunit;
 
 namespace Maestro.Tests
 {
@@ -10,7 +9,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container();
 
-			Should.Throw<ActivationException>(() => container.Get<Unresolvable>());
+			Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
 		}
 
 		[Todo]
@@ -18,7 +17,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x => x.Service<Unresolvable>().Use.Type<Unresolvable>());
 
-			Should.Throw<ActivationException>(() => container.Get<Unresolvable>());
+			Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
 		}
 
 		[Todo]
@@ -26,7 +25,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x => x.Service<Unresolvable>().Use.Type<Unresolvable>());
 
-			Should.Throw<ActivationException>(() => container.GetAll<Unresolvable>());
+			Should.Throw<ActivationException>(() => container.GetServices<Unresolvable>());
 		}
 
 		[Todo]
@@ -37,7 +36,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container();
 
-			Should.Throw<ActivationException>(() => container.Get<Resolvable>());
+			Should.Throw<ActivationException>(() => container.GetService<Resolvable>());
 		}
 
 		[Todo]
@@ -46,7 +45,7 @@ namespace Maestro.Tests
 			var container = new Container(x => x.Service<Unresolvable>().Use.Type<Unresolvable>());
 
 			Resolvable resolvable;
-			Should.Throw<ActivationException>(() => container.TryGet(out resolvable));
+			Should.Throw<ActivationException>(() => container.TryGetService(out resolvable));
 		}
 
 		[Todo]

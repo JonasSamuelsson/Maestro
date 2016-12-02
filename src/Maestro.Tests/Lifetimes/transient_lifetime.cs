@@ -14,7 +14,7 @@ namespace Maestro.Tests.Lifetimes
 														x.Service<Parent>().Use.Type<Parent>();
 													});
 
-			var instance = container.Get<Parent>();
+			var instance = container.GetService<Parent>();
 
 			instance.Object1.Should().NotBe(instance.Object2);
 		}

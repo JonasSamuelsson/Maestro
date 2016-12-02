@@ -17,7 +17,7 @@ namespace Maestro.Tests
 				x.Services<object>().Add.Type<EventArgs>();
 			});
 
-			var instance = container.Get<TypeWithArrayOfObjectDependency>();
+			var instance = container.GetService<TypeWithArrayOfObjectDependency>();
 
 			instance.Objects.Should().HaveCount(2);
 			instance.Objects.Should().Contain(x => x.GetType() == typeof(object));
@@ -29,7 +29,7 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x => x.Service<TypeWithArrayOfObjectDependency>().Use.Type<TypeWithArrayOfObjectDependency>());
 
-			var instance = container.Get<TypeWithArrayOfObjectDependency>();
+			var instance = container.GetService<TypeWithArrayOfObjectDependency>();
 
 			instance.Objects.Should().HaveCount(0);
 		}
@@ -46,13 +46,13 @@ namespace Maestro.Tests
 			var array = new[] { 1, 2, 3 };
 			var container = new Container();
 
-			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
+			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
 
 			container.Configure(x => x.Services<int>().Add.Instance(0));
-			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
+			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
 
 			container.Configure(x => x.Service<int[]>().Use.Instance(array));
-			container.Get<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeEquivalentTo(array);
+			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeEquivalentTo(array);
 		}
 
 		private class TypeWithArrayOfValueTypeDependency
