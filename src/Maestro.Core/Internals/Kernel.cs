@@ -79,14 +79,14 @@ namespace Maestro.Internals
 			return GetAll(type, context);
 		}
 
-		public bool CanGet(Type type, Context context)
+		public bool CanGetService(Type type, Context context)
 		{
 			context.PushStackFrame(type);
 
 			try
 			{
 				IPipeline pipeline;
-				return TryGetPipeline(type, context, out pipeline);
+				return TryGetPipeline(type, context, out pipeline) || Reflector.IsEnumerable(type);
 			}
 			finally
 			{
@@ -148,11 +148,6 @@ namespace Maestro.Internals
 			{
 				context.PopStackFrame();
 			}
-		}
-
-		public bool CanGetDependency(Type type, Context context)
-		{
-			return CanGet(type, context) || Reflector.IsEnumerable(type);
 		}
 
 		public object GetDependency(Type type, Context context)

@@ -20,7 +20,7 @@ namespace Maestro.TypeFactoryResolvers
 			factoryProvider = (from ctor in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 									 let parameters = ctor.GetParameters()
 									 orderby parameters.Length descending
-									 where parameters.All(p => context.Kernel.CanGetDependency(p.ParameterType, context))
+									 where parameters.All(p => context.Kernel.CanGetService(p.ParameterType, context))
 									 select new TypeFactoryProvider(type) { Constructor = ctor }).FirstOrDefault();
 			return factoryProvider != null;
 		}
