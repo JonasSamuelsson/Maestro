@@ -48,7 +48,7 @@ namespace Maestro
 
 		public IContainer GetChildContainer(Action<IContainerExpression> action)
 		{
-			var childContainer = new Container(_kernel.GetChildKernel());
+			var childContainer = new Container(new Kernel(_kernel));
 			childContainer.Configure(action);
 			return childContainer;
 		}
