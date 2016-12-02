@@ -90,6 +90,7 @@
     <Compile Include="ChildContainer_resolution_tests.cs" />
     <Compile Include="child_container.cs" />
     <Compile Include="CommonServiceLocator.cs" />
+    <Compile Include="ContainerExpression_disposed_tests.cs" />
     <Compile Include="context_can_get_tests.cs" />
     <Compile Include="Context_tests.cs" />
     <Compile Include="Conventions\add_concrete_classes_closing_convention.cs" />
