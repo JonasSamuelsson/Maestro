@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,7 +11,7 @@ namespace Maestro.Tests.Performance
 {
 	public class perf_tests : IDisposable
 	{
-		private const int Iterations = 100 * 1000;
+		private const int Iterations = 1000 * 1000;
 		private readonly Dictionary<string, object> _dictionary;
 		private readonly ITestOutputHelper _output;
 
@@ -22,7 +23,8 @@ namespace Maestro.Tests.Performance
 			{
 				{"build config", GetBuildConfig()},
 				{"iterations", Iterations},
-				{"cpu", new ManagementObject("Win32_Processor.DeviceID='CPU0'")["CurrentClockSpeed"]}
+				{"cpu count", Environment.ProcessorCount},
+				{"cpu speed", new ManagementObject("Win32_Processor.DeviceID='CPU0'")["CurrentClockSpeed"]}
 			};
 		}
 
@@ -34,7 +36,10 @@ namespace Maestro.Tests.Performance
 			Type();
 			Singleton();
 			Enumerable();
+			CtorInjection();
+			PropertyInjection();
 			Complex();
+			MultiThreaded();
 			ChildContainer();
 		}
 
@@ -81,34 +86,85 @@ namespace Maestro.Tests.Performance
 		}
 
 		[Fact(Skip = "run manually")]
+		public void CtorInjection()
+		{
+			var container = new Container(x =>
+			{
+				x.Service<CtorDependency>().Use.Type<CtorDependency>();
+				x.Service<object>().Use.Type<object>();
+			});
+			Benchmark(() => container.GetService<CtorDependency>(), "ctor injection");
+		}
+
+		[Fact(Skip = "run manually")]
+		public void PropertyInjection()
+		{
+			var container = new Container(x =>
+			{
+				x.Service<PropertyDependency>().Use.Type<PropertyDependency>().SetProperty(y => y.O);
+				x.Service<object>().Use.Type<object>();
+			});
+			Benchmark(() => container.GetService<CtorDependency>(), "property injection");
+		}
+
+		[Fact(Skip = "run manually")]
 		public void Complex()
 		{
 			var container = new Container(x =>
 			{
-				x.Service<A>().Use.Type<A>();
-				x.Service<B>().Use.Type<B>();
-				x.Service<C>().Use.Type<C>();
-				x.Service<D>().Use.Type<D>();
+				x.Service<Complex1>().Use.Type<Complex1>();
+				x.Service<Complex2>().Use.Type<Complex2>();
+				x.Service<Complex3>().Use.Type<Complex3>();
+				x.Service<Complex4>().Use.Type<Complex4>();
 			});
-			Benchmark(() => container.GetService<A>(), "complex");
+			Benchmark(() => container.GetService<Complex1>(), "complex");
+		}
+
+		[Fact(Skip = "run manually")]
+		public void MultiThreaded()
+		{
+			var container = new Container(x =>
+			{
+				x.Service<Complex1>().Use.Type<Complex1>();
+				x.Service<Complex2>().Use.Type<Complex2>();
+				x.Service<Complex3>().Use.Type<Complex3>();
+				x.Service<Complex4>().Use.Type<Complex4>();
+			});
+			Benchmark(() => container.GetService<Complex1>(), "multi threaded");
 		}
 
 		[Fact(Skip = "run manually")]
 		public void ChildContainer()
 		{
-			var parentContainer = new Container(x => x.Service<C>().Use.Type<C>());
-			var childContainer = parentContainer.GetChildContainer(x => x.Service<D>().Use.Type<D>());
-			Benchmark(() => childContainer.GetService<A>(), "child container");
+			var parentContainer = new Container(x => x.Service<CtorDependency>().Use.Type<CtorDependency>());
+			var childContainer = parentContainer.GetChildContainer(x => x.Service<object>().Use.Type<object>());
+			Benchmark(() => childContainer.GetService<CtorDependency>(), "child container");
 		}
 
-		private void Benchmark(Action action, string info)
+		private void Benchmark(Action action, string info, bool multiThreaded = false)
 		{
+			Execute(action, 1);
 			GC.Collect();
-			action();
+
 			var stopwatch = Stopwatch.StartNew();
-			for (var i = 0; i < Iterations; i++) action();
+			if (multiThreaded == false)
+			{
+				Execute(action, Iterations);
+			}
+			else
+			{
+				var tasks = System.Linq.Enumerable.Range(0, Environment.ProcessorCount)
+					.Select(_ => Task.Factory.StartNew(() => Execute(action, Iterations)))
+					.ToList();
+				Task.WhenAll(tasks).Wait();
+			}
 			var elapsed = stopwatch.Elapsed;
 			_dictionary.Add(info, elapsed.TotalMilliseconds.ToString("0") + "ms");
+		}
+
+		private static void Execute(Action action, int iterations)
+		{
+			for (var i = 0; i < iterations; i++) action();
 		}
 
 		public void Dispose()
@@ -129,9 +185,11 @@ namespace Maestro.Tests.Performance
 #endif
 		}
 
-		class A { public A(B b, C c, D d) { } }
-		class B { public B(C c, D d) { } }
-		class C { public C(D d) { } }
-		class D { public D() { } }
+		class CtorDependency { public CtorDependency(object o) { } }
+		class PropertyDependency { public object O { get; set; } }
+		class Complex1 { public Complex1(Complex2 complex2, Complex3 complex3, Complex4 complex4) { } }
+		class Complex2 { public Complex2(Complex3 complex3, Complex4 complex4) { } }
+		class Complex3 { public Complex3(Complex4 complex4) { } }
+		class Complex4 { public Complex4() { } }
 	}
 }
