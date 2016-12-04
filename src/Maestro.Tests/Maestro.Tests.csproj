@@ -60,6 +60,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
@@ -120,6 +121,7 @@
     <Compile Include="named_type_instance_with_configured_dependencies.cs" />
     <Compile Include="open_generic_type.cs" />
     <Compile Include="Performance\performance_tests.cs" />
+    <Compile Include="Performance\perf_tests.cs" />
     <Compile Include="primitive_type_tests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Utils\Reflector_tests.cs" />
