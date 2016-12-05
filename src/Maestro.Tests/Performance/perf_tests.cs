@@ -31,6 +31,8 @@ namespace Maestro.Tests.Performance
 		[Fact(Skip = "run manually")]
 		public void Full()
 		{
+			BaselineSimple();
+			BaselineComplex();
 			Instance();
 			Factory();
 			Type();
@@ -41,6 +43,25 @@ namespace Maestro.Tests.Performance
 			Complex();
 			MultiThreaded();
 			ChildContainer();
+		}
+
+		private void BaselineSimple()
+		{
+			Action action = () => new object();
+			Benchmark(action, "baseline simple");
+		}
+
+		private void BaselineComplex()
+		{
+			Action action = () => new Complex1(
+				new Complex2(
+					new Complex3(
+						new Complex4()),
+					new Complex4()),
+				new Complex3(
+					new Complex4()),
+				new Complex4());
+			Benchmark(action, "baseline complex");
 		}
 
 		[Fact(Skip = "run manually")]
@@ -130,7 +151,8 @@ namespace Maestro.Tests.Performance
 				x.Service<Complex3>().Use.Type<Complex3>();
 				x.Service<Complex4>().Use.Type<Complex4>();
 			});
-			Benchmark(() => container.GetService<Complex1>(), "multi threaded");
+			var concurrentWorkers = Environment.ProcessorCount;
+			Benchmark(() => container.GetService<Complex1>(), $"complex ({concurrentWorkers} workers)", concurrentWorkers);
 		}
 
 		[Fact(Skip = "run manually")]
@@ -141,25 +163,25 @@ namespace Maestro.Tests.Performance
 			Benchmark(() => childContainer.GetService<CtorDependency>(), "child container");
 		}
 
-		private void Benchmark(Action action, string info, bool multiThreaded = false)
+		private void Benchmark(Action action, string info, int concurrentWorkers = 1)
 		{
 			Execute(action, 1);
 			GC.Collect();
 
 			var stopwatch = Stopwatch.StartNew();
-			if (multiThreaded == false)
+			if (concurrentWorkers <= 1)
 			{
 				Execute(action, Iterations);
 			}
 			else
 			{
-				var tasks = System.Linq.Enumerable.Range(0, Environment.ProcessorCount)
-					.Select(_ => Task.Factory.StartNew(() => Execute(action, Iterations)))
+				var tasks = System.Linq.Enumerable.Range(0, concurrentWorkers)
+					.Select(_ => Task.Factory.StartNew(() => Execute(action, Iterations), TaskCreationOptions.LongRunning))
 					.ToList();
 				Task.WhenAll(tasks).Wait();
 			}
 			var elapsed = stopwatch.Elapsed;
-			_dictionary.Add(info, elapsed.TotalMilliseconds.ToString("0") + "ms");
+			_dictionary.Add(info, $"{elapsed.TotalMilliseconds:0} ms");
 		}
 
 		private static void Execute(Action action, int iterations)
