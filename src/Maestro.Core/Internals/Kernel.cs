@@ -65,16 +65,28 @@ namespace Maestro.Internals
 		{
 			IPipeline pipeline;
 			instance = TryGetPipeline(type, context, out pipeline) ? pipeline.Execute(context) : null;
+
+			if (instance == null && Reflector.IsGenericEnumerable(type))
+			{
+				// todo performance
+				var elementType = type.GetGenericArguments().Single();
+				instance = Array.CreateInstance(elementType, 0);
+			}
+
 			return instance != null;
 		}
 
 		public IEnumerable<object> GetServices(Type type, Context context)
 		{
 			var enumerableType = typeof(IEnumerable<>).MakeGenericType(type);
-			IPipeline pipeline;
-			return TryGetPipeline(enumerableType, context, out pipeline)
-				? (IEnumerable<object>)pipeline.Execute(context)
-				: Enumerable.Empty<object>();
+
+			object instance;
+			if (TryGetService(enumerableType, context, out instance))
+			{
+				return (IEnumerable<object>) instance;
+			}
+
+			throw new InvalidOperationException();
 		}
 
 		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
@@ -102,7 +114,7 @@ namespace Maestro.Internals
 							if (Reflector.IsGenericEnumerable(type))
 							{
 								var elementType = type.GetGenericArguments().Single();
-								var plugins = _pluginLookup.GetAll(type);
+								var plugins = _pluginLookup.GetAll(elementType);
 								var pipelines = plugins.Select(x => new Pipeline(x)).ToList();
 
 								if (pipelines.Any())
@@ -110,23 +122,6 @@ namespace Maestro.Internals
 									pipeline = new EnumerablePipeline(elementType, pipelines);
 									_pipelineCache.Add(pipelineKey, pipeline);
 									return true;
-								}
-							}
-
-							if (type.IsGenericType)
-							{
-								var genericTypeDefinition = type.GetGenericTypeDefinition();
-								if (genericTypeDefinition == typeof(IEnumerable<>))
-								{
-									var elementType = type.GetGenericArguments().Single();
-									var isPrimitive = elementType.IsValueType || elementType == typeof(string) || elementType == typeof(object);
-									var pipelines = GetPipelines(elementType).ToList();
-									if (!isPrimitive || pipelines.Count != 0)
-									{
-										pipeline = new EnumerablePipeline(elementType, pipelines);
-										_pipelineCache.Add(pipelineKey, pipeline);
-										return true;
-									}
 								}
 							}
 
@@ -160,26 +155,6 @@ namespace Maestro.Internals
 			}
 
 			return true;
-		}
-
-		private IEnumerable<IPipeline> GetPipelines(Type type)
-		{
-			var key = $"{type.FullName}[]";
-			IEnumerable<IPipeline> pipelines;
-
-			if (_pipelineCache.TryGet(key, out pipelines))
-				return pipelines;
-
-			lock (_pipelineCache)
-			{
-				if (_pipelineCache.TryGet(key, out pipelines))
-					return pipelines;
-
-				var plugins = _pluginLookup.GetAll(type);
-				pipelines = plugins.Select(x => new Pipeline(x)).ToList();
-				_pipelineCache.Add(key, pipelines);
-				return pipelines;
-			}
 		}
 
 		private static string GetPipelineKey(Type type, Context context)
