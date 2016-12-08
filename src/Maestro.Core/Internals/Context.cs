@@ -54,7 +54,7 @@ namespace Maestro.Internals
 		bool IContext.TryGetService(Type type, out object instance)
 		{
 			AssertNotDisposed();
-			return Kernel.TryGet(type, this, out instance);
+			return Kernel.TryGetService(type, this, out instance);
 		}
 
 		IEnumerable<T> IContext.GetServices<T>()

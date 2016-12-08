@@ -70,7 +70,7 @@ namespace Maestro.Internals
 		{
 			name = name ?? PluginLookup.DefaultName;
 			using (var context = new Context(name, this))
-				return TryGet(type, context, out instance);
+				return TryGetService(type, context, out instance);
 		}
 
 		public IEnumerable<object> GetAll(Type type)
@@ -94,7 +94,7 @@ namespace Maestro.Internals
 			}
 		}
 
-		public bool TryGet(Type type, Context context, out object instance)
+		public bool TryGetService(Type type, Context context, out object instance)
 		{
 			context.PushStackFrame(type);
 
@@ -159,7 +159,7 @@ namespace Maestro.Internals
 
 		public bool TryGetDependency(Type type, Context context, out object instance)
 		{
-			if (TryGet(type, context, out instance)) return true;
+			if (TryGetService(type, context, out instance)) return true;
 
 			if (Reflector.IsEnumerable(type))
 			{
