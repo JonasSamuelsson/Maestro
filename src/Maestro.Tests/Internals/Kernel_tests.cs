@@ -57,7 +57,7 @@ namespace Maestro.Tests.Internals
 				.GetKernel();
 			var context = new Context(PluginLookup.DefaultName, kernel);
 
-			kernel.GetAll(typeof(object), context).ShouldBe(new[] { instance1, instance2, instance3 });
+			kernel.GetServices(typeof(object), context).ShouldBe(new[] { instance1, instance2, instance3 });
 		}
 
 		[Fact]
@@ -70,7 +70,7 @@ namespace Maestro.Tests.Internals
 
 			object instance;
 			Should.Throw<Exception>(() => kernel.TryGetService(typeof(CyclicDependency), context, out instance));
-			Should.Throw<Exception>(() => kernel.GetAll(typeof(CyclicDependency), context));
+			Should.Throw<Exception>(() => kernel.GetServices(typeof(CyclicDependency), context));
 		}
 
 		class KernelBuilder

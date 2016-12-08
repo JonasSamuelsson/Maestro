@@ -12,19 +12,19 @@ namespace Maestro.Tests.Utils
 		[Fact]
 		public void should_return_false_if_type_isnt_IEnumerable()
 		{
-			Reflector.IsEnumerable(typeof(string)).ShouldBe(false);
-			Reflector.IsEnumerable(typeof(IEnumerable)).ShouldBe(false);
-			Reflector.IsEnumerable(typeof(ICollection<object>)).ShouldBe(false);
-			Reflector.IsEnumerable(typeof(object[])).ShouldBe(false);
-			Reflector.IsEnumerable(typeof(IEnumerable<int>)).ShouldBe(false);
-			Reflector.IsEnumerable(typeof(IEnumerable<string>)).ShouldBe(false);
+			Reflector.IsGenericEnumerable(typeof(string)).ShouldBe(false);
+			Reflector.IsGenericEnumerable(typeof(IEnumerable)).ShouldBe(false);
+			Reflector.IsGenericEnumerable(typeof(ICollection<object>)).ShouldBe(false);
+			Reflector.IsGenericEnumerable(typeof(object[])).ShouldBe(false);
+			Reflector.IsGenericEnumerable(typeof(IEnumerable<int>)).ShouldBe(false);
+			Reflector.IsGenericEnumerable(typeof(IEnumerable<string>)).ShouldBe(false);
 		}
 
 		[Fact]
 		public void should_return_true_if_type_is_IEnumerable()
 		{
-			Reflector.IsEnumerable(typeof(IEnumerable<object>)).ShouldBe(true);
-			Reflector.IsEnumerable(typeof(IEnumerable<IDisposable>)).ShouldBe(true);
+			Reflector.IsGenericEnumerable(typeof(IEnumerable<object>)).ShouldBe(true);
+			Reflector.IsGenericEnumerable(typeof(IEnumerable<IDisposable>)).ShouldBe(true);
 		}
 	}
 }

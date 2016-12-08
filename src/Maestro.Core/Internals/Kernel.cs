@@ -76,7 +76,7 @@ namespace Maestro.Internals
 		public IEnumerable<object> GetAll(Type type)
 		{
 			var context = new Context(PluginLookup.DefaultName, this);
-			return GetAll(type, context);
+			return GetServices(type, context);
 		}
 
 		public bool CanGetService(Type type, Context context)
@@ -86,7 +86,7 @@ namespace Maestro.Internals
 			try
 			{
 				IPipeline pipeline;
-				return TryGetPipeline(type, context, out pipeline) || Reflector.IsEnumerable(type);
+				return TryGetPipeline(type, context, out pipeline) || Reflector.IsGenericEnumerable(type);
 			}
 			finally
 			{
@@ -110,44 +110,13 @@ namespace Maestro.Internals
 			}
 		}
 
-		public IEnumerable<object> GetAll(Type type, Context context)
+		public IEnumerable<object> GetServices(Type type, Context context)
 		{
-			context.PushStackFrame(type);
-
-			try
-			{
-				var key = type.FullName;
-				IEnumerable<IPipeline> pipelines;
-				if (!_pipelineCache.TryGet(key, out pipelines))
-				{
-					lock (_pipelineCache)
-					{
-						if (!_pipelineCache.TryGet(key, out pipelines))
-						{
-							var names = new HashSet<string>();
-							var list = new List<IPipeline>();
-							for (var kernel = this; kernel != null; kernel = kernel._parent)
-							{
-								var plugins = kernel._pluginLookup.GetAll(type).ToList();
-								for (var i = 0; i < plugins.Count; i++)
-								{
-									var plugin = plugins[i];
-									if (!names.Add(plugin.Name)) continue;
-									list.Add(new Pipeline(plugin));
-								}
-							}
-							pipelines = list;
-							_pipelineCache.Add(key, pipelines);
-						}
-					}
-				}
-
-				return pipelines.Select(x => x.Execute(context)).ToList();
-			}
-			finally
-			{
-				context.PopStackFrame();
-			}
+			var enumerableType = typeof(IEnumerable<>).MakeGenericType(type);
+			IPipeline pipeline;
+			return TryGetPipeline(enumerableType, context, out pipeline)
+				? (IEnumerable<object>)pipeline.Execute(context)
+				: Enumerable.Empty<object>();
 		}
 
 		public object GetDependency(Type type, Context context)
@@ -161,10 +130,10 @@ namespace Maestro.Internals
 		{
 			if (TryGetService(type, context, out instance)) return true;
 
-			if (Reflector.IsEnumerable(type))
+			if (Reflector.IsGenericEnumerable(type))
 			{
 				var elementType = type.GetGenericArguments().Single();
-				var instances = GetAll(elementType, context);
+				var instances = GetServices(elementType, context);
 				var castMethod = typeof(Enumerable).GetMethod("Cast", BindingFlags.Public | BindingFlags.Static);
 				var genericCastMethod = castMethod.MakeGenericMethod(elementType);
 				instance = genericCastMethod.Invoke(null, new object[] { instances });
@@ -194,6 +163,20 @@ namespace Maestro.Internals
 								pipeline = new Pipeline(plugin);
 								_pipelineCache.Add(pipelineKey, pipeline);
 								return true;
+							}
+
+							if (Reflector.IsGenericEnumerable(type))
+							{
+								var elementType = type.GetGenericArguments().Single();
+								var plugins = _pluginLookup.GetAll(type);
+								var pipelines = plugins.Select(x => new Pipeline(x)).ToList();
+
+								if (pipelines.Any())
+								{
+									pipeline = new EnumerablePipeline(elementType, pipelines);
+									_pipelineCache.Add(pipelineKey, pipeline);
+									return true;
+								}
 							}
 
 							if (type.IsGenericType)
