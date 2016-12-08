@@ -11,10 +11,10 @@ namespace Maestro.TypeFactoryResolvers
 		{
 			factoryProvider = null;
 			if (!type.IsConcreteClassClosing(typeof(Func<>))) return false;
-			var typeArgument = type.GetGenericArguments().Single();
-			if (!context.Kernel.CanGetService(typeArgument, context)) return false;
+			var serviceType = type.GetGenericArguments().Single();
+			if (!context.Kernel.CanGetService(serviceType, context)) return false;
 
-			var wrapperType = typeof(Wrapper<>).MakeGenericType(typeArgument);
+			var wrapperType = typeof(Wrapper<>).MakeGenericType(serviceType);
 			var wrapper = Activator.CreateInstance(wrapperType, context.Name, context.Kernel);
 			var getFuncMethod = wrapperType.GetMethod("GetFunc");
 			var lambda = new Func<IContext, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
@@ -40,7 +40,8 @@ namespace Maestro.TypeFactoryResolvers
 
 			private T GetInstance()
 			{
-				return (T)_kernel.Get(typeof(T), _name);
+				using (var context = new Context(_name, _kernel))
+					return context.GetService<T>();
 			}
 		}
 	}

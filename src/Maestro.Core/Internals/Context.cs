@@ -18,12 +18,12 @@ namespace Maestro.Internals
 		public string Name { get; }
 		public Kernel Kernel { get; }
 
-		bool IContext.CanGetService<T>()
+		public bool CanGetService<T>()
 		{
 			return ((IContext)this).CanGetService(typeof(T));
 		}
 
-		bool IContext.CanGetService(Type type)
+		public bool CanGetService(Type type)
 		{
 			// todo add cyclic check & error handling
 
@@ -31,14 +31,14 @@ namespace Maestro.Internals
 			return Kernel.CanGetService(type, this);
 		}
 
-		T IContext.GetService<T>()
+		public T GetService<T>()
 		{
 			// todo add cyclic check & error handling
 
 			return (T)((IContext)this).GetService(typeof(T));
 		}
 
-		object IContext.GetService(Type type)
+		public object GetService(Type type)
 		{
 			// todo add cyclic check & error handling
 
@@ -49,7 +49,7 @@ namespace Maestro.Internals
 			throw new NotImplementedException("foobar");
 		}
 
-		bool IContext.TryGetService<T>(out T instance)
+		public bool TryGetService<T>(out T instance)
 		{
 			// todo add cyclic check & error handling
 
@@ -59,7 +59,7 @@ namespace Maestro.Internals
 			return result;
 		}
 
-		bool IContext.TryGetService(Type type, out object instance)
+		public bool TryGetService(Type type, out object instance)
 		{
 			// todo add cyclic check & error handling
 
@@ -67,14 +67,14 @@ namespace Maestro.Internals
 			return Kernel.TryGetService(type, this, out instance);
 		}
 
-		IEnumerable<T> IContext.GetServices<T>()
+		public IEnumerable<T> GetServices<T>()
 		{
 			// todo add cyclic check & error handling
 
 			return ((IContext)this).GetServices(typeof(T)).Cast<T>().ToArray();
 		}
 
-		IEnumerable<object> IContext.GetServices(Type type)
+		public IEnumerable<object> GetServices(Type type)
 		{
 			// todo add cyclic check & error handling
 
