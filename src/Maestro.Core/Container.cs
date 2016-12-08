@@ -41,12 +41,12 @@ namespace Maestro
 				action(containerExpression);
 		}
 
-		public IContainer GetChildContainer()
+		internal IContainer GetChildContainer()
 		{
 			return GetChildContainer(delegate { });
 		}
 
-		public IContainer GetChildContainer(Action<IContainerExpression> action)
+		internal IContainer GetChildContainer(Action<IContainerExpression> action)
 		{
 			var childContainer = new Container(new Kernel(_kernel));
 			childContainer.Configure(action);
@@ -100,22 +100,9 @@ namespace Maestro
 			return GetServices(typeof(T)).Cast<T>().ToList();
 		}
 
-		public string GetConfiguration()
+		internal string GetConfiguration()
 		{
 			throw new NotImplementedException();
-			//var builder = new DiagnosticsBuilder();
-			//foreach (var pair1 in _plugins.OrderBy(x => x.Key.FullName))
-			//{
-			//	using (builder.Category(pair1.Key))
-			//		foreach (var pair2 in pair1.Value.OrderBy(x => x.Key))
-			//		{
-			//			var prefix = pair2.Key == DefaultName ? "{default}" : pair2.Key;
-			//			builder.Prefix(prefix + " : ");
-			//			pair2.Value.GetConfiguration(builder);
-			//		}
-			//	builder.Line();
-			//}
-			//return builder.ToString();
 		}
 
 		public event Action<Guid> Disposed

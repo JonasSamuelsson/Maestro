@@ -12,8 +12,8 @@ namespace Maestro
 		/// <param name="action"></param>
 		void Configure(Action<IContainerExpression> action);
 
-		IContainer GetChildContainer();
-		IContainer GetChildContainer(Action<IContainerExpression> action);
+		//IContainer GetChildContainer();
+		//IContainer GetChildContainer(Action<IContainerExpression> action);
 
 		/// <summary>
 		/// Gets an instance of type <paramref name="type"/> named <paramref name="name"/>.
@@ -80,11 +80,5 @@ namespace Maestro
 		/// <returns></returns>
 		/// <remarks>Does not swallow any exceptions.</remarks>
 		bool TryGetService<T>(string name, out T instance);
-
-		/// <summary>
-		/// Gets a report of the complete container configuration.
-		/// </summary>
-		/// <returns></returns>
-		string GetConfiguration();
 	}
 }
