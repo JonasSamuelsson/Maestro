@@ -39,7 +39,7 @@ namespace Maestro.Interceptors
 			return ctx =>
 					 {
 						 var context = ((Context)ctx);
-						 return context.Kernel.GetDependency(propertyType, context);
+						 return context.GetService(propertyType);
 					 };
 		}
 

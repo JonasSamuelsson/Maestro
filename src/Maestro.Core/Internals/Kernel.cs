@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
@@ -56,48 +55,17 @@ namespace Maestro.Internals
 				return _pluginLookup.Add(plugin, throwIfDuplicate);
 		}
 
-		public bool TryGet(Type type, string name, out object instance)
-		{
-			name = name ?? PluginLookup.DefaultName;
-			using (var context = new Context(name, this))
-				return TryGetService(type, context, out instance);
-		}
-
-		public IEnumerable<object> GetAll(Type type)
-		{
-			var context = new Context(PluginLookup.DefaultName, this);
-			return GetServices(type, context);
-		}
-
 		public bool CanGetService(Type type, Context context)
 		{
-			context.PushStackFrame(type);
-
-			try
-			{
-				IPipeline pipeline;
-				return TryGetPipeline(type, context, out pipeline) || Reflector.IsGenericEnumerable(type);
-			}
-			finally
-			{
-				context.PopStackFrame();
-			}
+			IPipeline pipeline;
+			return TryGetPipeline(type, context, out pipeline) || Reflector.IsGenericEnumerable(type);
 		}
 
 		public bool TryGetService(Type type, Context context, out object instance)
 		{
-			context.PushStackFrame(type);
-
-			try
-			{
-				IPipeline pipeline;
-				instance = TryGetPipeline(type, context, out pipeline) ? pipeline.Execute(context) : null;
-				return instance != null;
-			}
-			finally
-			{
-				context.PopStackFrame();
-			}
+			IPipeline pipeline;
+			instance = TryGetPipeline(type, context, out pipeline) ? pipeline.Execute(context) : null;
+			return instance != null;
 		}
 
 		public IEnumerable<object> GetServices(Type type, Context context)
@@ -107,30 +75,6 @@ namespace Maestro.Internals
 			return TryGetPipeline(enumerableType, context, out pipeline)
 				? (IEnumerable<object>)pipeline.Execute(context)
 				: Enumerable.Empty<object>();
-		}
-
-		public object GetDependency(Type type, Context context)
-		{
-			object instance;
-			if (TryGetDependency(type, context, out instance)) return instance;
-			throw new InvalidOperationException();
-		}
-
-		public bool TryGetDependency(Type type, Context context, out object instance)
-		{
-			if (TryGetService(type, context, out instance)) return true;
-
-			if (Reflector.IsGenericEnumerable(type))
-			{
-				var elementType = type.GetGenericArguments().Single();
-				var instances = GetServices(elementType, context);
-				var castMethod = typeof(Enumerable).GetMethod("Cast", BindingFlags.Public | BindingFlags.Static);
-				var genericCastMethod = castMethod.MakeGenericMethod(elementType);
-				instance = genericCastMethod.Invoke(null, new object[] { instances });
-				return true;
-			}
-
-			return false;
 		}
 
 		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)

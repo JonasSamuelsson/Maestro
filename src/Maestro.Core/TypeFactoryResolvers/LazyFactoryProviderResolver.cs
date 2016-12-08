@@ -22,7 +22,7 @@ namespace Maestro.TypeFactoryResolvers
 									 where parameters[0].ParameterType == funcType
 									 where parameters[1].ParameterType == typeof(LazyThreadSafetyMode)
 									 select ctor).First();
-			var param1 = new Func<Context, object>(ctx => ctx.Kernel.GetDependency(funcType, ctx));
+			var param1 = new Func<Context, object>(ctx => ctx.GetService(funcType));
 			var param2 = new Func<Context, object>(_ => LazyThreadSafetyMode.ExecutionAndPublication);
 			var activator = ConstructorInvokation.Get(constructor, new[] { param1, param2 });
 			factoryProvider = new LambdaFactoryProvider(ctx => activator((Context)ctx));
