@@ -53,74 +53,51 @@ namespace Maestro
 			return childContainer;
 		}
 
-		public T GetService<T>(string name = null)
-		{
-			return (T)GetService(typeof(T), name);
-		}
-
 		public object GetService(Type type, string name = null)
 		{
-			object instance;
-			if (TryGetService(type, name, out instance))
-				return instance;
-
-			var template = PluginLookup.EqualsDefaultName(name)
-									? "Can't get default instance of type '{0}'."
-									: "Can't get '{1}' instance of type '{0}'.";
-			var message = string.Format(template, type.FullName, name);
-			throw new ActivationException(message);
+			using (var context = new Context(name, _kernel))
+				return context.GetService(type);
 		}
 
-		public bool TryGetService<T>(out T instance)
+		public T GetService<T>(string name = null)
 		{
-			return TryGetService(PluginLookup.DefaultName, out instance);
-		}
-
-		public bool TryGetService<T>(string name, out T instance)
-		{
-			object temp;
-			var result = TryGetService(typeof(T), name, out temp);
-			instance = (T)temp;
-			return result;
+			using (var context = new Context(name, _kernel))
+				return context.GetService<T>();
 		}
 
 		public bool TryGetService(Type type, out object instance)
 		{
-			return TryGetService(type, PluginLookup.DefaultName, out instance);
+			using (var context = new Context(PluginLookup.DefaultName, _kernel))
+				return context.TryGetService(type, out instance);
 		}
 
 		public bool TryGetService(Type type, string name, out object instance)
 		{
-			try
-			{
-				return _kernel.TryGet(type, name, out instance);
-			}
-			catch (Exception exception)
-			{
-				var template = PluginLookup.EqualsDefaultName(name)
-										? "Can't get default instance of type '{0}'."
-										: "Can't get '{1}' instance of type '{0}'.";
-				var message = string.Format(template, type.FullName, name);
-				throw new ActivationException(message, exception);
-			}
+			using (var context = new Context(name, _kernel))
+				return context.TryGetService(type, out instance);
+		}
+
+		public bool TryGetService<T>(out T instance)
+		{
+			using (var context = new Context(PluginLookup.DefaultName, _kernel))
+				return context.TryGetService(out instance);
+		}
+
+		public bool TryGetService<T>(string name, out T instance)
+		{
+			using (var context = new Context(name, _kernel))
+				return context.TryGetService(out instance);
+		}
+
+		public IEnumerable<object> GetServices(Type type)
+		{
+			using (var context = new Context(PluginLookup.DefaultName, _kernel))
+				return context.GetServices(type);
 		}
 
 		public IEnumerable<T> GetServices<T>()
 		{
 			return GetServices(typeof(T)).Cast<T>().ToList();
-		}
-
-		public IEnumerable<object> GetServices(Type type)
-		{
-			try
-			{
-				return _kernel.GetAll(type);
-			}
-			catch (Exception exception)
-			{
-				var message = $"Can't get all instances of type '{type.FullName}'.";
-				throw new ActivationException(message, exception);
-			}
 		}
 
 		public string GetConfiguration()
