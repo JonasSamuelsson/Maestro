@@ -15,7 +15,7 @@ namespace Maestro.Tests.Internals
 			var context = new Context(PluginLookup.DefaultName, kernel);
 
 			object instance;
-			kernel.TryGet(typeof(IDisposable), context, out instance).ShouldBe(false);
+			kernel.TryGetService(typeof(IDisposable), context, out instance).ShouldBe(false);
 			instance.ShouldBe(null);
 		}
 
@@ -29,7 +29,7 @@ namespace Maestro.Tests.Internals
 			var context = new Context(PluginLookup.DefaultName, kernel);
 
 			object instance;
-			kernel.TryGet(typeof(object), context, out instance).ShouldBe(true);
+			kernel.TryGetService(typeof(object), context, out instance).ShouldBe(true);
 			instance.ShouldBeOfType<object>();
 		}
 
@@ -40,7 +40,7 @@ namespace Maestro.Tests.Internals
 			var context = new Context(PluginLookup.DefaultName, kernel);
 
 			object instance;
-			kernel.TryGet(typeof(object), context, out instance).ShouldBe(true);
+			kernel.TryGetService(typeof(object), context, out instance).ShouldBe(true);
 			instance.ShouldNotBe(null);
 		}
 
@@ -69,7 +69,7 @@ namespace Maestro.Tests.Internals
 			var context = new Context(string.Empty, kernel);
 
 			object instance;
-			Should.Throw<Exception>(() => kernel.TryGet(typeof(CyclicDependency), context, out instance));
+			Should.Throw<Exception>(() => kernel.TryGetService(typeof(CyclicDependency), context, out instance));
 			Should.Throw<Exception>(() => kernel.GetAll(typeof(CyclicDependency), context));
 		}
 
