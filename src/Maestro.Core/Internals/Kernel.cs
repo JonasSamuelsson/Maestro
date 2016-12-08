@@ -56,16 +56,6 @@ namespace Maestro.Internals
 				return _pluginLookup.Add(plugin, throwIfDuplicate);
 		}
 
-		public object Get(Type type, string name)
-		{
-			name = name ?? PluginLookup.DefaultName;
-			object instance;
-			if (TryGet(type, name, out instance))
-				return instance;
-
-			throw new NotImplementedException("error handling");
-		}
-
 		public bool TryGet(Type type, string name, out object instance)
 		{
 			name = name ?? PluginLookup.DefaultName;
