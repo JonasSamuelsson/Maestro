@@ -25,17 +25,23 @@ namespace Maestro.Internals
 
 		bool IContext.CanGetService(Type type)
 		{
+			// todo add cyclic check & error handling
+
 			AssertNotDisposed();
 			return Kernel.CanGetService(type, this);
 		}
 
 		T IContext.GetService<T>()
 		{
+			// todo add cyclic check & error handling
+
 			return (T)((IContext)this).GetService(typeof(T));
 		}
 
 		object IContext.GetService(Type type)
 		{
+			// todo add cyclic check & error handling
+
 			object instance;
 			if (((IContext)this).TryGetService(type, out instance))
 				return instance;
@@ -45,6 +51,8 @@ namespace Maestro.Internals
 
 		bool IContext.TryGetService<T>(out T instance)
 		{
+			// todo add cyclic check & error handling
+
 			object o;
 			var result = ((IContext)this).TryGetService(typeof(T), out o);
 			instance = (T)o;
@@ -53,17 +61,23 @@ namespace Maestro.Internals
 
 		bool IContext.TryGetService(Type type, out object instance)
 		{
+			// todo add cyclic check & error handling
+
 			AssertNotDisposed();
 			return Kernel.TryGetService(type, this, out instance);
 		}
 
 		IEnumerable<T> IContext.GetServices<T>()
 		{
+			// todo add cyclic check & error handling
+
 			return ((IContext)this).GetServices(typeof(T)).Cast<T>().ToArray();
 		}
 
 		IEnumerable<object> IContext.GetServices(Type type)
 		{
+			// todo add cyclic check & error handling
+
 			AssertNotDisposed();
 			return Kernel.GetServices(type, this);
 		}
@@ -85,7 +99,7 @@ namespace Maestro.Internals
 
 		private void AssertNotDisposed()
 		{
-			if (_disposed) throw new ObjectDisposedException("Context has been disposed.");
+			if (_disposed) throw new ObjectDisposedException(objectName: null, message: "Context has been disposed.");
 		}
 
 		public void Dispose()
