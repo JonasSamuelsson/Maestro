@@ -19,12 +19,12 @@ namespace Maestro.Configuration
 
 		public void Instance(T instance)
 		{
-			_plugins.Add(new Plugin
-			             {
-				             Type = _type,
-				             Name = _name,
-				             FactoryProvider = new InstanceFactoryProvider(instance)
-			             });
+			_plugins.Add(new ServiceDescriptor
+			{
+				Type = _type,
+				Name = _name,
+				FactoryProvider = new InstanceFactoryProvider(instance)
+			});
 		}
 
 		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<TInstance> factory)
@@ -34,24 +34,24 @@ namespace Maestro.Configuration
 
 		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<IContext, TInstance> factory)
 		{
-			var plugin = new Plugin
-			             {
-				             Type = _type,
-				             Name = _name,
-				             FactoryProvider = new LambdaFactoryProvider(ctx => factory(ctx))
-			             };
+			var plugin = new ServiceDescriptor
+			{
+				Type = _type,
+				Name = _name,
+				FactoryProvider = new LambdaFactoryProvider(ctx => factory(ctx))
+			};
 			_plugins.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
 		public ITypeInstanceExpression<TInstance> Type<TInstance>()
 		{
-			var plugin = new Plugin
-			             {
-				             Type = _type,
-				             Name = _name,
-				             FactoryProvider = new TypeFactoryProvider(_type)
-			             };
+			var plugin = new ServiceDescriptor
+			{
+				Type = _type,
+				Name = _name,
+				FactoryProvider = new TypeFactoryProvider(_type)
+			};
 			_plugins.Add(plugin);
 			return new TypeInstanceExpression<TInstance>(plugin);
 		}

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Maestro.Conventions;
-using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
@@ -67,7 +66,7 @@ namespace Maestro.Configuration
 			AddConcreteSubClassesOf(typeof(T), expression =>
 														  {
 															  action = action ?? delegate { };
-															  var plugin = ((TypeInstanceExpression<object>)expression).Plugin;
+															  var plugin = ((TypeInstanceExpression<object>)expression).ServiceDescriptor;
 															  action(new TypeInstanceExpression<T>(plugin));
 														  });
 		}

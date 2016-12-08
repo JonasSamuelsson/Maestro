@@ -7,9 +7,9 @@ namespace Maestro.Configuration
 {
 	class FactoryInstanceExpression<T> : IFactoryInstanceExpression<T>
 	{
-		public FactoryInstanceExpression(Plugin plugin)
+		public FactoryInstanceExpression(ServiceDescriptor serviceDescriptor)
 		{
-			InstanceExpression = new InstanceExpression<T, IFactoryInstanceExpression<T>>(plugin, this);
+			InstanceExpression = new InstanceExpression<T, IFactoryInstanceExpression<T>>(serviceDescriptor, this);
 		}
 
 		public IInstanceExpression<T, IFactoryInstanceExpression<T>> InstanceExpression { get; set; }
@@ -53,7 +53,7 @@ namespace Maestro.Configuration
 
 		public IInstanceExpression<T, IFactoryInstanceExpression<T>> SetProperty(string property, Func<object> factory)
 		{
-			return InstanceExpression.SetProperty(property,factory);
+			return InstanceExpression.SetProperty(property, factory);
 		}
 
 		public IInstanceExpression<T, IFactoryInstanceExpression<T>> SetProperty(string property, Func<IContext, object> factory)

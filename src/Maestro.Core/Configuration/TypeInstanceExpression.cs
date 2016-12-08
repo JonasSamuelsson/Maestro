@@ -7,13 +7,13 @@ namespace Maestro.Configuration
 {
 	class TypeInstanceExpression<T> : ITypeInstanceExpression<T>
 	{
-		public TypeInstanceExpression(Plugin plugin)
+		public TypeInstanceExpression(ServiceDescriptor serviceDescriptor)
 		{
-			Plugin = plugin;
-			InstanceExpression = new InstanceExpression<T, ITypeInstanceExpression<T>>(plugin, this);
+			ServiceDescriptor = serviceDescriptor;
+			InstanceExpression = new InstanceExpression<T, ITypeInstanceExpression<T>>(serviceDescriptor, this);
 		}
 
-		internal Plugin Plugin { get; }
+		internal ServiceDescriptor ServiceDescriptor { get; }
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> InstanceExpression { get; }
 
 		public ILifetimeExpression<ITypeInstanceExpression<T>> Lifetime => InstanceExpression.Lifetime;
