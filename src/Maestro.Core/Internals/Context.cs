@@ -65,7 +65,7 @@ namespace Maestro.Internals
 		IEnumerable<object> IContext.GetServices(Type type)
 		{
 			AssertNotDisposed();
-			return Kernel.GetAll(type, this);
+			return Kernel.GetServices(type, this);
 		}
 
 		public void PushStackFrame(Type type)
