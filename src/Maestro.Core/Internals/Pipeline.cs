@@ -1,5 +1,4 @@
 using Maestro.FactoryProviders.Factories;
-using Maestro.Interceptors;
 using Maestro.Lifetimes;
 
 namespace Maestro.Internals
@@ -10,18 +9,18 @@ namespace Maestro.Internals
 		{
 		}
 
-		public Pipeline(Plugin plugin)
+		public Pipeline(ServiceDescriptor serviceDescriptor)
 		{
-			Plugin = plugin;
+			ServiceDescriptor = serviceDescriptor;
 		}
 
-		public Plugin Plugin { get; set; }
+		public ServiceDescriptor ServiceDescriptor { get; set; }
 		public IFactory Factory { get; set; }
 
 		public object Execute(Context context)
 		{
 			var temp = new NextStep { Context = context, Pipeline = this };
-			return Plugin.Lifetime.Execute(temp);
+			return ServiceDescriptor.Lifetime.Execute(temp);
 		}
 
 		internal struct NextStep : INextStep
@@ -33,12 +32,12 @@ namespace Maestro.Internals
 			{
 				if (Pipeline.Factory == null)
 				{
-					Pipeline.Factory = Pipeline.Plugin.FactoryProvider.GetFactory(Context);
+					Pipeline.Factory = Pipeline.ServiceDescriptor.FactoryProvider.GetFactory(Context);
 				}
 
 				var instance = Pipeline.Factory.GetInstance(Context);
 
-				var interceptors = Pipeline.Plugin.Interceptors;
+				var interceptors = Pipeline.ServiceDescriptor.Interceptors;
 				for (var i = 0; i < interceptors.Count; i++)
 				{
 					instance = interceptors[i].Execute(instance, Context);

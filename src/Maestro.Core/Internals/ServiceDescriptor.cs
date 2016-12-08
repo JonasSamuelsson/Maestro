@@ -6,7 +6,7 @@ using Maestro.Lifetimes;
 
 namespace Maestro.Internals
 {
-	class Plugin
+	class ServiceDescriptor
 	{
 		public Type Type { get; set; }
 		public string Name { get; set; }

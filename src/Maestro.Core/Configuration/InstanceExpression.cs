@@ -7,18 +7,18 @@ namespace Maestro.Configuration
 {
 	class InstanceExpression<TInstance, TParent> : IInstanceExpression<TInstance, TParent>
 	{
-		public InstanceExpression(Plugin plugin, TParent parent)
+		public InstanceExpression(ServiceDescriptor serviceDescriptor, TParent parent)
 		{
-			Plugin = plugin;
+			ServiceDescriptor = serviceDescriptor;
 			Parent = parent;
 		}
 
-		internal Plugin Plugin { get; set; }
+		internal ServiceDescriptor ServiceDescriptor { get; set; }
 		internal TParent Parent { get; set; }
 
 		public ILifetimeExpression<TParent> Lifetime
 		{
-			get { return new LifetimeExpression<TParent>(Parent, lifetime => Plugin.Lifetime = lifetime); }
+			get { return new LifetimeExpression<TParent>(Parent, lifetime => ServiceDescriptor.Lifetime = lifetime); }
 		}
 
 		public IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance> action)
@@ -43,7 +43,7 @@ namespace Maestro.Configuration
 
 		public IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor)
 		{
-			Plugin.Interceptors.Add(interceptor);
+			ServiceDescriptor.Interceptors.Add(interceptor);
 			return this;
 		}
 

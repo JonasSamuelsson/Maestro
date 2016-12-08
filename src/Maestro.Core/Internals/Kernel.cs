@@ -49,10 +49,10 @@ namespace Maestro.Internals
 				_pipelineCache.Clear();
 		}
 
-		public bool Add(Plugin plugin, bool throwIfDuplicate)
+		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
 		{
 			lock (_pipelineCache)
-				return _pluginLookup.Add(plugin, throwIfDuplicate);
+				return _pluginLookup.Add(serviceDescriptor, throwIfDuplicate);
 		}
 
 		public bool CanGetService(Type type, Context context)
@@ -83,7 +83,7 @@ namespace Maestro.Internals
 			object instance;
 			if (TryGetService(enumerableType, context, out instance))
 			{
-				return (IEnumerable<object>) instance;
+				return (IEnumerable<object>)instance;
 			}
 
 			throw new InvalidOperationException();
@@ -103,10 +103,10 @@ namespace Maestro.Internals
 						tryGetPlugin:
 						for (var kernel = this; kernel != null; kernel = kernel._parent)
 						{
-							Plugin plugin;
-							if (kernel._pluginLookup.TryGet(type, name, out plugin))
+							ServiceDescriptor serviceDescriptor;
+							if (kernel._pluginLookup.TryGet(type, name, out serviceDescriptor))
 							{
-								pipeline = new Pipeline(plugin);
+								pipeline = new Pipeline(serviceDescriptor);
 								_pipelineCache.Add(pipelineKey, pipeline);
 								return true;
 							}
@@ -138,7 +138,7 @@ namespace Maestro.Internals
 							if (!factoryProviderResolver.TryGet(type, context, out factoryProvider)) continue;
 							pipeline = new Pipeline
 							{
-								Plugin = new Plugin
+								ServiceDescriptor = new ServiceDescriptor
 								{
 									Type = type,
 									Name = context.Name,

@@ -48,9 +48,9 @@ namespace Maestro.Configuration
 				: null;
 		}
 
-		private Plugin CreatePlugin(string name, IFactoryProvider factoryProvider)
+		private ServiceDescriptor CreatePlugin(string name, IFactoryProvider factoryProvider)
 		{
-			return new Plugin
+			return new ServiceDescriptor
 			{
 				Name = name,
 				Type = ServiceType,

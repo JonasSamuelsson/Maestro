@@ -8,7 +8,7 @@ namespace Maestro.Internals
 {
 	internal class PluginLookup : IPluginLookup, IDisposable
 	{
-		readonly ThreadSafeList<Plugin> _list = new ThreadSafeList<Plugin>();
+		readonly ThreadSafeList<ServiceDescriptor> _list = new ThreadSafeList<ServiceDescriptor>();
 
 		private void ParentOnPluginAdded()
 		{
@@ -24,28 +24,28 @@ namespace Maestro.Internals
 
 		public event Action PluginAdded = delegate { };
 
-		public bool Add(Plugin plugin, bool throwIfDuplicate = true)
+		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate = true)
 		{
-			if (_list.Any(x => x.Type == plugin.Type && x.Name != null && x.Name == plugin.Name))
+			if (_list.Any(x => x.Type == serviceDescriptor.Type && x.Name != null && x.Name == serviceDescriptor.Name))
 			{
 				if (throwIfDuplicate) throw new InvalidOperationException("Duplicate key");
 				return false;
 			}
 
-			_list.Add(plugin);
+			_list.Add(serviceDescriptor);
 
 			PluginAdded();
 
 			return true;
 		}
 
-		public bool TryGet(Type type, string name, out Plugin plugin)
+		public bool TryGet(Type type, string name, out ServiceDescriptor serviceDescriptor)
 		{
-			plugin = GetPluginOrNull(type, name);
-			return plugin != null;
+			serviceDescriptor = GetPluginOrNull(type, name);
+			return serviceDescriptor != null;
 		}
 
-		private Plugin GetPluginOrNull(Type type, string name)
+		private ServiceDescriptor GetPluginOrNull(Type type, string name)
 		{
 			var plugin = _list.FirstOrDefault(x => x.Type == type && x.Name == name);
 			if (plugin != null) return plugin;
@@ -61,7 +61,7 @@ namespace Maestro.Internals
 					var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
 					var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
 					var lifetime = plugin.Lifetime.MakeGeneric(genericArguments);
-					plugin = new Plugin
+					plugin = new ServiceDescriptor
 					{
 						FactoryProvider = factoryProvider,
 						Interceptors = interceptors,
@@ -77,9 +77,9 @@ namespace Maestro.Internals
 			return null;
 		}
 
-		public IEnumerable<Plugin> GetAll(Type type)
+		public IEnumerable<ServiceDescriptor> GetAll(Type type)
 		{
-			var plugins = new List<Plugin>();
+			var plugins = new List<ServiceDescriptor>();
 			var isGenericType = type.IsGenericType;
 			var genericTypeDefinition = isGenericType ? type.GetGenericTypeDefinition() : null;
 
@@ -95,7 +95,7 @@ namespace Maestro.Internals
 				var genericArguments = type.GetGenericArguments();
 				var factoryProvider = plugin.FactoryProvider.MakeGeneric(genericArguments);
 				var interceptors = plugin.Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList();
-				var newPlugin = new Plugin
+				var newPlugin = new ServiceDescriptor
 				{
 					FactoryProvider = factoryProvider,
 					Interceptors = interceptors,
