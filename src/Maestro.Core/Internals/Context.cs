@@ -178,7 +178,7 @@ namespace Maestro.Internals
 			if (_disposed) throw new ObjectDisposedException(objectName: null, message: "Context has been disposed.");
 		}
 
-		public bool AddStackFrame(Type type)
+		private void AddStackFrame(Type type)
 		{
 			if (_stack.Contains(type))
 			{
@@ -186,10 +186,9 @@ namespace Maestro.Internals
 			}
 
 			_stack.Push(type);
-			return true;
 		}
 
-		public void RemoveStackFrame()
+		private void RemoveStackFrame()
 		{
 			_stack.Pop();
 		}
