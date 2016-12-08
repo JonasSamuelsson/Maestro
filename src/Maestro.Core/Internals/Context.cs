@@ -18,71 +18,167 @@ namespace Maestro.Internals
 		public string Name { get; }
 		public Kernel Kernel { get; }
 
-		public bool CanGetService<T>()
-		{
-			return ((IContext)this).CanGetService(typeof(T));
-		}
-
 		public bool CanGetService(Type type)
 		{
-			// todo add cyclic check & error handling
+			var removeStackFrame = false;
 
-			AssertNotDisposed();
-			return Kernel.CanGetService(type, this);
+			try
+			{
+				AssertNotDisposed();
+				AddStackFrame(type);
+				removeStackFrame = true;
+
+				return Kernel.CanGetService(type, this);
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
+			finally
+			{
+				if (removeStackFrame) RemoveStackFrame();
+			}
 		}
 
-		public T GetService<T>()
+		public bool CanGetService<T>()
 		{
-			// todo add cyclic check & error handling
-
-			return (T)((IContext)this).GetService(typeof(T));
+			try
+			{
+				return CanGetService(typeof(T));
+			}
+			catch (ActivationException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
 		}
 
 		public object GetService(Type type)
 		{
-			// todo add cyclic check & error handling
+			try
+			{
+				object instance;
+				if (TryGetService(type, out instance))
+					return instance;
 
-			object instance;
-			if (((IContext)this).TryGetService(type, out instance))
-				return instance;
-
-			throw new NotImplementedException("foobar");
+				throw new ActivationException("todo");
+			}
+			catch (ActivationException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
 		}
 
-		public bool TryGetService<T>(out T instance)
+		public T GetService<T>()
 		{
-			// todo add cyclic check & error handling
-
-			object o;
-			var result = ((IContext)this).TryGetService(typeof(T), out o);
-			instance = (T)o;
-			return result;
+			try
+			{
+				return (T)GetService(typeof(T));
+			}
+			catch (ActivationException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
 		}
 
 		public bool TryGetService(Type type, out object instance)
 		{
-			// todo add cyclic check & error handling
+			var removeStackFrame = false;
 
-			AssertNotDisposed();
-			return Kernel.TryGetService(type, this, out instance);
+			try
+			{
+				AssertNotDisposed();
+				AddStackFrame(type);
+				removeStackFrame = true;
+
+				return Kernel.TryGetService(type, this, out instance);
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
+			finally
+			{
+				if (removeStackFrame) RemoveStackFrame();
+			}
 		}
 
-		public IEnumerable<T> GetServices<T>()
+		public bool TryGetService<T>(out T instance)
 		{
-			// todo add cyclic check & error handling
+			try
+			{
+				object @object;
+				if (TryGetService(typeof(T), out @object))
+				{
+					instance = (T)@object;
+					return true;
+				}
 
-			return ((IContext)this).GetServices(typeof(T)).Cast<T>().ToArray();
+				instance = default(T);
+				return false;
+			}
+			catch (ActivationException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
 		}
 
 		public IEnumerable<object> GetServices(Type type)
 		{
-			// todo add cyclic check & error handling
-
-			AssertNotDisposed();
-			return Kernel.GetServices(type, this);
+			try
+			{
+				var enumerableType = typeof(IEnumerable<>).MakeGenericType(type);
+				var services = GetService(enumerableType);
+				var listType = typeof(List<>).MakeGenericType(type);
+				return (IEnumerable<object>)Activator.CreateInstance(listType, services);
+			}
+			catch (ActivationException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
 		}
 
-		public void PushStackFrame(Type type)
+		public IEnumerable<T> GetServices<T>()
+		{
+			try
+			{
+				return GetServices(typeof(T)).Cast<T>();
+			}
+			catch (ActivationException)
+			{
+				throw;
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
+		}
+
+		private void AssertNotDisposed()
+		{
+			if (_disposed) throw new ObjectDisposedException(objectName: null, message: "Context has been disposed.");
+		}
+
+		public bool AddStackFrame(Type type)
 		{
 			if (_stack.Contains(type))
 			{
@@ -90,16 +186,17 @@ namespace Maestro.Internals
 			}
 
 			_stack.Push(type);
+			return true;
 		}
 
-		public void PopStackFrame()
+		public void RemoveStackFrame()
 		{
 			_stack.Pop();
 		}
 
-		private void AssertNotDisposed()
+		private static Exception CreateActivationException(Exception exception)
 		{
-			if (_disposed) throw new ObjectDisposedException(objectName: null, message: "Context has been disposed.");
+			return new ActivationException($"todo : {exception.Message}", exception);
 		}
 
 		public void Dispose()

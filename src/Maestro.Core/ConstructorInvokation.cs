@@ -19,7 +19,7 @@ namespace Maestro
 			var parameters = constructor.GetParameters();
 			dependencyProviders = (dependencyProviders
 										  ?? parameters.Select(x => x.ParameterType)
-															.Select(x => new Func<Context, object>(ctx => ctx.Kernel.GetDependency(x, ctx)))).ToList();
+															.Select(x => new Func<Context, object>(ctx => ctx.GetService(x)))).ToList();
 
 			if (dependencyProviders.Count() != parameters.Length)
 			{
