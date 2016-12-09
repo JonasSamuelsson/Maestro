@@ -9,19 +9,19 @@ namespace Maestro.Internals
 {
 	internal class Kernel : IDisposable
 	{
-		private readonly PluginLookup _pluginLookup;
+		private readonly ServiceDescriptorLookup _serviceDescriptorLookup;
 		private readonly PipelineCache _pipelineCache;
 		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
 		private readonly Kernel _parent;
 
 		public event EventHandler ConfigurationChanged;
 
-		public Kernel() : this(new PluginLookup())
+		public Kernel() : this(new ServiceDescriptorLookup())
 		{ }
 
-		public Kernel(PluginLookup pluginLookup)
+		public Kernel(ServiceDescriptorLookup serviceDescriptorLookup)
 		{
-			_pluginLookup = pluginLookup;
+			_serviceDescriptorLookup = serviceDescriptorLookup;
 			_pipelineCache = new PipelineCache();
 			_factoryProviderResolvers = new IFactoryProviderResolver[]
 											{
@@ -29,12 +29,6 @@ namespace Maestro.Internals
 												new LazyFactoryProviderResolver(),
 												new ConcreteClosedClassFactoryProviderResolver()
 											};
-
-			_pluginLookup.PluginAdded += () =>
-			{
-				_pipelineCache.Clear();
-				ConfigurationChanged?.Invoke(this, EventArgs.Empty);
-			};
 		}
 
 		public Kernel(Kernel kernel) : this()
@@ -46,13 +40,20 @@ namespace Maestro.Internals
 		private void ParentConfigurationChanged(object sender, EventArgs e)
 		{
 			lock (_pipelineCache)
+			{
 				_pipelineCache.Clear();
+				ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+			}
 		}
 
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
 		{
 			lock (_pipelineCache)
-				return _pluginLookup.Add(serviceDescriptor, throwIfDuplicate);
+			{
+				_pipelineCache.Clear();
+				ConfigurationChanged?.Invoke(this, EventArgs.Empty);
+				return _serviceDescriptorLookup.Add(serviceDescriptor, throwIfDuplicate);
+			}
 		}
 
 		public bool CanGetService(Type type, Context context)
@@ -104,7 +105,7 @@ namespace Maestro.Internals
 						for (var kernel = this; kernel != null; kernel = kernel._parent)
 						{
 							ServiceDescriptor serviceDescriptor;
-							if (kernel._pluginLookup.TryGet(type, name, out serviceDescriptor))
+							if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 							{
 								pipeline = new Pipeline(serviceDescriptor);
 								_pipelineCache.Add(pipelineKey, pipeline);
@@ -114,20 +115,19 @@ namespace Maestro.Internals
 							if (Reflector.IsGenericEnumerable(type))
 							{
 								var elementType = type.GetGenericArguments().Single();
-								var plugins = _pluginLookup.GetAll(elementType);
-								var pipelines = plugins.Select(x => new Pipeline(x)).ToList();
-
-								if (pipelines.Any())
+								IEnumerable<ServiceDescriptor> serviceDescriptors;
+								if (_serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out serviceDescriptors))
 								{
+									var pipelines = serviceDescriptors.Select(x => new Pipeline(x)).ToList();
 									pipeline = new EnumerablePipeline(elementType, pipelines);
 									_pipelineCache.Add(pipelineKey, pipeline);
 									return true;
 								}
 							}
 
-							if (name != PluginLookup.DefaultName)
+							if (name != ServiceDescriptorLookup.DefaultName)
 							{
-								name = PluginLookup.DefaultName;
+								name = ServiceDescriptorLookup.DefaultName;
 								goto tryGetPlugin;
 							}
 						}

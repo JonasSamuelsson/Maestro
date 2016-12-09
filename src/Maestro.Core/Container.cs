@@ -67,7 +67,7 @@ namespace Maestro
 
 		public bool TryGetService(Type type, out object instance)
 		{
-			using (var context = new Context(PluginLookup.DefaultName, _kernel))
+			using (var context = new Context(ServiceDescriptorLookup.DefaultName, _kernel))
 				return context.TryGetService(type, out instance);
 		}
 
@@ -79,7 +79,7 @@ namespace Maestro
 
 		public bool TryGetService<T>(out T instance)
 		{
-			using (var context = new Context(PluginLookup.DefaultName, _kernel))
+			using (var context = new Context(ServiceDescriptorLookup.DefaultName, _kernel))
 				return context.TryGetService(out instance);
 		}
 
@@ -91,7 +91,7 @@ namespace Maestro
 
 		public IEnumerable<object> GetServices(Type type)
 		{
-			using (var context = new Context(PluginLookup.DefaultName, _kernel))
+			using (var context = new Context(ServiceDescriptorLookup.DefaultName, _kernel))
 				return context.GetServices(type);
 		}
 

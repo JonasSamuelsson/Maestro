@@ -8,6 +8,8 @@ namespace Maestro.Utils
 		private readonly object _root = new object();
 		private List<T> _list = new List<T>();
 
+		public int Count => _list.Count;
+
 		public void Add(T item)
 		{
 			lock (_root)

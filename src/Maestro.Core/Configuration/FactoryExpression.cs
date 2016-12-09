@@ -8,18 +8,18 @@ namespace Maestro.Configuration
 	{
 		private readonly Type _type;
 		private readonly string _name;
-		private readonly PluginLookup _plugins;
+		private readonly ServiceDescriptorLookup _serviceDescriptors;
 
-		public FactoryExpression(Type type, string name, PluginLookup plugins)
+		public FactoryExpression(Type type, string name, ServiceDescriptorLookup serviceDescriptors)
 		{
 			_type = type;
 			_name = name;
-			_plugins = plugins;
+			_serviceDescriptors = serviceDescriptors;
 		}
 
 		public void Instance(T instance)
 		{
-			_plugins.Add(new ServiceDescriptor
+			_serviceDescriptors.Add(new ServiceDescriptor
 			{
 				Type = _type,
 				Name = _name,
@@ -40,7 +40,7 @@ namespace Maestro.Configuration
 				Name = _name,
 				FactoryProvider = new LambdaFactoryProvider(ctx => factory(ctx))
 			};
-			_plugins.Add(plugin);
+			_serviceDescriptors.Add(plugin);
 			return new FactoryInstanceExpression<TInstance>(plugin);
 		}
 
@@ -52,7 +52,7 @@ namespace Maestro.Configuration
 				Name = _name,
 				FactoryProvider = new TypeFactoryProvider(_type)
 			};
-			_plugins.Add(plugin);
+			_serviceDescriptors.Add(plugin);
 			return new TypeInstanceExpression<TInstance>(plugin);
 		}
 	}
