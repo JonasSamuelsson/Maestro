@@ -11,7 +11,7 @@ namespace Maestro.Internals
 
 		public Context(string name, Kernel kernel)
 		{
-			Name = name;
+			Name = name ?? ServiceDescriptorLookup.DefaultName;
 			Kernel = kernel;
 		}
 
