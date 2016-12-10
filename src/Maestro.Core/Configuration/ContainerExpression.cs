@@ -42,7 +42,7 @@ namespace Maestro.Configuration
 		public IServiceExpression Service(Type type, string name)
 		{
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type, name, _kernel, _defaultSettings);
+			return new ServiceExpression<object>(type, name ?? ServiceDescriptorLookup.DefaultName, _kernel, _defaultSettings);
 		}
 
 		public IServiceExpression<T> Service<T>()
@@ -54,19 +54,19 @@ namespace Maestro.Configuration
 		public IServiceExpression<T> Service<T>(string name)
 		{
 			AssertNotDisposed();
-			return new ServiceExpression<T>(typeof(T), name, _kernel, _defaultSettings);
+			return new ServiceExpression<T>(typeof(T), name ?? ServiceDescriptorLookup.DefaultName, _kernel, _defaultSettings);
 		}
 
 		public IServicesExpression Services(Type type)
 		{
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type, ServiceDescriptorLookup.GetRandomName(), _kernel, _defaultSettings);
+			return new ServiceExpression<object>(type, null, _kernel, _defaultSettings);
 		}
 
 		public IServicesExpression<T> Services<T>()
 		{
 			AssertNotDisposed();
-			return new ServiceExpression<T>(typeof(T), ServiceDescriptorLookup.GetRandomName(), _kernel, _defaultSettings);
+			return new ServiceExpression<T>(typeof(T), null, _kernel, _defaultSettings);
 		}
 
 		private void AssertNotDisposed()

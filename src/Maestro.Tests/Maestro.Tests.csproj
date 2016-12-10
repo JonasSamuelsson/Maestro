@@ -120,6 +120,7 @@
     <Compile Include="Lifetimes\transient_lifetime.cs" />
     <Compile Include="OldTests\named_type_instance_with_configured_dependencies.cs" />
     <Compile Include="OldTests\open_generic_type.cs" />
+    <Compile Include="OldTests\services_tests.cs" />
     <Compile Include="Performance\performance_tests.cs" />
     <Compile Include="Performance\perf_tests.cs" />
     <Compile Include="OldTests\primitive_type_tests.cs" />

@@ -51,8 +51,9 @@ namespace Maestro.Internals
 			lock (_pipelineCache)
 			{
 				_pipelineCache.Clear();
+				var added = _serviceDescriptorLookup.Add(serviceDescriptor, throwIfDuplicate);
 				ConfigurationChanged?.Invoke(this, EventArgs.Empty);
-				return _serviceDescriptorLookup.Add(serviceDescriptor, throwIfDuplicate);
+				return added;
 			}
 		}
 
