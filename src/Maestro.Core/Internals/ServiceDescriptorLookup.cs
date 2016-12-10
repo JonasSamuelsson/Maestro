@@ -19,6 +19,12 @@ namespace Maestro.Internals
 			var type = serviceDescriptor.Type;
 			var name = serviceDescriptor.Name;
 
+			if (name == null)
+			{
+				AddToServices(serviceDescriptor);
+				return true;
+			}
+
 			ServiceFamily serviceFamily;
 
 			if (!_serviceFamilies.TryGetValue(type, out serviceFamily))
@@ -39,6 +45,23 @@ namespace Maestro.Internals
 				if (throwIfDuplicate) throw;
 				return false;
 			}
+		}
+
+		public void AddToServices(ServiceDescriptor serviceDescriptor)
+		{
+			var type = serviceDescriptor.Type;
+
+			ServiceFamily serviceFamily;
+
+			if (!_serviceFamilies.TryGetValue(type, out serviceFamily))
+			{
+				serviceFamily = new ServiceFamily();
+				serviceFamily.Services.Add(serviceDescriptor);
+				_serviceFamilies = new Dictionary<Type, ServiceFamily>(_serviceFamilies) { { type, serviceFamily } };
+				return;
+			}
+
+			serviceFamily.Services.Add(serviceDescriptor);
 		}
 
 		public bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
