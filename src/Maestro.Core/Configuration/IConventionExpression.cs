@@ -61,7 +61,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="filter"></param>
 		/// <returns></returns>
-		IConventionExpression Matching(IConventionFilter filter);
+		IConventionExpression Matching(IFilter filter);
 
 		/// <summary>
 		/// Adds concrete sub classes of <typeparamref name="T"/>.

@@ -2,7 +2,7 @@
 
 namespace Maestro.Conventions
 {
-	internal class LambdaFilter : IConventionFilter
+	internal class LambdaFilter : IFilter
 	{
 		private readonly Func<Type, bool> _predicate;
 

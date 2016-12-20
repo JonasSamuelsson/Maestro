@@ -6,10 +6,10 @@ namespace Maestro.Configuration
 {
 	internal class DefaultFilterExpression : IDefaultFilterExpression
 	{
-		private readonly IList<IConventionFilter> _filters;
+		private readonly IList<IFilter> _filters;
 		private readonly IDefaultSettingsExpression _parent;
 
-		public DefaultFilterExpression(IList<IConventionFilter> filters, IDefaultSettingsExpression parent)
+		public DefaultFilterExpression(IList<IFilter> filters, IDefaultSettingsExpression parent)
 		{
 			_filters = filters;
 			_parent = parent;
@@ -20,7 +20,7 @@ namespace Maestro.Configuration
 			return Add(new LambdaFilter(predicate));
 		}
 
-		public IDefaultSettingsExpression Add(IConventionFilter filter)
+		public IDefaultSettingsExpression Add(IFilter filter)
 		{
 			_filters.Add(filter);
 			return _parent;

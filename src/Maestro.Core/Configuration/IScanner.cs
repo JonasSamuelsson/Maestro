@@ -14,8 +14,8 @@ namespace Maestro.Configuration
 		IScanner AssemblyContainingTypeOf(object o);
 		IScanner Types(IEnumerable<Type> types);
 		IScanner Matching(Func<Type, bool> predicate);
-		IScanner Matching<T>() where T : IConventionFilter, new();
-		IScanner Matching(IConventionFilter filter);
+		IScanner Matching<T>() where T : IFilter, new();
+		IScanner Matching(IFilter filter);
 		IScanner With<T>() where T : IConvention, new();
 		IScanner With(IConvention convention);
 	}

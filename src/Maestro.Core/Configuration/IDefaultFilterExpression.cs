@@ -17,7 +17,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="filter"></param>
 		/// <returns></returns>
-		IDefaultSettingsExpression Add(IConventionFilter filter);
+		IDefaultSettingsExpression Add(IFilter filter);
 
 		/// <summary>
 		/// Clears the list of global filters.

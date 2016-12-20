@@ -114,7 +114,7 @@
     <Compile Include="Configuration\Keep\InstanceBuilderExpression.cs" />
     <Compile Include="Configuration\IInstanceExpression.cs" />
     <Compile Include="Configuration\LifetimeExpression.cs" />
-    <Compile Include="Conventions\IConventionFilter.cs" />
+    <Compile Include="Conventions\IFilter.cs" />
     <Compile Include="Conventions\IConvention.cs" />
     <Compile Include="Interceptors\ActionInterceptor.cs" />
     <Compile Include="Interceptors\IInterceptor.cs" />
