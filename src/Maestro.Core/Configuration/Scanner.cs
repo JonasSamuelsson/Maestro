@@ -10,7 +10,7 @@ namespace Maestro.Configuration
 	{
 		private readonly IContainerExpression _containerExpression;
 		private readonly List<Type> _types = new List<Type>();
-		private readonly List<IConventionFilter> _filters = new List<IConventionFilter>();
+		private readonly List<IFilter> _filters = new List<IFilter>();
 		private readonly List<IConvention> _conventions = new List<IConvention>();
 
 		public Scanner(IContainerExpression containerExpression)
@@ -60,12 +60,12 @@ namespace Maestro.Configuration
 			return this;
 		}
 
-		public IScanner Matching<T>() where T : IConventionFilter, new()
+		public IScanner Matching<T>() where T : IFilter, new()
 		{
 			return Matching(new T());
 		}
 
-		public IScanner Matching(IConventionFilter filter)
+		public IScanner Matching(IFilter filter)
 		{
 			_filters.Add(filter);
 			return this;

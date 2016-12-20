@@ -9,7 +9,7 @@ namespace Maestro
 	internal class DefaultSettings : IDefaultSettingsExpression
 	{
 		private Func<ILifetime> _lifetimeFactory = () => TransientLifetime.Instance;
-		private readonly IList<IConventionFilter> _filters = new List<IConventionFilter>();
+		private readonly IList<IFilter> _filters = new List<IFilter>();
 
 		ILifetimeExpression<IDefaultSettingsExpression> IDefaultSettingsExpression.Lifetime
 		{
@@ -26,7 +26,7 @@ namespace Maestro
 			return _lifetimeFactory();
 		}
 
-		public IEnumerable<IConventionFilter> GetFilters()
+		public IEnumerable<IFilter> GetFilters()
 		{
 			return _filters;
 		}

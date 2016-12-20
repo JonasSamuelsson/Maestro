@@ -10,13 +10,13 @@ namespace Maestro.Configuration
 	{
 		private readonly IContainerExpression _containerExpression;
 		private readonly List<Type> _types;
-		private readonly List<IConventionFilter> _filters;
+		private readonly List<IFilter> _filters;
 
 		public ConventionExpression(IContainerExpression containerExpression, DefaultSettings defaultSettings)
 		{
 			_containerExpression = containerExpression;
 			_types = new List<Type>();
-			_filters = new List<IConventionFilter>(defaultSettings.GetFilters());
+			_filters = new List<IFilter>(defaultSettings.GetFilters());
 		}
 
 		public IConventionExpression Assemblies(IEnumerable<Assembly> assemblies)
@@ -55,7 +55,7 @@ namespace Maestro.Configuration
 			return Matching(new LambdaFilter(predicate));
 		}
 
-		public IConventionExpression Matching(IConventionFilter filter)
+		public IConventionExpression Matching(IFilter filter)
 		{
 			_filters.Add(filter);
 			return this;

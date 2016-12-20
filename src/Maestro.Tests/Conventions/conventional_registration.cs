@@ -80,7 +80,7 @@ namespace Maestro.Tests.Conventions
 			}
 		}
 
-		public class IsClassFilter : IConventionFilter
+		public class IsClassFilter : IFilter
 		{
 			public bool IsMatch(Type type)
 			{

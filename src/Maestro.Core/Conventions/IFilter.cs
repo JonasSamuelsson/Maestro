@@ -2,7 +2,7 @@
 
 namespace Maestro.Conventions
 {
-	public interface IConventionFilter
+	public interface IFilter
 	{
 		bool IsMatch(Type type);
 	}
