@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Maestro.Conventions
+namespace Maestro
 {
 	public interface IFilter
 	{
