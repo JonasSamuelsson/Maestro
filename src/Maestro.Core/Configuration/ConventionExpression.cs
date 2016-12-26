@@ -73,20 +73,20 @@ namespace Maestro.Configuration
 
 		public void AddConcreteSubClassesOf(Type type, Action<ITypeInstanceExpression<object>> action = null)
 		{
-			Using(new AddConcreteSubClassesConvention(type, action ?? delegate { }));
+			With(new AddConcreteSubClassesConvention(type, action ?? delegate { }));
 		}
 
 		public void AddConcreteClassesClosing(Type genericTypeDefinition, Action<ITypeInstanceExpression<object>> action = null)
 		{
-			Using(new AddConcreteClassesClosingConvention(genericTypeDefinition, action ?? delegate { }));
+			With(new AddConcreteClassesClosingConvention(genericTypeDefinition, action ?? delegate { }));
 		}
 
 		public void UseDefaultImplementations(Action<ITypeInstanceExpression<object>> action = null)
 		{
-			Using(new UseDefaultImplementationsConvention(action ?? delegate { }));
+			With(new UseDefaultImplementationsConvention(action ?? delegate { }));
 		}
 
-		public void Using(IConvention convention)
+		public void With(IConvention convention)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
 			convention.Process(types, _containerExpression);

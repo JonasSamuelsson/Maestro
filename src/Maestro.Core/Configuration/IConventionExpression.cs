@@ -94,6 +94,6 @@ namespace Maestro.Configuration
 		/// Uses <paramref name="convention"/> to configure the container.
 		/// </summary>
 		/// <param name="convention"></param>
-		void Using(IConvention convention);
+		IConventionExpression With(IConvention convention);
 	}
 }

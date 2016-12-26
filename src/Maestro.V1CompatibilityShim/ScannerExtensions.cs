@@ -1,5 +1,6 @@
 ﻿using System;
 using Maestro.Configuration;
+using Maestro.Conventions;
 
 namespace Maestro
 {
@@ -8,6 +9,11 @@ namespace Maestro
 		public static IConventionExpression Where(this IConventionExpression expression, Func<Type, bool> predicate)
 		{
 			return expression.Matching(predicate);
+		}
+
+		public static void Using(this IConventionExpression expression, IConvention convention)
+		{
+			expression.With(convention);
 		}
 	}
 }
