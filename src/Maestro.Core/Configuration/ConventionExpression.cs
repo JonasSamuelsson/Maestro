@@ -50,7 +50,7 @@ namespace Maestro.Configuration
 			return this;
 		}
 
-		public IConventionExpression Where(Func<Type, bool> predicate)
+		public IConventionExpression Matching(Func<Type, bool> predicate)
 		{
 			return Matching(new LambdaFilter(predicate));
 		}

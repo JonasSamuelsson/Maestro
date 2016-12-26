@@ -54,7 +54,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		IConventionExpression Where(Func<Type, bool> predicate);
+		IConventionExpression Matching(Func<Type, bool> predicate);
 
 		/// <summary>
 		/// Filter types to those matching <paramref name="filter"/>.
