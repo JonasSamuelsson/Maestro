@@ -30,7 +30,7 @@ namespace Maestro.Tests.Conventions
 
 			container.Configure(x => x.Scan
 											  .Types(new[] { typeof(object), typeof(int) })
-											  .Where(t => t.IsClass)
+											  .Matching(t => t.IsClass)
 											  .Using(convention));
 
 			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
@@ -58,8 +58,8 @@ namespace Maestro.Tests.Conventions
 
 			container.Configure(x => x.Scan
 											  .Types(new[] { typeof(object), typeof(int), typeof(string) })
-											  .Where(t => t.IsClass)
-											  .Where(t => t.Name.Contains("n"))
+											  .Matching(t => t.IsClass)
+											  .Matching(t => t.Name.Contains("n"))
 											  .Using(convention));
 
 			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(string) });
