@@ -86,10 +86,11 @@ namespace Maestro.Configuration
 			With(new UseDefaultImplementationsConvention(action ?? delegate { }));
 		}
 
-		public void With(IConvention convention)
+		public IConventionExpression With(IConvention convention)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
 			convention.Process(types, _containerExpression);
+			return this;
 		}
 	}
 }
