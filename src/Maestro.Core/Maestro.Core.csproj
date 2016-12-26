@@ -60,12 +60,10 @@
     <Compile Include="Configuration\IFactoryExpression.cs" />
     <Compile Include="Configuration\IFactoryInstanceExpression.cs" />
     <Compile Include="Configuration\InstanceExpression.cs" />
-    <Compile Include="Configuration\IScanner.cs" />
     <Compile Include="Configuration\IServiceExpression.cs" />
     <Compile Include="Configuration\IServiceInstanceExpression.cs" />
     <Compile Include="Configuration\IServicesExpression.cs" />
     <Compile Include="Configuration\ITypeInstanceExpression.cs" />
-    <Compile Include="Configuration\Scanner.cs" />
     <Compile Include="Configuration\ServiceExpression.cs" />
     <Compile Include="Configuration\ServiceInstanceExpression.cs" />
     <Compile Include="Configuration\TypeInstanceExpression.cs" />
