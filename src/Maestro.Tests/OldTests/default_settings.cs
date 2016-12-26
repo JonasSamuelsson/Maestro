@@ -18,7 +18,7 @@ namespace Maestro.Tests
 			new Container(x =>
 							  {
 								  x.Default.Filters.Add(t => !t.Name.Contains("n"));
-								  x.Scan.Types(types).Using(convention);
+								  x.Scan.Types(types).With(convention);
 							  });
 			convention.Types.Should().BeEquivalentTo(new[] { typeof(object) });
 		}
