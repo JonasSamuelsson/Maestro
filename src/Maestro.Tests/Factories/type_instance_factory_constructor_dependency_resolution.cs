@@ -81,11 +81,11 @@ namespace Maestro.Tests.Factories
 			var dependency2 = new Dependency2();
 			var container = new Container(x =>
 													{
-														x.Service<Dependency>("1").Use.Instance(dependency1);
-														x.Service<Dependency>("2").Use.Instance(dependency2);
+														x.Services<Dependency>().Add.Instance(dependency1);
+														x.Services<Dependency>().Add.Instance(dependency2);
 													});
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
-			instance.Dependency.Should().BeEquivalentTo(new object[] { dependency1, dependency2 });
+			instance.Dependency.Should().BeEquivalentTo(dependency1, dependency2);
 		}
 
 		[Fact]
@@ -111,7 +111,7 @@ namespace Maestro.Tests.Factories
 			var dependency = new Dependency();
 			var container = new Container(x => x.Service<Dependency>().Use.Instance(dependency));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency[]>>();
-			instance.Dependency.Should().BeEquivalentTo(new[] { dependency });
+			instance.Dependency.Should().BeEquivalentTo(dependency);
 		}
 
 		[Todo]
@@ -165,18 +165,22 @@ namespace Maestro.Tests.Factories
 			instance.Dependency.Should().BeNull();
 		}
 
+		// ReSharper disable once ClassNeverInstantiated.Local
 		private class TypeWithOptionalConstructorDependency<T>
 		{
+			// ReSharper disable once UnusedMember.Local
 			public TypeWithOptionalConstructorDependency()
 			{
 			}
 
+			// ReSharper disable once UnusedMember.Local
 			public TypeWithOptionalConstructorDependency(T dependency)
 			{
 				Dependency = dependency;
 			}
 
-			public T Dependency { get; private set; }
+			// ReSharper disable once MemberHidesStaticFromOuterClass
+			public T Dependency { get; }
 		}
 
 		private class Dependency { }
