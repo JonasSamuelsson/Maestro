@@ -25,8 +25,8 @@ namespace Maestro.Tests
 			var @string = "foobar";
 			var container = new Container(x =>
 													{
-														x.Service<int>().Use.Instance(@int);
-														x.Service<string>().Use.Instance(@string);
+														x.Services<int>().Add.Instance(@int);
+														x.Services<string>().Add.Instance(@string);
 													});
 
 			var ints = container.GetServices<int>();
