@@ -61,21 +61,13 @@ namespace Maestro.Internals
 		public bool CanGetService(Type type, Context context)
 		{
 			IPipeline pipeline;
-			return TryGetPipeline(type, context, out pipeline) || Reflector.IsGenericEnumerable(type);
+			return TryGetPipeline(type, context, out pipeline);
 		}
 
 		public bool TryGetService(Type type, Context context, out object instance)
 		{
 			IPipeline pipeline;
 			instance = TryGetPipeline(type, context, out pipeline) ? pipeline.Execute(context) : null;
-
-			if (instance == null && Reflector.IsGenericEnumerable(type))
-			{
-				// todo performance
-				var elementType = type.GetGenericArguments().Single();
-				instance = Array.CreateInstance(elementType, 0);
-			}
-
 			return instance != null;
 		}
 
