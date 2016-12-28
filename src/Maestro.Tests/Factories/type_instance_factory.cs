@@ -74,7 +74,7 @@ namespace Maestro.Tests.Factories
 		public void should_get_type_with_enumerable_dependency()
 		{
 			var dependency = new NoDependencies();
-			var container = new Container(x => x.Service<INoDependencies>().Use.Instance(dependency));
+			var container = new Container(x => x.Services<INoDependencies>().Add.Instance(dependency));
 
 			var instance = container.GetService<OptionalDependency<IEnumerable<INoDependencies>>>();
 
