@@ -27,7 +27,8 @@ namespace Maestro.Internals
 											{
 												new FuncFactoryProviderResolver(),
 												new LazyFactoryProviderResolver(),
-												new ConcreteClosedClassFactoryProviderResolver()
+												new ConcreteClosedClassFactoryProviderResolver(),
+												new EmptyEnumerableFactoryProviderResolver()
 											};
 		}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -144,8 +145,7 @@ namespace Maestro.Internals
 			{
 				var enumerableType = typeof(IEnumerable<>).MakeGenericType(type);
 				var services = GetService(enumerableType);
-				var listType = typeof(List<>).MakeGenericType(type);
-				return (IEnumerable<object>)Activator.CreateInstance(listType, services);
+				return services as IEnumerable<object> ?? ((IEnumerable)services).Cast<object>();
 			}
 			catch (ActivationException)
 			{

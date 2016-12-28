@@ -90,6 +90,7 @@
     <Compile Include="Internals\PipelineCache.cs" />
     <Compile Include="Internals\ServiceDescriptor.cs" />
     <Compile Include="Internals\ServiceDescriptorLookup.cs" />
+    <Compile Include="TypeFactoryResolvers\EmptyEnumerableFactoryProviderResolver.cs" />
     <Compile Include="TypeFactoryResolvers\FuncFactoryProviderResolver.cs" />
     <Compile Include="TypeFactoryResolvers\IFactoryProviderResolver.cs" />
     <Compile Include="FactoryProviders\TypeFactoryProvider.cs" />
