@@ -23,7 +23,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisRuleSet>Maestro.Interception.DynamicProxy.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,7 +32,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Maestro.Interception.DynamicProxy.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>Maestro.Interception.DynamicProxy.ruleset</CodeAnalysisRuleSet>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
@@ -62,7 +60,6 @@
     <None Include="..\Maestro.Core\Maestro.snk">
       <Link>Maestro.snk</Link>
     </None>
-    <None Include="Maestro.Interception.DynamicProxy.ruleset" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -80,4 +77,3 @@
   </Target>
   -->
 </Project>
-
