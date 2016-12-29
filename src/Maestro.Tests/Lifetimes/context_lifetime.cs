@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Lifetimes
@@ -13,9 +13,9 @@ namespace Maestro.Tests.Lifetimes
 			var foo1 = container.GetService<Foo>();
 			var foo2 = container.GetService<Foo>();
 
-			foo1.Object.Should().Be(foo1.Bar.Object);
-			foo2.Object.Should().Be(foo2.Bar.Object);
-			foo1.Object.Should().NotBe(foo2.Object);
+			foo1.Object.ShouldBe(foo1.Bar.Object);
+			foo2.Object.ShouldBe(foo2.Bar.Object);
+			foo1.Object.ShouldNotBe(foo2.Object);
 		}
 
 		private class Foo

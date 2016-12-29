@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -10,7 +10,7 @@ namespace Maestro.Tests
 		{
 			new Container(x => x.Service(typeof(object)).Use.Type(typeof(object)))
 				.GetService(typeof(object))
-				.Should().BeOfType<object>();
+				.ShouldBeOfType<object>();
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Lifetimes
@@ -16,7 +16,7 @@ namespace Maestro.Tests.Lifetimes
 
 			var instance = container.GetService<Parent>();
 
-			instance.Object1.Should().NotBe(instance.Object2);
+			instance.Object1.ShouldNotBe(instance.Object2);
 		}
 
 		private class Parent

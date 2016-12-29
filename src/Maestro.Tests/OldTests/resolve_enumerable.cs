@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -14,8 +14,8 @@ namespace Maestro.Tests
 			var ints = container.GetServices<int>();
 			var strings = container.GetServices<string>();
 
-			ints.Should().BeEmpty();
-			strings.Should().BeEmpty();
+			ints.ShouldBeEmpty();
+			strings.ShouldBeEmpty();
 		}
 
 		[Fact]
@@ -32,8 +32,8 @@ namespace Maestro.Tests
 			var ints = container.GetServices<int>();
 			var strings = container.GetServices<string>();
 
-			ints.Should().BeEquivalentTo(new[] { @int });
-			strings.Should().BeEquivalentTo(new[] { @string });
+			ints.ShouldBe(new[] { @int });
+			strings.ShouldBe(new[] { @string });
 		}
 
 		[Todo]
@@ -54,8 +54,8 @@ namespace Maestro.Tests
 
 			var foos = container.GetServices<Foo>().ToList();
 
-			foos.Should().Contain(x => (string)x.Object == defaultDependency);
-			foos.Should().Contain(x => (string)x.Object == namedDependency);
+			foos.ShouldContain(x => (string)x.Object == defaultDependency);
+			foos.ShouldContain(x => (string)x.Object == namedDependency);
 		}
 
 		private class Foo

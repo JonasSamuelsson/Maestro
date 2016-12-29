@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions;
+using System.Linq;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -19,9 +20,9 @@ namespace Maestro.Tests
 
 			var instance = container.GetService<TypeWithArrayOfObjectDependency>();
 
-			instance.Objects.Should().HaveCount(2);
-			instance.Objects.Should().Contain(x => x.GetType() == typeof(object));
-			instance.Objects.Should().Contain(x => x.GetType() == typeof(EventArgs));
+			instance.Objects.Count().ShouldBe(2);
+			instance.Objects.ShouldContain(x => x.GetType() == typeof(object));
+			instance.Objects.ShouldContain(x => x.GetType() == typeof(EventArgs));
 		}
 
 		[Todo]
@@ -31,7 +32,7 @@ namespace Maestro.Tests
 
 			var instance = container.GetService<TypeWithArrayOfObjectDependency>();
 
-			instance.Objects.Should().HaveCount(0);
+			instance.Objects.Count().ShouldBe(0);
 		}
 
 		private class TypeWithArrayOfObjectDependency
@@ -46,13 +47,13 @@ namespace Maestro.Tests
 			var array = new[] { 1, 2, 3 };
 			var container = new Container();
 
-			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
+			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBeNull();
 
 			container.Configure(x => x.Services<int>().Add.Instance(0));
-			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeNull();
+			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBeNull();
 
 			container.Configure(x => x.Service<int[]>().Use.Instance(array));
-			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.Should().BeEquivalentTo(array);
+			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBe(array);
 		}
 
 		private class TypeWithArrayOfValueTypeDependency

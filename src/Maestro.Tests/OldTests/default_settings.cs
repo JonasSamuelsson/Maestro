@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using Maestro.Configuration;
 using Maestro.Conventions;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -20,7 +20,7 @@ namespace Maestro.Tests
 								  x.Default.Filters.Add(t => !t.Name.Contains("n"));
 								  x.Scan.Types(types).With(convention);
 							  });
-			convention.Types.Should().BeEquivalentTo(new[] { typeof(object) });
+			convention.Types.ShouldBe(new[] { typeof(object) });
 		}
 
 		public class Convention : IConvention

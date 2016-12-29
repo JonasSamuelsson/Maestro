@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using FluentAssertions;
 using Maestro.Utils;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Factories
@@ -29,7 +29,7 @@ namespace Maestro.Tests.Factories
 			var dependency = new Dependency();
 			var container = new Container(x => x.Service<Dependency>().Use.Instance(dependency));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency>>();
-			instance.Dependency.Should().Be(dependency);
+			instance.Dependency.ShouldBe(dependency);
 		}
 
 		[Fact]
@@ -37,7 +37,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency>>();
-			instance.Dependency.Should().NotBeNull();
+			instance.Dependency.ShouldNotBeNull();
 		}
 
 		[Fact]
@@ -45,7 +45,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<IDisposable>>();
-			instance.Dependency.Should().BeNull();
+			instance.Dependency.ShouldBeNull();
 		}
 
 		[Fact]
@@ -54,7 +54,7 @@ namespace Maestro.Tests.Factories
 			var @int = 987;
 			var container = new Container(x => x.Service<int>().Use.Instance(@int));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<int>>();
-			instance.Dependency.Should().Be(@int);
+			instance.Dependency.ShouldBe(@int);
 		}
 
 		[Fact]
@@ -62,7 +62,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<int>>();
-			instance.Dependency.Should().Be(default(int));
+			instance.Dependency.ShouldBe(default(int));
 		}
 
 		[Fact]
@@ -71,7 +71,7 @@ namespace Maestro.Tests.Factories
 			var dependencies = new[] { new Dependency1(), new Dependency1() };
 			var container = new Container(x => x.Service<IEnumerable<Dependency>>().Use.Instance(dependencies));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
-			instance.Dependency.Should().BeEquivalentTo(dependencies);
+			instance.Dependency.ShouldBe(dependencies);
 		}
 
 		[Fact]
@@ -85,7 +85,7 @@ namespace Maestro.Tests.Factories
 														x.Services<Dependency>().Add.Instance(dependency2);
 													});
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
-			instance.Dependency.Should().BeEquivalentTo(dependency1, dependency2);
+			instance.Dependency.ShouldBe(new Dependency[] { dependency1, dependency2 });
 		}
 
 		[Fact]
@@ -93,7 +93,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<Dependency>>>();
-			instance.Dependency.Should().BeEmpty();
+			instance.Dependency.ShouldBeEmpty();
 		}
 
 		[Fact]
@@ -102,7 +102,7 @@ namespace Maestro.Tests.Factories
 			var dependencies = new[] { new Dependency(), new Dependency() };
 			var container = new Container(x => x.Service<Dependency[]>().Use.Instance(dependencies));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency[]>>();
-			instance.Dependency.Should().BeEquivalentTo(dependencies);
+			instance.Dependency.ShouldBe(dependencies);
 		}
 
 		[Todo]
@@ -111,7 +111,7 @@ namespace Maestro.Tests.Factories
 			var dependency = new Dependency();
 			var container = new Container(x => x.Service<Dependency>().Use.Instance(dependency));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency[]>>();
-			instance.Dependency.Should().BeEquivalentTo(dependency);
+			instance.Dependency.ShouldBe(new[] { dependency });
 		}
 
 		[Todo]
@@ -119,7 +119,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<Dependency[]>>();
-			instance.Dependency.Should().BeEmpty();
+			instance.Dependency.ShouldBeEmpty();
 		}
 
 		[Fact]
@@ -128,7 +128,7 @@ namespace Maestro.Tests.Factories
 			var ints = new[] { 1, 2, 3 };
 			var container = new Container(x => x.Service<IEnumerable<int>>().Use.Instance(ints));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<int>>>();
-			instance.Dependency.Should().BeEquivalentTo(ints);
+			instance.Dependency.ShouldBe(ints);
 		}
 
 		[Fact]
@@ -136,7 +136,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<int>>>();
-			instance.Dependency.Should().BeNull();
+			instance.Dependency.ShouldBeNull();
 		}
 
 		[Fact]
@@ -145,7 +145,7 @@ namespace Maestro.Tests.Factories
 			var ints = new[] { 1, 2, 3 };
 			var container = new Container(x => x.Service<int[]>().Use.Instance(ints));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<int[]>>();
-			instance.Dependency.Should().BeEquivalentTo(ints);
+			instance.Dependency.ShouldBe(ints);
 		}
 
 		[Fact]
@@ -154,7 +154,7 @@ namespace Maestro.Tests.Factories
 			var @int = 159;
 			var container = new Container(x => x.Service<int>().Use.Instance(@int));
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<int[]>>();
-			instance.Dependency.Should().BeNull();
+			instance.Dependency.ShouldBeNull();
 		}
 
 		[Fact]
@@ -162,7 +162,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container();
 			var instance = container.GetService<TypeWithOptionalConstructorDependency<int[]>>();
-			instance.Dependency.Should().BeNull();
+			instance.Dependency.ShouldBeNull();
 		}
 
 		// ReSharper disable once ClassNeverInstantiated.Local

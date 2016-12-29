@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Lifetimes
@@ -13,7 +13,7 @@ namespace Maestro.Tests.Lifetimes
 			var o1 = container.GetService<object>();
 			var o2 = container.GetService<object>();
 
-			o1.Should().Be(o2);
+			o1.ShouldBe(o2);
 		}
 	}
 }
