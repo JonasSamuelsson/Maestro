@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using FluentAssertions;
+using System.Linq;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -19,10 +20,10 @@ namespace Maestro.Tests
 
 			var parent = container.GetService<Parent>();
 
-			parent.Children.Should().HaveCount(3);
-			parent.Children.Should().Contain(x => x.GetType() == typeof(Child1));
-			parent.Children.Should().Contain(x => x.GetType() == typeof(Child2));
-			parent.Children.Should().Contain(x => x.GetType() == typeof(Child3));
+			parent.Children.Count().ShouldBe(3);
+			parent.Children.ShouldContain(x => x.GetType() == typeof(Child1));
+			parent.Children.ShouldContain(x => x.GetType() == typeof(Child2));
+			parent.Children.ShouldContain(x => x.GetType() == typeof(Child3));
 		}
 
 		[Fact]
@@ -32,8 +33,8 @@ namespace Maestro.Tests
 
 			var foobar = container.GetService<Parent>();
 
-			foobar.Children.Should().NotBeNull();
-			foobar.Children.Should().HaveCount(0);
+			foobar.Children.ShouldNotBeNull();
+			foobar.Children.ShouldBeEmpty();
 		}
 
 		private class Parent

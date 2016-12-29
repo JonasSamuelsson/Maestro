@@ -1,5 +1,5 @@
 ﻿using System;
-using FluentAssertions;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -18,7 +18,7 @@ namespace Maestro.Tests
 
 			var o = container.GetService<ClassWithDependency>(name);
 
-			o.Dependency.Should().BeOfType<object>();
+			o.Dependency.ShouldBeOfType<object>();
 		}
 
 		[Fact]
@@ -33,7 +33,7 @@ namespace Maestro.Tests
 
 			var o = container.GetService<ClassWithDependency>(name);
 
-			o.Dependency.Should().BeOfType<EventArgs>();
+			o.Dependency.ShouldBeOfType<EventArgs>();
 		}
 
 		private class ClassWithDependency

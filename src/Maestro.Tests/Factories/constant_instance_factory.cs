@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Factories
@@ -13,7 +13,7 @@ namespace Maestro.Tests.Factories
 
 			var o = container.GetService<object>();
 
-			o.Should().Be(instance);
+			o.ShouldBe(instance);
 		}
 	}
 }

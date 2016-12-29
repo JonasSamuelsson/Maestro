@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using Maestro.Tests.Conventions.DefaultImplementationConvention;
+﻿using Maestro.Tests.Conventions.DefaultImplementationConvention;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Conventions
@@ -13,10 +13,10 @@ namespace Maestro.Tests.Conventions
 
 			var container = new Container(x => x.Scan.AssemblyContainingTypeOf(this).Matching(y => y.Namespace != null && y.Namespace.StartsWith(ns)).UseDefaultImplementations());
 
-			container.Invoking(x => x.GetService<IFoobar1>()).ShouldNotThrow();
-			container.Invoking(x => x.GetService<IFoobar2>()).ShouldNotThrow();
-			container.Invoking(x => x.GetService<IFoobar3>()).ShouldThrow<ActivationException>();
-			container.Invoking(x => x.GetService<IFoobar4>()).ShouldThrow<ActivationException>();
+			Should.NotThrow(() => container.GetService<IFoobar1>());
+			Should.NotThrow(() => container.GetService<IFoobar2>());
+			Should.Throw<ActivationException>(() => container.GetService<IFoobar3>());
+			Should.Throw<ActivationException>(() => container.GetService<IFoobar4>());
 		}
 
 		[Fact]
@@ -27,7 +27,7 @@ namespace Maestro.Tests.Conventions
 			var instance1 = container.GetService<IFoobar1>();
 			var instance2 = container.GetService<IFoobar1>();
 
-			instance1.Should().Be(instance2);
+			instance1.ShouldBe(instance2);
 		}
 	}
 }
