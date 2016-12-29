@@ -1,8 +1,4 @@
-﻿using System;
-using FluentAssertions;
-using Xunit;
-
-namespace Maestro.Tests
+﻿namespace Maestro.Tests
 {
 	public class default_type_instance_with_configured_dependencies
 	{

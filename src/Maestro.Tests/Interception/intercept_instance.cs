@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Castle.DynamicProxy;
-using FluentAssertions;
-using Maestro.Configuration;
 using Maestro.Interceptors;
-using Xunit;
 using IInterceptor = Castle.DynamicProxy.IInterceptor;
 
 namespace Maestro.Tests.Interception

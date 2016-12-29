@@ -1,10 +1,4 @@
-﻿using System;
-using CommonServiceLocator.MaestroAdapter;
-using FluentAssertions;
-using Microsoft.Practices.ServiceLocation;
-using Xunit;
-
-namespace Maestro.Tests
+﻿namespace Maestro.Tests
 {
 	public class CommonServiceLocator
 	{
