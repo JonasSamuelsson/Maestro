@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using Shouldly;
 using Xunit;
 
@@ -15,9 +14,10 @@ namespace Maestro.Tests.Conventions
 			var types = new[] { typeof(Class<IDisposable>), typeof(ClassOfObject) };
 			var container = new Container(x => x.Scan.Types(types).AddConcreteClassesClosing(typeof(IInterface<>)));
 
-			container.Invoking(x => x.GetServices<IList<IDisposable>>()).ShouldNotThrow("IInterface<IDisposable>");
-			container.Invoking(x => x.GetServices<IList<object>>()).ShouldNotThrow("IInterface<object>");
-			container.Invoking(x => x.GetService<IList<string>>()).ShouldThrow<ActivationException>();
+
+			Should.NotThrow(() => container.GetServices<IList<IDisposable>>());
+			Should.NotThrow(() => container.GetServices<IList<object>>());
+			Should.Throw<ActivationException>(() => container.GetService<IList<string>>());
 		}
 
 		[Fact]
