@@ -143,6 +143,7 @@ namespace Maestro.Internals
 		{
 			try
 			{
+				// todo - use or remove kernel.getservices 
 				var enumerableType = typeof(IEnumerable<>).MakeGenericType(type);
 				var services = GetService(enumerableType);
 				return services as IEnumerable<object> ?? ((IEnumerable)services).Cast<object>();
