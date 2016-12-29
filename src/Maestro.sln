@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.V1CompatibilityShim", "Maestro.V1CompatibilityShim\Maestro.V1CompatibilityShim.csproj", "{E4CBF5D4-DDD7-4205-9807-6A78C6135838}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.V1ApiCompatibilityShim", "Maestro.V1ApiCompatibilityShim\Maestro.V1ApiCompatibilityShim.csproj", "{E4CBF5D4-DDD7-4205-9807-6A78C6135838}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Microsoft.DependencyInjection", "Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj", "{B8474763-52FB-4201-9F3F-CE1D20785C49}"
 EndProject
