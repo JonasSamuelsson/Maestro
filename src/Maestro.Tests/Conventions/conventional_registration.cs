@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
 using Maestro.Configuration;
 using Maestro.Conventions;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Conventions
@@ -19,7 +19,7 @@ namespace Maestro.Tests.Conventions
 
 			container.Configure(x => x.Scan.Types(types).With(convention));
 
-			convention.ProcessedTypes.Should().BeEquivalentTo(types);
+			convention.ProcessedTypes.ShouldBe(types);
 		}
 
 		[Fact]
@@ -33,7 +33,7 @@ namespace Maestro.Tests.Conventions
 											  .Matching(t => t.IsClass)
 											  .With(convention));
 
-			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
+			convention.ProcessedTypes.ShouldBe(new[] { typeof(object) });
 		}
 
 		[Fact]
@@ -47,7 +47,7 @@ namespace Maestro.Tests.Conventions
 											  .Matching(new IsClassFilter())
 											  .With(convention));
 
-			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(object) });
+			convention.ProcessedTypes.ShouldBe(new[] { typeof(object) });
 		}
 
 		[Fact]
@@ -62,7 +62,7 @@ namespace Maestro.Tests.Conventions
 											  .Matching(t => t.Name.Contains("n"))
 											  .With(convention));
 
-			convention.ProcessedTypes.Should().BeEquivalentTo(new[] { typeof(string) });
+			convention.ProcessedTypes.ShouldBe(new[] { typeof(string) });
 		}
 
 		private class Convention : IConvention
