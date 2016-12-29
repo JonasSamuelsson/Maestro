@@ -31,6 +31,7 @@ namespace Maestro.FactoryProviders
 
 		private ConstructorInfo GetConstructor(Context context)
 		{
+			// todo - merge logic with ConcreteClosedClassFactoryProviderResolver
 			var constructor = (from ctor in Type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 									 let parameterTypes = ctor.GetParameters().Select(x => x.ParameterType)
 									 orderby parameterTypes.Count() descending
