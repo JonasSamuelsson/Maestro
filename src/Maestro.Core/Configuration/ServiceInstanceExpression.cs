@@ -48,6 +48,11 @@ namespace Maestro.Configuration
 				: null;
 		}
 
+		public ITypeInstanceExpression<object> Self()
+		{
+			return Type(ServiceType);
+		}
+
 		private ServiceDescriptor CreatePlugin(string name, IFactoryProvider factoryProvider)
 		{
 			return new ServiceDescriptor
@@ -84,6 +89,11 @@ namespace Maestro.Configuration
 			return Kernel.Add(plugin, ThrowIfDuplicate)
 				? new TypeInstanceExpression<TInstance>(plugin)
 				: null;
+		}
+
+		ITypeInstanceExpression<TService> IServiceInstanceExpression<TService>.Self()
+		{
+			return Type<TService>();
 		}
 	}
 }
