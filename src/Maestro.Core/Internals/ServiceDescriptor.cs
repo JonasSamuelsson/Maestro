@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Maestro.FactoryProviders;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
@@ -12,6 +13,18 @@ namespace Maestro.Internals
 		public string Name { get; set; }
 		public IFactoryProvider FactoryProvider { get; set; }
 		public List<IInterceptor> Interceptors { get; set; } = new List<IInterceptor>();
-		public ILifetime Lifetime { get; set; } = new TransientLifetime();
+		public ILifetime Lifetime { get; set; } = TransientLifetime.Instance;
+
+		public ServiceDescriptor MakeGeneric(Type[] genericArguments)
+		{
+			return new ServiceDescriptor
+			{
+				Type = Type.MakeGenericType(genericArguments),
+				FactoryProvider = FactoryProvider.MakeGeneric(genericArguments),
+				Interceptors = Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList(),
+				Lifetime = Lifetime.MakeGeneric(genericArguments),
+				Name = Name
+			};
+		}
 	}
 }
