@@ -43,19 +43,19 @@ namespace Maestro.Tests.Utils
 
 			Reflector.IsGenericEnumerable(typeof(ICollection<object>)).ShouldBeFalse();
 			Reflector.IsGenericEnumerable(typeof(ICollection<object>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsGenericEnumerable(typeof(ICollection<string>)).ShouldBeFalse();
 			Reflector.IsGenericEnumerable(typeof(ICollection<string>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsGenericEnumerable(typeof(ICollection<int>)).ShouldBeFalse();
 			Reflector.IsGenericEnumerable(typeof(ICollection<int>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsGenericEnumerable(typeof(ICollection<Class>)).ShouldBeFalse();
 			Reflector.IsGenericEnumerable(typeof(ICollection<Class>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsGenericEnumerable(typeof(ICollection<IInterface>)).ShouldBeFalse();
 			Reflector.IsGenericEnumerable(typeof(ICollection<IInterface>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 		}
 
 		[Fact]
@@ -75,20 +75,20 @@ namespace Maestro.Tests.Utils
 
 			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<object>)).ShouldBeFalse();
 			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<object>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<string>)).ShouldBeFalse();
 			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<string>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<int>)).ShouldBeFalse();
 			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<int>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 
 			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<Class>)).ShouldBeFalse();
 			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<Class>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<IInterface>)).ShouldBeFalse();
 			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<IInterface>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 		}
 
 		[Fact]
@@ -98,13 +98,13 @@ namespace Maestro.Tests.Utils
 
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<object>)).ShouldBeFalse();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<object>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<string>)).ShouldBeFalse();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<string>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<int>)).ShouldBeFalse();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<int>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<Class>)).ShouldBeTrue();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<Class>), out elementType).ShouldBeTrue();
@@ -115,13 +115,38 @@ namespace Maestro.Tests.Utils
 
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(ICollection<Class>)).ShouldBeFalse();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(ICollection<Class>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(ICollection<IInterface>)).ShouldBeFalse();
 			Reflector.IsNonPrimitiveGenericEnumerable(typeof(ICollection<IInterface>), out elementType).ShouldBeFalse();
-			elementType.ShouldBe(null);
+			elementType.ShouldBeNull();
 		}
 
 		private interface IInterface { }
 		private class Class { }
+
+		[Fact]
+		public void IsGeneric()
+		{
+			Type genericTypeDefinition;
+			Type[] genericArguments;
+
+			Reflector.IsGeneric(typeof(IEnumerable<>), out genericTypeDefinition, out genericArguments).ShouldBeFalse();
+			genericTypeDefinition.ShouldBeNull();
+			genericArguments.ShouldBeNull();
+
+			Reflector.IsGeneric(typeof(IEnumerable<object>), out genericTypeDefinition, out genericArguments).ShouldBeTrue();
+			genericTypeDefinition.ShouldBe(typeof(IEnumerable<>));
+			genericArguments.ShouldBe(new[] { typeof(object) });
+
+			Reflector.IsGeneric(typeof(List<object>), out genericTypeDefinition, out genericArguments).ShouldBeTrue();
+			genericTypeDefinition.ShouldBe(typeof(List<>));
+			genericArguments.ShouldBe(new[] { typeof(object) });
+
+			Reflector.IsGeneric(typeof(ListOfObject), out genericTypeDefinition, out genericArguments).ShouldBeFalse();
+			genericTypeDefinition.ShouldBeNull();
+			genericArguments.ShouldBeNull();
+		}
+
+		class ListOfObject : List<object> { }
 	}
 }

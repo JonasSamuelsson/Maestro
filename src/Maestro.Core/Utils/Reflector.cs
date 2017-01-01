@@ -201,5 +201,25 @@ namespace Maestro.Utils
 		{
 			return type.IsValueType || type == typeof(string) || type == typeof(object);
 		}
+
+		public static bool IsGeneric(Type type, out Type genericTypeDefinition, out Type[] genericArguments)
+		{
+			genericTypeDefinition = null;
+			genericArguments = null;
+
+			if (!type.IsGenericType)
+			{
+				return false;
+			}
+
+			if (type.IsGenericTypeDefinition)
+			{
+				return false;
+			}
+
+			genericTypeDefinition = type.GetGenericTypeDefinition();
+			genericArguments = type.GetGenericArguments();
+			return true;
+		}
 	}
 }

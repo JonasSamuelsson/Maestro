@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Maestro.Utils;
 
 namespace Maestro.Internals
 {
@@ -76,10 +77,16 @@ namespace Maestro.Internals
 				}
 			}
 
-			if (type.IsGenericType && !type.IsGenericTypeDefinition)
+			Type genericTypeDefinition;
+			Type[] genericArguments;
+			if (Reflector.IsGeneric(type, out genericTypeDefinition, out genericArguments))
 			{
-				var genericTypeDefinition = type.GetGenericTypeDefinition();
-				return TryGetServiceDescriptor(genericTypeDefinition, name, out serviceDescriptor);
+				if (TryGetServiceDescriptor(genericTypeDefinition, name, out serviceDescriptor))
+				{
+					serviceDescriptor = serviceDescriptor.MakeGeneric(genericArguments);
+					Add(serviceDescriptor);
+					return true;
+				}
 			}
 
 			serviceDescriptor = null;
