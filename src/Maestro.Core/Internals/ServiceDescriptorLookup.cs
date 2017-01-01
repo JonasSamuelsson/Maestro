@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Maestro.Utils;
 
 namespace Maestro.Internals
@@ -96,20 +97,35 @@ namespace Maestro.Internals
 		public bool TryGetServiceDescriptors(Type type, out IEnumerable<ServiceDescriptor> serviceDescriptors)
 		{
 			ServiceFamily serviceFamily;
+			var result = new List<ServiceDescriptor>();
 
 			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
 			{
 				if (serviceFamily.Services.Count != 0)
 				{
-					serviceDescriptors = serviceFamily.Services;
-					return true;
+					result.AddRange(serviceFamily.Services);
 				}
 			}
 
-			if (type.IsGenericType && !type.IsGenericTypeDefinition)
+			Type genericTypeDefinition;
+			Type[] genericArguments;
+			if (Reflector.IsGeneric(type, out genericTypeDefinition, out genericArguments))
 			{
-				var genericTypeDefinition = type.GetGenericTypeDefinition();
-				return TryGetServiceDescriptors(genericTypeDefinition, out serviceDescriptors);
+				if (TryGetServiceDescriptors(genericTypeDefinition, out serviceDescriptors))
+				{
+					serviceDescriptors = serviceDescriptors
+						.Where(x => result.All(y => x.CorrelationId != y.CorrelationId))
+						.Select(x => x.MakeGeneric(genericArguments))
+						.ToList();
+					foreach (var serviceDescriptor in serviceDescriptors) AddToServices(serviceDescriptor);
+					result.AddRange(serviceDescriptors);
+				}
+			}
+
+			if (result.Count != 0)
+			{
+				serviceDescriptors = result;
+				return true;
 			}
 
 			serviceDescriptors = null;

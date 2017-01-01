@@ -7,7 +7,7 @@ namespace Maestro.Tests
 	public class open_generic_type
 	{
 		[Fact]
-		public void should_get_generic_type()
+		public void GetService_should_support_generic_type_definitions()
 		{
 			var container = new Container(x => x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)));
 
@@ -95,14 +95,23 @@ namespace Maestro.Tests
 		}
 
 		[Fact]
-		public void get_all_should_not_evaluate_open_generic_type_multiple_times_on_consecutive_calls()
+		public void GetServices_should_support_generic_type_definitions()
 		{
-			var container = new Container(x => x.Services(typeof(Instance<>)).Add.Type(typeof(Instance<>)));
+			var container = new Container(x => x.Services<object>().Add.Self());
 
-			var instances1 = container.GetServices<Instance<string>>();
-			var instances2 = container.GetServices<Instance<string>>();
+			container.GetServices<object>().Count().ShouldBe(1);
+		}
 
-			instances1.Count().ShouldBe(instances2.Count());
+		[Fact]
+		public void GetServices_should_handle_container_reconfiguration()
+		{
+			var container = new Container(x => x.Services(typeof(Instance<>)).Add.Self());
+
+			container.GetServices<Instance<object>>().Count().ShouldBe(1);
+
+			container.Configure(x => x.Services(typeof(Instance<>)).Add.Self());
+
+			container.GetServices<Instance<object>>().Count().ShouldBe(2);
 		}
 
 		class Instance<T>

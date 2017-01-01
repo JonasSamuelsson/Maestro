@@ -98,6 +98,8 @@ namespace Maestro.Internals
 						tryGetPlugin:
 						for (var kernel = this; kernel != null; kernel = kernel._parent)
 						{
+							// todo - get services fallback
+
 							ServiceDescriptor serviceDescriptor;
 							if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 							{
@@ -105,20 +107,6 @@ namespace Maestro.Internals
 								_pipelineCache.Add(pipelineKey, pipeline);
 								return true;
 							}
-
-							//Type genericTypeDefinition;
-							//Type[] genericArguments;
-							//if (Reflector.IsGeneric(type, out genericTypeDefinition, out genericArguments))
-							//{
-							//	if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(genericTypeDefinition, name, out serviceDescriptor))
-							//	{
-							//		serviceDescriptor = serviceDescriptor.MakeGeneric(genericArguments);
-							//		kernel._serviceDescriptorLookup.Add(serviceDescriptor);
-							//		pipeline = new Pipeline(serviceDescriptor);
-							//		_pipelineCache.Add(pipelineKey, pipeline);
-							//		return true;
-							//	}
-							//}
 
 							if (Reflector.IsGenericEnumerable(type))
 							{
