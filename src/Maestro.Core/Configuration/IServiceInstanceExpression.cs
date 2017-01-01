@@ -8,6 +8,7 @@ namespace Maestro.Configuration
 		IFactoryInstanceExpression<object> Factory(Func<object> factory);
 		IFactoryInstanceExpression<object> Factory(Func<IContext, object> factory);
 		ITypeInstanceExpression<object> Type(Type type);
+		ITypeInstanceExpression<object> Self();
 	}
 
 	public interface IServiceInstanceExpression<T>
@@ -16,5 +17,6 @@ namespace Maestro.Configuration
 		IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : T;
 		IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<IContext, TInstance> factory) where TInstance : T;
 		ITypeInstanceExpression<TInstance> Type<TInstance>() where TInstance : T;
+		ITypeInstanceExpression<T> Self();
 	}
 }
