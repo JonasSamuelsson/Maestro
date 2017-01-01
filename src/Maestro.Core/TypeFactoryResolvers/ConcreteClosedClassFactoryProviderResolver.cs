@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Maestro.FactoryProviders;
 using Maestro.Internals;
-using Maestro.Utils;
 
 namespace Maestro.TypeFactoryResolvers
 {
@@ -30,7 +29,6 @@ namespace Maestro.TypeFactoryResolvers
 			return from ctor in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 					 let parameters = ctor.GetParameters()
 					 orderby parameters.Length descending
-					 where parameters.All(p => !Reflector.IsPrimitiveGenericEnumerable(p.ParameterType))
 					 where parameters.All(p => context.Kernel.CanGetService(p.ParameterType, context))
 					 select new TypeFactoryProvider(type) { Constructor = ctor };
 		}
