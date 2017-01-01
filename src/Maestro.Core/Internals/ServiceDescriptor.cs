@@ -9,6 +9,7 @@ namespace Maestro.Internals
 {
 	class ServiceDescriptor
 	{
+		public Guid CorrelationId { get; set; } = Guid.NewGuid();
 		public Type Type { get; set; }
 		public string Name { get; set; }
 		public IFactoryProvider FactoryProvider { get; set; }
@@ -19,6 +20,7 @@ namespace Maestro.Internals
 		{
 			return new ServiceDescriptor
 			{
+				CorrelationId = CorrelationId,
 				Type = Type.MakeGenericType(genericArguments),
 				FactoryProvider = FactoryProvider.MakeGeneric(genericArguments),
 				Interceptors = Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList(),
