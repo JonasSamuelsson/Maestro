@@ -19,21 +19,26 @@ namespace Maestro.Tests
 		}
 
 		[Fact]
-		public void GetAll_should_get_instances_from_parent_container_if_name_is_different()
+		public void GetServices_should_resolve_instances_from_both_child_and_parent_container()
 		{
-			var parentContainer = new Container(x =>
-			{
-				x.For<object>().Use.Instance("default parent");
-				x.For<object>().Add.Instance("parent");
-			});
+			var container = new Container(x => x.For<object>().Add.Instance("parent"))
+				.GetChildContainer(x => x.For<object>().Add.Instance("child"));
 
-			var childContainer = parentContainer.GetChildContainer(x =>
-			{
-				x.For<object>().Use.Instance("default child");
-				x.For<object>().Add.Instance("child");
-			});
+			container.GetServices<object>().ShouldBe(new[] { "child", "parent" });
+		}
 
-			childContainer.GetServices<object>().ShouldBe(new[] { "default child", "child", "parent" });
+		[Fact]
+		public void GetServices_should_not_resolve_from_parent_if_enumerable_is_registered()
+		{
+			var container = new Container(x => x.For<object>().Add.Instance("fail"))
+				.GetChildContainer(x =>
+				{
+					x.For<object>().Add.Instance("fail");
+					x.For<IEnumerable<object>>().Use.Instance(new[] { "1" });
+				})
+				.GetChildContainer(x => x.For<object>().Add.Instance("2"));
+
+			container.GetServices<object>().ShouldBe(new[] { "2", "1" }); // todo - wip
 		}
 	}
 }
