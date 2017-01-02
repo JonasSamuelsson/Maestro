@@ -21,7 +21,7 @@ namespace Maestro.Tests
 		[Todo]
 		public void GetAll_should_throw_ActivationException()
 		{
-			var container = new Container(x => x.Service<Alpha>().Use.Type<Alpha>());
+			var container = new Container(x => x.For<Alpha>().Use.Type<Alpha>());
 			Should.Throw<ActivationException>(() => container.GetServices<Alpha>())
 					.InnerException.Message.ShouldBe(@"Cyclic dependency.
   Maestro.Tests.resolve_type_with_cyclic_dependencies+Alpha
@@ -39,7 +39,7 @@ namespace Maestro.Tests
 		[Todo]
 		public void CanGet_should_throw()
 		{
-			var container = new Container(x => x.Service<object>().Use.Type<object>().Intercept((_, ctx) => ctx.CanGetService<Alpha>()));
+			var container = new Container(x => x.For<object>().Use.Type<object>().Intercept((_, ctx) => ctx.CanGetService<Alpha>()));
 
 			container.GetService<object>();
 		}
@@ -49,8 +49,8 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 													{
-														x.Service<A>().Use.Factory(ctx => new A { B = ctx.GetService<B>() });
-														x.Service<B>().Use.Factory(ctx => new B { A = ctx.GetService<A>() });
+														x.For<A>().Use.Factory(ctx => new A { B = ctx.GetService<B>() });
+														x.For<B>().Use.Factory(ctx => new B { A = ctx.GetService<A>() });
 													});
 
 			var exception = Should.Throw<ActivationException>(() => container.GetService<A>());

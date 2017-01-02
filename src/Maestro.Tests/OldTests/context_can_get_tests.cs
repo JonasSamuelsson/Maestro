@@ -10,10 +10,10 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 													{
-														x.Service<A>().Use.Type<A>();
-														x.Service<B>().Use.Instance(new B());
-														x.Service<C>().Use.Factory(() => new C());
-														x.Service<Instance>().Use.Factory(ctx => new Instance
+														x.For<A>().Use.Type<A>();
+														x.For<B>().Use.Instance(new B());
+														x.For<C>().Use.Factory(() => new C());
+														x.For<Instance>().Use.Factory(ctx => new Instance
 														{
 															Flags = new[]
 																											 {
@@ -34,8 +34,8 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 													{
-														x.Service<object>().Use.Type<object>();
-														x.Service<Instance>().Use.Factory(ctx => new Instance { Flags = new[] { ctx.CanGetService<object>() } });
+														x.For<object>().Use.Type<object>();
+														x.For<Instance>().Use.Factory(ctx => new Instance { Flags = new[] { ctx.CanGetService<object>() } });
 													});
 
 			var instance = container.GetService<Instance>();

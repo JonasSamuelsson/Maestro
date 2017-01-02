@@ -67,28 +67,28 @@ namespace Maestro.Tests.Performance
 		[Fact(Skip = "run manually")]
 		public void Instance()
 		{
-			var container = new Container(x => x.Service<object>().Use.Instance(new object()));
+			var container = new Container(x => x.For<object>().Use.Instance(new object()));
 			Benchmark(() => container.GetService<object>(), "instance");
 		}
 
 		[Fact(Skip = "run manually")]
 		public void Factory()
 		{
-			var container = new Container(x => x.Service<object>().Use.Factory(() => new object()));
+			var container = new Container(x => x.For<object>().Use.Factory(() => new object()));
 			Benchmark(() => container.GetService<object>(), "factory");
 		}
 
 		[Fact(Skip = "run manually")]
 		public void Type()
 		{
-			var container = new Container(x => x.Service<object>().Use.Type<object>());
+			var container = new Container(x => x.For<object>().Use.Type<object>());
 			Benchmark(() => container.GetService<object>(), "type");
 		}
 
 		[Fact(Skip = "run manually")]
 		public void Singleton()
 		{
-			var container = new Container(x => x.Service<object>().Use.Type<object>().Lifetime.Singleton());
+			var container = new Container(x => x.For<object>().Use.Type<object>().Lifetime.Singleton());
 			Benchmark(() => container.GetService<object>(), "singleton");
 		}
 
@@ -97,11 +97,11 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x =>
 			{
-				x.Services<object>().Add.Type<object>();
-				x.Services<object>().Add.Type<object>();
-				x.Services<object>().Add.Type<object>();
-				x.Services<object>().Add.Type<object>();
-				x.Services<object>().Add.Type<object>();
+				x.For<object>().Add.Type<object>();
+				x.For<object>().Add.Type<object>();
+				x.For<object>().Add.Type<object>();
+				x.For<object>().Add.Type<object>();
+				x.For<object>().Add.Type<object>();
 			});
 			Benchmark(() => container.GetServices<object>(), "enumerable");
 		}
@@ -111,8 +111,8 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x =>
 			{
-				x.Service<CtorDependency>().Use.Type<CtorDependency>();
-				x.Service<object>().Use.Type<object>();
+				x.For<CtorDependency>().Use.Type<CtorDependency>();
+				x.For<object>().Use.Type<object>();
 			});
 			Benchmark(() => container.GetService<CtorDependency>(), "ctor injection");
 		}
@@ -122,8 +122,8 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x =>
 			{
-				x.Service<PropertyDependency>().Use.Type<PropertyDependency>().SetProperty(y => y.O);
-				x.Service<object>().Use.Type<object>();
+				x.For<PropertyDependency>().Use.Type<PropertyDependency>().SetProperty(y => y.O);
+				x.For<object>().Use.Type<object>();
 			});
 			Benchmark(() => container.GetService<CtorDependency>(), "property injection");
 		}
@@ -133,10 +133,10 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x =>
 			{
-				x.Service<Complex1>().Use.Type<Complex1>();
-				x.Service<Complex2>().Use.Type<Complex2>();
-				x.Service<Complex3>().Use.Type<Complex3>();
-				x.Service<Complex4>().Use.Type<Complex4>();
+				x.For<Complex1>().Use.Type<Complex1>();
+				x.For<Complex2>().Use.Type<Complex2>();
+				x.For<Complex3>().Use.Type<Complex3>();
+				x.For<Complex4>().Use.Type<Complex4>();
 			});
 			Benchmark(() => container.GetService<Complex1>(), "complex");
 		}
@@ -146,10 +146,10 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x =>
 			{
-				x.Service<Complex1>().Use.Type<Complex1>();
-				x.Service<Complex2>().Use.Type<Complex2>();
-				x.Service<Complex3>().Use.Type<Complex3>();
-				x.Service<Complex4>().Use.Type<Complex4>();
+				x.For<Complex1>().Use.Type<Complex1>();
+				x.For<Complex2>().Use.Type<Complex2>();
+				x.For<Complex3>().Use.Type<Complex3>();
+				x.For<Complex4>().Use.Type<Complex4>();
 			});
 			var concurrentWorkers = Environment.ProcessorCount;
 			Benchmark(() => container.GetService<Complex1>(), $"complex ({concurrentWorkers} workers)", concurrentWorkers);
@@ -158,8 +158,8 @@ namespace Maestro.Tests.Performance
 		[Fact(Skip = "run manually")]
 		public void ChildContainer()
 		{
-			var parentContainer = new Container(x => x.Service<CtorDependency>().Use.Type<CtorDependency>());
-			var childContainer = parentContainer.GetChildContainer(x => x.Service<object>().Use.Type<object>());
+			var parentContainer = new Container(x => x.For<CtorDependency>().Use.Type<CtorDependency>());
+			var childContainer = parentContainer.GetChildContainer(x => x.For<object>().Use.Type<object>());
 			Benchmark(() => childContainer.GetService<CtorDependency>(), "child container");
 		}
 

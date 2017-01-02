@@ -21,7 +21,7 @@ namespace Maestro.Microsoft.DependencyInjection
 
 			container.Configure(x =>
 			{
-				x.Service<IServiceProvider>().Use.Instance(new MaestroServiceProvider(container));
+				x.For<IServiceProvider>().Use.Instance(new MaestroServiceProvider(container));
 
 				foreach (var descriptor in descriptors)
 				{
@@ -38,14 +38,14 @@ namespace Maestro.Microsoft.DependencyInjection
 				throw new InvalidOperationException("Populate should only be called once per container.");
 			}
 
-			container.Configure(x => x.Service<Marker>().Use.Type<Marker>());
+			container.Configure(x => x.For<Marker>().Use.Type<Marker>());
 		}
 
 		private static void Register(this IContainerExpression expression, ServiceDescriptor descriptor)
 		{
 			if (descriptor.ImplementationType != null)
 			{
-				expression.Service(descriptor.ServiceType)
+				expression.For(descriptor.ServiceType)
 					 .Use.Type(descriptor.ImplementationType)
 					 .Lifetime.Use(descriptor.Lifetime);
 
@@ -54,14 +54,14 @@ namespace Maestro.Microsoft.DependencyInjection
 
 			if (descriptor.ImplementationFactory != null)
 			{
-				expression.Service(descriptor.ServiceType)
+				expression.For(descriptor.ServiceType)
 					 .Use.Factory(GetFactory(descriptor))
 					 .Lifetime.Use(descriptor.Lifetime);
 
 				return;
 			}
 
-			expression.Service(descriptor.ServiceType)
+			expression.For(descriptor.ServiceType)
 				 .Use.Instance(descriptor.ImplementationInstance);
 		}
 

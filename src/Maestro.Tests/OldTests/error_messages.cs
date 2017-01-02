@@ -15,7 +15,7 @@ namespace Maestro.Tests
 		[Todo]
 		public void tryget()
 		{
-			var container = new Container(x => x.Service<Unresolvable>().Use.Type<Unresolvable>());
+			var container = new Container(x => x.For<Unresolvable>().Use.Type<Unresolvable>());
 
 			Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
 		}
@@ -23,7 +23,7 @@ namespace Maestro.Tests
 		[Todo]
 		public void getall()
 		{
-			var container = new Container(x => x.Service<Unresolvable>().Use.Type<Unresolvable>());
+			var container = new Container(x => x.For<Unresolvable>().Use.Type<Unresolvable>());
 
 			Should.Throw<ActivationException>(() => container.GetServices<Unresolvable>());
 		}
@@ -42,7 +42,7 @@ namespace Maestro.Tests
 		[Todo]
 		public void tryget_dependency()
 		{
-			var container = new Container(x => x.Service<Unresolvable>().Use.Type<Unresolvable>());
+			var container = new Container(x => x.For<Unresolvable>().Use.Type<Unresolvable>());
 
 			Resolvable resolvable;
 			Should.Throw<ActivationException>(() => container.TryGetService(out resolvable));

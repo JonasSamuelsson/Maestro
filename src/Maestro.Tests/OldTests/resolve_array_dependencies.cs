@@ -13,9 +13,9 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 			{
-				x.Service<TypeWithArrayOfObjectDependency>().Use.Type<TypeWithArrayOfObjectDependency>();
-				x.Services<object>().Add.Type<object>();
-				x.Services<object>().Add.Type<EventArgs>();
+				x.For<TypeWithArrayOfObjectDependency>().Use.Type<TypeWithArrayOfObjectDependency>();
+				x.For<object>().Add.Type<object>();
+				x.For<object>().Add.Type<EventArgs>();
 			});
 
 			var instance = container.GetService<TypeWithArrayOfObjectDependency>();
@@ -28,7 +28,7 @@ namespace Maestro.Tests
 		[Todo]
 		public void should_use_empty_enumerable_if_enumerated_type_is_not_registered_and_not_value_type()
 		{
-			var container = new Container(x => x.Service<TypeWithArrayOfObjectDependency>().Use.Type<TypeWithArrayOfObjectDependency>());
+			var container = new Container(x => x.For<TypeWithArrayOfObjectDependency>().Use.Type<TypeWithArrayOfObjectDependency>());
 
 			var instance = container.GetService<TypeWithArrayOfObjectDependency>();
 
@@ -49,10 +49,10 @@ namespace Maestro.Tests
 
 			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBeNull();
 
-			container.Configure(x => x.Services<int>().Add.Instance(0));
+			container.Configure(x => x.For<int>().Add.Instance(0));
 			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBeNull();
 
-			container.Configure(x => x.Service<int[]>().Use.Instance(array));
+			container.Configure(x => x.For<int[]>().Use.Instance(array));
 			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBe(array);
 		}
 

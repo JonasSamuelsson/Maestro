@@ -9,7 +9,7 @@ namespace Maestro.Tests
 		[Fact]
 		public void GetService_should_support_generic_type_definitions()
 		{
-			var container = new Container(x => x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)));
+			var container = new Container(x => x.For(typeof(Instance<>)).Use.Type(typeof(Instance<>)));
 
 			var instance = container.GetService<Instance<int>>();
 
@@ -21,9 +21,9 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 			{
-				x.Service<int>().Use.Instance(1);
-				x.Service<string>().Use.Instance("foobar");
-				x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)).SetProperty("Value");
+				x.For<int>().Use.Instance(1);
+				x.For<string>().Use.Instance("foobar");
+				x.For(typeof(Instance<>)).Use.Type(typeof(Instance<>)).SetProperty("Value");
 			});
 
 			var instance1 = container.GetService<Instance<int>>();
@@ -38,9 +38,9 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 			{
-				x.Service<int>().Use.Instance(1);
-				x.Service<string>().Use.Instance("foobar");
-				x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)).Lifetime.Singleton();
+				x.For<int>().Use.Instance(1);
+				x.For<string>().Use.Instance("foobar");
+				x.For(typeof(Instance<>)).Use.Type(typeof(Instance<>)).Lifetime.Singleton();
 			});
 
 			var instance1 = container.GetService<Instance<int>>();
@@ -55,8 +55,8 @@ namespace Maestro.Tests
 		[Fact]
 		public void child_container_config_should_be_considered_over_parent_container()
 		{
-			var parent = new Container(x => x.Service<Instance<string>>().Use.Factory(() => new Instance<string> { Value = "root" }));
-			var child = parent.GetChildContainer(x => x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)));
+			var parent = new Container(x => x.For<Instance<string>>().Use.Factory(() => new Instance<string> { Value = "root" }));
+			var child = parent.GetChildContainer(x => x.For(typeof(Instance<>)).Use.Type(typeof(Instance<>)));
 
 			var instance = child.GetService<Instance<string>>();
 
@@ -68,19 +68,19 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 													{
-														x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)).SetProperty("Value", "parent-default");
-														x.Service(typeof(Instance<>), "1").Use.Type(typeof(Instance<>)).SetProperty("Value", "parent-1");
-														x.Service<Instance<string>>("2").Use.Type<Instance<string>>().SetProperty("Value", "parent-2");
-														x.Service(typeof(Instance<>), "3").Use.Type(typeof(Instance<>)).SetProperty("Value", "parent-3");
-														x.Services(typeof(Instance<>)).Add.Type(typeof(Instance<>)).SetProperty("Value", "parent");
+														x.For(typeof(Instance<>)).Use.Type(typeof(Instance<>)).SetProperty("Value", "parent-default");
+														x.For(typeof(Instance<>), "1").Use.Type(typeof(Instance<>)).SetProperty("Value", "parent-1");
+														x.For<Instance<string>>("2").Use.Type<Instance<string>>().SetProperty("Value", "parent-2");
+														x.For(typeof(Instance<>), "3").Use.Type(typeof(Instance<>)).SetProperty("Value", "parent-3");
+														x.For(typeof(Instance<>)).Add.Type(typeof(Instance<>)).SetProperty("Value", "parent");
 													})
 				.GetChildContainer(x =>
 										 {
-											 x.Service(typeof(Instance<>)).Use.Type(typeof(Instance<>)).SetProperty("Value", "child-default");
-											 x.Service(typeof(Instance<>), "1").Use.Type(typeof(Instance<>)).SetProperty("Value", "child-1");
-											 x.Service(typeof(Instance<>), "2").Use.Type(typeof(Instance<>)).SetProperty("Value", "child-2");
-											 x.Service<Instance<string>>("3").Use.Type<Instance<string>>().SetProperty("Value", "child-3");
-											 x.Services(typeof(Instance<>)).Add.Type(typeof(Instance<>)).SetProperty("Value", "child");
+											 x.For(typeof(Instance<>)).Use.Type(typeof(Instance<>)).SetProperty("Value", "child-default");
+											 x.For(typeof(Instance<>), "1").Use.Type(typeof(Instance<>)).SetProperty("Value", "child-1");
+											 x.For(typeof(Instance<>), "2").Use.Type(typeof(Instance<>)).SetProperty("Value", "child-2");
+											 x.For<Instance<string>>("3").Use.Type<Instance<string>>().SetProperty("Value", "child-3");
+											 x.For(typeof(Instance<>)).Add.Type(typeof(Instance<>)).SetProperty("Value", "child");
 										 });
 
 			var instances = container.GetServices<Instance<string>>().ToList();
@@ -97,7 +97,7 @@ namespace Maestro.Tests
 		[Fact]
 		public void GetServices_should_support_generic_type_definitions()
 		{
-			var container = new Container(x => x.Services<object>().Add.Self());
+			var container = new Container(x => x.For<object>().Add.Self());
 
 			container.GetServices<object>().Count().ShouldBe(1);
 		}
@@ -105,11 +105,11 @@ namespace Maestro.Tests
 		[Fact]
 		public void GetServices_should_handle_container_reconfiguration()
 		{
-			var container = new Container(x => x.Services(typeof(Instance<>)).Add.Self());
+			var container = new Container(x => x.For(typeof(Instance<>)).Add.Self());
 
 			container.GetServices<Instance<object>>().Count().ShouldBe(1);
 
-			container.Configure(x => x.Services(typeof(Instance<>)).Add.Self());
+			container.Configure(x => x.For(typeof(Instance<>)).Add.Self());
 
 			container.GetServices<Instance<object>>().Count().ShouldBe(2);
 		}

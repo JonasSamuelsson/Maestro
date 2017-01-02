@@ -32,14 +32,14 @@ namespace Maestro.Internals
 			if (!_serviceFamilies.TryGetValue(type, out serviceFamily))
 			{
 				serviceFamily = new ServiceFamily();
-				serviceFamily.Service.Add(serviceDescriptor.Name, serviceDescriptor);
+				serviceFamily.Services.Add(serviceDescriptor.Name, serviceDescriptor);
 				_serviceFamilies = new Dictionary<Type, ServiceFamily>(_serviceFamilies) { { type, serviceFamily } };
 				return true;
 			}
 
 			try
 			{
-				serviceFamily.Service.Add(name, serviceDescriptor);
+				serviceFamily.Services.Add(name, serviceDescriptor);
 				return true;
 			}
 			catch (ArgumentException)
@@ -58,12 +58,12 @@ namespace Maestro.Internals
 			if (!_serviceFamilies.TryGetValue(type, out serviceFamily))
 			{
 				serviceFamily = new ServiceFamily();
-				serviceFamily.Services.Add(serviceDescriptor);
+				serviceFamily.Services_Obsolete.Add(serviceDescriptor);
 				_serviceFamilies = new Dictionary<Type, ServiceFamily>(_serviceFamilies) { { type, serviceFamily } };
 				return;
 			}
 
-			serviceFamily.Services.Add(serviceDescriptor);
+			serviceFamily.Services_Obsolete.Add(serviceDescriptor);
 		}
 
 		public bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
@@ -72,7 +72,7 @@ namespace Maestro.Internals
 
 			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
 			{
-				if (serviceFamily.Service.TryGetValue(name, out serviceDescriptor))
+				if (serviceFamily.Services.TryGetValue(name, out serviceDescriptor))
 				{
 					return true;
 				}
@@ -103,7 +103,7 @@ namespace Maestro.Internals
 			{
 				if (serviceFamily.Services.Count != 0)
 				{
-					result.AddRange(serviceFamily.Services);
+					result.AddRange(serviceFamily.Services.Values);
 				}
 			}
 
@@ -117,7 +117,7 @@ namespace Maestro.Internals
 						.Where(x => result.All(y => x.CorrelationId != y.CorrelationId))
 						.Select(x => x.MakeGeneric(genericArguments))
 						.ToList();
-					foreach (var serviceDescriptor in serviceDescriptors) AddToServices(serviceDescriptor);
+					foreach (var serviceDescriptor in serviceDescriptors) Add(serviceDescriptor);
 					result.AddRange(serviceDescriptors);
 				}
 			}

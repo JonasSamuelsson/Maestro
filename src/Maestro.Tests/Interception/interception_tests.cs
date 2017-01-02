@@ -12,7 +12,7 @@ namespace Maestro.Tests.Interception
 			var i = new Instance();
 			var container = new Container(x =>
 			{
-				x.Service<Instance>().Use.Factory(() => i).Intercept(new InstanceInterceptor());
+				x.For<Instance>().Use.Factory(() => i).Intercept(new InstanceInterceptor());
 			});
 
 			var instance = container.GetService<Instance>();
@@ -27,8 +27,8 @@ namespace Maestro.Tests.Interception
 			var i = new Instance();
 			var container = new Container(x =>
 			{
-				x.Service<Instance>("1").Use.Factory(() => i).Intercept(instance => new Instance(instance));
-				x.Service<Instance>("2").Use.Factory(() => i).Intercept((instance, ctx) => new Instance(instance));
+				x.For<Instance>("1").Use.Factory(() => i).Intercept(instance => new Instance(instance));
+				x.For<Instance>("2").Use.Factory(() => i).Intercept((instance, ctx) => new Instance(instance));
 			});
 
 			var instance1 = container.GetService<Instance>("1");
@@ -66,8 +66,8 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 			{
-				x.Service<NumberWrapper>("1").Use.Type<NumberWrapper>().Intercept(instance => instance.Number = 1);
-				x.Service<NumberWrapper>("2").Use.Type<NumberWrapper>().Intercept((instance, ctx) => instance.Number = 2);
+				x.For<NumberWrapper>("1").Use.Type<NumberWrapper>().Intercept(instance => instance.Number = 1);
+				x.For<NumberWrapper>("2").Use.Type<NumberWrapper>().Intercept((instance, ctx) => instance.Number = 2);
 			});
 
 			container.GetService<NumberWrapper>("1").Number.ShouldBe(1);
@@ -82,7 +82,7 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void interceptors_should_be_executed_in_the_same_order_as_they_are_configured()
 		{
-			var container = new Container(x => x.Service<TextWrapper>().Use.Type<TextWrapper>()
+			var container = new Container(x => x.For<TextWrapper>().Use.Type<TextWrapper>()
 				.Intercept(y => y.Text += 1)
 				.Intercept(y =>
 				{
@@ -120,7 +120,7 @@ namespace Maestro.Tests.Interception
 		public void interceptors_should_not_be_executed_if_instance_is_cached()
 		{
 			var counter = 0;
-			var container = new Container(x => x.Service<object>().Use.Type<object>().Intercept(_ => counter++).Lifetime.Singleton());
+			var container = new Container(x => x.For<object>().Use.Type<object>().Intercept(_ => counter++).Lifetime.Singleton());
 
 			container.GetService<object>();
 			counter.ShouldBe(1);
@@ -133,8 +133,8 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 													{
-														x.Services<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", "success");
-														x.Services<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, "success");
+														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", "success");
+														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, "success");
 													});
 
 			var instances = container.GetServices<TextWrapper>();
@@ -147,10 +147,10 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 													{
-														x.Services<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", () => "success");
-														x.Services<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", ctx => "success");
-														x.Services<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, () => "success");
-														x.Services<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, ctx => "success");
+														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", () => "success");
+														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", ctx => "success");
+														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, () => "success");
+														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, ctx => "success");
 													});
 
 			var instances = container.GetServices<TextWrapper>();
@@ -170,8 +170,8 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 													{
-														x.Service<Parent>("1").Use.Type<Parent>().SetProperty("Child");
-														x.Service<Parent>("2").Use.Type<Parent>().SetProperty(y => y.Child);
+														x.For<Parent>("1").Use.Type<Parent>().SetProperty("Child");
+														x.For<Parent>("2").Use.Type<Parent>().SetProperty(y => y.Child);
 													});
 
 			var instance1 = container.GetService<Parent>("1");
@@ -185,7 +185,7 @@ namespace Maestro.Tests.Interception
 		//public void set_property_with_value_from_provided_func()
 		//{
 		//	var dependency = new object();
-		//	var container = new Container(x => x.Service<Foobar>().Use<Foobar>().Set(y => y.ResolvableDependency, () => dependency));
+		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set(y => y.ResolvableDependency, () => dependency));
 
 		//	var instance = container.Get<Foobar>();
 
@@ -195,7 +195,7 @@ namespace Maestro.Tests.Interception
 		//[Fact]
 		//public void set_property_with_resolvable_type_should_work()
 		//{
-		//	var container = new Container(x => x.Service<Foobar>().Use<Foobar>().Set("ResolvableDependency"));
+		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set("ResolvableDependency"));
 		//	var instance = container.Get<Foobar>();
 
 		//	instance.ResolvableDependency.Should().NotBeNull();
@@ -204,7 +204,7 @@ namespace Maestro.Tests.Interception
 		//[Fact]
 		//public void set_missing_property_should_throw()
 		//{
-		//	var container = new Container(x => x.Service<Foobar>().Use<Foobar>().Set("missing property"));
+		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set("missing property"));
 
 		//	container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		//}
@@ -212,7 +212,7 @@ namespace Maestro.Tests.Interception
 		//[Fact]
 		//public void set_property_with_unresolvable_type_should_throw()
 		//{
-		//	var container = new Container(x => x.Service<Foobar>().Use<Foobar>().Set(y => y.UnresolvableDependency));
+		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set(y => y.UnresolvableDependency));
 
 		//	container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		//}
@@ -220,7 +220,7 @@ namespace Maestro.Tests.Interception
 		//[Fact]
 		//public void try_set_property_with_unresolvable_type_should_work()
 		//{
-		//	var container = new Container(x => x.Service<Foobar>().Use<Foobar>().TrySet(y => y.UnresolvableDependency));
+		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().TrySet(y => y.UnresolvableDependency));
 
 		//	container.Invoking(x => x.Get<Foobar>()).ShouldNotThrow();
 		//}
@@ -228,7 +228,7 @@ namespace Maestro.Tests.Interception
 		//[Fact]
 		//public void try_set_missing_property_should_throw()
 		//{
-		//	var container = new Container(x => x.Service<Foobar>().Use<Foobar>().TrySet("missing property"));
+		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().TrySet("missing property"));
 
 		//	container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
 		//}
@@ -239,8 +239,8 @@ namespace Maestro.Tests.Interception
 		//	var o = new object();
 		//	var container = new Container(x =>
 		//											{
-		//												x.Service<object>().Use(o);
-		//												x.Service<Foobar>().Use<Foobar>().Set(y => y.Enumerable);
+		//												x.For<object>().Use(o);
+		//												x.For<Foobar>().Use<Foobar>().Set(y => y.Enumerable);
 		//											});
 
 		//	var instance = container.Get<Foobar>();
@@ -254,8 +254,8 @@ namespace Maestro.Tests.Interception
 		//	var o = new object();
 		//	var container = new Container(x =>
 		//											{
-		//												x.Service<object>().Use(o);
-		//												x.Service<Foobar>().Use<Foobar>().Set(y => y.Array);
+		//												x.For<object>().Use(o);
+		//												x.For<Foobar>().Use<Foobar>().Set(y => y.Array);
 		//											});
 
 		//	var instance = container.Get<Foobar>();

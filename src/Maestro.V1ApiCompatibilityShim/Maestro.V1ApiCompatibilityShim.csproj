@@ -34,7 +34,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration\ContainerExpressionExtensions.cs" />
     <Compile Include="Configuration\IDefaultPluginExpression.cs" />
     <Compile Include="Configuration\IPluginExpression.cs" />
     <Compile Include="Configuration\PluginExpression.cs" />

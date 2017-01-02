@@ -10,8 +10,8 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_prefer_generic_child_container_config_over_specific_parent_config()
 		{
-			var parentContainer = new Container(x => x.Service<ICollection<object>>().Use.Type<Collection<object>>());
-			var childContainer = parentContainer.GetChildContainer(x => x.Service(typeof(ICollection<>)).Use.Type(typeof(List<>)));
+			var parentContainer = new Container(x => x.For<ICollection<object>>().Use.Type<Collection<object>>());
+			var childContainer = parentContainer.GetChildContainer(x => x.For(typeof(ICollection<>)).Use.Type(typeof(List<>)));
 
 			var collection = childContainer.GetService<ICollection<object>>();
 
@@ -23,14 +23,14 @@ namespace Maestro.Tests
 		{
 			var parentContainer = new Container(x =>
 			{
-				x.Service<object>().Use.Instance("default parent");
-				x.Services<object>().Add.Instance("parent");
+				x.For<object>().Use.Instance("default parent");
+				x.For<object>().Add.Instance("parent");
 			});
 
 			var childContainer = parentContainer.GetChildContainer(x =>
 			{
-				x.Service<object>().Use.Instance("default child");
-				x.Services<object>().Add.Instance("child");
+				x.For<object>().Use.Instance("default child");
+				x.For<object>().Add.Instance("child");
 			});
 
 			childContainer.GetServices<object>().ShouldBe(new[] { "default child", "child", "parent" });

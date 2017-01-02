@@ -54,13 +54,16 @@
     <Compile Include="ActivationException.cs" />
     <Compile Include="Configuration\FactoryExpression.cs" />
     <Compile Include="Configuration\FactoryInstanceExpression.cs" />
+    <Compile Include="Configuration\IAddServiceExpression.cs" />
     <Compile Include="Configuration\IFactoryExpression.cs" />
     <Compile Include="Configuration\IFactoryInstanceExpression.cs" />
+    <Compile Include="Configuration\INamedServiceExpression.cs" />
     <Compile Include="Configuration\InstanceExpression.cs" />
     <Compile Include="Configuration\IServiceExpression.cs" />
     <Compile Include="Configuration\IServiceInstanceExpression.cs" />
-    <Compile Include="Configuration\IServicesExpression.cs" />
+    <Compile Include="Configuration\ITryUseServiceExpression.cs" />
     <Compile Include="Configuration\ITypeInstanceExpression.cs" />
+    <Compile Include="Configuration\IUseServiceExpression.cs" />
     <Compile Include="Configuration\ServiceExpression.cs" />
     <Compile Include="Configuration\ServiceInstanceExpression.cs" />
     <Compile Include="Configuration\TypeInstanceExpression.cs" />

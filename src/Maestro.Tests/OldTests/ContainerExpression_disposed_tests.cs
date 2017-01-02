@@ -17,14 +17,14 @@ namespace Maestro.Tests
 
 			Should.Throw<ObjectDisposedException>(() => { var scan = expression.Scan; });
 
-			Should.Throw<ObjectDisposedException>(() => expression.Service(typeof(object)));
-			Should.Throw<ObjectDisposedException>(() => expression.Service(typeof(object), string.Empty));
+			Should.Throw<ObjectDisposedException>(() => expression.For(typeof(object)));
+			Should.Throw<ObjectDisposedException>(() => expression.For(typeof(object), string.Empty));
 
-			Should.Throw<ObjectDisposedException>(() => expression.Service<object>());
-			Should.Throw<ObjectDisposedException>(() => expression.Service<object>(string.Empty));
+			Should.Throw<ObjectDisposedException>(() => expression.For<object>());
+			Should.Throw<ObjectDisposedException>(() => expression.For<object>(string.Empty));
 
-			Should.Throw<ObjectDisposedException>(() => expression.Services(typeof(object)));
-			Should.Throw<ObjectDisposedException>(() => expression.Services<object>());
+			Should.Throw<ObjectDisposedException>(() => expression.For(typeof(object)));
+			Should.Throw<ObjectDisposedException>(() => expression.For<object>());
 		}
 	}
 }

@@ -8,7 +8,7 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_handle_non_generic_self_type_registration()
 		{
-			var container = new Container(x => x.Service(typeof(object)).Use.Self());
+			var container = new Container(x => x.For(typeof(object)).Use.Self());
 
 			container.GetService(typeof(object)).GetType().ShouldBe(typeof(object));
 		}
@@ -16,7 +16,7 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_handle_generic_self_type_registration()
 		{
-			var container = new Container(x => x.Service<object>().Use.Self());
+			var container = new Container(x => x.For<object>().Use.Self());
 
 			container.GetService<object>().GetType().ShouldBe(typeof(object));
 		}
