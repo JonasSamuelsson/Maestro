@@ -10,7 +10,7 @@ namespace Maestro.Internals
 	internal class Kernel : IDisposable
 	{
 		private readonly ServiceDescriptorLookup _serviceDescriptorLookup;
-		private readonly PipelineCache _pipelineCache;
+		private readonly PipelineCache<long> _pipelineCache;
 		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
 		private readonly Kernel _parent;
 
@@ -22,7 +22,7 @@ namespace Maestro.Internals
 		public Kernel(ServiceDescriptorLookup serviceDescriptorLookup)
 		{
 			_serviceDescriptorLookup = serviceDescriptorLookup;
-			_pipelineCache = new PipelineCache();
+			_pipelineCache = new PipelineCache<long>();
 			_factoryProviderResolvers = new IFactoryProviderResolver[]
 											{
 												new FuncFactoryProviderResolver(),
@@ -86,7 +86,7 @@ namespace Maestro.Internals
 
 		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
 		{
-			var pipelineKey = GetPipelineKey(type, context);
+			var pipelineKey = GetPipelineCacheKey(type, context);
 			if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
 			{
 				lock (_pipelineCache)
@@ -153,9 +153,12 @@ namespace Maestro.Internals
 			return true;
 		}
 
-		private static string GetPipelineKey(Type type, Context context)
+		private static long GetPipelineCacheKey(Type type, Context context)
 		{
-			return $"{type.FullName}:{context.Name}";
+			long key = type.GetHashCode();
+			key = (key << 32);
+			key = key | (uint)context.Name.GetHashCode();
+			return key;
 		}
 
 		public void Dispose()
