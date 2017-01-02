@@ -108,9 +108,7 @@
     <Compile Include="Configuration\IConventionExpression.cs" />
     <Compile Include="Configuration\IDefaultFilterExpression.cs" />
     <Compile Include="Configuration\IDefaultSettingsExpression.cs" />
-    <Compile Include="Configuration\Keep\IInstanceBuilderExpression.cs" />
     <Compile Include="Configuration\ILifetimeExpression.cs" />
-    <Compile Include="Configuration\Keep\InstanceBuilderExpression.cs" />
     <Compile Include="Configuration\IInstanceExpression.cs" />
     <Compile Include="Configuration\LifetimeExpression.cs" />
     <Compile Include="IFilter.cs" />
