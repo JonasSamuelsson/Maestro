@@ -169,6 +169,13 @@ namespace Maestro.Tests.Performance
 			GC.Collect();
 
 			var stopwatch = Stopwatch.StartNew();
+			ExecuteTest(action, concurrentWorkers);
+			var elapsed = stopwatch.Elapsed;
+			_dictionary.Add(info, $"{elapsed.TotalMilliseconds:0} ms");
+		}
+
+		private static void ExecuteTest(Action action, int concurrentWorkers)
+		{
 			if (concurrentWorkers <= 1)
 			{
 				Execute(action, Iterations);
@@ -180,8 +187,6 @@ namespace Maestro.Tests.Performance
 					.ToList();
 				Task.WhenAll(tasks).Wait();
 			}
-			var elapsed = stopwatch.Elapsed;
-			_dictionary.Add(info, $"{elapsed.TotalMilliseconds:0} ms");
 		}
 
 		private static void Execute(Action action, int iterations)
