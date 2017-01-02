@@ -3,16 +3,16 @@ using System.Linq;
 
 namespace Maestro.Internals
 {
-	class PipelineCache
+	class PipelineCache<TKey>
 	{
-		private readonly Dictionary<string, IEnumerable<IPipeline>> _dictionary = new Dictionary<string, IEnumerable<IPipeline>>();
+		private readonly Dictionary<TKey, IEnumerable<IPipeline>> _dictionary = new Dictionary<TKey, IEnumerable<IPipeline>>();
 
-		public void Add(string key, IPipeline pipeline)
+		public void Add(TKey key, IPipeline pipeline)
 		{
 			Add(key, new[] { pipeline });
 		}
 
-		public void Add(string key, IEnumerable<IPipeline> pipelines)
+		public void Add(TKey key, IEnumerable<IPipeline> pipelines)
 		{
 			_dictionary.Add(key, pipelines);
 		}
@@ -22,7 +22,7 @@ namespace Maestro.Internals
 			_dictionary.Clear();
 		}
 
-		public bool TryGet(string key, out IPipeline pipeline)
+		public bool TryGet(TKey key, out IPipeline pipeline)
 		{
 			IEnumerable<IPipeline> pipelines;
 			pipeline = _dictionary.TryGetValue(key, out pipelines)
@@ -31,7 +31,7 @@ namespace Maestro.Internals
 			return pipeline != null;
 		}
 
-		public bool TryGet(string key, out IEnumerable<IPipeline> pipelines)
+		public bool TryGet(TKey key, out IEnumerable<IPipeline> pipelines)
 		{
 			return _dictionary.TryGetValue(key, out pipelines);
 		}

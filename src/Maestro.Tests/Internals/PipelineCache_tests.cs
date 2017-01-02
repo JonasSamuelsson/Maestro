@@ -12,7 +12,7 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void should_not_get_pipeline_if_it_has_not_been_added()
 		{
-			var cache = new PipelineCache();
+			var cache = new PipelineCache<string>();
 
 			IPipeline pipeline;
 			cache.TryGet("key not found", out pipeline).ShouldBe(false);
@@ -22,7 +22,7 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void should_not_get_pipelines_if_they_have_not_been_added()
 		{
-			var cache = new PipelineCache();
+			var cache = new PipelineCache<string>();
 
 			IEnumerable<IPipeline> pipelines;
 			cache.TryGet("key not found", out pipelines).ShouldBe(false);
@@ -34,7 +34,7 @@ namespace Maestro.Tests.Internals
 		{
 			var expectedPipeline = new Pipeline();
 
-			var cache = new PipelineCache();
+			var cache = new PipelineCache<string>();
 
 			cache.Add("key", expectedPipeline);
 
@@ -48,7 +48,7 @@ namespace Maestro.Tests.Internals
 		{
 			var pipeline = new Pipeline();
 
-			var cache = new PipelineCache();
+			var cache = new PipelineCache<string>();
 
 			cache.Add("key", new[] { pipeline });
 
@@ -60,7 +60,7 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void get_pipeline_from_multi_pipeline_collection_should_throw()
 		{
-			var cache = new PipelineCache();
+			var cache = new PipelineCache<string>();
 
 			cache.Add("key", new[] { new Pipeline(), new Pipeline() });
 
@@ -73,7 +73,7 @@ namespace Maestro.Tests.Internals
 		{
 			var pipeline1 = new Pipeline();
 			var pipeline2 = new Pipeline();
-			var cache = new PipelineCache();
+			var cache = new PipelineCache<string>();
 
 			cache.Add("key", new[] { pipeline1, pipeline2 });
 
@@ -85,7 +85,7 @@ namespace Maestro.Tests.Internals
 		[Fact]
 		public void clear_should_empty_cache()
 		{
-			var cache = new PipelineCache();
+			var cache = new PipelineCache<string>();
 
 			cache.Add("key", new Pipeline());
 
