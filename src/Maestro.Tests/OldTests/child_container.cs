@@ -9,7 +9,7 @@ namespace Maestro.Tests
 		public void should_fallback_to_use_root_config()
 		{
 			var expectedInstance = new object();
-			var rootContainer = new Container(x => x.Service<object>().Use.Instance(expectedInstance));
+			var rootContainer = new Container(x => x.For<object>().Use.Instance(expectedInstance));
 			var childContainer = rootContainer.GetChildContainer();
 
 			var rootInstance = rootContainer.GetService<object>();
@@ -23,7 +23,7 @@ namespace Maestro.Tests
 		public void child_config_should_not_be_used_for_instances_resolved_directly_from_root_container()
 		{
 			var rootContainer = new Container();
-			var childContainer = rootContainer.GetChildContainer(x => x.Service<IDependency>().Use.Type<Dependency>());
+			var childContainer = rootContainer.GetChildContainer(x => x.For<IDependency>().Use.Type<Dependency>());
 
 			var rootInstance = rootContainer.GetService<ClassWithOptionalDependency>();
 
@@ -34,7 +34,7 @@ namespace Maestro.Tests
 		public void child_config_should_be_used_for_instances_resolved_directly_from_child_container()
 		{
 			var rootContainer = new Container();
-			var childContainer = rootContainer.GetChildContainer(x => x.Service<IDependency>().Use.Type<Dependency>());
+			var childContainer = rootContainer.GetChildContainer(x => x.For<IDependency>().Use.Type<Dependency>());
 
 			var childInstance = childContainer.GetService<ClassWithOptionalDependency>();
 
@@ -54,17 +54,17 @@ namespace Maestro.Tests
 			var childInstance4 = new object();
 			var rootContainer = new Container(x =>
 														 {
-															 x.Service<object>().Use.Instance(rootInstance1);
-															 x.Service<object>("foo").Use.Instance(rootInstance2);
-															 x.Service<object>("root").Use.Instance(rootInstance3);
-															 x.Services<object>().Add.Instance(rootInstance4);
+															 x.For<object>().Use.Instance(rootInstance1);
+															 x.For<object>("foo").Use.Instance(rootInstance2);
+															 x.For<object>("root").Use.Instance(rootInstance3);
+															 x.For<object>().Add.Instance(rootInstance4);
 														 });
 			var childContainer = rootContainer.GetChildContainer(x =>
 																				  {
-																					  x.Service<object>().Use.Instance(childInstance1);
-																					  x.Service<object>("foo").Use.Instance(childInstance2);
-																					  x.Service<object>("child").Use.Instance(childInstance3);
-																					  x.Services<object>().Add.Instance(childInstance4);
+																					  x.For<object>().Use.Instance(childInstance1);
+																					  x.For<object>("foo").Use.Instance(childInstance2);
+																					  x.For<object>("child").Use.Instance(childInstance3);
+																					  x.For<object>().Add.Instance(childInstance4);
 																				  });
 
 			var rootInstances = rootContainer.GetServices<object>();
@@ -81,7 +81,7 @@ namespace Maestro.Tests
 			var childContainer = rootContainer.GetChildContainer();
 
 			var instance1 = childContainer.GetService<ClassWithOptionalDependency>();
-			rootContainer.Configure(x => x.Service<IDependency>().Use.Type<Dependency>());
+			rootContainer.Configure(x => x.For<IDependency>().Use.Type<Dependency>());
 			var instance2 = childContainer.GetService<ClassWithOptionalDependency>();
 
 			instance1.Dependency.ShouldBe(null);

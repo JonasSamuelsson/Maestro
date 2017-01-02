@@ -45,7 +45,7 @@ namespace Maestro.Tests.Performance
 		[Fact(Skip = "performance")]
 		public void property_injection()
 		{
-			var container = new Container(x => x.Service<P>().Use.Type<P>().SetProperty("O", new object()));
+			var container = new Container(x => x.For<P>().Use.Type<P>().SetProperty("O", new object()));
 			Action baseline = () => new P { O = new object() };
 			Action work = () => container.GetService<P>();
 			Compare(baseline, work);
@@ -55,7 +55,7 @@ namespace Maestro.Tests.Performance
 		[Fact(Skip = "performance")]
 		public void get_generics()
 		{
-			var container = new Container(x => x.Service(typeof(IList<>)).Use.Type(typeof(List<>)));
+			var container = new Container(x => x.For(typeof(IList<>)).Use.Type(typeof(List<>)));
 			Action baseline = () => new List<string>();
 			Action work = () => container.GetService<IList<string>>();
 			Compare(baseline, work);
@@ -67,8 +67,8 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x =>
 													{
-														x.Services(typeof(IList<>)).Add.Instance(typeof(List<>));
-														x.Services(typeof(IList<>)).Add.Instance(typeof(List<>));
+														x.For(typeof(IList<>)).Add.Instance(typeof(List<>));
+														x.For(typeof(IList<>)).Add.Instance(typeof(List<>));
 													});
 			Action baseline = delegate { var temp = new[] { new List<string>(), new List<string>() }; };
 			Action work = () => container.GetServices<IList<string>>();
@@ -104,10 +104,10 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x =>
 			{
-				x.Service<C0>().Use.Type<C0>();
-				x.Service<C1>().Use.Type<C1>();
-				x.Service<C2>().Use.Type<C2>();
-				x.Service<C3>().Use.Type<C3>();
+				x.For<C0>().Use.Type<C0>();
+				x.For<C1>().Use.Type<C1>();
+				x.For<C2>().Use.Type<C2>();
+				x.For<C3>().Use.Type<C3>();
 			});
 			return container;
 		}

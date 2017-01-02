@@ -5,9 +5,9 @@ namespace Maestro.Configuration
 	internal class PluginExpression : IPluginExpression, IDefaultPluginExpression
 	{
 		private readonly IServiceExpression _serviceExpression;
-		private readonly IServicesExpression _servicesExpression;
+		private readonly IServiceExpression _servicesExpression;
 
-		public PluginExpression(IServiceExpression serviceExpression, IServicesExpression servicesExpression)
+		public PluginExpression(IServiceExpression serviceExpression, IServiceExpression servicesExpression)
 		{
 			_serviceExpression = serviceExpression;
 			_servicesExpression = servicesExpression;
@@ -77,9 +77,9 @@ namespace Maestro.Configuration
 	internal class PluginExpression<T> : IPluginExpression<T>, IDefaultPluginExpression<T>
 	{
 		private readonly IServiceExpression<T> _serviceExpression;
-		private readonly IServicesExpression<T> _servicesExpression;
+		private readonly IServiceExpression<T> _servicesExpression;
 
-		public PluginExpression(IServiceExpression<T> serviceExpression, IServicesExpression<T> servicesExpression)
+		public PluginExpression(IServiceExpression<T> serviceExpression, IServiceExpression<T> servicesExpression)
 		{
 			_serviceExpression = serviceExpression;
 			_servicesExpression = servicesExpression;

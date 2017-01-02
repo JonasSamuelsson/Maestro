@@ -3,7 +3,7 @@ using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	class ServiceExpression<TService> : IServiceExpression, IServiceExpression<TService>, IServicesExpression, IServicesExpression<TService>
+	class ServiceExpression<TService> : IServiceExpression, IServiceExpression<TService>, INamedServiceExpression, INamedServiceExpression<TService>
 	{
 		public ServiceExpression(Type type, string name, Kernel kernel, DefaultSettings defaultSettings)
 		{
@@ -18,34 +18,34 @@ namespace Maestro.Configuration
 		internal Kernel Kernel { get; }
 		internal DefaultSettings DefaultSettings { get; set; }
 
-		IServiceInstanceExpression IServiceExpression.Use
+		IServiceInstanceExpression IUseServiceExpression.Use
 		{
 			get { return new ServiceInstanceExpression<object>(Type, Name, Kernel, DefaultSettings, true); }
 		}
 
-		IServiceInstanceExpression IServiceExpression.TryUse
+		IServiceInstanceExpression ITryUseServiceExpression.TryUse
 		{
 			get { return new ServiceInstanceExpression<object>(Type, Name, Kernel, DefaultSettings, false); }
 		}
 
-		IServiceInstanceExpression<TService> IServiceExpression<TService>.Use
+		IServiceInstanceExpression<TService> IUseServiceExpression<TService>.Use
 		{
 			get { return new ServiceInstanceExpression<TService>(Type, Name, Kernel, DefaultSettings, true); }
 		}
 
-		IServiceInstanceExpression<TService> IServiceExpression<TService>.TryUse
+		IServiceInstanceExpression<TService> ITryUseServiceExpression<TService>.TryUse
 		{
 			get { return new ServiceInstanceExpression<TService>(Type, Name, Kernel, DefaultSettings, false); }
 		}
 
-		IServiceInstanceExpression IServicesExpression.Add
+		IServiceInstanceExpression IAddServiceExpression.Add
 		{
-			get { return new ServiceInstanceExpression<object>(Type, Name, Kernel, DefaultSettings, true); }
+			get { return new ServiceInstanceExpression<object>(Type, ServiceDescriptorLookup.GetRandomName(), Kernel, DefaultSettings, true); }
 		}
 
-		IServiceInstanceExpression<TService> IServicesExpression<TService>.Add
+		IServiceInstanceExpression<TService> IAddServiceExpression<TService>.Add
 		{
-			get { return new ServiceInstanceExpression<TService>(Type, Name, Kernel, DefaultSettings, true); }
+			get { return new ServiceInstanceExpression<TService>(Type, ServiceDescriptorLookup.GetRandomName(), Kernel, DefaultSettings, true); }
 		}
 	}
 }

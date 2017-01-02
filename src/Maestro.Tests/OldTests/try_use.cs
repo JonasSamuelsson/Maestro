@@ -12,8 +12,8 @@ namespace Maestro.Tests
 
 			container.Configure(x =>
 			{
-				x.Service<string>().TryUse.Instance("success");
-				x.Service<string>().TryUse.Instance("fail");
+				x.For<string>().TryUse.Instance("success");
+				x.For<string>().TryUse.Instance("fail");
 			});
 
 			container.GetService<string>().ShouldBe("success");
@@ -26,8 +26,8 @@ namespace Maestro.Tests
 
 			container.Configure(x =>
 			{
-				x.Service(typeof(string), "foobar").TryUse.Instance("success");
-				x.Service(typeof(string), "foobar").TryUse.Instance("fail");
+				x.For(typeof(string), "foobar").TryUse.Instance("success");
+				x.For(typeof(string), "foobar").TryUse.Instance("fail");
 			});
 
 			container.GetService(typeof(string), "foobar").ShouldBe("success");
@@ -38,8 +38,8 @@ namespace Maestro.Tests
 		{
 			new Container(x =>
 			{
-				x.Service<object>().TryUse.Type<object>().ShouldNotBeNull();
-				x.Service<object>().TryUse.Type<object>().ShouldBeNull();
+				x.For<object>().TryUse.Type<object>().ShouldNotBeNull();
+				x.For<object>().TryUse.Type<object>().ShouldBeNull();
 			});
 		}
 	}

@@ -27,7 +27,7 @@ namespace Maestro.Conventions
 				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
 				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
 				if (@class == null) continue;
-				var typeInstanceExpression = containerExpression.Service(@interface).Use.Type(@class);
+				var typeInstanceExpression = containerExpression.For(@interface).Use.Type(@class);
 				_configureAction(typeInstanceExpression);
 			}
 		}
