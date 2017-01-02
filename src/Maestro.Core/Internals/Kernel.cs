@@ -98,8 +98,6 @@ namespace Maestro.Internals
 						tryGetPlugin:
 						for (var kernel = this; kernel != null; kernel = kernel._parent)
 						{
-							// todo - get services fallback
-
 							ServiceDescriptor serviceDescriptor;
 							if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 							{

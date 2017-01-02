@@ -41,12 +41,12 @@ namespace Maestro
 				action(containerExpression);
 		}
 
-		internal IContainer GetChildContainer()
+		public IContainer GetChildContainer()
 		{
 			return GetChildContainer(delegate { });
 		}
 
-		internal IContainer GetChildContainer(Action<IContainerExpression> action)
+		public IContainer GetChildContainer(Action<IContainerExpression> action)
 		{
 			var childContainer = new Container(new Kernel(_kernel));
 			childContainer.Configure(action);
