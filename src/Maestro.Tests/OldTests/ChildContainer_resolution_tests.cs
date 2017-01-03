@@ -38,7 +38,7 @@ namespace Maestro.Tests
 				})
 				.GetChildContainer(x => x.For<object>().Add.Instance("2"));
 
-			container.GetServices<object>().ShouldBe(new[] { "2", "1" }); // todo - wip
+			container.GetServices<object>().ShouldBe(new[] { "2", "1" });
 		}
 	}
 }
