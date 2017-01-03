@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
@@ -93,36 +92,57 @@ namespace Maestro.Internals
 				{
 					if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
 					{
-						var name = context.Name;
-
-						tryGetPlugin:
-						for (var kernel = this; kernel != null; kernel = kernel._parent)
+						Type elementType;
+						if (!Reflector.IsGenericEnumerable(type, out elementType))
 						{
 							ServiceDescriptor serviceDescriptor;
-							if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
+							if (TryGetServiceDescriptor(type, context.Name, out serviceDescriptor))
 							{
 								pipeline = new Pipeline(serviceDescriptor);
 								_pipelineCache.Add(pipelineKey, pipeline);
 								return true;
 							}
+						}
+						else
+						{
+							var compoundPipeline = new CompoundPipeline(elementType);
 
-							if (Reflector.IsGenericEnumerable(type))
+							for (var kernel = this; kernel != null; kernel = kernel._parent)
 							{
-								var elementType = type.GetGenericArguments().Single();
-								IEnumerable<ServiceDescriptor> serviceDescriptors;
-								if (_serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out serviceDescriptors))
+								var name = context.Name;
+
+								tryGetService:
+
+								ServiceDescriptor serviceDescriptor;
+								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 								{
-									var pipelines = serviceDescriptors.Select(x => new Pipeline(x)).ToList();
-									pipeline = new EnumerablePipeline(elementType, pipelines);
-									_pipelineCache.Add(pipelineKey, pipeline);
-									return true;
+									compoundPipeline.Add(new EnumerablePipeline(elementType, serviceDescriptor));
+									goto addToPipelineCache;
+								}
+
+								if (name != ServiceDescriptorLookup.DefaultName)
+								{
+									name = ServiceDescriptorLookup.DefaultName;
+									goto tryGetService;
+								}
+
+								IEnumerable<ServiceDescriptor> serviceDescriptors;
+								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out serviceDescriptors))
+								{
+									foreach (var descriptor in serviceDescriptors)
+									{
+										compoundPipeline.Add(new Pipeline(descriptor));
+									}
 								}
 							}
 
-							if (name != ServiceDescriptorLookup.DefaultName)
+							addToPipelineCache:
+
+							if (compoundPipeline.Any())
 							{
-								name = ServiceDescriptorLookup.DefaultName;
-								goto tryGetPlugin;
+								_pipelineCache.Add(pipelineKey, compoundPipeline);
+								pipeline = compoundPipeline;
+								return true;
 							}
 						}
 
@@ -151,12 +171,44 @@ namespace Maestro.Internals
 			return true;
 		}
 
+		private bool TryGetServicePipeline(Type type, Context context, ref IPipeline pipeline, long pipelineKey)
+		{
+			ServiceDescriptor serviceDescriptor;
+			if (TryGetServiceDescriptor(type, context.Name, out serviceDescriptor))
+			{
+				pipeline = new Pipeline(serviceDescriptor);
+				return true;
+			}
+
+			return false;
+		}
+
 		private static long GetPipelineCacheKey(Type type, Context context)
 		{
 			long key = type.GetHashCode();
 			key = (key << 32);
 			key = key | (uint)context.Name.GetHashCode();
 			return key;
+		}
+
+		private bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
+		{
+			for (var kernel = this; kernel != null; kernel = kernel._parent)
+			{
+				if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
+				{
+					return true;
+				}
+			}
+
+			var defaultName = ServiceDescriptorLookup.DefaultName;
+			if (name != defaultName)
+			{
+				return TryGetServiceDescriptor(type, defaultName, out serviceDescriptor);
+			}
+
+			serviceDescriptor = null;
+			return false;
 		}
 
 		public void Dispose()

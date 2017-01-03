@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -7,19 +6,19 @@ namespace Maestro.Internals
 {
 	class EnumerablePipeline : IPipeline
 	{
-		private readonly IEnumerable<IPipeline> _pipelines;
 		private readonly MethodInfo _genericCastMethod;
+		private readonly IPipeline _pipeline;
 
-		public EnumerablePipeline(Type elementType, IEnumerable<IPipeline> pipelines)
+		public EnumerablePipeline(Type elementType, ServiceDescriptor serviceDescriptor)
 		{
 			var castMethod = typeof(Enumerable).GetMethod("Cast", BindingFlags.Public | BindingFlags.Static);
 			_genericCastMethod = castMethod.MakeGenericMethod(elementType);
-			_pipelines = pipelines;
+			_pipeline = new Pipeline(serviceDescriptor);
 		}
 
 		public object Execute(Context context)
 		{
-			var instances = _pipelines.Select(x => x.Execute(context));
+			var instances = _pipeline.Execute(context);
 			return _genericCastMethod.Invoke(null, new object[] { instances });
 		}
 	}
