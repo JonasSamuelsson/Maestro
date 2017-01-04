@@ -75,9 +75,9 @@
     <Compile Include="Interceptors\FuncInterceptor.cs" />
     <Compile Include="Interceptors\SetPropertyAction.cs" />
     <Compile Include="Interceptors\SetPropertyActionFactory.cs" />
-    <Compile Include="Internals\EnumerablePipeline.cs" />
     <Compile Include="Internals\IPipeline.cs" />
-    <Compile Include="Internals\CompoundPipeline.cs" />
+    <Compile Include="Internals\ComposedPipeline.cs" />
+    <Compile Include="Internals\PipelineType.cs" />
     <Compile Include="Internals\ServiceFamily.cs" />
     <Compile Include="Lifetimes\INextStep.cs" />
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryProviderResolver.cs" />
@@ -87,7 +87,7 @@
     <Compile Include="FactoryProviders\IFactoryProvider.cs" />
     <Compile Include="Internals\Kernel.cs" />
     <Compile Include="FactoryProviders\LambdaFactoryProvider.cs" />
-    <Compile Include="Internals\Pipeline.cs" />
+    <Compile Include="Internals\ServicePipeline.cs" />
     <Compile Include="Internals\PipelineCache.cs" />
     <Compile Include="Internals\ServiceDescriptor.cs" />
     <Compile Include="Internals\ServiceDescriptorLookup.cs" />

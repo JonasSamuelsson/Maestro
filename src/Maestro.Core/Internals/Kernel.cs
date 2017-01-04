@@ -93,19 +93,21 @@ namespace Maestro.Internals
 					if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
 					{
 						Type elementType;
-						if (!Reflector.IsGenericEnumerable(type, out elementType))
+						var isGenericEnumerable = Reflector.IsGenericEnumerable(type, out elementType);
+
+						if (!isGenericEnumerable)
 						{
 							ServiceDescriptor serviceDescriptor;
 							if (TryGetServiceDescriptor(type, context.Name, out serviceDescriptor))
 							{
-								pipeline = new Pipeline(serviceDescriptor);
+								pipeline = new ServicePipeline(serviceDescriptor, PipelineType.Service);
 								_pipelineCache.Add(pipelineKey, pipeline);
 								return true;
 							}
 						}
 						else
 						{
-							var compoundPipeline = new CompoundPipeline(elementType);
+							var compoundPipeline = new ComposedPipeline(elementType);
 
 							for (var kernel = this; kernel != null; kernel = kernel._parent)
 							{
@@ -116,7 +118,7 @@ namespace Maestro.Internals
 								ServiceDescriptor serviceDescriptor;
 								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 								{
-									compoundPipeline.Add(new EnumerablePipeline(elementType, serviceDescriptor));
+									compoundPipeline.Add(new ServicePipeline(serviceDescriptor, PipelineType.Services));
 									goto addToPipelineCache;
 								}
 
@@ -131,7 +133,7 @@ namespace Maestro.Internals
 								{
 									foreach (var descriptor in serviceDescriptors)
 									{
-										compoundPipeline.Add(new Pipeline(descriptor));
+										compoundPipeline.Add(new ServicePipeline(descriptor, PipelineType.Service));
 									}
 								}
 							}
@@ -150,15 +152,14 @@ namespace Maestro.Internals
 						{
 							IFactoryProvider factoryProvider;
 							if (!factoryProviderResolver.TryGet(type, context, out factoryProvider)) continue;
-							pipeline = new Pipeline
+							var serviceDescriptor = new ServiceDescriptor
 							{
-								ServiceDescriptor = new ServiceDescriptor
-								{
-									Type = type,
-									Name = context.Name,
-									FactoryProvider = factoryProvider
-								}
+								Type = type,
+								Name = context.Name,
+								FactoryProvider = factoryProvider
 							};
+							var pipelineType = isGenericEnumerable ? PipelineType.Services : PipelineType.Service;
+							pipeline = new ServicePipeline(serviceDescriptor, pipelineType);
 							_pipelineCache.Add(pipelineKey, pipeline);
 							return true;
 						}
@@ -169,18 +170,6 @@ namespace Maestro.Internals
 			}
 
 			return true;
-		}
-
-		private bool TryGetServicePipeline(Type type, Context context, ref IPipeline pipeline, long pipelineKey)
-		{
-			ServiceDescriptor serviceDescriptor;
-			if (TryGetServiceDescriptor(type, context.Name, out serviceDescriptor))
-			{
-				pipeline = new Pipeline(serviceDescriptor);
-				return true;
-			}
-
-			return false;
 		}
 
 		private static long GetPipelineCacheKey(Type type, Context context)
