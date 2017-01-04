@@ -16,10 +16,10 @@ namespace Maestro.Lifetimes
 		public object Execute(INextStep nextStep)
 		{
 			object instance;
-			var context = ((Pipeline.NextStep)nextStep).Context;
+			var context = ((ServicePipeline.NextStep)nextStep).Context;
 
 			lock (_dictionary)
-			if (_dictionary.TryGetValue(context, out instance))
+				if (_dictionary.TryGetValue(context, out instance))
 					return instance;
 
 			instance = nextStep.Execute();

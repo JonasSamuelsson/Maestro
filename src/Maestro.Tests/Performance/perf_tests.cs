@@ -11,7 +11,7 @@ namespace Maestro.Tests.Performance
 {
 	public class perf_tests : IDisposable
 	{
-		private const int Iterations = 1000 * 1000;
+		private const int Iterations = 100 * 1000;
 		private readonly Dictionary<string, object> _dictionary;
 		private readonly ITestOutputHelper _output;
 
@@ -33,6 +33,7 @@ namespace Maestro.Tests.Performance
 		{
 			BaselineSimple();
 			BaselineComplex();
+			BaselineEnumerable();
 			Instance();
 			Factory();
 			Type();
@@ -45,13 +46,15 @@ namespace Maestro.Tests.Performance
 			ChildContainer();
 		}
 
-		private void BaselineSimple()
+		[Fact(Skip = "run manually")]
+		public void BaselineSimple()
 		{
 			Action action = () => new object();
 			Benchmark(action, "baseline simple");
 		}
 
-		private void BaselineComplex()
+		[Fact(Skip = "run manually")]
+		public void BaselineComplex()
 		{
 			Action action = () => new Complex1(
 				new Complex2(
@@ -62,6 +65,13 @@ namespace Maestro.Tests.Performance
 					new Complex4()),
 				new Complex4());
 			Benchmark(action, "baseline complex");
+		}
+
+		[Fact(Skip = "run manually")]
+		public void BaselineEnumerable()
+		{
+			Action action = () => new List<object>(new[] { new object(), new object(), new object(), new object(), new object() });
+			Benchmark(action, "baseline enumerable");
 		}
 
 		[Fact(Skip = "run manually")]
