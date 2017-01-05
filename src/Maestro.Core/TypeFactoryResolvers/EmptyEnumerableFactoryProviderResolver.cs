@@ -29,7 +29,7 @@ namespace Maestro.TypeFactoryResolvers
 
 			public IFactoryProvider MakeGeneric(Type[] genericArguments)
 			{
-				throw new NotImplementedException();
+				throw new NotSupportedException();
 			}
 		}
 
