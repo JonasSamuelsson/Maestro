@@ -6,12 +6,12 @@ namespace Maestro.Lifetimes
 	{
 		private object _instance;
 
-		public object Execute(INextStep nextStep)
+		public object Execute(IContext context, Func<IContext, object> factory)
 		{
 			if (_instance == null)
 				lock (this)
 					if (_instance == null)
-						_instance = nextStep.Execute();
+						_instance = factory(context);
 
 			return _instance;
 		}

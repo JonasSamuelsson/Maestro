@@ -11,9 +11,9 @@ namespace Maestro.Lifetimes
 
 		public static ILifetime Instance { get; }
 
-		public object Execute(INextStep nextStep)
+		public object Execute(IContext context, Func<IContext, object> factory)
 		{
-			return nextStep.Execute();
+			return factory(context);
 		}
 
 		public ILifetime MakeGeneric(Type[] genericArguments)
