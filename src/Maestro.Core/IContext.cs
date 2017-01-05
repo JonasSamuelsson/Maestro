@@ -5,6 +5,8 @@ namespace Maestro
 {
 	public interface IContext
 	{
+		event Action<IContext> Disposed;
+
 		bool CanGetService<T>();
 		bool CanGetService(Type type);
 
