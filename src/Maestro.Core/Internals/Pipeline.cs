@@ -1,5 +1,4 @@
 using Maestro.FactoryProviders.Factories;
-using Maestro.Lifetimes;
 
 namespace Maestro.Internals
 {
@@ -17,17 +16,18 @@ namespace Maestro.Internals
 
 		public object Execute(Context context)
 		{
-			var temp = new NextStep { Context = context, Pipeline = this };
-			return ServiceDescriptor.Lifetime.Execute(temp);
+			var temp = new NextStep { Pipeline = this };
+			return ServiceDescriptor.Lifetime.Execute(context, temp.Execute);
 		}
 
-		internal struct NextStep : INextStep
+		internal struct NextStep
 		{
 			public Pipeline Pipeline { get; set; }
-			public Context Context { get; set; }
 
-			public object Execute()
+			public object Execute(IContext context)
 			{
+				var Context = (Context)context;
+
 				if (Pipeline.Factory == null)
 				{
 					Pipeline.Factory = Pipeline.ServiceDescriptor.FactoryProvider.GetFactory(Context);

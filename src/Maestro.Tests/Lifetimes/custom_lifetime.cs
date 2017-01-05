@@ -22,10 +22,10 @@ namespace Maestro.Tests.Lifetimes
 		{
 			public bool Executed { get; private set; }
 
-			public object Execute(INextStep nextStep)
+			public object Execute(IContext context, Func<IContext, object> factory)
 			{
 				Executed = true;
-				return nextStep.Execute();
+				return factory(context);
 			}
 
 			public ILifetime MakeGeneric(Type[] genericArguments)

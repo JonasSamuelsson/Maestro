@@ -13,18 +13,18 @@ namespace Maestro.Lifetimes
 			_dictionary = new Dictionary<Context, object>();
 		}
 
-		public object Execute(INextStep nextStep)
+		public object Execute(IContext context, Func<IContext, object> factory)
 		{
 			object instance;
-			var context = ((Pipeline.NextStep)nextStep).Context;
+			var ctx = (Context)context;
 
 			lock (_dictionary)
-				if (_dictionary.TryGetValue(context, out instance))
+				if (_dictionary.TryGetValue(ctx, out instance))
 					return instance;
 
-			instance = nextStep.Execute();
-			context.Disposed += ContextOnDisposed;
-			lock (_dictionary) _dictionary.Add(context, instance);
+			instance = factory(context);
+			ctx.Disposed += ContextOnDisposed;
+			lock (_dictionary) _dictionary.Add(ctx, instance);
 			return instance;
 		}
 
