@@ -7,7 +7,7 @@ namespace Maestro.Internals
 {
 	internal class ServiceDescriptorLookup : IDisposable
 	{
-		private ThreadSafeDictionary<Type, ServiceFamily> _serviceFamilies = new ThreadSafeDictionary<Type, ServiceFamily>();
+		private readonly ThreadSafeDictionary<Type, ServiceFamily> _serviceFamilies = new ThreadSafeDictionary<Type, ServiceFamily>();
 
 		internal const string DefaultName = "";
 
