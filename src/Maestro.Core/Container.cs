@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Maestro.Configuration;
 using Maestro.Internals;
 
@@ -97,7 +96,8 @@ namespace Maestro
 
 		public IEnumerable<T> GetServices<T>()
 		{
-			return GetServices(typeof(T)).Cast<T>().ToList();
+			using (var context = new Context(ServiceDescriptorLookup.DefaultName, _kernel))
+				return context.GetServices<T>();
 		}
 
 		internal string GetConfiguration()

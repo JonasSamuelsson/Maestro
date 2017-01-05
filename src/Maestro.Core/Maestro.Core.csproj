@@ -75,6 +75,7 @@
     <Compile Include="Interceptors\FuncInterceptor.cs" />
     <Compile Include="Interceptors\SetPropertyAction.cs" />
     <Compile Include="Interceptors\SetPropertyActionFactory.cs" />
+    <Compile Include="Internals\EnumerableTypeBuilder.cs" />
     <Compile Include="Internals\IPipeline.cs" />
     <Compile Include="Internals\ComposedPipeline.cs" />
     <Compile Include="Internals\PipelineType.cs" />

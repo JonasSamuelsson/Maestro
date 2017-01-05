@@ -28,7 +28,7 @@ namespace Maestro.Tests
 		}
 
 		[Fact]
-		public void GetServices_should_not_resolve_from_parent_if_enumerable_is_registered()
+		public void GetServices_should_not_resolve_from_parent_if_enumerable_instance_is_registered_in_child()
 		{
 			var container = new Container(x => x.For<object>().Add.Instance("fail"))
 				.GetChildContainer(x =>

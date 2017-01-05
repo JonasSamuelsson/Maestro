@@ -70,19 +70,6 @@ namespace Maestro.Internals
 			return instance != null;
 		}
 
-		public IEnumerable<object> GetServices(Type type, Context context)
-		{
-			var enumerableType = typeof(IEnumerable<>).MakeGenericType(type);
-
-			object instance;
-			if (TryGetService(enumerableType, context, out instance))
-			{
-				return (IEnumerable<object>)instance;
-			}
-
-			throw new InvalidOperationException();
-		}
-
 		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
 		{
 			var pipelineKey = GetPipelineCacheKey(type, context);
