@@ -143,8 +143,7 @@ namespace Maestro.Internals
 		{
 			try
 			{
-				// todo - use or remove kernel.getservices 
-				var enumerableType = typeof(IEnumerable<>).MakeGenericType(type);
+				var enumerableType = EnumerableTypeBuilder.Get(type);
 				var services = GetService(enumerableType);
 				return services as IEnumerable<object> ?? ((IEnumerable)services).Cast<object>();
 			}
@@ -162,7 +161,7 @@ namespace Maestro.Internals
 		{
 			try
 			{
-				return GetServices(typeof(T)).Cast<T>();
+				return GetService<IEnumerable<T>>();
 			}
 			catch (ActivationException)
 			{
