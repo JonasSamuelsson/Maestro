@@ -1,48 +1,46 @@
+using System.Collections.Generic;
 using Maestro.FactoryProviders.Factories;
+using Maestro.Interceptors;
+using Maestro.Lifetimes;
 
 namespace Maestro.Internals
 {
-	class Pipeline : IPipeline
+	internal class Pipeline : IPipeline
 	{
-		public Pipeline(ServiceDescriptor serviceDescriptor, PipelineType pipelineType)
+		private readonly IFactory _factory;
+		private readonly int _interceptorCount;
+		private readonly List<IInterceptor> _interceptors;
+		private readonly ILifetime _lifetime;
+
+		public Pipeline(PipelineType pipelineType, IFactory factory, List<IInterceptor> interceptors, ILifetime lifetime)
 		{
-			ServiceDescriptor = serviceDescriptor;
 			PipelineType = pipelineType;
+			_factory = factory;
+			_interceptorCount = interceptors.Count;
+			_interceptors = interceptors;
+			_lifetime = lifetime;
 		}
 
-		public ServiceDescriptor ServiceDescriptor { get; set; }
 		public PipelineType PipelineType { get; }
-		public IFactory Factory { get; set; }
 
 		public object Execute(Context context)
 		{
-			var temp = new NextStep { Pipeline = this };
-			return ServiceDescriptor.Lifetime.Execute(context, temp.Execute);
+			return _lifetime.Execute(context, GetInstance);
 		}
 
-		internal struct NextStep
+		public object GetInstance(IContext context)
 		{
-			public Pipeline Pipeline { get; set; }
+			var ctx = (Context)context;
 
-			public object Execute(IContext context)
+			var instance = _factory.GetInstance(ctx);
+
+			var interceptors = _interceptors;
+			for (var i = 0; i < _interceptorCount; i++)
 			{
-				var Context = (Context)context;
-
-				if (Pipeline.Factory == null)
-				{
-					Pipeline.Factory = Pipeline.ServiceDescriptor.FactoryProvider.GetFactory(Context);
-				}
-
-				var instance = Pipeline.Factory.GetInstance(Context);
-
-				var interceptors = Pipeline.ServiceDescriptor.Interceptors;
-				for (var i = 0; i < interceptors.Count; i++)
-				{
-					instance = interceptors[i].Execute(instance, Context);
-				}
-
-				return instance;
+				instance = interceptors[i].Execute(instance, context);
 			}
+
+			return instance;
 		}
 	}
 }

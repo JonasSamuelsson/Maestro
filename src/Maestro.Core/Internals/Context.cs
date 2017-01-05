@@ -204,6 +204,6 @@ namespace Maestro.Internals
 			Disposed?.Invoke(this);
 		}
 
-		public event Action<Context> Disposed;
+		public event Action<IContext> Disposed;
 	}
 }

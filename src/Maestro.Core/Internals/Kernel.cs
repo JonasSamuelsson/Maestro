@@ -87,7 +87,7 @@ namespace Maestro.Internals
 							ServiceDescriptor serviceDescriptor;
 							if (TryGetServiceDescriptor(type, context.Name, out serviceDescriptor))
 							{
-								pipeline = new Pipeline(serviceDescriptor, PipelineType.Service);
+								pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
 								_pipelineCache.Add(pipelineKey, pipeline);
 								return true;
 							}
@@ -105,7 +105,7 @@ namespace Maestro.Internals
 								ServiceDescriptor serviceDescriptor;
 								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 								{
-									compoundPipeline.Add(new Pipeline(serviceDescriptor, PipelineType.Services));
+									compoundPipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
 									goto addToPipelineCache;
 								}
 
@@ -120,7 +120,7 @@ namespace Maestro.Internals
 								{
 									foreach (var descriptor in serviceDescriptors)
 									{
-										compoundPipeline.Add(new Pipeline(descriptor, PipelineType.Service));
+										compoundPipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));
 									}
 								}
 							}
@@ -146,7 +146,7 @@ namespace Maestro.Internals
 								FactoryProvider = factoryProvider
 							};
 							var pipelineType = isGenericEnumerable ? PipelineType.Services : PipelineType.Service;
-							pipeline = new Pipeline(serviceDescriptor, pipelineType);
+							pipeline = CreatePipeline(pipelineType, serviceDescriptor, context);
 							_pipelineCache.Add(pipelineKey, pipeline);
 							return true;
 						}
@@ -157,6 +157,11 @@ namespace Maestro.Internals
 			}
 
 			return true;
+		}
+
+		private static Pipeline CreatePipeline(PipelineType pipelineType, ServiceDescriptor serviceDescriptor, Context context)
+		{
+			return new Pipeline(pipelineType, serviceDescriptor.FactoryProvider.GetFactory(context), serviceDescriptor.Interceptors, serviceDescriptor.Lifetime);
 		}
 
 		private static long GetPipelineCacheKey(Type type, Context context)

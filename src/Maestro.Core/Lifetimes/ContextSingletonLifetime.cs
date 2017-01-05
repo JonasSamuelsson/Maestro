@@ -1,30 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using Maestro.Internals;
 
 namespace Maestro.Lifetimes
 {
 	internal class ContextSingletonLifetime : ILifetime
 	{
-		private readonly Dictionary<Context, object> _dictionary;
-
-		public ContextSingletonLifetime()
-		{
-			_dictionary = new Dictionary<Context, object>();
-		}
+		private readonly Dictionary<IContext, object> _dictionary = new Dictionary<IContext, object>();
 
 		public object Execute(IContext context, Func<IContext, object> factory)
 		{
 			object instance;
-			var ctx = (Context)context;
 
 			lock (_dictionary)
-				if (_dictionary.TryGetValue(ctx, out instance))
+				if (_dictionary.TryGetValue(context, out instance))
 					return instance;
 
 			instance = factory(context);
-			ctx.Disposed += ContextOnDisposed;
-			lock (_dictionary) _dictionary.Add(ctx, instance);
+			context.Disposed += ContextOnDisposed;
+			lock (_dictionary) _dictionary.Add(context, instance);
 			return instance;
 		}
 
@@ -33,7 +26,7 @@ namespace Maestro.Lifetimes
 			return new ContextSingletonLifetime();
 		}
 
-		private void ContextOnDisposed(Context context)
+		private void ContextOnDisposed(IContext context)
 		{
 			lock (_dictionary) _dictionary.Remove(context);
 		}
