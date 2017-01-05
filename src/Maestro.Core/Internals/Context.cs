@@ -7,7 +7,7 @@ namespace Maestro.Internals
 {
 	class Context : IContext, IDisposable
 	{
-		private readonly ISet<Type> _resolvedTypes = new HashSet<Type>();
+		private readonly Stack<Type> _processedTypes = new Stack<Type>();
 		private bool _disposed;
 
 		public Context(string name, Kernel kernel)
@@ -37,7 +37,7 @@ namespace Maestro.Internals
 			}
 			finally
 			{
-				if (removeStackFrame) RemoveStackFrame(type);
+				if (removeStackFrame) RemoveStackFrame();
 			}
 		}
 
@@ -111,7 +111,7 @@ namespace Maestro.Internals
 			}
 			finally
 			{
-				if (removeStackFrame) RemoveStackFrame(type);
+				if (removeStackFrame) RemoveStackFrame();
 			}
 		}
 
@@ -180,15 +180,17 @@ namespace Maestro.Internals
 
 		private void AddStackFrame(Type type)
 		{
-			if (!_resolvedTypes.Add(type))
+			if (_processedTypes.Contains(type))
 			{
 				throw new InvalidOperationException($"Cyclic dependency, '{type.FullName}'.");
 			}
+
+			_processedTypes.Push(type);
 		}
 
-		private void RemoveStackFrame(Type type)
+		private void RemoveStackFrame()
 		{
-			_resolvedTypes.Remove(type);
+			_processedTypes.Pop();
 		}
 
 		private static Exception CreateActivationException(Exception exception)
