@@ -42,39 +42,6 @@ namespace Maestro.Tests
 		}
 
 		[Fact]
-		public void GetAll_from_child_container_should_include_instances_from_parent_where_name_doesnt_match()
-		{
-			var rootInstance1 = new object();
-			var rootInstance2 = new object();
-			var rootInstance3 = new object();
-			var rootInstance4 = new object();
-			var childInstance1 = new object();
-			var childInstance2 = new object();
-			var childInstance3 = new object();
-			var childInstance4 = new object();
-			var rootContainer = new Container(x =>
-														 {
-															 x.For<object>().Use.Instance(rootInstance1);
-															 x.For<object>("foo").Use.Instance(rootInstance2);
-															 x.For<object>("root").Use.Instance(rootInstance3);
-															 x.For<object>().Add.Instance(rootInstance4);
-														 });
-			var childContainer = rootContainer.GetChildContainer(x =>
-																				  {
-																					  x.For<object>().Use.Instance(childInstance1);
-																					  x.For<object>("foo").Use.Instance(childInstance2);
-																					  x.For<object>("child").Use.Instance(childInstance3);
-																					  x.For<object>().Add.Instance(childInstance4);
-																				  });
-
-			var rootInstances = rootContainer.GetServices<object>();
-			var childInstances = childContainer.GetServices<object>();
-
-			rootInstances.ShouldBe(new[] { rootInstance1, rootInstance2, rootInstance3, rootInstance4 });
-			childInstances.ShouldBe(new[] { childInstance1, childInstance2, childInstance3, childInstance4, rootInstance3, rootInstance4 });
-		}
-
-		[Fact]
 		public void constructor_selection_should_be_reevaluated_if_parent_container_is_reconfigured()
 		{
 			var rootContainer = new Container();
