@@ -10,7 +10,7 @@ namespace Maestro.TypeFactoryResolvers
 {
 	internal class ConcreteClosedClassFactoryProviderResolver : IFactoryProviderResolver
 	{
-		public bool TryGet(Type type, Context context, out IFactoryProvider factoryProvider)
+		public bool TryGet(Type type, IContext context, out IFactoryProvider factoryProvider)
 		{
 			factoryProvider = null;
 
@@ -25,12 +25,12 @@ namespace Maestro.TypeFactoryResolvers
 			return factoryProvider != null;
 		}
 
-		private static IEnumerable<TypeFactoryProvider> GetFactoryProviders(Type type, Context context)
+		private static IEnumerable<TypeFactoryProvider> GetFactoryProviders(Type type, IContext context)
 		{
 			return from ctor in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 					 let parameters = ctor.GetParameters()
 					 orderby parameters.Length descending
-					 where parameters.All(p => context.Kernel.CanGetService(p.ParameterType, context))
+					 where parameters.All(p => context.CanGetService(p.ParameterType))
 					 select new TypeFactoryProvider(type) { Constructor = ctor };
 		}
 	}

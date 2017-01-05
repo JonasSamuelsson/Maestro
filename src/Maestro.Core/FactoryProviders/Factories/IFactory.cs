@@ -4,6 +4,6 @@ namespace Maestro.FactoryProviders.Factories
 {
 	interface IFactory
 	{
-		object GetInstance(Context context);
+		object GetInstance(IContext context);
 	}
 }
