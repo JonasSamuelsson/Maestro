@@ -177,6 +177,9 @@ namespace Maestro.Tests.Performance
 		{
 			Execute(action, 1);
 			GC.Collect();
+			GC.WaitForFullGCApproach();
+			GC.WaitForFullGCComplete();
+			GC.WaitForPendingFinalizers();
 
 			var stopwatch = Stopwatch.StartNew();
 			ExecuteTest(action, concurrentWorkers);
