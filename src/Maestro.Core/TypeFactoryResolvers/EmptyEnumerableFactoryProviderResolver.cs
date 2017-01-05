@@ -14,7 +14,7 @@ namespace Maestro.TypeFactoryResolvers
 			factoryProvider = null;
 
 			Type elementType;
-			if (!Reflector.IsNonPrimitiveGenericEnumerable(type, out elementType)) return false;
+			if (!Reflector.IsGenericEnumerable(type, out elementType)) return false;
 			var factoryProviderType = typeof(FactoryProvider<>).MakeGenericType(elementType);
 			factoryProvider = (IFactoryProvider)Activator.CreateInstance(factoryProviderType);
 			return true;

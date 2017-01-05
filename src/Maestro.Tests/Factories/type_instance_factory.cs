@@ -99,18 +99,6 @@ namespace Maestro.Tests.Factories
 			instanceWithStrings.Dependency.ShouldBe(strings);
 		}
 
-		[Fact]
-		public void should_not_use_constructor_with_enumerable_struct_or_string_dependency_if_dependency_is_not_explicitly_configured()
-		{
-			var container = new Container();
-
-			var instanceWithInts = container.GetService<OptionalDependency<IEnumerable<int>>>();
-			var instanceWithStrings = container.GetService<OptionalDependency<IEnumerable<string>>>();
-
-			instanceWithInts.Dependency.ShouldBe(null);
-			instanceWithStrings.Dependency.ShouldBe(null);
-		}
-
 		interface INoDependencies
 		{ }
 
