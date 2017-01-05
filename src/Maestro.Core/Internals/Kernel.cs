@@ -87,7 +87,7 @@ namespace Maestro.Internals
 							ServiceDescriptor serviceDescriptor;
 							if (TryGetServiceDescriptor(type, context.Name, out serviceDescriptor))
 							{
-								pipeline = new ServicePipeline(serviceDescriptor, PipelineType.Service);
+								pipeline = new Pipeline(serviceDescriptor, PipelineType.Service);
 								_pipelineCache.Add(pipelineKey, pipeline);
 								return true;
 							}
@@ -105,7 +105,7 @@ namespace Maestro.Internals
 								ServiceDescriptor serviceDescriptor;
 								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 								{
-									compoundPipeline.Add(new ServicePipeline(serviceDescriptor, PipelineType.Services));
+									compoundPipeline.Add(new Pipeline(serviceDescriptor, PipelineType.Services));
 									goto addToPipelineCache;
 								}
 
@@ -120,7 +120,7 @@ namespace Maestro.Internals
 								{
 									foreach (var descriptor in serviceDescriptors)
 									{
-										compoundPipeline.Add(new ServicePipeline(descriptor, PipelineType.Service));
+										compoundPipeline.Add(new Pipeline(descriptor, PipelineType.Service));
 									}
 								}
 							}
@@ -146,7 +146,7 @@ namespace Maestro.Internals
 								FactoryProvider = factoryProvider
 							};
 							var pipelineType = isGenericEnumerable ? PipelineType.Services : PipelineType.Service;
-							pipeline = new ServicePipeline(serviceDescriptor, pipelineType);
+							pipeline = new Pipeline(serviceDescriptor, pipelineType);
 							_pipelineCache.Add(pipelineKey, pipeline);
 							return true;
 						}
