@@ -3,9 +3,9 @@ using Maestro.Lifetimes;
 
 namespace Maestro.Internals
 {
-	class ServicePipeline : IPipeline
+	class Pipeline : IPipeline
 	{
-		public ServicePipeline(ServiceDescriptor serviceDescriptor, PipelineType pipelineType)
+		public Pipeline(ServiceDescriptor serviceDescriptor, PipelineType pipelineType)
 		{
 			ServiceDescriptor = serviceDescriptor;
 			PipelineType = pipelineType;
@@ -23,7 +23,7 @@ namespace Maestro.Internals
 
 		internal struct NextStep : INextStep
 		{
-			public ServicePipeline Pipeline { get; set; }
+			public Pipeline Pipeline { get; set; }
 			public Context Context { get; set; }
 
 			public object Execute()
