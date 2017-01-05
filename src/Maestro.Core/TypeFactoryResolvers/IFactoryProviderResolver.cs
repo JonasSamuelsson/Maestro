@@ -6,6 +6,6 @@ namespace Maestro.TypeFactoryResolvers
 {
 	interface IFactoryProviderResolver
 	{
-		bool TryGet(Type type, Context context, out IFactoryProvider factoryProvider);
+		bool TryGet(Type type, IContext context, out IFactoryProvider factoryProvider);
 	}
 }

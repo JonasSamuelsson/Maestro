@@ -1,18 +1,17 @@
 using System;
-using Maestro.Internals;
 
 namespace Maestro.FactoryProviders.Factories
 {
 	class Factory : IFactory
 	{
-		private readonly Func<Context, object> _activator;
+		private readonly Func<IContext, object> _activator;
 
-		public Factory(Func<Context, object> activator)
+		public Factory(Func<IContext, object> activator)
 		{
 			_activator = activator;
 		}
 
-		public object GetInstance(Context context)
+		public object GetInstance(IContext context)
 		{
 			return _activator(context);
 		}
