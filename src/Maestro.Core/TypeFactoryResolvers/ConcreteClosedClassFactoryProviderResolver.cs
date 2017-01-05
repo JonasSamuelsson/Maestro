@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Maestro.FactoryProviders;
 using Maestro.Internals;
+using Maestro.Utils;
 
 namespace Maestro.TypeFactoryResolvers
 {
@@ -13,9 +14,9 @@ namespace Maestro.TypeFactoryResolvers
 		{
 			factoryProvider = null;
 
-			if (type == typeof(object)) return false;
-			if (!type.IsConcreteClosedClass()) return false;
 			if (type.IsArray) return false;
+			if (Reflector.IsPrimitive(type)) return false;
+			if (!type.IsConcreteClosedClass()) return false;
 			if (type.IsConcreteClassClosing(typeof(Func<>))) return false;
 			if (type.IsConcreteClassClosing(typeof(Lazy<>))) return false;
 
