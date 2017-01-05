@@ -7,7 +7,7 @@ namespace Maestro.Internals
 {
 	internal class ServiceDescriptorLookup : IDisposable
 	{
-		private Dictionary<Type, ServiceFamily> _serviceFamilies = new Dictionary<Type, ServiceFamily>();
+		private ThreadSafeDictionary<Type, ServiceFamily> _serviceFamilies = new ThreadSafeDictionary<Type, ServiceFamily>();
 
 		internal const string DefaultName = "";
 
@@ -18,28 +18,11 @@ namespace Maestro.Internals
 
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate = true)
 		{
-			var type = serviceDescriptor.Type;
-			var name = serviceDescriptor.Name;
-
-			if (name == null)
-			{
-				AddToServices(serviceDescriptor);
-				return true;
-			}
-
-			ServiceFamily serviceFamily;
-
-			if (!_serviceFamilies.TryGetValue(type, out serviceFamily))
-			{
-				serviceFamily = new ServiceFamily();
-				serviceFamily.Services.Add(serviceDescriptor.Name, serviceDescriptor);
-				_serviceFamilies = new Dictionary<Type, ServiceFamily>(_serviceFamilies) { { type, serviceFamily } };
-				return true;
-			}
+			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, _ => new ServiceFamily());
 
 			try
 			{
-				serviceFamily.Services.Add(name, serviceDescriptor);
+				serviceFamily.Services.Add(serviceDescriptor.Name, serviceDescriptor);
 				return true;
 			}
 			catch (ArgumentException)
@@ -49,28 +32,11 @@ namespace Maestro.Internals
 			}
 		}
 
-		public void AddToServices(ServiceDescriptor serviceDescriptor)
-		{
-			var type = serviceDescriptor.Type;
-
-			ServiceFamily serviceFamily;
-
-			if (!_serviceFamilies.TryGetValue(type, out serviceFamily))
-			{
-				serviceFamily = new ServiceFamily();
-				serviceFamily.Services_Obsolete.Add(serviceDescriptor);
-				_serviceFamilies = new Dictionary<Type, ServiceFamily>(_serviceFamilies) { { type, serviceFamily } };
-				return;
-			}
-
-			serviceFamily.Services_Obsolete.Add(serviceDescriptor);
-		}
-
 		public bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
 		{
 			ServiceFamily serviceFamily;
 
-			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
+			if (_serviceFamilies.TryGet(type, out serviceFamily))
 			{
 				if (serviceFamily.Services.TryGetValue(name, out serviceDescriptor))
 				{
@@ -99,7 +65,7 @@ namespace Maestro.Internals
 			ServiceFamily serviceFamily;
 			var result = new List<ServiceDescriptor>();
 
-			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
+			if (_serviceFamilies.TryGet(type, out serviceFamily))
 			{
 				if (serviceFamily.Services.Count != 0)
 				{
