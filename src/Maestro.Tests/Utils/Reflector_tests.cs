@@ -58,69 +58,6 @@ namespace Maestro.Tests.Utils
 			elementType.ShouldBeNull();
 		}
 
-		[Fact]
-		public void IsPrimitiveGenericEnumerable_should_return_true_if_element_type_is_primitive()
-		{
-			Type elementType;
-
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<object>)).ShouldBeTrue();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<object>), out elementType).ShouldBeTrue();
-			elementType.ShouldBe(typeof(object));
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<string>)).ShouldBeTrue();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<string>), out elementType).ShouldBeTrue();
-			elementType.ShouldBe(typeof(string));
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<int>)).ShouldBeTrue();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<int>), out elementType).ShouldBeTrue();
-			elementType.ShouldBe(typeof(int));
-
-			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<object>)).ShouldBeFalse();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<object>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<string>)).ShouldBeFalse();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<string>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<int>)).ShouldBeFalse();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(ICollection<int>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<Class>)).ShouldBeFalse();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<Class>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<IInterface>)).ShouldBeFalse();
-			Reflector.IsPrimitiveGenericEnumerable(typeof(IEnumerable<IInterface>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-		}
-
-		[Fact]
-		public void IsNonPrimitiveGenericEnumerable_should_return_true_if_element_type_isnt_primitive()
-		{
-			Type elementType;
-
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<object>)).ShouldBeFalse();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<object>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<string>)).ShouldBeFalse();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<string>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<int>)).ShouldBeFalse();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<int>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<Class>)).ShouldBeTrue();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<Class>), out elementType).ShouldBeTrue();
-			elementType.ShouldBe(typeof(Class));
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<IInterface>)).ShouldBeTrue();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(IEnumerable<IInterface>), out elementType).ShouldBeTrue();
-			elementType.ShouldBe(typeof(IInterface));
-
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(ICollection<Class>)).ShouldBeFalse();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(ICollection<Class>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(ICollection<IInterface>)).ShouldBeFalse();
-			Reflector.IsNonPrimitiveGenericEnumerable(typeof(ICollection<IInterface>), out elementType).ShouldBeFalse();
-			elementType.ShouldBeNull();
-		}
-
 		private interface IInterface { }
 		private class Class { }
 

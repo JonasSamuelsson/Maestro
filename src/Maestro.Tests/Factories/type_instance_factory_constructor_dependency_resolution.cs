@@ -132,14 +132,6 @@ namespace Maestro.Tests.Factories
 		}
 
 		[Fact]
-		public void should_not_resolve_unregistered_value_type_enumerable()
-		{
-			var container = new Container();
-			var instance = container.GetService<TypeWithOptionalConstructorDependency<IEnumerable<int>>>();
-			instance.Dependency.ShouldBeNull();
-		}
-
-		[Fact]
 		public void should_resolve_registered_value_type_array()
 		{
 			var ints = new[] { 1, 2, 3 };
