@@ -5,6 +5,8 @@ namespace Maestro.Interceptors
 {
 	internal class SetPropertyInterceptor : Interceptor<object>
 	{
+		// todo : perf
+
 		private readonly string _propertyName;
 		private Func<IContext, object> _valueFactory;
 		private SetPropertyAction _setPropertyAction;
