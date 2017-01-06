@@ -76,9 +76,7 @@ namespace Maestro.Utils
 		{
 			lock (this)
 			{
-				var dictionary = new Dictionary<TKey, TValue>(_dictionary);
-				dictionary[key] = value;
-				_dictionary = dictionary;
+				_dictionary = new Dictionary<TKey, TValue>(_dictionary) { [key] = value };
 			}
 		}
 	}
