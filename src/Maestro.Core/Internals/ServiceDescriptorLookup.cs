@@ -102,10 +102,5 @@ namespace Maestro.Internals
 		{
 			// todo
 		}
-
-		public static bool EqualsDefaultName(string name)
-		{
-			return string.IsNullOrEmpty(name);
-		}
 	}
 }
