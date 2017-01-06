@@ -6,8 +6,8 @@ namespace Maestro.Tests.TypeFactoryResolvers
 {
 	public class LazyFactoryResolver_tests
 	{
-		[Todo]
-		public void should_get_unregistered_closed_lazy_of_resolvable_type()
+		[Fact]
+		public void should_resolve_unregistered_lazy_of_resolvable_type()
 		{
 			var container = new Container();
 			var lazy = container.GetService<Lazy<ResolvableClass>>();
@@ -15,17 +15,13 @@ namespace Maestro.Tests.TypeFactoryResolvers
 		}
 
 		[Fact]
-		public void should_not_get_unregistered_closed_lazy_of_unresolvable_type()
+		public void should_throw_trying_to_resolve_unregistered_lazy_of_unresolvable_type()
 		{
 			var container = new Container();
 			Should.Throw<ActivationException>(() => container.GetService<Lazy<UnresolvableClass>>());
 		}
 
-		class ResolvableClass
-		{
-			public ResolvableClass(object o)
-			{ }
-		}
+		class ResolvableClass { }
 
 		class UnresolvableClass
 		{
