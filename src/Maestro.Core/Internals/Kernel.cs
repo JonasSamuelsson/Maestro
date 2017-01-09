@@ -57,20 +57,20 @@ namespace Maestro.Internals
 			}
 		}
 
-		public bool CanGetService(Type type, Context context)
+		public bool CanGetService(Type type, string name, Context context)
 		{
 			IPipeline pipeline;
-			return TryGetPipeline(type, context, out pipeline);
+			return TryGetPipeline(type, name, context, out pipeline);
 		}
 
-		public bool TryGetService(Type type, Context context, out object instance)
+		public bool TryGetService(Type type, string name, Context context, out object instance)
 		{
 			IPipeline pipeline;
-			instance = TryGetPipeline(type, context, out pipeline) ? pipeline.Execute(context) : null;
+			instance = TryGetPipeline(type, name, context, out pipeline) ? pipeline.Execute(context) : null;
 			return instance != null;
 		}
 
-		private bool TryGetPipeline(Type type, Context context, out IPipeline pipeline)
+		private bool TryGetPipeline(Type type, string name, Context context, out IPipeline pipeline)
 		{
 			var pipelineKey = GetPipelineCacheKey(type, context);
 			if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
@@ -98,20 +98,20 @@ namespace Maestro.Internals
 
 							for (var kernel = this; kernel != null; kernel = kernel._parent)
 							{
-								var name = context.Name;
+								var temp = name;
 
 								tryGetService:
 
 								ServiceDescriptor serviceDescriptor;
-								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
+								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, temp, out serviceDescriptor))
 								{
 									compoundPipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
 									goto addToPipelineCache;
 								}
 
-								if (name != ServiceDescriptorLookup.DefaultName)
+								if (temp != ServiceDescriptorLookup.DefaultName)
 								{
-									name = ServiceDescriptorLookup.DefaultName;
+									temp = ServiceDescriptorLookup.DefaultName;
 									goto tryGetService;
 								}
 
@@ -138,7 +138,7 @@ namespace Maestro.Internals
 						foreach (var factoryProviderResolver in _factoryProviderResolvers)
 						{
 							IFactoryProvider factoryProvider;
-							if (!factoryProviderResolver.TryGet(type, context, out factoryProvider)) continue;
+							if (!factoryProviderResolver.TryGet(type, name, context, out factoryProvider)) continue;
 							var serviceDescriptor = new ServiceDescriptor
 							{
 								Type = type,

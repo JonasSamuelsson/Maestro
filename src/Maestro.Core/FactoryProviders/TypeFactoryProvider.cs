@@ -8,12 +8,14 @@ namespace Maestro.FactoryProviders
 {
 	class TypeFactoryProvider : IFactoryProvider
 	{
-		public TypeFactoryProvider(Type type)
+		public TypeFactoryProvider(Type type, string name)
 		{
 			Type = type;
+			Name = name;
 		}
 
 		public Type Type { get; }
+		public string Name { get; }
 		public ConstructorInfo Constructor { get; set; }
 
 		public IFactory GetFactory(Context context)
@@ -26,7 +28,7 @@ namespace Maestro.FactoryProviders
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)
 		{
 			var type = Type.MakeGenericType(genericArguments);
-			return new TypeFactoryProvider(type);
+			return new TypeFactoryProvider(type, Name);
 		}
 
 		private ConstructorInfo GetConstructor(Context context)
@@ -35,7 +37,7 @@ namespace Maestro.FactoryProviders
 			var constructor = (from ctor in Type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 									 let parameterTypes = ctor.GetParameters().Select(x => x.ParameterType)
 									 orderby parameterTypes.Count() descending
-									 where parameterTypes.All(t => context.Kernel.CanGetService(t, context))
+									 where parameterTypes.All(t => context.Kernel.CanGetService(t, Name, context))
 									 select ctor).FirstOrDefault();
 
 			if (constructor == null)

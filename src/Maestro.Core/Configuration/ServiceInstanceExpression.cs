@@ -42,7 +42,7 @@ namespace Maestro.Configuration
 
 		public ITypeInstanceExpression<object> Type(Type type)
 		{
-			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type));
+			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type, Name));
 			return Kernel.Add(plugin, ThrowIfDuplicate)
 				? new TypeInstanceExpression<object>(plugin)
 				: null;
@@ -85,7 +85,7 @@ namespace Maestro.Configuration
 
 		public ITypeInstanceExpression<TInstance> Type<TInstance>() where TInstance : TService
 		{
-			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance)));
+			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance), Name));
 			return Kernel.Add(plugin, ThrowIfDuplicate)
 				? new TypeInstanceExpression<TInstance>(plugin)
 				: null;

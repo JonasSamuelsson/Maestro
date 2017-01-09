@@ -41,7 +41,7 @@ namespace Maestro.Interceptors
 			return ctx =>
 					 {
 						 var context = ((Context)ctx);
-						 return context.GetService(propertyType);
+						 return context.GetService(propertyType, ServiceDescriptorLookup.DefaultName); // todo : use name of parent default
 					 };
 		}
 
