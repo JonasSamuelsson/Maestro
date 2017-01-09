@@ -1,5 +1,4 @@
-﻿using System;
-using Shouldly;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests
@@ -53,7 +52,7 @@ namespace Maestro.Tests
 														x.For<B>().Use.Factory(ctx => new B { A = ctx.GetService<A>() });
 													});
 
-			var exception = Should.Throw<ActivationException>(() => container.GetService<A>());
+			Should.Throw<ActivationException>(() => container.GetService<A>()).Message.ShouldContain("cyclic dependency");
 
 			// todo
 			//exception.Message.ShouldBe("Can't get default instance of type 'Maestro.Tests.cyclic_dependencies+A'.");
