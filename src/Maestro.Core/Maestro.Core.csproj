@@ -82,6 +82,7 @@
     <Compile Include="Internals\ComposedPipeline.cs" />
     <Compile Include="Internals\PipelineType.cs" />
     <Compile Include="Internals\ServiceFamily.cs" />
+    <Compile Include="Internals\ServiceRequest.cs" />
     <Compile Include="Lifetimes\INextStep.cs" />
     <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryProviderResolver.cs" />
     <Compile Include="Internals\Context.cs" />
