@@ -7,16 +7,16 @@ namespace Maestro.TypeFactoryResolvers
 {
 	class FuncFactoryProviderResolver : IFactoryProviderResolver
 	{
-		public bool TryGet(Type type, IContext context, out IFactoryProvider factoryProvider)
+		public bool TryGet(Type type, string name, IContext context, out IFactoryProvider factoryProvider)
 		{
 			factoryProvider = null;
 			if (!type.IsConcreteClassClosing(typeof(Func<>))) return false;
 			var serviceType = type.GetGenericArguments().Single();
-			if (!context.CanGetService(serviceType)) return false;
+			if (!context.CanGetService(serviceType, name)) return false;
 
 			var wrapperType = typeof(Wrapper<>).MakeGenericType(serviceType);
 			var ctx = (Context)context;
-			var wrapper = Activator.CreateInstance(wrapperType, ctx.Name, ctx.Kernel);
+			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.Kernel);
 			var getFuncMethod = wrapperType.GetMethod("GetFunc");
 			var lambda = new Func<IContext, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
 			factoryProvider = new LambdaFactoryProvider(lambda);
@@ -42,7 +42,7 @@ namespace Maestro.TypeFactoryResolvers
 			private T GetInstance()
 			{
 				using (var context = new Context(_name, _kernel))
-					return context.GetService<T>();
+					return context.GetService<T>(_name);
 			}
 		}
 	}

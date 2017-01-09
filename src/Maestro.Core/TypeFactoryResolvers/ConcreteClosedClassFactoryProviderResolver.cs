@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Maestro.FactoryProviders;
-using Maestro.Internals;
 using Maestro.Utils;
 
 namespace Maestro.TypeFactoryResolvers
 {
 	internal class ConcreteClosedClassFactoryProviderResolver : IFactoryProviderResolver
 	{
-		public bool TryGet(Type type, IContext context, out IFactoryProvider factoryProvider)
+		public bool TryGet(Type type, string name, IContext context, out IFactoryProvider factoryProvider)
 		{
 			factoryProvider = null;
 
@@ -20,18 +19,18 @@ namespace Maestro.TypeFactoryResolvers
 			if (type.IsConcreteClassClosing(typeof(Func<>))) return false;
 			if (type.IsConcreteClassClosing(typeof(Lazy<>))) return false;
 
-			factoryProvider = GetFactoryProviders(type, context).FirstOrDefault();
+			factoryProvider = GetFactoryProviders(type, name, context).FirstOrDefault();
 
 			return factoryProvider != null;
 		}
 
-		private static IEnumerable<TypeFactoryProvider> GetFactoryProviders(Type type, IContext context)
+		private static IEnumerable<TypeFactoryProvider> GetFactoryProviders(Type type, string name, IContext context)
 		{
 			return from ctor in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
 					 let parameters = ctor.GetParameters()
 					 orderby parameters.Length descending
-					 where parameters.All(p => context.CanGetService(p.ParameterType))
-					 select new TypeFactoryProvider(type) { Constructor = ctor };
+					 where parameters.All(p => context.CanGetService(p.ParameterType, name))
+					 select new TypeFactoryProvider(type, name) { Constructor = ctor };
 		}
 	}
 }

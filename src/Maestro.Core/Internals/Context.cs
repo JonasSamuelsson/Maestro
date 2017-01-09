@@ -19,7 +19,7 @@ namespace Maestro.Internals
 		public string Name { get; }
 		public Kernel Kernel { get; }
 
-		public bool CanGetService(Type type)
+		public bool CanGetService(Type type, string name)
 		{
 			var removeStackFrame = false;
 
@@ -29,7 +29,7 @@ namespace Maestro.Internals
 				AddStackFrame(type);
 				removeStackFrame = true;
 
-				return Kernel.CanGetService(type, this);
+				return Kernel.CanGetService(type, name, this);
 			}
 			catch (Exception exception)
 			{
@@ -41,11 +41,11 @@ namespace Maestro.Internals
 			}
 		}
 
-		public bool CanGetService<T>()
+		public bool CanGetService<T>(string name)
 		{
 			try
 			{
-				return CanGetService(typeof(T));
+				return CanGetService(typeof(T), name);
 			}
 			catch (ActivationException)
 			{
@@ -57,7 +57,7 @@ namespace Maestro.Internals
 			}
 		}
 
-		public object GetService(Type type)
+		public object GetService(Type type, string name)
 		{
 			try
 			{
@@ -77,11 +77,11 @@ namespace Maestro.Internals
 			}
 		}
 
-		public T GetService<T>()
+		public T GetService<T>(string name)
 		{
 			try
 			{
-				return (T)GetService(typeof(T));
+				return (T)GetService(typeof(T), name);
 			}
 			catch (ActivationException)
 			{
@@ -93,34 +93,17 @@ namespace Maestro.Internals
 			}
 		}
 
-		public bool TryGetService(Type type, out object instance)
+		public bool TryGetService<T>(out T instance)
 		{
-			var removeStackFrame = false;
-
-			try
-			{
-				AssertNotDisposed();
-				AddStackFrame(type);
-				removeStackFrame = true;
-
-				return Kernel.TryGetService(type, this, out instance);
-			}
-			catch (Exception exception)
-			{
-				throw CreateActivationException(exception);
-			}
-			finally
-			{
-				if (removeStackFrame) RemoveStackFrame();
-			}
+			return TryGetService(ServiceDescriptorLookup.DefaultName, out instance);
 		}
 
-		public bool TryGetService<T>(out T instance)
+		public bool TryGetService<T>(string name, out T instance)
 		{
 			try
 			{
 				object @object;
-				if (TryGetService(typeof(T), out @object))
+				if (TryGetService(typeof(T), name, out @object))
 				{
 					instance = (T)@object;
 					return true;
@@ -139,12 +122,39 @@ namespace Maestro.Internals
 			}
 		}
 
+		public bool TryGetService(Type type, out object instance)
+		{
+			return TryGetService(type, ServiceDescriptorLookup.DefaultName, out instance);
+		}
+
+		public bool TryGetService(Type type, string name, out object instance)
+		{
+			var removeStackFrame = false;
+
+			try
+			{
+				AssertNotDisposed();
+				AddStackFrame(type);
+				removeStackFrame = true;
+
+				return Kernel.TryGetService(type, name, this, out instance);
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception);
+			}
+			finally
+			{
+				if (removeStackFrame) RemoveStackFrame();
+			}
+		}
+
 		public IEnumerable<object> GetServices(Type type)
 		{
 			try
 			{
 				var enumerableType = EnumerableTypeBuilder.Get(type);
-				var services = GetService(enumerableType);
+				var services = GetService(enumerableType, ServiceDescriptorLookup.DefaultName);
 				return services as IEnumerable<object> ?? ((IEnumerable)services).Cast<object>();
 			}
 			catch (ActivationException)
@@ -161,7 +171,7 @@ namespace Maestro.Internals
 		{
 			try
 			{
-				return GetService<IEnumerable<T>>();
+				return GetService<IEnumerable<T>>(ServiceDescriptorLookup.DefaultName);
 			}
 			catch (ActivationException)
 			{

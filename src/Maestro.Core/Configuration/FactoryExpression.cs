@@ -50,7 +50,7 @@ namespace Maestro.Configuration
 			{
 				Type = _type,
 				Name = _name,
-				FactoryProvider = new TypeFactoryProvider(_type)
+				FactoryProvider = new TypeFactoryProvider(_type, _name)
 			};
 			_serviceDescriptors.Add(plugin);
 			return new TypeInstanceExpression<TInstance>(plugin);

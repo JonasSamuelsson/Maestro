@@ -9,7 +9,7 @@ namespace Maestro.TypeFactoryResolvers
 {
 	internal class EmptyEnumerableFactoryProviderResolver : IFactoryProviderResolver
 	{
-		public bool TryGet(Type type, IContext context, out IFactoryProvider factoryProvider)
+		public bool TryGet(Type type, string name, IContext context, out IFactoryProvider factoryProvider)
 		{
 			factoryProvider = null;
 

@@ -55,13 +55,13 @@ namespace Maestro
 		public object GetService(Type type, string name = null)
 		{
 			using (var context = new Context(name, _kernel))
-				return context.GetService(type);
+				return context.GetService(type, name);
 		}
 
 		public T GetService<T>(string name = null)
 		{
 			using (var context = new Context(name, _kernel))
-				return context.GetService<T>();
+				return context.GetService<T>(name);
 		}
 
 		public bool TryGetService(Type type, out object instance)
