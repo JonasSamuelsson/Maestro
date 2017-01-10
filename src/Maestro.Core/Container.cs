@@ -54,49 +54,49 @@ namespace Maestro
 
 		public object GetService(Type type, string name = null)
 		{
-			using (var context = new Context(name, _kernel))
+			using (var context = new Context(_kernel))
 				return context.GetService(type, name);
 		}
 
 		public T GetService<T>(string name = null)
 		{
-			using (var context = new Context(name, _kernel))
+			using (var context = new Context(_kernel))
 				return context.GetService<T>(name);
 		}
 
 		public bool TryGetService(Type type, out object instance)
 		{
-			using (var context = new Context(ServiceDescriptorLookup.DefaultName, _kernel))
+			using (var context = new Context(_kernel))
 				return context.TryGetService(type, out instance);
 		}
 
 		public bool TryGetService(Type type, string name, out object instance)
 		{
-			using (var context = new Context(name, _kernel))
-				return context.TryGetService(type, out instance);
+			using (var context = new Context( _kernel))
+				return context.TryGetService(type, name, out instance);
 		}
 
 		public bool TryGetService<T>(out T instance)
 		{
-			using (var context = new Context(ServiceDescriptorLookup.DefaultName, _kernel))
+			using (var context = new Context(_kernel))
 				return context.TryGetService(out instance);
 		}
 
 		public bool TryGetService<T>(string name, out T instance)
 		{
-			using (var context = new Context(name, _kernel))
-				return context.TryGetService(out instance);
+			using (var context = new Context(_kernel))
+				return context.TryGetService(name, out instance);
 		}
 
 		public IEnumerable<object> GetServices(Type type)
 		{
-			using (var context = new Context(ServiceDescriptorLookup.DefaultName, _kernel))
+			using (var context = new Context(_kernel))
 				return context.GetServices(type);
 		}
 
 		public IEnumerable<T> GetServices<T>()
 		{
-			using (var context = new Context(ServiceDescriptorLookup.DefaultName, _kernel))
+			using (var context = new Context(_kernel))
 				return context.GetServices<T>();
 		}
 

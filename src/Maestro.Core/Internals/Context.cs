@@ -10,13 +10,11 @@ namespace Maestro.Internals
 		private readonly Stack<ServiceRequest> _serviceRequests = new Stack<ServiceRequest>();
 		private bool _disposed;
 
-		public Context(string name, Kernel kernel)
+		public Context(Kernel kernel)
 		{
-			Name = name ?? ServiceDescriptorLookup.DefaultName;
 			Kernel = kernel;
 		}
 
-		public string Name { get; }
 		public Kernel Kernel { get; }
 
 		public bool CanGetService(Type type, string name)
@@ -26,7 +24,8 @@ namespace Maestro.Internals
 			try
 			{
 				AssertNotDisposed();
-				AddStackFrame(type);
+				name = GetValueOrDefaultName(name);
+				AddStackFrame(type, name);
 				removeStackFrame = true;
 
 				return Kernel.CanGetService(type, name, this);
@@ -62,10 +61,10 @@ namespace Maestro.Internals
 			try
 			{
 				object instance;
-				if (TryGetService(type, out instance))
+				if (TryGetService(type, name, out instance))
 					return instance;
 
-				throw new ActivationException("todo");
+				throw new ActivationException($"todo > type: '{type.FullName}' name: '{name}'.");
 			}
 			catch (ActivationException)
 			{
@@ -134,7 +133,8 @@ namespace Maestro.Internals
 			try
 			{
 				AssertNotDisposed();
-				AddStackFrame(type);
+				name = GetValueOrDefaultName(name);
+				AddStackFrame(type, name);
 				removeStackFrame = true;
 
 				return Kernel.TryGetService(type, name, this, out instance);
@@ -188,9 +188,14 @@ namespace Maestro.Internals
 			if (_disposed) throw new ObjectDisposedException(objectName: null, message: "Context has been disposed.");
 		}
 
-		private void AddStackFrame(Type type)
+		private static string GetValueOrDefaultName(string value)
 		{
-			var request = new ServiceRequest(type, Name);
+			return value ?? ServiceDescriptorLookup.DefaultName;
+		}
+
+		private void AddStackFrame(Type type, string name)
+		{
+			var request = new ServiceRequest(type, name);
 
 			if (_serviceRequests.Contains(request))
 			{
