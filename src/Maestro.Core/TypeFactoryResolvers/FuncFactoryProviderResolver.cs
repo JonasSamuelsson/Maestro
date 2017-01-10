@@ -41,7 +41,7 @@ namespace Maestro.TypeFactoryResolvers
 
 			private T GetInstance()
 			{
-				using (var context = new Context(_name, _kernel))
+				using (var context = new Context(_kernel))
 					return context.GetService<T>(_name);
 			}
 		}

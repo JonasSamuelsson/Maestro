@@ -158,27 +158,19 @@ namespace Maestro.Tests.Interception
 			instances.ShouldAllBe(x => x.Text == "success");
 		}
 
-		class Parent
-		{
-			public Child Child { get; set; }
-		}
-
-		class Child { }
-
 		[Fact]
-		public void should_auto_inject_selected_property()
+		public void should_auto_inject_property_with_dependencies_with_the_same_name()
 		{
 			var container = new Container(x =>
-													{
-														x.For<Parent>("1").Use.Type<Parent>().SetProperty("Child");
-														x.For<Parent>("2").Use.Type<Parent>().SetProperty(y => y.Child);
-													});
+			{
+				x.For<string>().Use.Instance("default");
+				x.For<string>("x").Use.Instance("named");
+				x.For<TextWrapper>().Use.Self().SetProperty(y => y.Text);
+				x.For<TextWrapper>("x").Use.Self().SetProperty(y => y.Text);
+			});
 
-			var instance1 = container.GetService<Parent>("1");
-			var instance2 = container.GetService<Parent>("2");
-
-			instance1.Child.ShouldNotBe(null);
-			instance2.Child.ShouldNotBe(null);
+			container.GetService<TextWrapper>().Text.ShouldBe("default");
+			container.GetService<TextWrapper>("x").Text.ShouldBe("named");
 		}
 
 		//[Fact]

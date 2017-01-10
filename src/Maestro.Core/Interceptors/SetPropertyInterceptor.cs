@@ -1,5 +1,4 @@
 ﻿using System;
-using Maestro.Internals;
 
 namespace Maestro.Interceptors
 {
@@ -8,10 +7,17 @@ namespace Maestro.Interceptors
 		// todo : perf
 
 		private readonly string _propertyName;
+		private readonly string _name;
 		private Func<IContext, object> _valueFactory;
 		private SetPropertyAction _setPropertyAction;
 
-		public SetPropertyInterceptor(string propertyName, Func<IContext, object> valueFactory = null)
+		public SetPropertyInterceptor(string propertyName, string name)
+		{
+			_propertyName = propertyName;
+			_name = name;
+		}
+
+		public SetPropertyInterceptor(string propertyName, Func<IContext, object> valueFactory)
 		{
 			_propertyName = propertyName;
 			_valueFactory = valueFactory;
@@ -25,7 +31,7 @@ namespace Maestro.Interceptors
 			{
 				if (_valueFactory == null)
 				{
-					_valueFactory = GetValueFactory(property.PropertyType);
+					_valueFactory = GetValueFactory(property.PropertyType, _name);
 				}
 
 				_setPropertyAction = SetPropertyActionFactory.Get(property);
@@ -36,23 +42,21 @@ namespace Maestro.Interceptors
 			return instance;
 		}
 
-		private static Func<IContext, object> GetValueFactory(Type propertyType)
+		private static Func<IContext, object> GetValueFactory(Type propertyType, string name)
 		{
-			return ctx =>
-					 {
-						 var context = ((Context)ctx);
-						 return context.GetService(propertyType, ServiceDescriptorLookup.DefaultName); // todo : use name of parent default
-					 };
+			return context => context.GetService(propertyType, name);
 		}
 
 		public override IInterceptor MakeGeneric(Type[] genericArguments)
 		{
-			return new SetPropertyInterceptor(_propertyName, _valueFactory);
+			return _name != null
+				? new SetPropertyInterceptor(_propertyName, _name)
+				: new SetPropertyInterceptor(_propertyName, _valueFactory);
 		}
 
 		public override string ToString()
 		{
-			return string.Format("set property {0}", _propertyName);
+			return $"set property {_propertyName}";
 		}
 	}
 }

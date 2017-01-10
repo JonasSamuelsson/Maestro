@@ -72,7 +72,7 @@ namespace Maestro.Internals
 
 		private bool TryGetPipeline(Type type, string name, Context context, out IPipeline pipeline)
 		{
-			var pipelineKey = GetPipelineCacheKey(type, context);
+			var pipelineKey = GetPipelineCacheKey(type, name);
 			if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
 			{
 				lock (_pipelineCache)
@@ -85,7 +85,7 @@ namespace Maestro.Internals
 						if (!isGenericEnumerable)
 						{
 							ServiceDescriptor serviceDescriptor;
-							if (TryGetServiceDescriptor(type, context.Name, out serviceDescriptor))
+							if (TryGetServiceDescriptor(type, name, out serviceDescriptor))
 							{
 								pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
 								_pipelineCache.Add(pipelineKey, pipeline);
@@ -142,7 +142,7 @@ namespace Maestro.Internals
 							var serviceDescriptor = new ServiceDescriptor
 							{
 								Type = type,
-								Name = context.Name,
+								Name = name,
 								FactoryProvider = factoryProvider
 							};
 							var pipelineType = isGenericEnumerable ? PipelineType.Services : PipelineType.Service;
@@ -164,11 +164,11 @@ namespace Maestro.Internals
 			return new Pipeline(pipelineType, serviceDescriptor.FactoryProvider.GetFactory(context), serviceDescriptor.Interceptors, serviceDescriptor.Lifetime);
 		}
 
-		private static long GetPipelineCacheKey(Type type, Context context)
+		private static long GetPipelineCacheKey(Type type, string name)
 		{
 			long key = type.GetHashCode();
 			key = (key << 32);
-			key = key | (uint)context.Name.GetHashCode();
+			key = key | (uint)name.GetHashCode();
 			return key;
 		}
 

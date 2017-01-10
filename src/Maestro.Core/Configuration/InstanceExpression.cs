@@ -49,7 +49,7 @@ namespace Maestro.Configuration
 
 		public IInstanceExpression<TInstance, TParent> SetProperty(string property)
 		{
-			return Intercept(new SetPropertyInterceptor(property));
+			return Intercept(new SetPropertyInterceptor(property, ServiceDescriptor.Name));
 		}
 
 		public IInstanceExpression<TInstance, TParent> SetProperty(string property, object value)
