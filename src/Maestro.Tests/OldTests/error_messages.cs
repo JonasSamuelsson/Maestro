@@ -7,25 +7,37 @@ namespace Maestro.Tests
 		[Todo]
 		public void get()
 		{
-			var container = new Container();
+			var container = new Container(x =>
+			{
+				x.For<A>().Use.Self();
+				x.For<B>().Use.Self();
+			});
 
-			Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
+			Should.Throw<ActivationException>(() => container.GetService<A>());
 		}
 
 		[Todo]
 		public void tryget()
 		{
-			var container = new Container(x => x.For<Unresolvable>().Use.Type<Unresolvable>());
+			var container = new Container(x =>
+			{
+				x.For<A>().Use.Self();
+				x.For<B>().Use.Self();
+			});
 
-			Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
+			Should.Throw<ActivationException>(() => container.GetService<A>());
 		}
 
 		[Todo]
 		public void getall()
 		{
-			var container = new Container(x => x.For<Unresolvable>().Use.Type<Unresolvable>());
+			var container = new Container(x =>
+			{
+				x.For<A>().Use.Self();
+				x.For<B>().Use.Self();
+			});
 
-			Should.Throw<ActivationException>(() => container.GetServices<Unresolvable>());
+			Should.Throw<ActivationException>(() => container.GetServices<A>());
 		}
 
 		[Todo]
@@ -34,27 +46,41 @@ namespace Maestro.Tests
 		[Todo]
 		public void get_dependency()
 		{
-			var container = new Container();
+			var container = new Container(x =>
+			{
+				x.For<A>().Use.Factory(ctx => new A(ctx.GetService<B>()));
+				x.For<B>().Use.Self();
+			});
 
-			Should.Throw<ActivationException>(() => container.GetService<Resolvable>());
+			Should.Throw<ActivationException>(() => container.GetService<A>()).Message.ShouldBeNull();
 		}
 
 		[Todo]
 		public void tryget_dependency()
 		{
-			var container = new Container(x => x.For<Unresolvable>().Use.Type<Unresolvable>());
+			var container = new Container(x =>
+			{
+				x.For<A>().Use.Factory(ctx => new A(ctx.GetService<B>()));
+				x.For<B>().Use.Self();
+			});
 
-			Resolvable resolvable;
-			Should.Throw<ActivationException>(() => container.TryGetService(out resolvable));
+			A instance;
+			Should.Throw<ActivationException>(() => container.TryGetService(out instance));
 		}
 
 		[Todo]
 		public void getall_dependencies() { }
 
 		[Todo]
-		public void cyclic_dependency() { }
+		public void cyclic_dependency()
+		{
+			var container = new Container();
 
-		class Resolvable { public Resolvable(Unresolvable unresolvable) { } }
-		class Unresolvable { public Unresolvable(object o) { } }
+			Should.Throw<ActivationException>(() => container.GetService<X>()).Message.ShouldBeNull();
+		}
+
+		class A { public A(B b) { } }
+		class B { public B(object o) { } }
+		class X { public X(X dependency) { } }
 	}
 }

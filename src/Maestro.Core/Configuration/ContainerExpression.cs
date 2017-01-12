@@ -37,7 +37,7 @@ namespace Maestro.Configuration
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type, ServiceDescriptorLookup.DefaultName, _kernel, _defaultSettings);
+			return new ServiceExpression<object>(type, ServiceNames.Default, _kernel, _defaultSettings);
 		}
 
 		public INamedServiceExpression For(Type type, string name)
@@ -45,20 +45,20 @@ namespace Maestro.Configuration
 			if (type == null) throw new ArgumentNullException();
 			if (name == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type, name ?? ServiceDescriptorLookup.DefaultName, _kernel, _defaultSettings);
+			return new ServiceExpression<object>(type, name, _kernel, _defaultSettings);
 		}
 
 		public IServiceExpression<T> For<T>()
 		{
 			AssertNotDisposed();
-			return new ServiceExpression<T>(typeof(T), ServiceDescriptorLookup.DefaultName, _kernel, _defaultSettings);
+			return new ServiceExpression<T>(typeof(T), ServiceNames.Default, _kernel, _defaultSettings);
 		}
 
 		public INamedServiceExpression<T> For<T>(string name)
 		{
 			if (name == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<T>(typeof(T), name ?? ServiceDescriptorLookup.DefaultName, _kernel, _defaultSettings);
+			return new ServiceExpression<T>(typeof(T), name, _kernel, _defaultSettings);
 		}
 
 		private void AssertNotDisposed()

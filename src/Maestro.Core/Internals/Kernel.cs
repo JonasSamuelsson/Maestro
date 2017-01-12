@@ -109,9 +109,10 @@ namespace Maestro.Internals
 									goto addToPipelineCache;
 								}
 
-								if (temp != ServiceDescriptorLookup.DefaultName)
+								var defaultName = ServiceNames.Default;
+								if (temp != defaultName)
 								{
-									temp = ServiceDescriptorLookup.DefaultName;
+									temp = defaultName;
 									goto tryGetService;
 								}
 
@@ -182,7 +183,7 @@ namespace Maestro.Internals
 				}
 			}
 
-			var defaultName = ServiceDescriptorLookup.DefaultName;
+			var defaultName = ServiceNames.Default;
 			if (name != defaultName)
 			{
 				return TryGetServiceDescriptor(type, defaultName, out serviceDescriptor);

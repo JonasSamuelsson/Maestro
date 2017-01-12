@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Maestro.Internals;
 
 namespace Maestro
 {
@@ -7,11 +8,11 @@ namespace Maestro
 	{
 		event Action<IContext> Disposed;
 
-		bool CanGetService<T>(string name = null);
-		bool CanGetService(Type type, string name = null);
+		bool CanGetService<T>(string name = ServiceNames.Default);
+		bool CanGetService(Type type, string name = ServiceNames.Default);
 
 		T GetService<T>(string name = null);
-		object GetService(Type type, string name = null);
+		object GetService(Type type, string name = ServiceNames.Default);
 
 		bool TryGetService<T>(out T instance);
 		bool TryGetService<T>(string name, out T instance);
