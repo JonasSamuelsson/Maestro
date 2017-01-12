@@ -40,12 +40,12 @@ namespace Maestro.Configuration
 
 		IServiceInstanceExpression IAddServiceExpression.Add
 		{
-			get { return new ServiceInstanceExpression<object>(Type, ServiceDescriptorLookup.GetRandomName(), Kernel, DefaultSettings, true); }
+			get { return new ServiceInstanceExpression<object>(Type, ServiceNames.Anonymous, Kernel, DefaultSettings, true); }
 		}
 
 		IServiceInstanceExpression<TService> IAddServiceExpression<TService>.Add
 		{
-			get { return new ServiceInstanceExpression<TService>(Type, ServiceDescriptorLookup.GetRandomName(), Kernel, DefaultSettings, true); }
+			get { return new ServiceInstanceExpression<TService>(Type, ServiceNames.Anonymous, Kernel, DefaultSettings, true); }
 		}
 	}
 }

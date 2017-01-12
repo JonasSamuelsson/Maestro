@@ -20,19 +20,24 @@ namespace Maestro.Internals
 		public bool CanGetService(Type type, string name)
 		{
 			var removeStackFrame = false;
+			name = GetValueOrDefaultName(name);
 
 			try
 			{
 				AssertNotDisposed();
-				name = GetValueOrDefaultName(name);
 				AddStackFrame(type, name);
 				removeStackFrame = true;
 
 				return Kernel.CanGetService(type, name, this);
 			}
+			catch (ActivationException exception)
+			{
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
+			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(exception);
+				throw CreateActivationException(type, name, exception);
 			}
 			finally
 			{
@@ -42,67 +47,81 @@ namespace Maestro.Internals
 
 		public bool CanGetService<T>(string name)
 		{
+			var type = typeof(T);
+			name = GetValueOrDefaultName(name);
+
 			try
 			{
-				return CanGetService(typeof(T), name);
+				return CanGetService(type, name);
 			}
-			catch (ActivationException)
+			catch (ActivationException exception)
 			{
-				throw;
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(exception);
+				throw CreateActivationException(type, name, exception);
 			}
 		}
 
 		public object GetService(Type type, string name)
 		{
+			name = GetValueOrDefaultName(name);
+
 			try
 			{
 				object instance;
 				if (TryGetService(type, name, out instance))
 					return instance;
 
-				throw new ActivationException($"todo > type: '{type.FullName}' name: '{name}'.");
+				throw new ActivationException(type, name, "Service not registered.");
 			}
-			catch (ActivationException)
+			catch (ActivationException exception)
 			{
-				throw;
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(exception);
+				throw CreateActivationException(type, name, exception);
 			}
 		}
 
 		public T GetService<T>(string name)
 		{
+			var type = typeof(T);
+			name = GetValueOrDefaultName(name);
+
 			try
 			{
-				return (T)GetService(typeof(T), name);
+				return (T)GetService(type, name);
 			}
-			catch (ActivationException)
+			catch (ActivationException exception)
 			{
-				throw;
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(exception);
+				throw CreateActivationException(type, name, exception);
 			}
 		}
 
 		public bool TryGetService<T>(out T instance)
 		{
-			return TryGetService(ServiceDescriptorLookup.DefaultName, out instance);
+			return TryGetService(ServiceNames.Default, out instance);
 		}
 
 		public bool TryGetService<T>(string name, out T instance)
 		{
+			var type = typeof(T);
+			name = GetValueOrDefaultName(name);
+
 			try
 			{
 				object @object;
-				if (TryGetService(typeof(T), name, out @object))
+				if (TryGetService(type, name, out @object))
 				{
 					instance = (T)@object;
 					return true;
@@ -111,37 +130,43 @@ namespace Maestro.Internals
 				instance = default(T);
 				return false;
 			}
-			catch (ActivationException)
+			catch (ActivationException exception)
 			{
-				throw;
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(exception);
+				throw CreateActivationException(type, name, exception);
 			}
 		}
 
 		public bool TryGetService(Type type, out object instance)
 		{
-			return TryGetService(type, ServiceDescriptorLookup.DefaultName, out instance);
+			return TryGetService(type, ServiceNames.Default, out instance);
 		}
 
 		public bool TryGetService(Type type, string name, out object instance)
 		{
 			var removeStackFrame = false;
+			name = GetValueOrDefaultName(name);
 
 			try
 			{
 				AssertNotDisposed();
-				name = GetValueOrDefaultName(name);
 				AddStackFrame(type, name);
 				removeStackFrame = true;
 
 				return Kernel.TryGetService(type, name, this, out instance);
 			}
+			catch (ActivationException exception)
+			{
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
+			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(exception);
+				throw CreateActivationException(type, name, exception);
 			}
 			finally
 			{
@@ -151,46 +176,53 @@ namespace Maestro.Internals
 
 		public IEnumerable<object> GetServices(Type type)
 		{
+			var enumerableType = EnumerableTypeBuilder.Get(type);
+			var name = ServiceNames.Default;
+
 			try
 			{
-				var enumerableType = EnumerableTypeBuilder.Get(type);
-				var services = GetService(enumerableType, ServiceDescriptorLookup.DefaultName);
+				var services = GetService(enumerableType, name);
 				return services as IEnumerable<object> ?? ((IEnumerable)services).Cast<object>();
 			}
-			catch (ActivationException)
+			catch (ActivationException exception)
 			{
-				throw;
+				if (exception.Type == enumerableType && exception.Name == name) throw;
+				throw new ActivationException(enumerableType, name, exception);
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(exception);
+				throw CreateActivationException(enumerableType, name, exception);
 			}
 		}
 
 		public IEnumerable<T> GetServices<T>()
 		{
+			var type = typeof(IEnumerable<T>);
+			var name = ServiceNames.Default;
+
 			try
 			{
-				return GetService<IEnumerable<T>>(ServiceDescriptorLookup.DefaultName);
+				return GetService<IEnumerable<T>>(name);
 			}
-			catch (ActivationException)
+			catch (ActivationException exception)
 			{
-				throw;
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(exception);
+				throw CreateActivationException(type, name, exception);
 			}
+		}
+
+		private static string GetValueOrDefaultName(string name)
+		{
+			return name ?? ServiceNames.Default;
 		}
 
 		private void AssertNotDisposed()
 		{
 			if (_disposed) throw new ObjectDisposedException(objectName: null, message: "Context has been disposed.");
-		}
-
-		private static string GetValueOrDefaultName(string value)
-		{
-			return value ?? ServiceDescriptorLookup.DefaultName;
 		}
 
 		private void AddStackFrame(Type type, string name)
@@ -199,7 +231,7 @@ namespace Maestro.Internals
 
 			if (_serviceRequests.Contains(request))
 			{
-				throw new InvalidOperationException($"Cyclic dependency, '{type.FullName}'.");
+				throw new InvalidOperationException("Cyclic dependency.");
 			}
 
 			_serviceRequests.Push(request);
@@ -210,9 +242,9 @@ namespace Maestro.Internals
 			_serviceRequests.Pop();
 		}
 
-		private static Exception CreateActivationException(Exception exception)
+		private static Exception CreateActivationException(Type type, string name, Exception exception)
 		{
-			return new ActivationException($"todo : {exception.Message}", exception);
+			return new ActivationException(type, name, exception);
 		}
 
 		public void Dispose()

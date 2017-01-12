@@ -9,23 +9,19 @@ namespace Maestro.Internals
 	{
 		private readonly ThreadSafeDictionary<Type, ServiceFamily> _serviceFamilies = new ThreadSafeDictionary<Type, ServiceFamily>();
 
-		internal const string DefaultName = "";
-
-		public static string GetRandomName() => null;
-
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate = true)
 		{
 			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, _ => new ServiceFamily());
 
 			try
 			{
-				if (serviceDescriptor.Name != null)
+				if (serviceDescriptor.Name == ServiceNames.Anonymous)
 				{
-					serviceFamily.NamedServices.Add(serviceDescriptor.Name, serviceDescriptor);
+					serviceFamily.AnonymousServices.Add(serviceDescriptor);
 				}
 				else
 				{
-					serviceFamily.AnonymousServices.Add(serviceDescriptor);
+					serviceFamily.NamedServices.Add(serviceDescriptor.Name, serviceDescriptor);
 				}
 
 				return true;
