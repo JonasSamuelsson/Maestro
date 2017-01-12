@@ -11,10 +11,7 @@ namespace Maestro.Internals
 
 		internal const string DefaultName = "";
 
-		public static string GetRandomName()
-		{
-			return Guid.NewGuid().ToString();
-		}
+		public static string GetRandomName() => null;
 
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate = true)
 		{
@@ -22,7 +19,15 @@ namespace Maestro.Internals
 
 			try
 			{
-				serviceFamily.Services.Add(serviceDescriptor.Name, serviceDescriptor);
+				if (serviceDescriptor.Name != null)
+				{
+					serviceFamily.NamedServices.Add(serviceDescriptor.Name, serviceDescriptor);
+				}
+				else
+				{
+					serviceFamily.AnonymousServices.Add(serviceDescriptor);
+				}
+
 				return true;
 			}
 			catch (ArgumentException)
@@ -38,7 +43,7 @@ namespace Maestro.Internals
 
 			if (_serviceFamilies.TryGet(type, out serviceFamily))
 			{
-				if (serviceFamily.Services.TryGetValue(name, out serviceDescriptor))
+				if (serviceFamily.NamedServices.TryGetValue(name, out serviceDescriptor))
 				{
 					return true;
 				}
@@ -67,9 +72,14 @@ namespace Maestro.Internals
 
 			if (_serviceFamilies.TryGet(type, out serviceFamily))
 			{
-				if (serviceFamily.Services.Count != 0)
+				if (serviceFamily.NamedServices.Count != 0)
 				{
-					result.AddRange(serviceFamily.Services.Values);
+					result.AddRange(serviceFamily.NamedServices.Values);
+				}
+
+				if (serviceFamily.AnonymousServices.Count != 0)
+				{
+					result.AddRange(serviceFamily.AnonymousServices);
 				}
 			}
 
