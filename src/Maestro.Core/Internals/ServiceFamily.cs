@@ -6,7 +6,7 @@ namespace Maestro.Internals
 	internal class ServiceFamily
 	{
 		public Type Type { get; set; }
-		public Dictionary<string, ServiceDescriptor> Services { get; } = new Dictionary<string, ServiceDescriptor>();
-		public List<ServiceDescriptor> Services_Obsolete { get; } = new List<ServiceDescriptor>();
+		public Dictionary<string, ServiceDescriptor> NamedServices { get; } = new Dictionary<string, ServiceDescriptor>();
+		public List<ServiceDescriptor> AnonymousServices { get; } = new List<ServiceDescriptor>();
 	}
 }
