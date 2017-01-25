@@ -54,15 +54,20 @@ namespace Maestro.Configuration
 
 		public IInstanceExpression<TInstance, TParent> SetProperty(string property, object value)
 		{
-			return SetProperty(property, _ => value);
+			return SetProperty(property, (ctx, type) => value);
 		}
 
 		public IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<object> factory)
 		{
-			return SetProperty(property, _ => factory());
+			return SetProperty(property, (ctx, type) => factory());
 		}
 
 		public IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, object> factory)
+		{
+			return Intercept(new SetPropertyInterceptor(property, (ctx, type) => factory(ctx)));
+		}
+
+		public IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, Type, object> factory)
 		{
 			return Intercept(new SetPropertyInterceptor(property, factory));
 		}
@@ -79,12 +84,12 @@ namespace Maestro.Configuration
 
 		public IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory)
 		{
-			return SetProperty(GetPropertyName(property), _ => factory());
+			return SetProperty(GetPropertyName(property), (ctx, type) => factory());
 		}
 
 		public IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory)
 		{
-			return SetProperty(GetPropertyName(property), ctx => factory(ctx));
+			return SetProperty(GetPropertyName(property), (ctx, type) => factory(ctx));
 		}
 
 		private static string GetPropertyName<TValue>(Expression<Func<TInstance, TValue>> property)
