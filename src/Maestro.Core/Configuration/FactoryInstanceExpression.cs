@@ -61,6 +61,11 @@ namespace Maestro.Configuration
 			return InstanceExpression.SetProperty(property, factory);
 		}
 
+		public IInstanceExpression<T, IFactoryInstanceExpression<T>> SetProperty(string property, Func<IContext, Type, object> factory)
+		{
+			return InstanceExpression.SetProperty(property, factory);
+		}
+
 		public IInstanceExpression<T, IFactoryInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property)
 		{
 			return InstanceExpression.SetProperty(property);

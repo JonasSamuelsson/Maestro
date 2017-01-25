@@ -1,4 +1,4 @@
 namespace Maestro.Interceptors
 {
-	public delegate void SetPropertyAction(object target, object value);
+	internal delegate void SetPropertyAction(object target, object value);
 }

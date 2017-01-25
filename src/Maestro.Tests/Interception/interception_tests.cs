@@ -66,52 +66,47 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 			{
-				x.For<NumberWrapper>("1").Use.Type<NumberWrapper>().Intercept(instance => instance.Number = 1);
-				x.For<NumberWrapper>("2").Use.Type<NumberWrapper>().Intercept((instance, ctx) => instance.Number = 2);
+				x.For<Wrapper<int>>("1").Use.Type<Wrapper<int>>().Intercept(instance => instance.Value = 1);
+				x.For<Wrapper<int>>("2").Use.Type<Wrapper<int>>().Intercept((instance, ctx) => instance.Value = 2);
 			});
 
-			container.GetService<NumberWrapper>("1").Number.ShouldBe(1);
-			container.GetService<NumberWrapper>("2").Number.ShouldBe(2);
-		}
-
-		class NumberWrapper
-		{
-			public int Number { get; set; }
+			container.GetService<Wrapper<int>>("1").Value.ShouldBe(1);
+			container.GetService<Wrapper<int>>("2").Value.ShouldBe(2);
 		}
 
 		[Fact]
 		public void interceptors_should_be_executed_in_the_same_order_as_they_are_configured()
 		{
-			var container = new Container(x => x.For<TextWrapper>().Use.Type<TextWrapper>()
-				.Intercept(y => y.Text += 1)
+			var container = new Container(x => x.For<Wrapper<string>>().Use.Type<Wrapper<string>>()
+				.Intercept(y => y.Value += 1)
 				.Intercept(y =>
 				{
-					y.Text += 2;
+					y.Value += 2;
 					return y;
 				})
-				.Intercept(new TextWrapperInterceptor())
+				.Intercept(new StringWrapperInterceptor())
 				.Intercept(y =>
 				{
-					y.Text += 4;
+					y.Value += 4;
 					return y;
 				})
-				.Intercept(y => y.Text += 5));
+				.Intercept(y => y.Value += 5));
 
-			var instance = container.GetService<TextWrapper>();
+			var instance = container.GetService<Wrapper<string>>();
 
-			instance.Text.ShouldBe("12345");
+			instance.Value.ShouldBe("12345");
 		}
 
-		class TextWrapper
+		class Wrapper<T>
 		{
-			public string Text { get; set; }
+			public T Value { get; set; }
 		}
 
-		class TextWrapperInterceptor : Interceptor<TextWrapper>
+		class StringWrapperInterceptor : Interceptor<Wrapper<string>>
 		{
-			public override TextWrapper Execute(TextWrapper instance, IContext context)
+			public override Wrapper<string> Execute(Wrapper<string> instance, IContext context)
 			{
-				instance.Text += 3;
+				instance.Value += 3;
 				return instance;
 			}
 		}
@@ -129,17 +124,35 @@ namespace Maestro.Tests.Interception
 		}
 
 		[Fact]
-		public void set_property_with_provided_value()
+		public void set_property_using_auto_injection()
+		{
+			var continer = new Container(x =>
+			{
+				x.For<string>().Use.Instance("success-1");
+				x.For<Wrapper<string>>().Use.Self().SetProperty(y => y.Value);
+				x.For<string>("x").Use.Instance("success-2");
+				x.For<Wrapper<string>>("x").Use.Self().SetProperty(y => y.Value);
+				x.For<string>("y").Use.Instance("success-3");
+				x.For(typeof(Wrapper<>), "y").Use.Self().SetProperty("Value");
+			});
+
+			continer.GetService<Wrapper<string>>().Value.ShouldBe("success-1");
+			continer.GetService<Wrapper<string>>("x").Value.ShouldBe("success-2");
+			continer.GetService<Wrapper<string>>("y").Value.ShouldBe("success-3");
+		}
+
+		[Fact]
+		public void set_property_using_provided_value()
 		{
 			var container = new Container(x =>
 													{
-														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", "success");
-														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, "success");
+														x.For<Wrapper<string>>().Add.Self().SetProperty("Value", "success");
+														x.For<Wrapper<string>>().Add.Self().SetProperty(y => y.Value, "success");
 													});
 
-			var instances = container.GetServices<TextWrapper>();
+			var instances = container.GetServices<Wrapper<string>>();
 
-			instances.ShouldAllBe(x => x.Text == "success");
+			instances.ShouldAllBe(x => x.Value == "success");
 		}
 
 		[Fact]
@@ -147,135 +160,18 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 													{
-														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", () => "success");
-														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty("Text", ctx => "success");
-														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, () => "success");
-														x.For<TextWrapper>().Add.Type<TextWrapper>().SetProperty(y => y.Text, ctx => "success");
+														x.For<string>().Use.Instance("success");
+														x.For<Wrapper<string>>().Add.Self().SetProperty("Value", () => "success");
+														x.For<Wrapper<string>>().Add.Self().SetProperty("Value", ctx => ctx.GetService<string>());
+														x.For<Wrapper<string>>().Add.Self().SetProperty("Value", (ctx, type) => ctx.GetService(type));
+														x.For(typeof(Wrapper<>)).Use.Self().SetProperty("Value", (ctx, type) => ctx.GetService(type));
+														x.For<Wrapper<string>>().Add.Self().SetProperty(y => y.Value, () => "success");
+														x.For<Wrapper<string>>().Add.Self().SetProperty(y => y.Value, ctx => ctx.GetService<string>());
 													});
 
-			var instances = container.GetServices<TextWrapper>();
+			var instances = container.GetServices<Wrapper<string>>();
 
-			instances.ShouldAllBe(x => x.Text == "success");
+			instances.ShouldAllBe(x => x.Value == "success");
 		}
-
-		[Fact]
-		public void should_auto_inject_property_with_dependencies_with_the_same_name()
-		{
-			var container = new Container(x =>
-			{
-				x.For<string>().Use.Instance("default");
-				x.For<string>("x").Use.Instance("named");
-				x.For<TextWrapper>().Use.Self().SetProperty(y => y.Text);
-				x.For<TextWrapper>("x").Use.Self().SetProperty(y => y.Text);
-			});
-
-			container.GetService<TextWrapper>().Text.ShouldBe("default");
-			container.GetService<TextWrapper>("x").Text.ShouldBe("named");
-		}
-
-		//[Fact]
-		//public void set_property_with_value_from_provided_func()
-		//{
-		//	var dependency = new object();
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set(y => y.ResolvableDependency, () => dependency));
-
-		//	var instance = container.Get<Foobar>();
-
-		//	instance.ResolvableDependency.Should().Be(dependency);
-		//}
-
-		//[Fact]
-		//public void set_property_with_resolvable_type_should_work()
-		//{
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set("ResolvableDependency"));
-		//	var instance = container.Get<Foobar>();
-
-		//	instance.ResolvableDependency.Should().NotBeNull();
-		//}
-
-		//[Fact]
-		//public void set_missing_property_should_throw()
-		//{
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set("missing property"));
-
-		//	container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
-		//}
-
-		//[Fact]
-		//public void set_property_with_unresolvable_type_should_throw()
-		//{
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().Set(y => y.UnresolvableDependency));
-
-		//	container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
-		//}
-
-		//[Fact]
-		//public void try_set_property_with_unresolvable_type_should_work()
-		//{
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().TrySet(y => y.UnresolvableDependency));
-
-		//	container.Invoking(x => x.Get<Foobar>()).ShouldNotThrow();
-		//}
-
-		//[Fact]
-		//public void try_set_missing_property_should_throw()
-		//{
-		//	var container = new Container(x => x.For<Foobar>().Use<Foobar>().TrySet("missing property"));
-
-		//	container.Invoking(x => x.Get<Foobar>()).ShouldThrow<ActivationException>();
-		//}
-
-		//[Fact]
-		//public void set_enumerable_property_should_work()
-		//{
-		//	var o = new object();
-		//	var container = new Container(x =>
-		//											{
-		//												x.For<object>().Use(o);
-		//												x.For<Foobar>().Use<Foobar>().Set(y => y.Enumerable);
-		//											});
-
-		//	var instance = container.Get<Foobar>();
-
-		//	instance.Enumerable.Should().BeEquivalentTo(new[] { o });
-		//}
-
-		//[Fact]
-		//public void set_array_property_should_work()
-		//{
-		//	var o = new object();
-		//	var container = new Container(x =>
-		//											{
-		//												x.For<object>().Use(o);
-		//												x.For<Foobar>().Use<Foobar>().Set(y => y.Array);
-		//											});
-
-		//	var instance = container.Get<Foobar>();
-
-		//	instance.Array.Should().BeEquivalentTo(new[] { o });
-		//}
-
-		//private class Foobar
-		//{
-		//	public object ResolvableDependency { get; set; }
-		//	public IDisposable UnresolvableDependency { get; set; }
-		//	public IEnumerable<object> Enumerable { get; set; }
-		//	public object[] Array { get; set; }
-		//}
-
-		//public class property_injection_using_expressions : property_injection { }
-
-		//public class property_injection_using_reflection : property_injection, IDisposable
-		//{
-		//	public property_injection_using_reflection()
-		//	{
-		//		Reflector.AlwaysUseReflection = true;
-		//	}
-
-		//	public void Dispose()
-		//	{
-		//		Reflector.AlwaysUseReflection = false;
-		//	}
-		//}
 	}
 }

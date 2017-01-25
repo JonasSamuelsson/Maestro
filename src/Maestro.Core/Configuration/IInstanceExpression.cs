@@ -75,6 +75,8 @@ namespace Maestro.Configuration
 		/// <returns></returns>
 		IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, object> factory);
 
+		IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, Type, object> factory);
+
 		/// <summary>
 		/// Set property <paramref name="property"/>.
 		/// </summary>
