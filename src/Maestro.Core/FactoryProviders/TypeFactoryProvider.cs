@@ -29,13 +29,16 @@ namespace Maestro.FactoryProviders
 		{
 			var dependencyProviders = constructor
 				.GetParameters()
-				.Select(x => new Func<IContext, object>(ctx => ctx.GetService(x.ParameterType, name)));
+				.Select(x => new Func<IContext, object>(ctx => ctx.GetService(x.ParameterType, name)))
+				.ToList();
+			var count = dependencyProviders.Count;
 
 			return context =>
 			{
-				var dependencies = dependencyProviders.Select(x => x(context));
-				return constructor.Invoke(dependencies.ToArray());
-				//return Activator.CreateInstance(constructor.ReflectedType, dependencies.ToArray());
+				// todo - perf
+				var dependencies = new object[count];
+				for (var i = 0; i < count; i++) dependencies[i] = dependencyProviders[i](context);
+				return constructor.Invoke(dependencies);
 			};
 		}
 
