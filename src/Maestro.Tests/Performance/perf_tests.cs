@@ -15,7 +15,7 @@ namespace Maestro.Tests.Performance
 		private readonly Dictionary<string, object> _dictionary;
 		private readonly ITestOutputHelper _output;
 
-		public perf_tests(ITestOutputHelper output)
+		public perf_tests(ITestOutputHelper output = null)
 		{
 			_output = output;
 
@@ -212,7 +212,7 @@ namespace Maestro.Tests.Performance
 			var keyLength = _dictionary.Keys.Max(x => x.Length);
 			foreach (var timing in _dictionary)
 			{
-				_output.WriteLine($"{timing.Key.PadRight(keyLength)} : {timing.Value}");
+				_output?.WriteLine($"{timing.Key.PadRight(keyLength)} : {timing.Value}");
 			}
 		}
 
