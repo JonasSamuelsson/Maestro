@@ -112,5 +112,9 @@ namespace Maestro.Configuration
 		/// <param name="factory"></param>
 		/// <returns></returns>
 		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
+
+		IInstanceExpression<TInstance, TParent> TrySetProperty(string property);
+
+		IInstanceExpression<TInstance, TParent> TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
 	}
 }

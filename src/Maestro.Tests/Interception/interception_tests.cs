@@ -1,4 +1,5 @@
-﻿using Maestro.Interceptors;
+﻿using Castle.Core.Internal;
+using Maestro.Interceptors;
 using Shouldly;
 using Xunit;
 
@@ -150,9 +151,7 @@ namespace Maestro.Tests.Interception
 														x.For<Wrapper<string>>().Add.Self().SetProperty(y => y.Value, "success");
 													});
 
-			var instances = container.GetServices<Wrapper<string>>();
-
-			instances.ShouldAllBe(x => x.Value == "success");
+			container.GetServices<Wrapper<string>>().ForEach(x => x.Value.ShouldBe("success"));
 		}
 
 		[Fact]
@@ -169,9 +168,21 @@ namespace Maestro.Tests.Interception
 														x.For<Wrapper<string>>().Add.Self().SetProperty(y => y.Value, ctx => ctx.GetService<string>());
 													});
 
-			var instances = container.GetServices<Wrapper<string>>();
+			container.GetServices<Wrapper<string>>().ForEach(x => x.Value.ShouldBe("success"));
+		}
 
-			instances.ShouldAllBe(x => x.Value == "success");
+		[Fact]
+		public void try_set_property()
+		{
+			var container = new Container(x =>
+			{
+				x.For<string>().Use.Instance("success");
+				x.For<Wrapper<string>>().Add.Self().TrySetProperty("Value");
+				x.For<Wrapper<string>>().Add.Self().TrySetProperty(y => y.Value);
+				x.For(typeof(Wrapper<>)).Add.Self().TrySetProperty("Value");
+			});
+
+			container.GetServices<Wrapper<string>>().ForEach(x => x.Value.ShouldBe("success"));
 		}
 	}
 }

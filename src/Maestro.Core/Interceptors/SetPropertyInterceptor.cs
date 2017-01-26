@@ -8,45 +8,35 @@ namespace Maestro.Interceptors
 
 		private readonly string _propertyName;
 		private readonly string _serviceName;
-		private Func<IContext, Type, object> _factory;
-		private Func<IContext, object> _factoryAdapter;
-		private SetPropertyAction _setPropertyAction;
+		private readonly Func<IContext, Type, object> _factory;
+		private Action<object, IContext> _worker;
 
 		public SetPropertyInterceptor(string propertyName, string serviceName)
 		{
 			_propertyName = propertyName;
 			_serviceName = serviceName;
+			_factory = (ctx, type) => ctx.GetService(type, _serviceName);
+			_worker = Initialize;
 		}
 
 		public SetPropertyInterceptor(string propertyName, Func<IContext, Type, object> factory)
 		{
 			_propertyName = propertyName;
 			_factory = factory;
+			_worker = Initialize;
 		}
 
 		public override object Execute(object instance, IContext context)
 		{
-			if (_setPropertyAction == null)
-			{
-				var property = instance.GetType().GetProperty(_propertyName);
-
-				if (_factory == null)
-				{
-					_factory = GetValueFactory(property.PropertyType, _serviceName);
-				}
-
-				_factoryAdapter = ctx => _factory.Invoke(ctx, property.PropertyType);
-				_setPropertyAction = SetPropertyActionFactory.Get(property);
-			}
-
-			var value = _factoryAdapter.Invoke(context);
-			_setPropertyAction.Invoke(instance, value);
+			_worker.Invoke(instance, context);
 			return instance;
 		}
 
-		private static Func<IContext, Type, object> GetValueFactory(Type propertyType, string serviceName)
+		private void Initialize(object instance, IContext context)
 		{
-			return (context, type) => context.GetService(propertyType, serviceName);
+			var property = instance.GetType().GetProperty(_propertyName);
+			_worker = (o, ctx) => property.SetValue(o, _factory(ctx, property.PropertyType));
+			_worker.Invoke(instance, context);
 		}
 
 		public override IInterceptor MakeGeneric(Type[] genericArguments)
