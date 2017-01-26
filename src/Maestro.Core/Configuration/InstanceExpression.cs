@@ -92,6 +92,16 @@ namespace Maestro.Configuration
 			return SetProperty(GetPropertyName(property), (ctx, type) => factory(ctx));
 		}
 
+		public IInstanceExpression<TInstance, TParent> TrySetProperty(string property)
+		{
+			return Intercept(new TrySetPropertyInterceptor(property, ServiceDescriptor.Name));
+		}
+
+		public IInstanceExpression<TInstance, TParent> TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
+		{
+			return TrySetProperty(GetPropertyName(property));
+		}
+
 		private static string GetPropertyName<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
 			return ((MemberExpression)property.Body).Member.Name;

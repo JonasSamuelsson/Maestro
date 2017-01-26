@@ -87,5 +87,15 @@ namespace Maestro.Configuration
 		{
 			return InstanceExpression.SetProperty(property, factory);
 		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> TrySetProperty(string property)
+		{
+			return InstanceExpression.TrySetProperty(property);
+		}
+
+		public IInstanceExpression<T, ITypeInstanceExpression<T>> TrySetProperty<TValue>(Expression<Func<T, TValue>> property)
+		{
+			return InstanceExpression.TrySetProperty(property);
+		}
 	}
 }
