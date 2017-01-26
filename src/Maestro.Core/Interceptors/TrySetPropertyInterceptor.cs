@@ -23,7 +23,23 @@ namespace Maestro.Interceptors
 			return instance;
 		}
 
+		private void Initialize(object instance, IContext context)
 		{
+			var property = instance.GetType().GetProperty(_propertyName);
+
+			_worker = (o, ctx) =>
+			{
+				object service;
+				if (!ctx.TryGetService(property.PropertyType, _serviceName, out service)) return;
+				property.SetValue(o, service);
+			};
+
+			_worker.Invoke(instance, context);
+		}
+
+		public override IInterceptor MakeGeneric(Type[] genericArguments)
+		{
+			return new TrySetPropertyInterceptor(_propertyName, _serviceName);
 		}
 
 		public override string ToString()
