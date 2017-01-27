@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -8,36 +8,35 @@ namespace Maestro
 {
 	class ConstructorInvokation
 	{
-		static readonly Dictionary<ConstructorInfo, Func<IContext, object>> Cache = new Dictionary<ConstructorInfo, Func<IContext, object>>();
+		private static readonly ConcurrentDictionary<string, Func<IContext, object>> Cache = new ConcurrentDictionary<string, Func<IContext, object>>();
 
-		public static Func<IContext, object> Get(ConstructorInfo constructor, IEnumerable<Func<IContext, object>> dependencyProviders = null)
+		public static Func<IContext, object> Create(ConstructorInfo constructor, string serviceName, IReadOnlyList<Func<IContext, object>> parameterProviders)
 		{
-			Func<IContext, object> func;
-			if (Cache.TryGetValue(constructor, out func)) return func;
+			var key = $"{constructor.GetHashCode()}-{serviceName}";
+
+			Func<IContext, object> activator;
+			if (Cache.TryGetValue(key, out activator)) return activator;
 
 			var parameters = constructor.GetParameters();
-			dependencyProviders = (dependencyProviders
-										  ?? parameters.Select(x => x.ParameterType)
-															.Select(x => new Func<IContext, object>(ctx => ctx.GetService(x)))).ToList();
 
-			if (dependencyProviders.Count() != parameters.Length)
+			if (parameterProviders.Count != parameters.Length)
 			{
 				throw new InvalidOperationException();
 			}
 
 			var parameterExpression = Expression.Parameter(typeof(IContext), "ctx");
 			var index = 0;
-			var dependencyExpressions = new List<Expression>();
-			foreach (var dependencyProvider in dependencyProviders)
+			var factoryExpressions = new List<Expression>();
+			foreach (var parameterProvider in parameterProviders)
 			{
-				var type = parameters[index++].ParameterType;
-				Expression<Func<IContext, object>> providerExpression = ctx => dependencyProvider(ctx);
+				var parameterType = parameters[index++].ParameterType;
+				Expression<Func<IContext, object>> providerExpression = ctx => parameterProvider(ctx);
 				var invokeExpression = Expression.Invoke(providerExpression, parameterExpression);
-				var castExpression = Expression.Convert(invokeExpression, type);
-				dependencyExpressions.Add(castExpression);
+				var castExpression = Expression.Convert(invokeExpression, parameterType);
+				factoryExpressions.Add(castExpression);
 			}
-			var newExpressions = Expression.New(constructor, dependencyExpressions);
-			return Cache[constructor] = Expression.Lambda<Func<IContext, object>>(newExpressions, parameterExpression).Compile();
+			var newExpressions = Expression.New(constructor, factoryExpressions);
+			return Cache[key] = Expression.Lambda<Func<IContext, object>>(newExpressions, parameterExpression).Compile();
 		}
 	}
 }
