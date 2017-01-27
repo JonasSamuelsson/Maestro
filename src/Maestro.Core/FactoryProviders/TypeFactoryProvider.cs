@@ -21,25 +21,18 @@ namespace Maestro.FactoryProviders
 		public IFactory GetFactory(Context context)
 		{
 			var constructor = Constructor ?? GetConstructor(context);
-			var activator = GetActivator(constructor, Name); // ConstructorInvokation.Get(constructor);
+			var activator = GetActivator(constructor, Name);
 			return new Factory(activator);
 		}
 
 		private static Func<IContext, object> GetActivator(ConstructorInfo constructor, string name)
 		{
-			var dependencyProviders = constructor
+			var factories = constructor
 				.GetParameters()
 				.Select(x => new Func<IContext, object>(ctx => ctx.GetService(x.ParameterType, name)))
 				.ToList();
-			var count = dependencyProviders.Count;
 
-			return context =>
-			{
-				// todo - perf
-				var dependencies = new object[count];
-				for (var i = 0; i < count; i++) dependencies[i] = dependencyProviders[i](context);
-				return constructor.Invoke(dependencies);
-			};
+			return ConstructorInvokation.Create(constructor, name, factories);
 		}
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)
