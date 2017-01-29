@@ -11,7 +11,7 @@ namespace Maestro.Tests.Performance
 {
 	public class perf_tests : IDisposable
 	{
-		private const int Iterations = 100 * 1000;
+		private const int Iterations = 1000 * 1000;
 		private readonly Dictionary<string, object> _dictionary;
 		private readonly ITestOutputHelper _output;
 

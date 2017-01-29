@@ -8,35 +8,35 @@ namespace Maestro
 {
 	class ConstructorInvokation
 	{
-		private static readonly ConcurrentDictionary<string, Func<IContext, object>> Cache = new ConcurrentDictionary<string, Func<IContext, object>>();
+		private static readonly ConcurrentDictionary<ConstructorInfo, Func<IReadOnlyList<Func<IContext, object>>, IContext, object>> Cache = new ConcurrentDictionary<ConstructorInfo, Func<IReadOnlyList<Func<IContext, object>>, IContext, object>>();
 
-		public static Func<IContext, object> Create(ConstructorInfo constructor, string serviceName, IReadOnlyList<Func<IContext, object>> parameterProviders)
+		public static Func<IReadOnlyList<Func<IContext, object>>, IContext, object> Create(ConstructorInfo constructor, IReadOnlyList<Func<IContext, object>> factories)
 		{
-			var key = $"{constructor.GetHashCode()}-{serviceName}";
 
-			Func<IContext, object> activator;
-			if (Cache.TryGetValue(key, out activator)) return activator;
+			Func<IReadOnlyList<Func<IContext, object>>, IContext, object> activator;
+			if (Cache.TryGetValue(constructor, out activator)) return activator;
 
 			var parameters = constructor.GetParameters();
 
-			if (parameterProviders.Count != parameters.Length)
+			if (factories.Count != parameters.Length)
 			{
 				throw new InvalidOperationException();
 			}
 
-			var parameterExpression = Expression.Parameter(typeof(IContext), "ctx");
-			var index = 0;
-			var factoryExpressions = new List<Expression>();
-			foreach (var parameterProvider in parameterProviders)
+			var factoriesExpression = Expression.Parameter(typeof(IReadOnlyList<Func<IContext, object>>), "factories");
+			var contextExpression = Expression.Parameter(typeof(IContext), "context");
+			var typedValueExpressions = new List<Expression>();
+			var property = typeof(IReadOnlyList<Func<IContext, object>>).GetProperty("Item");
+			for (var index = 0; index < factories.Count; index++)
 			{
-				var parameterType = parameters[index++].ParameterType;
-				Expression<Func<IContext, object>> providerExpression = ctx => parameterProvider(ctx);
-				var invokeExpression = Expression.Invoke(providerExpression, parameterExpression);
-				var castExpression = Expression.Convert(invokeExpression, parameterType);
-				factoryExpressions.Add(castExpression);
+				var indexExpression = Expression.Constant(index, typeof(int));
+				var factoryExpression = Expression.Property(factoriesExpression, property, indexExpression);
+				var valueExpression = Expression.Invoke(factoryExpression, contextExpression);
+				var typedValueExpression = Expression.Convert(valueExpression, parameters[index].ParameterType);
+				typedValueExpressions.Add(typedValueExpression);
 			}
-			var newExpressions = Expression.New(constructor, factoryExpressions);
-			return Cache[key] = Expression.Lambda<Func<IContext, object>>(newExpressions, parameterExpression).Compile();
+			var newExpression = Expression.New(constructor, typedValueExpressions);
+			return Cache[constructor] = Expression.Lambda<Func<IReadOnlyList<Func<IContext, object>>, IContext, object>>(newExpression, factoriesExpression, contextExpression).Compile();
 		}
 	}
 }

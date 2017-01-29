@@ -23,8 +23,9 @@ namespace Maestro.TypeFactoryResolvers
 									 select ctor).First();
 			var param1 = new Func<IContext, object>(ctx => ctx.GetService(funcType, name));
 			var param2 = new Func<IContext, object>(_ => LazyThreadSafetyMode.ExecutionAndPublication);
-			var activator = ConstructorInvokation.Create(constructor, name, new[] { param1, param2 });
-			factoryProvider = new LambdaFactoryProvider(ctx => activator(ctx));
+			var factories = new[] { param1, param2 };
+			var innerActivator = ConstructorInvokation.Create(constructor, factories);
+			factoryProvider = new LambdaFactoryProvider(ctx => innerActivator(factories, ctx));
 			return true;
 		}
 	}
