@@ -1,6 +1,4 @@
-﻿using Maestro.Internals;
-
-namespace Maestro.FactoryProviders.Factories
+﻿namespace Maestro.FactoryProviders.Factories
 {
 	interface IFactory
 	{

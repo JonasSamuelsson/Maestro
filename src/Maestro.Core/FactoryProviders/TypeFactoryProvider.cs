@@ -32,7 +32,8 @@ namespace Maestro.FactoryProviders
 				.Select(x => new Func<IContext, object>(ctx => ctx.GetService(x.ParameterType, name)))
 				.ToList();
 
-			return ConstructorInvokation.Create(constructor, name, factories);
+			var innerActivator = ConstructorInvokation.Create(constructor, factories);
+			return ctx => innerActivator(factories, ctx);
 		}
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)
