@@ -2,7 +2,7 @@
 
 namespace Maestro.Interceptors
 {
-	public class FuncInterceptor<T> : Interceptor<T>
+	internal class FuncInterceptor<T> : Interceptor<T>
 	{
 		private readonly Func<T, IContext, T> _func;
 
