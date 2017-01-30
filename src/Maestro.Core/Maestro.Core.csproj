@@ -107,6 +107,7 @@
     <Compile Include="TypeFactoryResolvers\IFactoryProviderResolver.cs" />
     <Compile Include="FactoryProviders\TypeFactoryProvider.cs" />
     <Compile Include="TypeFactoryResolvers\LazyFactoryProviderResolver.cs" />
+    <Compile Include="ITypeProvider.cs" />
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
     <Compile Include="Conventions\AddConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />

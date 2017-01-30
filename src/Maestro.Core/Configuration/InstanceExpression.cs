@@ -106,5 +106,10 @@ namespace Maestro.Configuration
 		{
 			return ((MemberExpression)property.Body).Member.Name;
 		}
+
+		public TParent CtorArg(string argName, object value)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
