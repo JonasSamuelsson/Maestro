@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Maestro.Internals;
 
 namespace Maestro.Configuration
@@ -32,6 +33,8 @@ namespace Maestro.Configuration
 				return _defaultSettings;
 			}
 		}
+
+		public IList<ITypeProvider> TypeProviders => _kernel.TypeProviders;
 
 		public IServiceExpression For(Type type)
 		{

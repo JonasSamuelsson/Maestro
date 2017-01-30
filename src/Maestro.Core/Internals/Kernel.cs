@@ -46,6 +46,8 @@ namespace Maestro.Internals
 			}
 		}
 
+		public IList<ITypeProvider> TypeProviders { get; } = new List<ITypeProvider>();
+
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
 		{
 			lock (_pipelineCache)
@@ -132,6 +134,24 @@ namespace Maestro.Internals
 							{
 								_pipelineCache.Add(pipelineKey, compoundPipeline);
 								pipeline = compoundPipeline;
+								return true;
+							}
+						}
+
+						for (var kernel = this; kernel != null; kernel = kernel._parent)
+						{
+							foreach (var typeProvider in kernel.TypeProviders)
+							{
+								var instanceType = typeProvider.GetInstanceTypeOrNull(type, context);
+								if (instanceType == null) continue;
+								var serviceDescriptor = new ServiceDescriptor
+								{
+									Type = type,
+									Name = name,
+									FactoryProvider = new TypeFactoryProvider(instanceType, name)
+								};
+								pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
+								_pipelineCache.Add(pipelineKey, pipeline);
 								return true;
 							}
 						}

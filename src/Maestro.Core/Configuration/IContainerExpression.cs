@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Maestro.Configuration
 {
@@ -19,5 +20,7 @@ namespace Maestro.Configuration
 		/// Used to setup default convention filters, lifetimes etc.
 		/// </summary>
 		IDefaultSettingsExpression Default { get; }
+
+		IList<ITypeProvider> TypeProviders { get; }
 	}
 }

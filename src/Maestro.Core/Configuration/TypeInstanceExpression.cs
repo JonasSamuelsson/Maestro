@@ -14,8 +14,7 @@ namespace Maestro.Configuration
 		}
 
 		internal ServiceDescriptor ServiceDescriptor { get; }
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> InstanceExpression { get; }
-
+		public InstanceExpression<T, ITypeInstanceExpression<T>> InstanceExpression { get; }
 		public ILifetimeExpression<ITypeInstanceExpression<T>> Lifetime => InstanceExpression.Lifetime;
 
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Action<T> action)
@@ -96,6 +95,11 @@ namespace Maestro.Configuration
 		public IInstanceExpression<T, ITypeInstanceExpression<T>> TrySetProperty<TValue>(Expression<Func<T, TValue>> property)
 		{
 			return InstanceExpression.TrySetProperty(property);
+		}
+
+		public ITypeInstanceExpression<T> CtorArg(string argName, object value)
+		{
+			return InstanceExpression.CtorArg(argName, value);
 		}
 	}
 }
