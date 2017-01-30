@@ -2,7 +2,7 @@
 
 namespace Maestro.Interceptors
 {
-	public abstract class Interceptor<T> : IInterceptor
+	internal abstract class Interceptor<T> : IInterceptor
 	{
 		public abstract T Execute(T instance, IContext context);
 
