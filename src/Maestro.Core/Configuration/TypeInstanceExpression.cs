@@ -99,7 +99,52 @@ namespace Maestro.Configuration
 
 		public ITypeInstanceExpression<T> CtorArg(string argName, object value)
 		{
-			return InstanceExpression.CtorArg(argName, value);
+			return InstanceExpression.CtorArg(argName, (ctx, type) => value);
+		}
+
+		public ITypeInstanceExpression<T> CtorArg(string argName, Func<object> factory)
+		{
+			return InstanceExpression.CtorArg(argName, (ctx, type) => factory());
+		}
+
+		public ITypeInstanceExpression<T> CtorArg(string argName, Func<IContext, object> factory)
+		{
+			return InstanceExpression.CtorArg(argName, (ctx, type) => factory(ctx));
+		}
+
+		public ITypeInstanceExpression<T> CtorArg(string argName, Func<IContext, Type, object> factory)
+		{
+			return InstanceExpression.CtorArg(argName, factory);
+		}
+
+		public ITypeInstanceExpression<T> CtorArg(Type argType, object value)
+		{
+			return InstanceExpression.CtorArg(argType, (ctx, type) => value);
+		}
+
+		public ITypeInstanceExpression<T> CtorArg(Type argType, Func<object> factory)
+		{
+			return InstanceExpression.CtorArg(argType, (ctx, type) => factory());
+		}
+
+		public ITypeInstanceExpression<T> CtorArg(Type argType, Func<IContext, object> factory)
+		{
+			return InstanceExpression.CtorArg(argType, (ctx, type) => factory(ctx));
+		}
+
+		public ITypeInstanceExpression<T> CtorArg<TValue>(TValue value)
+		{
+			return InstanceExpression.CtorArg(typeof(TValue), (ctx, type) => value);
+		}
+
+		public ITypeInstanceExpression<T> CtorArg<TValue>(Func<TValue> factory)
+		{
+			return InstanceExpression.CtorArg(typeof(TValue), (ctx, type) => factory());
+		}
+
+		public ITypeInstanceExpression<T> CtorArg<TValue>(Func<IContext, TValue> factory)
+		{
+			return InstanceExpression.CtorArg(typeof(TValue), (ctx, type) => factory(ctx));
 		}
 	}
 }

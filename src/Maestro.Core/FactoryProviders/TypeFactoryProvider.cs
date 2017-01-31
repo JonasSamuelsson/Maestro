@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Maestro.FactoryProviders.Factories;
@@ -17,46 +18,63 @@ namespace Maestro.FactoryProviders
 		public Type Type { get; }
 		public string Name { get; }
 		public ConstructorInfo Constructor { get; set; }
+		public IList<CtorArg> CtorArgs { get; private set; } = new List<CtorArg>();
 
 		public IFactory GetFactory(Context context)
 		{
-			var constructor = Constructor ?? GetConstructor(context);
-			var activator = GetActivator(constructor, Name);
+			var activator = GetActivator(Constructor, Name, context);
 			return new Factory(activator);
 		}
 
-		private static Func<IContext, object> GetActivator(ConstructorInfo constructor, string name)
+		private Func<IContext, object> GetActivator(ConstructorInfo constructor, string name, IContext context)
 		{
-			var factories = constructor
-				.GetParameters()
-				.Select(x => new Func<IContext, object>(ctx => ctx.GetService(x.ParameterType, name)))
-				.ToList();
+			var ctors = from ctor in constructor != null ? new[] { constructor } : Type.GetConstructors()
+							let parameters = ctor.GetParameters()
+							orderby parameters.Length descending
+							select new { ctor, parameters };
 
-			var innerActivator = ConstructorInvokation.Create(constructor, factories);
-			return ctx => innerActivator(factories, ctx);
+			foreach (var x in ctors)
+			{
+				var factories = new List<Func<IContext, object>>();
+
+				foreach (var parameter in x.parameters)
+				{
+					var parameterType = parameter.ParameterType;
+
+					var customFactory = CtorArgs.SingleOrDefault(ca => ca.Name == parameter.Name || ca.Type == parameterType)?.Factory;
+					if (customFactory != null)
+					{
+						factories.Add(ctx => customFactory(ctx, parameterType));
+						continue;
+					}
+
+					if (context.CanGetService(parameterType, name))
+					{
+						factories.Add(ctx => ctx.GetService(parameterType, name));
+					}
+				}
+
+				if (factories.Count == x.parameters.Length)
+				{
+					var innerActivator = ConstructorInvokation.Create(x.ctor, factories);
+					return ctx => innerActivator(factories, ctx);
+				}
+			}
+
+			throw new Exception("todo");
 		}
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)
 		{
 			var type = Type.MakeGenericType(genericArguments);
-			return new TypeFactoryProvider(type, Name);
+			return new TypeFactoryProvider(type, Name) { CtorArgs = CtorArgs };
 		}
 
-		private ConstructorInfo GetConstructor(Context context)
+		internal class CtorArg
 		{
-			// todo - merge logic with ConcreteClosedClassFactoryProviderResolver
-			var constructor = (from ctor in Type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
-									 let parameterTypes = ctor.GetParameters().Select(x => x.ParameterType)
-									 orderby parameterTypes.Count() descending
-									 where parameterTypes.All(t => context.Kernel.CanGetService(t, Name, context))
-									 select ctor).FirstOrDefault();
-
-			if (constructor == null)
-			{
-				throw new InvalidOperationException("Can't find appropriate constructor to invoke.");
-			}
-
-			return constructor;
+			public string Name { get; set; }
+			public Type Type { get; set; }
+			public Func<IContext, Type, object> Factory { get; set; }
 		}
 	}
 }

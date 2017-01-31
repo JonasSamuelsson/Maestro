@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using Maestro.FactoryProviders;
 using Maestro.Interceptors;
 using Maestro.Internals;
 
@@ -107,9 +108,20 @@ namespace Maestro.Configuration
 			return ((MemberExpression)property.Body).Member.Name;
 		}
 
-		public TParent CtorArg(string argName, object value)
+		public TParent CtorArg(string argName, Func<IContext, Type, object> factory)
 		{
-			throw new NotImplementedException();
+			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
+			var ctorArg = new TypeFactoryProvider.CtorArg { Name = argName, Factory = factory };
+			typeFactoryProvider.CtorArgs.Add(ctorArg);
+			return Parent;
+		}
+
+		public TParent CtorArg(Type argType, Func<IContext, Type, object> factory)
+		{
+			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
+			var ctorArg = new TypeFactoryProvider.CtorArg { Type = argType, Factory = factory };
+			typeFactoryProvider.CtorArgs.Add(ctorArg);
+			return Parent;
 		}
 	}
 }

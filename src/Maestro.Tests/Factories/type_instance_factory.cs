@@ -99,6 +99,33 @@ namespace Maestro.Tests.Factories
 			instanceWithStrings.Dependency.ShouldBe(strings);
 		}
 
+		[Fact]
+		public void should_use_custom_parameter_values()
+		{
+			var container = new Container(x =>
+			{
+				x.For<string>().Use.Instance("Object");
+
+				x.For<Root<object>>().Add.Self().CtorArg("dependency", "Object");
+				x.For<Root<object>>().Add.Self().CtorArg("dependency", () => "Object");
+				x.For<Root<object>>().Add.Self().CtorArg("dependency", ctx => ctx.GetService<string>());
+				x.For<Root<object>>().Add.Self().CtorArg("dependency", (ctx, type) => type.Name);
+				x.For(typeof(Root<>)).Add.Self().CtorArg("dependency", "Object");
+
+				x.For<Root<object>>().Add.Self().CtorArg(typeof(object), "Object");
+				x.For<Root<object>>().Add.Self().CtorArg(typeof(object), () => "Object");
+				x.For<Root<object>>().Add.Self().CtorArg(typeof(object), ctx => ctx.GetService<string>());
+				x.For(typeof(Root<>)).Add.Self().CtorArg(typeof(object), "Object");
+
+				x.For<Root<object>>().Add.Self().CtorArg<object>("Object");
+				x.For<Root<object>>().Add.Self().CtorArg<object>(() => "Object");
+				x.For<Root<object>>().Add.Self().CtorArg<object>(ctx => ctx.GetService<string>());
+				x.For(typeof(Root<>)).Add.Self().CtorArg<object>("Object");
+			});
+
+			container.GetServices<Root<object>>().ShouldAllBe(x => "Object".Equals(x.Dependency));
+		}
+
 		interface INoDependencies
 		{ }
 
@@ -145,6 +172,17 @@ namespace Maestro.Tests.Factories
 			public OptionalDependency() { }
 
 			public OptionalDependency(T dependency)
+			{
+				Dependency = dependency;
+			}
+
+			public T Dependency { get; }
+		}
+
+		class Root<T>
+		{
+			public Root() { }
+			public Root(T dependency)
 			{
 				Dependency = dependency;
 			}
