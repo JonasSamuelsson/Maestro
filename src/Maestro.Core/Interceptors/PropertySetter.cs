@@ -4,13 +4,13 @@ using System.Reflection;
 
 namespace Maestro.Interceptors
 {
-	static class SetPropertyActionFactory
+	static class PropertySetter
 	{
-		static readonly Dictionary<PropertyInfo, SetPropertyAction> Cache = new Dictionary<PropertyInfo, SetPropertyAction>();
+		static readonly Dictionary<PropertyInfo, Action> Cache = new Dictionary<PropertyInfo, Action>();
 
-		public static SetPropertyAction Get(PropertyInfo property)
+		public static Action Create(PropertyInfo property)
 		{
-			SetPropertyAction action;
+			Action action;
 			if (Cache.TryGetValue(property, out action))
 				return action;
 
@@ -19,7 +19,9 @@ namespace Maestro.Interceptors
 			var typedTarget = Expression.Convert(target, property.ReflectedType);
 			var typedValue = Expression.Convert(value, property.PropertyType);
 			var assignment = Expression.Assign(Expression.Property(typedTarget, property), typedValue);
-			return Cache[property] = Expression.Lambda<SetPropertyAction>(assignment, target, value).Compile();
+			return Cache[property] = Expression.Lambda<Action>(assignment, target, value).Compile();
 		}
+
+		internal delegate void Action(object target, object value);
 	}
 }

@@ -80,8 +80,7 @@
     <Compile Include="FactoryProviders\Factories\IFactory.cs" />
     <Compile Include="FactoryProviders\Factories\Factory.cs" />
     <Compile Include="Interceptors\FuncInterceptor.cs" />
-    <Compile Include="Interceptors\SetPropertyAction.cs" />
-    <Compile Include="Interceptors\SetPropertyActionFactory.cs" />
+    <Compile Include="Interceptors\PropertySetter.cs" />
     <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
     <Compile Include="Internals\EnumerableTypeBuilder.cs" />
     <Compile Include="Internals\IPipeline.cs" />
