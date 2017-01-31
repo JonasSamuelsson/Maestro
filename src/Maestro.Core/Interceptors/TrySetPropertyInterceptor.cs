@@ -26,12 +26,13 @@ namespace Maestro.Interceptors
 		private void Initialize(object instance, IContext context)
 		{
 			var property = instance.GetType().GetProperty(_propertyName);
+			var setter = PropertySetter.Create(property);
 
 			_worker = (o, ctx) =>
 			{
 				object service;
 				if (!ctx.TryGetService(property.PropertyType, _serviceName, out service)) return;
-				property.SetValue(o, service);
+				setter(o, service);
 			};
 
 			_worker.Invoke(instance, context);

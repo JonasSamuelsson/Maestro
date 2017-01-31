@@ -35,7 +35,8 @@ namespace Maestro.Interceptors
 		private void Initialize(object instance, IContext context)
 		{
 			var property = instance.GetType().GetProperty(_propertyName);
-			_worker = (o, ctx) => property.SetValue(o, _factory(ctx, property.PropertyType));
+			var setter = PropertySetter.Create(property);
+			_worker = (o, ctx) => setter(o, _factory(ctx, property.PropertyType));
 			_worker.Invoke(instance, context);
 		}
 
