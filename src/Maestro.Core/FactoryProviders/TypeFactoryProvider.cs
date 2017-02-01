@@ -70,6 +70,16 @@ namespace Maestro.FactoryProviders
 			return new TypeFactoryProvider(type, Name) { CtorArgs = CtorArgs };
 		}
 
+		public Type GetInstanceType()
+		{
+			return Type;
+		}
+
+		public override string ToString()
+		{
+			return "Type";
+		}
+
 		internal class CtorArg
 		{
 			public string Name { get; set; }

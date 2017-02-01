@@ -31,6 +31,11 @@ namespace Maestro.TypeFactoryResolvers
 			{
 				throw new NotSupportedException();
 			}
+
+			public Type GetInstanceType()
+			{
+				return null;
+			}
 		}
 
 		private class Factory<T> : IFactory
