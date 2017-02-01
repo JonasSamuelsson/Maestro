@@ -33,7 +33,7 @@ namespace Maestro.Lifetimes
 
 		public override string ToString()
 		{
-			return "context";
+			return "Context singleton";
 		}
 	}
 }

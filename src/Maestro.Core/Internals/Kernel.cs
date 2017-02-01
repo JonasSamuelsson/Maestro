@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Maestro.Diagnostics;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
@@ -217,6 +218,11 @@ namespace Maestro.Internals
 		{
 			if (_parent == null) return;
 			_parent.ConfigurationChanged -= ParentConfigurationChanged;
+		}
+
+		public void Populate(Diagnostics.Configuration configuration)
+		{
+			_serviceDescriptorLookup.Populate(configuration);
 		}
 	}
 }

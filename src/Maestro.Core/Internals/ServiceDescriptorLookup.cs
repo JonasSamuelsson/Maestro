@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.Diagnostics;
 using Maestro.Utils;
 
 namespace Maestro.Internals
@@ -11,7 +12,7 @@ namespace Maestro.Internals
 
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate = true)
 		{
-			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, _ => new ServiceFamily());
+			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, type => new ServiceFamily { Type = type });
 
 			try
 			{
@@ -107,6 +108,33 @@ namespace Maestro.Internals
 		public void Dispose()
 		{
 			// todo
+		}
+
+		public void Populate(Diagnostics.Configuration configuration)
+		{
+			var services = new List<Service>();
+
+			foreach (var serviceFamily in _serviceFamilies.OrderBy(x => x.Key.FullName).Select(x => x.Value))
+			{
+				var serviceDescriptors = serviceFamily.NamedServices
+					.Select(x => x.Value)
+					.OrderBy(x => x.Name)
+					.Concat(serviceFamily.AnonymousServices);
+
+				foreach (var serviceDescriptor in serviceDescriptors)
+				{
+					services.Add(new Service
+					{
+						InstanceType = serviceDescriptor.FactoryProvider.GetInstanceType(),
+						Lifetime = serviceDescriptor.Lifetime.ToString(),
+						Name = serviceDescriptor.Name,
+						Provider = serviceDescriptor.FactoryProvider.ToString(),
+						ServiceType = serviceFamily.Type
+					});
+				}
+			}
+
+			configuration.Services = services;
 		}
 	}
 }

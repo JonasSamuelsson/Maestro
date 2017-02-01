@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Maestro.FactoryProviders.Factories;
 using Maestro.Internals;
 
@@ -22,6 +21,16 @@ namespace Maestro.FactoryProviders
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)
 		{
 			throw new NotSupportedException();
+		}
+
+		public Type GetInstanceType()
+		{
+			return _instance.GetType();
+		}
+
+		public override string ToString()
+		{
+			return "Instance";
 		}
 	}
 }

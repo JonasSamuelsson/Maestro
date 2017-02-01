@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Maestro.Configuration;
+using Maestro.Diagnostics;
 using Maestro.Internals;
 
 namespace Maestro
@@ -72,7 +73,7 @@ namespace Maestro
 
 		public bool TryGetService(Type type, string name, out object instance)
 		{
-			using (var context = new Context( _kernel))
+			using (var context = new Context(_kernel))
 				return context.TryGetService(type, name, out instance);
 		}
 
@@ -100,9 +101,11 @@ namespace Maestro
 				return context.GetServices<T>();
 		}
 
-		internal string GetConfiguration()
+		internal Diagnostics.Configuration GetConfiguration()
 		{
-			throw new NotImplementedException();
+			var serviceCollection = new Diagnostics.Configuration();
+			_kernel.Populate(serviceCollection);
+			return serviceCollection;
 		}
 
 		public event Action<Guid> Disposed

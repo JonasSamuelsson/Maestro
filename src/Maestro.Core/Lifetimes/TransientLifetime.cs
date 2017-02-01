@@ -23,7 +23,7 @@ namespace Maestro.Lifetimes
 
 		public override string ToString()
 		{
-			return "transient";
+			return "Transient";
 		}
 	}
 }
