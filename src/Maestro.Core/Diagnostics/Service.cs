@@ -2,7 +2,7 @@
 
 namespace Maestro.Diagnostics
 {
-	public class Service
+	internal class Service
 	{
 		public Type InstanceType { get; internal set; }
 		public string Lifetime { get; internal set; }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Maestro.Configuration;
-using Maestro.Diagnostics;
 using Maestro.Internals;
 
 namespace Maestro
@@ -101,11 +100,11 @@ namespace Maestro
 				return context.GetServices<T>();
 		}
 
-		internal Diagnostics.Configuration GetConfiguration()
+		public string GetConfiguration()
 		{
 			var serviceCollection = new Diagnostics.Configuration();
 			_kernel.Populate(serviceCollection);
-			return serviceCollection;
+			return serviceCollection.ToString();
 		}
 
 		public event Action<Guid> Disposed
