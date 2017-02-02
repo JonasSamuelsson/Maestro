@@ -2,7 +2,7 @@ using System;
 
 namespace Maestro.Internals
 {
-	internal struct ServiceRequest
+	public struct ServiceRequest
 	{
 		public ServiceRequest(Type type, string name)
 		{

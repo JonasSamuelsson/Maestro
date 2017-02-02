@@ -8,6 +8,8 @@ namespace Maestro
 	{
 		event Action<IContext> Disposed;
 
+		IEnumerable<ServiceRequest> CallStack { get; }
+
 		bool CanGetService<T>(string name = ServiceNames.Default);
 		bool CanGetService(Type type, string name = ServiceNames.Default);
 

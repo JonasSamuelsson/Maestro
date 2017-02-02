@@ -89,8 +89,9 @@
     <Compile Include="OldTests\ChildContainer_resolution_tests.cs" />
     <Compile Include="OldTests\child_container.cs" />
     <Compile Include="OldTests\ContainerExpression_disposed_tests.cs" />
-    <Compile Include="OldTests\context_can_get_tests.cs" />
-    <Compile Include="OldTests\Context_tests.cs" />
+    <Compile Include="Context\context_call_stack_tests.cs" />
+    <Compile Include="Context\context_can_get_tests.cs" />
+    <Compile Include="Context\Context_tests.cs" />
     <Compile Include="Conventions\add_concrete_classes_closing_convention.cs" />
     <Compile Include="Conventions\add_concrete_sub_classes_convention.cs" />
     <Compile Include="Conventions\conventional_registration.cs" />

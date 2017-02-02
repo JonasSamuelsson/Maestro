@@ -1,7 +1,7 @@
 ﻿using Shouldly;
 using Xunit;
 
-namespace Maestro.Tests
+namespace Maestro.Tests.Context
 {
 	public class context_can_get_tests
 	{
