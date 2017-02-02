@@ -84,7 +84,6 @@
     <Compile Include="..\Maestro.Core\Properties\VersioningAssemblyInfo.cs">
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Diagnostics\get_configuration_tests.cs" />
     <Compile Include="Factories\Self_type_tests.cs" />
     <Compile Include="OldTests\ChildContainer_resolution_tests.cs" />
     <Compile Include="OldTests\child_container.cs" />

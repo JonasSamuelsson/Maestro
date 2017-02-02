@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Maestro.Diagnostics
 {
-	public class Configuration
+	internal class Configuration
 	{
 		public IEnumerable<Service> Services { get; internal set; }
 
