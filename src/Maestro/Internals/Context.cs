@@ -15,6 +15,7 @@ namespace Maestro.Internals
 			Kernel = kernel;
 		}
 
+		public IEnumerable<ServiceRequest> CallStack => _serviceRequests;
 		public Kernel Kernel { get; }
 
 		public bool CanGetService(Type type, string name)

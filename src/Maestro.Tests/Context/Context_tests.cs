@@ -2,7 +2,7 @@
 using Shouldly;
 using Xunit;
 
-namespace Maestro.Tests
+namespace Maestro.Tests.Context
 {
 	public class Context_tests
 	{
@@ -13,6 +13,10 @@ namespace Maestro.Tests
 			var factory = container.GetService<Factory>();
 			Should.Throw<ActivationException>(() => factory.Get(typeof(object))).GetBaseException().IsOfType<ObjectDisposedException>();
 		}
+
+		[Fact]
+		public void context_should_expose_call_stack()
+		{ }
 
 		class Factory
 		{
