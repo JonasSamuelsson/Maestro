@@ -7,8 +7,8 @@
     <ProjectGuid>{E79795D3-6C35-4846-91C1-D9E66C61E394}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommonServiceLocator.MaestroAdapter</RootNamespace>
-    <AssemblyName>CommonServiceLocator.MaestroAdapter</AssemblyName>
+    <RootNamespace>Maestro.CommonServiceLocator</RootNamespace>
+    <AssemblyName>Maestro.CommonServiceLocator</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -33,7 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\CommonServiceLocator.MaestroAdapter.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Maestro.CommonServiceLocator.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>CS1591</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
