@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Maestro;
 using Microsoft.Practices.ServiceLocation;
 
-namespace CommonServiceLocator.MaestroAdapter
+namespace Maestro.CommonServiceLocator
 {
 	public class MaestroServiceLocator : ServiceLocatorImplBase
 	{

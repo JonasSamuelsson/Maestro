@@ -84,10 +84,10 @@
     <Compile Include="..\Maestro\Properties\VersioningAssemblyInfo.cs">
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="CommonServiceLocator\adapter_tests.cs" />
     <Compile Include="Factories\Self_type_tests.cs" />
     <Compile Include="OldTests\ChildContainer_resolution_tests.cs" />
     <Compile Include="OldTests\child_container.cs" />
-    <Compile Include="OldTests\CommonServiceLocator.cs" />
     <Compile Include="OldTests\ContainerExpression_disposed_tests.cs" />
     <Compile Include="OldTests\context_can_get_tests.cs" />
     <Compile Include="OldTests\Context_tests.cs" />
@@ -140,9 +140,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonServiceLocator.MaestroAdapter\CommonServiceLocator.MaestroAdapter.csproj">
+    <ProjectReference Include="..\Maestro.CommonServiceLocator\Maestro.CommonServiceLocator.csproj">
       <Project>{E79795D3-6C35-4846-91C1-D9E66C61E394}</Project>
-      <Name>CommonServiceLocator.MaestroAdapter</Name>
+      <Name>Maestro.CommonServiceLocator</Name>
     </ProjectReference>
     <ProjectReference Include="..\Maestro\Maestro.csproj">
       <Project>{e07cb006-2c92-4cc5-b6fb-053a4be849eb}</Project>
