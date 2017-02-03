@@ -44,9 +44,9 @@
     <Compile Include="ScannerExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Maestro.Core\Maestro.Core.csproj">
+    <ProjectReference Include="..\Maestro\Maestro.csproj">
       <Project>{E07CB006-2C92-4CC5-B6FB-053A4BE849EB}</Project>
-      <Name>Maestro.Core</Name>
+      <Name>Maestro</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
