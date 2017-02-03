@@ -42,7 +42,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\Maestro.Core\Maestro.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Maestro\Maestro.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Practices.ServiceLocation">
@@ -52,22 +52,22 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Maestro.Core\Properties\CommonAssemblyInfo.cs">
+    <Compile Include="..\Maestro\Properties\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="MaestroServiceLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Maestro.Core\Maestro.snk">
+    <None Include="..\Maestro\Maestro.snk">
       <Link>Maestro.snk</Link>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Maestro.Core\Maestro.Core.csproj">
+    <ProjectReference Include="..\Maestro\Maestro.csproj">
       <Project>{e07cb006-2c92-4cc5-b6fb-053a4be849eb}</Project>
-      <Name>Maestro.Core</Name>
+      <Name>Maestro</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

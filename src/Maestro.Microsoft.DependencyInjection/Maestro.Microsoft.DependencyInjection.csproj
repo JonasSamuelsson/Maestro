@@ -48,9 +48,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Maestro.Core\Maestro.Core.csproj">
+    <ProjectReference Include="..\Maestro\Maestro.csproj">
       <Project>{e07cb006-2c92-4cc5-b6fb-053a4be849eb}</Project>
-      <Name>Maestro.Core</Name>
+      <Name>Maestro</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
