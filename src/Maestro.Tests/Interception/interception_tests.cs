@@ -22,26 +22,6 @@ namespace Maestro.Tests.Interception
 			instance.InnerInstance.ShouldBe(i);
 		}
 
-		[Fact]
-		public void should_execute_provided_func()
-		{
-			var i = new Instance();
-			var container = new Container(x =>
-			{
-				x.For<Instance>("1").Use.Factory(() => i).Intercept(instance => new Instance(instance));
-				x.For<Instance>("2").Use.Factory(() => i).Intercept((instance, ctx) => new Instance(instance));
-			});
-
-			var instance1 = container.GetService<Instance>("1");
-			var instance2 = container.GetService<Instance>("2");
-
-			instance1.ShouldNotBe(i);
-			instance1.InnerInstance.ShouldBe(i);
-
-			instance2.ShouldNotBe(i);
-			instance2.InnerInstance.ShouldBe(i);
-		}
-
 		class Instance
 		{
 			public Instance() { }
@@ -80,17 +60,9 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x => x.For<Wrapper<string>>().Use.Type<Wrapper<string>>()
 				.Intercept(y => y.Value += 1)
-				.Intercept(y =>
-				{
-					y.Value += 2;
-					return y;
-				})
+				.Intercept(y => y.Value += 2)
 				.Intercept(new StringWrapperInterceptor())
-				.Intercept(y =>
-				{
-					y.Value += 4;
-					return y;
-				})
+				.Intercept(y => y.Value += 4)
 				.Intercept(y => y.Value += 5));
 
 			var instance = container.GetService<Wrapper<string>>();

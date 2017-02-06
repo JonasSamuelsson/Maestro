@@ -8,6 +8,7 @@ namespace Maestro.Interceptors
 
 		public virtual IInterceptor MakeGeneric(Type[] genericArguments)
 		{
+			// todo
 			throw new NotImplementedException();
 		}
 

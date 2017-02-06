@@ -11,37 +11,23 @@ namespace Maestro.Configuration
 		/// <summary>
 		/// Adds an action to execute against the instance.
 		/// </summary>
-		/// <param name="action"></param>
+		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance> action);
+		TParent Intercept(Action<TInstance> interceptor);
 
 		/// <summary>
 		/// Adds an action to execute against the instance.
 		/// </summary>
-		/// <param name = "action" ></param>
+		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance, IContext> action);
-
-		/// <summary>
-		/// Adds a func to execute against the instance.
-		/// </summary>
-		/// <param name="func"></param>
-		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Intercept(Func<TInstance, TInstance> func);
-
-		/// <summary>
-		/// Adds a func to execute against the instance.
-		/// </summary>
-		/// <param name = "func" ></param>
-		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Intercept(Func<TInstance, IContext, TInstance> func);
+		TParent Intercept(Action<TInstance, IContext> interceptor);
 
 		/// <summary>
 		/// Adds <paramref name="interceptor"/> to the pipeline.
 		/// </summary>
 		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor);
+		TParent Intercept(IInterceptor interceptor);
 
 		/// <summary>
 		/// Set property <paramref name="property"/>.
@@ -49,7 +35,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <returns></returns>
 		/// <remarks>Throws if the property type can't be resolved.</remarks>
-		IInstanceExpression<TInstance, TParent> SetProperty(string property);
+		TParent SetProperty(string property);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value <paramref name="value"/>.
@@ -57,7 +43,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> SetProperty(string property, object value);
+		TParent SetProperty(string property, object value);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
@@ -65,7 +51,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<object> factory);
+		TParent SetProperty(string property, Func<object> factory);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
@@ -73,9 +59,9 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, object> factory);
+		TParent SetProperty(string property, Func<IContext, object> factory);
 
-		IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, Type, object> factory);
+		TParent SetProperty(string property, Func<IContext, Type, object> factory);
 
 		/// <summary>
 		/// Set property <paramref name="property"/>.
@@ -84,7 +70,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <returns></returns>
 		/// <remarks>Throws if the property type can't be resolved.</remarks>
-		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
+		TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value <paramref name="value"/>.
@@ -93,7 +79,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, TValue value);
+		TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, TValue value);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
@@ -102,7 +88,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory);
+		TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
@@ -111,10 +97,10 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-		IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
+		TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
 
-		IInstanceExpression<TInstance, TParent> TrySetProperty(string property);
+		TParent TrySetProperty(string property);
 
-		IInstanceExpression<TInstance, TParent> TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
+		TParent TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
 	}
 }

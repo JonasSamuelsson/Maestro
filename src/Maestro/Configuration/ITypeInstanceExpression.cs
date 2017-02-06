@@ -1,20 +1,28 @@
 using System;
+using Maestro.Interceptors;
 
 namespace Maestro.Configuration
 {
-	public interface ITypeInstanceExpression<T> : IInstanceExpression<T, ITypeInstanceExpression<T>>
+	public interface ITypeInstanceExpression<TInstance> : IInstanceExpression<TInstance, ITypeInstanceExpression<TInstance>>
 	{
-		ITypeInstanceExpression<T> CtorArg(string argName, object value);
-		ITypeInstanceExpression<T> CtorArg(string argName, Func<object> factory);
-		ITypeInstanceExpression<T> CtorArg(string argName, Func<IContext, object> factory);
-		ITypeInstanceExpression<T> CtorArg(string argName, Func<IContext, Type, object> factory);
+		ITypeInstanceExpression<TInstance> CtorArg(string argName, object value);
+		ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<object> factory);
+		ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<IContext, object> factory);
+		ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<IContext, Type, object> factory);
 
-		ITypeInstanceExpression<T> CtorArg(Type argType, object value);
-		ITypeInstanceExpression<T> CtorArg(Type argType, Func<object> factory);
-		ITypeInstanceExpression<T> CtorArg(Type argType, Func<IContext, object> factory);
+		ITypeInstanceExpression<TInstance> CtorArg(Type argType, object value);
+		ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<object> factory);
+		ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<IContext, object> factory);
 
-		ITypeInstanceExpression<T> CtorArg<TValue>(TValue value);
-		ITypeInstanceExpression<T> CtorArg<TValue>(Func<TValue> factory);
-		ITypeInstanceExpression<T> CtorArg<TValue>(Func<IContext, TValue> factory);
+		ITypeInstanceExpression<TInstance> CtorArg<TValue>(TValue value);
+		ITypeInstanceExpression<TInstance> CtorArg<TValue>(Func<TValue> factory);
+		ITypeInstanceExpression<TInstance> CtorArg<TValue>(Func<IContext, TValue> factory);
+
+		/// <summary>
+		/// Adds a func to execute against the instance.
+		/// </summary>
+		/// <param name="interceptor"></param>
+		/// <returns></returns>
+		IFactoryInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor) where TInstanceOut : TInstance;
 	}
 }

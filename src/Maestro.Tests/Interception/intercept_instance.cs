@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Maestro.Interceptors;
 using Shouldly;
 using Xunit;
 
@@ -35,20 +36,43 @@ namespace Maestro.Tests.Interception
 			counter.ShouldBe(1);
 		}
 
-		[Todo]
-		public void dynamic_proxy_interception()
+		[Fact]
+		public void factory_instance_should_support_instance_replacement_with_wrapper_configuration()
 		{
-			var container = new Container(x => x.For<FooOnly>().Use.Self().Intercept());
+			var @object = new object();
+
+			var container = new Container(x => x.For<object>().Use.Factory(() => @object)
+				.Intercept<Wrapper>(new FuncInterceptor<object>((instance, ctx) => new Wrapper(instance)))
+				.Intercept(y => y.Text = "success"));
+
+			var wrapper = (Wrapper)container.GetService<object>();
+
+			wrapper.Object.ShouldBe(@object);
+			wrapper.Text.ShouldBe("success");
 		}
 
-		class Foo
+		[Fact]
+		public void type_instance_should_support_instance_replacement_with_wrapper_configuration()
 		{
-			public string Foo { get; set; }
+			var container = new Container(x => x.For<object>().Use.Self()
+				.Intercept<Wrapper>(new FuncInterceptor<object>((instance, ctx) => new Wrapper(instance)))
+				.Intercept(y => y.Text = "success"));
+
+			var wrapper = (Wrapper)container.GetService<object>();
+
+			wrapper.Object.ShouldNotBeNull();
+			wrapper.Text.ShouldBe("success");
 		}
 
-		class FooAndBar : FooOnly
+		class Wrapper
 		{
-			public string Bar { get; set; }
+			public Wrapper(object @object)
+			{
+				Object = @object;
+			}
+
+			public object Object { get; }
+			public string Text { get; set; }
 		}
 	}
 }

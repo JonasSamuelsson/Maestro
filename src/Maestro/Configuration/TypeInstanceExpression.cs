@@ -1,150 +1,84 @@
 using System;
-using System.Linq.Expressions;
+using Maestro.FactoryProviders;
 using Maestro.Interceptors;
 using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	class TypeInstanceExpression<T> : ITypeInstanceExpression<T>
+	class TypeInstanceExpression<TInstance> : InstanceExpression<TInstance, ITypeInstanceExpression<TInstance>>, ITypeInstanceExpression<TInstance>
 	{
 		public TypeInstanceExpression(ServiceDescriptor serviceDescriptor)
+			: base(serviceDescriptor)
 		{
-			ServiceDescriptor = serviceDescriptor;
-			InstanceExpression = new InstanceExpression<T, ITypeInstanceExpression<T>>(serviceDescriptor, this);
 		}
 
-		internal ServiceDescriptor ServiceDescriptor { get; }
-		public InstanceExpression<T, ITypeInstanceExpression<T>> InstanceExpression { get; }
-		public ILifetimeExpression<ITypeInstanceExpression<T>> Lifetime => InstanceExpression.Lifetime;
+		internal override ITypeInstanceExpression<TInstance> Parent => this;
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Action<T> action)
+		public ITypeInstanceExpression<TInstance> CtorArg(string argName, object value)
 		{
-			return InstanceExpression.Intercept(action);
+			return CtorArg(argName, (ctx, type) => value);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Action<T, IContext> action)
+		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<object> factory)
 		{
-			return InstanceExpression.Intercept(action);
+			return CtorArg(argName, (ctx, type) => factory());
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Func<T, T> func)
+		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<IContext, object> factory)
 		{
-			return InstanceExpression.Intercept(func);
+			return CtorArg(argName, (ctx, type) => factory(ctx));
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(Func<T, IContext, T> func)
+		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<IContext, Type, object> factory)
 		{
-			return InstanceExpression.Intercept(func);
+			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
+			var ctorArg = new TypeFactoryProvider.CtorArg { Name = argName, Factory = factory };
+			typeFactoryProvider.CtorArgs.Add(ctorArg);
+			return this;
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> Intercept(IInterceptor interceptor)
+		public ITypeInstanceExpression<TInstance> CtorArg(Type argType, object value)
 		{
-			return InstanceExpression.Intercept(interceptor);
+			return CtorArg(argType, (ctx, type) => value);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property)
+		public ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<object> factory)
 		{
-			return InstanceExpression.SetProperty(property);
+			return CtorArg(argType, (ctx, type) => factory());
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, object value)
+		public ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<IContext, object> factory)
 		{
-			return InstanceExpression.SetProperty(property, value);
+			return CtorArg(argType, (ctx, type) => factory(ctx));
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, Func<object> factory)
+		private ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<IContext, Type, object> factory)
 		{
-			return InstanceExpression.SetProperty(property, factory);
+			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
+			var ctorArg = new TypeFactoryProvider.CtorArg { Type = argType, Factory = factory };
+			typeFactoryProvider.CtorArgs.Add(ctorArg);
+			return Parent;
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, Func<IContext, object> factory)
+		public ITypeInstanceExpression<TInstance> CtorArg<TValue>(TValue value)
 		{
-			return InstanceExpression.SetProperty(property, factory);
+			return CtorArg(typeof(TValue), (ctx, type) => value);
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty(string property, Func<IContext, Type, object> factory)
+		public ITypeInstanceExpression<TInstance> CtorArg<TValue>(Func<TValue> factory)
 		{
-			return InstanceExpression.SetProperty(property, factory);
+			return CtorArg(typeof(TValue), (ctx, type) => factory());
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property)
+		public ITypeInstanceExpression<TInstance> CtorArg<TValue>(Func<IContext, TValue> factory)
 		{
-			return InstanceExpression.SetProperty(property);
+			return CtorArg(typeof(TValue), (ctx, type) => factory(ctx));
 		}
 
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property, TValue value)
+		public IFactoryInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor) where TInstanceOut : TInstance
 		{
-			return InstanceExpression.SetProperty(property, value);
-		}
-
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property, Func<TValue> factory)
-		{
-			return InstanceExpression.SetProperty(property, factory);
-		}
-
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> SetProperty<TValue>(Expression<Func<T, TValue>> property, Func<IContext, TValue> factory)
-		{
-			return InstanceExpression.SetProperty(property, factory);
-		}
-
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> TrySetProperty(string property)
-		{
-			return InstanceExpression.TrySetProperty(property);
-		}
-
-		public IInstanceExpression<T, ITypeInstanceExpression<T>> TrySetProperty<TValue>(Expression<Func<T, TValue>> property)
-		{
-			return InstanceExpression.TrySetProperty(property);
-		}
-
-		public ITypeInstanceExpression<T> CtorArg(string argName, object value)
-		{
-			return InstanceExpression.CtorArg(argName, (ctx, type) => value);
-		}
-
-		public ITypeInstanceExpression<T> CtorArg(string argName, Func<object> factory)
-		{
-			return InstanceExpression.CtorArg(argName, (ctx, type) => factory());
-		}
-
-		public ITypeInstanceExpression<T> CtorArg(string argName, Func<IContext, object> factory)
-		{
-			return InstanceExpression.CtorArg(argName, (ctx, type) => factory(ctx));
-		}
-
-		public ITypeInstanceExpression<T> CtorArg(string argName, Func<IContext, Type, object> factory)
-		{
-			return InstanceExpression.CtorArg(argName, factory);
-		}
-
-		public ITypeInstanceExpression<T> CtorArg(Type argType, object value)
-		{
-			return InstanceExpression.CtorArg(argType, (ctx, type) => value);
-		}
-
-		public ITypeInstanceExpression<T> CtorArg(Type argType, Func<object> factory)
-		{
-			return InstanceExpression.CtorArg(argType, (ctx, type) => factory());
-		}
-
-		public ITypeInstanceExpression<T> CtorArg(Type argType, Func<IContext, object> factory)
-		{
-			return InstanceExpression.CtorArg(argType, (ctx, type) => factory(ctx));
-		}
-
-		public ITypeInstanceExpression<T> CtorArg<TValue>(TValue value)
-		{
-			return InstanceExpression.CtorArg(typeof(TValue), (ctx, type) => value);
-		}
-
-		public ITypeInstanceExpression<T> CtorArg<TValue>(Func<TValue> factory)
-		{
-			return InstanceExpression.CtorArg(typeof(TValue), (ctx, type) => factory());
-		}
-
-		public ITypeInstanceExpression<T> CtorArg<TValue>(Func<IContext, TValue> factory)
-		{
-			return InstanceExpression.CtorArg(typeof(TValue), (ctx, type) => factory(ctx));
+			Intercept(interceptor);
+			return new FactoryInstanceExpression<TInstanceOut>(ServiceDescriptor);
 		}
 	}
 }
