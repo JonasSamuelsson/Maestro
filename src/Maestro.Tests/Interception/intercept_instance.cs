@@ -1,92 +1,54 @@
-﻿using System;
-using Castle.DynamicProxy;
-using Maestro.Interceptors;
-using IInterceptor = Castle.DynamicProxy.IInterceptor;
+﻿using System.Collections.Generic;
+using Shouldly;
+using Xunit;
 
 namespace Maestro.Tests.Interception
 {
 	public class intercept_instance
 	{
-		[Todo]
+		[Fact]
 		public void interceptors_should_be_executed_in_the_same_order_they_are_configured()
 		{
-			//var list = new List<string>();
+			var list = new List<string>();
 
-			//new Container(x => x.For<object>().Use<object>()
-			//	.Intercept(new Interceptor(() => list.Add("create1")))
-			//	.Intercept(new Interceptor(() => list.Add("create2")))
-			//	.Intercept(new Interceptor(() => list.Add("activate1")))
-			//	.Intercept(new Interceptor(() => list.Add("activate2"))))
-			//.Get<object>();
+			new Container(x => x.For<object>().Use.Self()
+				.Intercept(_ => list.Add("one"))
+				.Intercept(_ => list.Add("two"))
+				.Intercept(_ => list.Add("three")))
+			.GetService<object>();
 
-			//list.Should().ContainInOrder(new[] { "create1", "create2", "activate1", "activate2" });
+			list.ShouldBe(new[] { "one", "two", "three" });
 		}
 
-		[Todo]
+		[Fact]
 		public void interceptors_should_not_be_executed_if_instance_is_chached()
 		{
-			//var interceptor = new Interceptor();
+			var counter = 0;
 
-			//var container = new Container(x => x.For<object>().Use<object>()
-			//	.Intercept(interceptor)
-			//	.Lifetime.Singleton());
+			var container = new Container(x => x.For<object>().Use.Self()
+				.Intercept(_ => counter++)
+				.Lifetime.Singleton());
 
-			//interceptor.ExecuteCount.Should().Be(0);
-			//container.Get<object>();
-			//interceptor.ExecuteCount.Should().Be(1);
-			//container.Get<object>();
-			//interceptor.ExecuteCount.Should().Be(1);
+			container.GetService<object>();
+			counter.ShouldBe(1);
+			container.GetService<object>();
+			counter.ShouldBe(1);
 		}
 
 		[Todo]
 		public void dynamic_proxy_interception()
 		{
-			//var interceptor = new DynamicProxyInterceptor();
-			//var container = new Container(x => x.For<ITarget>()
-			//												.Use<Target>()
-			//												.Proxy((o, pg) => pg.CreateInterfaceProxyWithTarget((ITarget)o, interceptor)));
-
-			//container.Get<ITarget>().ToString();
-
-			//interceptor.Executed.Should().BeTrue();
+			var container = new Container(x => x.For<FooOnly>().Use.Self().Intercept());
 		}
 
-		public interface ITarget
+		class Foo
 		{
-			string ToString();
+			public string Foo { get; set; }
 		}
 
-		private class Target : ITarget { }
-
-		public class DynamicProxyInterceptor : IInterceptor
+		class FooAndBar : FooOnly
 		{
-			public void Intercept(IInvocation invocation)
-			{
-				Executed = true;
-				invocation.Proceed();
-			}
-
-			public bool Executed { get; private set; }
-		}
-
-		private class Interceptor : Interceptor<object>
-		{
-			private readonly Action _action;
-
-			public Interceptor() : this(() => { }) { }
-			public Interceptor(Action action)
-			{
-				_action = action;
-			}
-
-			public int ExecuteCount { get; private set; }
-
-			public override object Execute(object instance, IContext context)
-			{
-				_action();
-				ExecuteCount++;
-				return instance;
-			}
+			public string Bar { get; set; }
 		}
 	}
 }
