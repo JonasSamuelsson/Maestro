@@ -1,104 +1,99 @@
 using System;
 using System.Linq.Expressions;
-using Maestro.FactoryProviders;
 using Maestro.Interceptors;
 using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	class InstanceExpression<TInstance, TParent> : IInstanceExpression<TInstance, TParent>
+	internal abstract class InstanceExpression
 	{
-		public InstanceExpression(ServiceDescriptor serviceDescriptor, TParent parent)
+		protected InstanceExpression(ServiceDescriptor serviceDescriptor)
 		{
 			ServiceDescriptor = serviceDescriptor;
-			Parent = parent;
 		}
 
-		internal ServiceDescriptor ServiceDescriptor { get; set; }
-		internal TParent Parent { get; set; }
+		internal ServiceDescriptor ServiceDescriptor { get; }
+	}
+	internal abstract class InstanceExpression<TInstance, TParent> : InstanceExpression, IInstanceExpression<TInstance, TParent>
+	{
+		protected InstanceExpression(ServiceDescriptor serviceDescriptor) : base(serviceDescriptor)
+		{
+		}
+
+		internal abstract TParent Parent { get; }
 
 		public ILifetimeExpression<TParent> Lifetime
 		{
 			get { return new LifetimeExpression<TParent>(Parent, lifetime => ServiceDescriptor.Lifetime = lifetime); }
 		}
 
-		public IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance> action)
+		public TParent Intercept(Action<TInstance> interceptor)
 		{
-			return Intercept((instance, ctx) => action(instance));
+			return Intercept((instance, ctx) => interceptor(instance));
 		}
 
-		public IInstanceExpression<TInstance, TParent> Intercept(Action<TInstance, IContext> action)
+		public TParent Intercept(Action<TInstance, IContext> interceptor)
 		{
-			return Intercept(new ActionInterceptor<TInstance>(action));
+			return Intercept(new ActionInterceptor<TInstance>(interceptor));
 		}
 
-		public IInstanceExpression<TInstance, TParent> Intercept(Func<TInstance, TInstance> func)
-		{
-			return Intercept((instance, ctx) => func(instance));
-		}
-
-		public IInstanceExpression<TInstance, TParent> Intercept(Func<TInstance, IContext, TInstance> func)
-		{
-			return Intercept(new FuncInterceptor<TInstance>(func));
-		}
-
-		public IInstanceExpression<TInstance, TParent> Intercept(IInterceptor interceptor)
+		public TParent Intercept(IInterceptor interceptor)
 		{
 			ServiceDescriptor.Interceptors.Add(interceptor);
-			return this;
+			return Parent;
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty(string property)
+		public TParent SetProperty(string property)
 		{
 			return Intercept(new SetPropertyInterceptor(property, ServiceDescriptor.Name));
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty(string property, object value)
+		public TParent SetProperty(string property, object value)
 		{
 			return SetProperty(property, (ctx, type) => value);
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<object> factory)
+		public TParent SetProperty(string property, Func<object> factory)
 		{
 			return SetProperty(property, (ctx, type) => factory());
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, object> factory)
+		public TParent SetProperty(string property, Func<IContext, object> factory)
 		{
 			return Intercept(new SetPropertyInterceptor(property, (ctx, type) => factory(ctx)));
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty(string property, Func<IContext, Type, object> factory)
+		public TParent SetProperty(string property, Func<IContext, Type, object> factory)
 		{
 			return Intercept(new SetPropertyInterceptor(property, factory));
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
+		public TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
 			return SetProperty(GetPropertyName(property));
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, TValue value)
+		public TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, TValue value)
 		{
 			return SetProperty(GetPropertyName(property), value);
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory)
+		public TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<TValue> factory)
 		{
 			return SetProperty(GetPropertyName(property), (ctx, type) => factory());
 		}
 
-		public IInstanceExpression<TInstance, TParent> SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory)
+		public TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory)
 		{
 			return SetProperty(GetPropertyName(property), (ctx, type) => factory(ctx));
 		}
 
-		public IInstanceExpression<TInstance, TParent> TrySetProperty(string property)
+		public TParent TrySetProperty(string property)
 		{
 			return Intercept(new TrySetPropertyInterceptor(property, ServiceDescriptor.Name));
 		}
 
-		public IInstanceExpression<TInstance, TParent> TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
+		public TParent TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
 			return TrySetProperty(GetPropertyName(property));
 		}
@@ -106,22 +101,6 @@ namespace Maestro.Configuration
 		private static string GetPropertyName<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
 			return ((MemberExpression)property.Body).Member.Name;
-		}
-
-		public TParent CtorArg(string argName, Func<IContext, Type, object> factory)
-		{
-			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
-			var ctorArg = new TypeFactoryProvider.CtorArg { Name = argName, Factory = factory };
-			typeFactoryProvider.CtorArgs.Add(ctorArg);
-			return Parent;
-		}
-
-		public TParent CtorArg(Type argType, Func<IContext, Type, object> factory)
-		{
-			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
-			var ctorArg = new TypeFactoryProvider.CtorArg { Type = argType, Factory = factory };
-			typeFactoryProvider.CtorArgs.Add(ctorArg);
-			return Parent;
 		}
 	}
 }

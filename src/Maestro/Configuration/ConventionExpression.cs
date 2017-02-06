@@ -66,7 +66,7 @@ namespace Maestro.Configuration
 			AddConcreteSubClassesOf(typeof(T), expression =>
 														  {
 															  action = action ?? delegate { };
-															  var plugin = ((TypeInstanceExpression<object>)expression).ServiceDescriptor;
+															  var plugin = ((InstanceExpression)expression).ServiceDescriptor;
 															  action(new TypeInstanceExpression<T>(plugin));
 														  });
 		}
