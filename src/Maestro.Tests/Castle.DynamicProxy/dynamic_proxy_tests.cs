@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Castle.DynamicProxy;
+using Maestro.Configuration;
 using Shouldly;
 using Xunit;
 
