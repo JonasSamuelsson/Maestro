@@ -21,9 +21,9 @@ namespace Maestro
 			return _defaultSettings;
 		}
 
-		public IDefaultSettingsExpression Context()
+		public IDefaultSettingsExpression Scoped()
 		{
-			return Use<ContextSingletonLifetime>();
+			return Use<ScopedLifetime>();
 		}
 
 		public IDefaultSettingsExpression Singleton()

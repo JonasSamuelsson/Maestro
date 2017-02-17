@@ -3,12 +3,12 @@ using Xunit;
 
 namespace Maestro.Tests.Lifetimes
 {
-	public class context_lifetime
+	public class scoped_lifetime
 	{
 		[Fact]
 		public void the_same_instance_should_be_returned_per_call_to_get()
 		{
-			var container = new Container(x => x.For<object>().Use.Type<object>().Lifetime.Context());
+			var container = new Container(x => x.For<object>().Use.Type<object>().Lifetime.Scoped());
 
 			var foo1 = container.GetService<Foo>();
 			var foo2 = container.GetService<Foo>();

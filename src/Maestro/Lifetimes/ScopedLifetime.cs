@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Maestro.Lifetimes
 {
-	internal class ContextSingletonLifetime : ILifetime
+	internal class ScopedLifetime : ILifetime
 	{
 		private readonly Dictionary<IContext, object> _dictionary = new Dictionary<IContext, object>();
 
@@ -23,7 +23,7 @@ namespace Maestro.Lifetimes
 
 		public ILifetime MakeGeneric(Type[] genericArguments)
 		{
-			return new ContextSingletonLifetime();
+			return new ScopedLifetime();
 		}
 
 		private void ContextOnDisposed(IContext context)
@@ -33,7 +33,7 @@ namespace Maestro.Lifetimes
 
 		public override string ToString()
 		{
-			return "Context singleton";
+			return "Scoped";
 		}
 	}
 }
