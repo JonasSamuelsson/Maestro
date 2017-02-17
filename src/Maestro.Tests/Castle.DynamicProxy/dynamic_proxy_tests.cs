@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Castle.DynamicProxy;
-using Maestro.Configuration;
 using Shouldly;
 using Xunit;
 
-namespace Maestro.Tests.Interception.DynamicProxy
+namespace Maestro.Tests.Castle.DynamicProxy
 {
 	public class dynamic_proxy_tests
 	{
