@@ -4,17 +4,17 @@ namespace Maestro.Microsoft.DependencyInjection
 {
 	internal class MaestroServiceProvider : IServiceProvider
 	{
-		private readonly IContainer _container;
+		private readonly IContext _context;
 
-		public MaestroServiceProvider(IContainer container)
+		public MaestroServiceProvider(IContext context)
 		{
-			_container = container;
+			_context = context;
 		}
 
 		public object GetService(Type serviceType)
 		{
 			object instance;
-			return _container.TryGetService(serviceType, out instance)
+			return _context.TryGetService(serviceType, out instance)
 				? instance
 				: null;
 		}
