@@ -17,8 +17,6 @@ namespace Maestro.Microsoft.DependencyInjection
 		/// <param name="descriptors">The service descriptors.</param>
 		public static void Populate(this IContainer container, IEnumerable<ServiceDescriptor> descriptors)
 		{
-			AssertContainerIsntPopulatedTwice(container);
-
 			container.Configure(x =>
 			{
 				x.For<IServiceProvider>().Use.Instance(new MaestroServiceProvider(container));
@@ -28,17 +26,6 @@ namespace Maestro.Microsoft.DependencyInjection
 					x.Register(descriptor);
 				}
 			});
-		}
-
-		private static void AssertContainerIsntPopulatedTwice(IContainer container)
-		{
-			Marker marker;
-			if (container.TryGetService(out marker))
-			{
-				throw new InvalidOperationException("Populate should only be called once per container.");
-			}
-
-			container.Configure(x => x.For<Marker>().Use.Type<Marker>());
 		}
 
 		private static void Register(this IContainerExpression expression, ServiceDescriptor descriptor)
