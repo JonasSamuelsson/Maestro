@@ -152,9 +152,9 @@
       <Project>{e07cb006-2c92-4cc5-b6fb-053a4be849eb}</Project>
       <Name>Maestro</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Maestro.Interception.DynamicProxy\Maestro.Interception.DynamicProxy.csproj">
+    <ProjectReference Include="..\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj">
       <Project>{f74c9100-d385-4573-b973-0b534e1fb976}</Project>
-      <Name>Maestro.Interception.DynamicProxy</Name>
+      <Name>Maestro.Castle.DynamicProxy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
