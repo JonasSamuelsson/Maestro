@@ -14,7 +14,7 @@ namespace Maestro.Configuration
 		/// Sets instance lifetime to one instance per IContext.
 		/// </summary>
 		/// <returns></returns>
-		T Context();
+		T Scoped();
 
 		/// <summary>
 		/// Sets instance lifetime to singleton.

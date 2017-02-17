@@ -134,7 +134,7 @@
     <Compile Include="Lifetimes\ILifetime.cs" />
     <Compile Include="IContainer.cs" />
     <Compile Include="Configuration\IContainerExpression.cs" />
-    <Compile Include="Lifetimes\ContextSingletonLifetime.cs" />
+    <Compile Include="Lifetimes\ScopedLifetime.cs" />
     <Compile Include="Lifetimes\SingletonLifetime.cs" />
     <Compile Include="Lifetimes\TransientLifetime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
