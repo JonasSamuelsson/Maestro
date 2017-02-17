@@ -88,7 +88,7 @@
     <Compile Include="CommonServiceLocator\adapter_tests.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Factories\Self_type_tests.cs" />
-    <Compile Include="Interception.DynamicProxy\dynamic_proxy_tests.cs" />
+    <Compile Include="Castle.DynamicProxy\dynamic_proxy_tests.cs" />
     <Compile Include="OldTests\ChildContainer_resolution_tests.cs" />
     <Compile Include="OldTests\child_container.cs" />
     <Compile Include="OldTests\ContainerExpression_disposed_tests.cs" />
