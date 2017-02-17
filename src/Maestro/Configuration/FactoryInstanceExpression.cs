@@ -13,7 +13,7 @@ namespace Maestro.Configuration
 
 		internal override IFactoryInstanceExpression<TInstance> Parent => this;
 
-		public IFactoryInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor) where TInstanceOut : TInstance
+		public IFactoryInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor)
 		{
 			Intercept(interceptor);
 			return new FactoryInstanceExpression<TInstanceOut>(ServiceDescriptor);

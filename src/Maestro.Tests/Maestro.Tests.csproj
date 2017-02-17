@@ -44,8 +44,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core">
-      <HintPath>..\packages\Castle.Core.3.2.1\lib\net40-client\Castle.Core.dll</HintPath>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
@@ -85,7 +86,9 @@
       <Link>Properties\VersioningAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CommonServiceLocator\adapter_tests.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Factories\Self_type_tests.cs" />
+    <Compile Include="Interception.DynamicProxy\dynamic_proxy_tests.cs" />
     <Compile Include="OldTests\ChildContainer_resolution_tests.cs" />
     <Compile Include="OldTests\child_container.cs" />
     <Compile Include="OldTests\ContainerExpression_disposed_tests.cs" />
