@@ -1,5 +1,4 @@
-﻿using Castle.Core.Internal;
-using Maestro.Interceptors;
+﻿using Maestro.Interceptors;
 using Shouldly;
 using Xunit;
 

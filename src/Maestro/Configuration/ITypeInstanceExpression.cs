@@ -23,6 +23,6 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		IFactoryInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor) where TInstanceOut : TInstance;
+		ITypeInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor);
 	}
 }

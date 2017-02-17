@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Castle.Core.Internal;
 using Xunit;
 
 namespace Maestro.Tests
