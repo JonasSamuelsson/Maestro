@@ -50,7 +50,7 @@ namespace Maestro.Tests.Performance
 		public void BaselineSimple()
 		{
 			Action action = () => new object();
-			Benchmark(action, "baseline simple");
+			Benchmark(action, "baseline simple", 1);
 		}
 
 		[Fact(Skip = "run manually")]
@@ -64,42 +64,42 @@ namespace Maestro.Tests.Performance
 				new Complex3(
 					new Complex4()),
 				new Complex4());
-			Benchmark(action, "baseline complex");
+			Benchmark(action, "baseline complex", 8);
 		}
 
 		[Fact(Skip = "run manually")]
 		public void BaselineEnumerable()
 		{
 			Action action = () => new List<object>(new[] { new object(), new object(), new object(), new object(), new object() });
-			Benchmark(action, "baseline enumerable");
+			Benchmark(action, "baseline enumerable", 5);
 		}
 
 		[Fact(Skip = "run manually")]
 		public void Instance()
 		{
 			var container = new Container(x => x.For<object>().Use.Instance(new object()));
-			Benchmark(() => container.GetService<object>(), "instance");
+			Benchmark(() => container.GetService<object>(), "instance", 1);
 		}
 
 		[Fact(Skip = "run manually")]
 		public void Factory()
 		{
 			var container = new Container(x => x.For<object>().Use.Factory(() => new object()));
-			Benchmark(() => container.GetService<object>(), "factory");
+			Benchmark(() => container.GetService<object>(), "factory", 1);
 		}
 
 		[Fact(Skip = "run manually")]
 		public void Type()
 		{
 			var container = new Container(x => x.For<object>().Use.Type<object>());
-			Benchmark(() => container.GetService<object>(), "type");
+			Benchmark(() => container.GetService<object>(), "type", 1);
 		}
 
 		[Fact(Skip = "run manually")]
 		public void Singleton()
 		{
 			var container = new Container(x => x.For<object>().Use.Type<object>().Lifetime.Singleton());
-			Benchmark(() => container.GetService<object>(), "singleton");
+			Benchmark(() => container.GetService<object>(), "singleton", 1);
 		}
 
 		[Fact(Skip = "run manually")]
@@ -113,7 +113,7 @@ namespace Maestro.Tests.Performance
 				x.For<object>().Add.Type<object>();
 				x.For<object>().Add.Type<object>();
 			});
-			Benchmark(() => container.GetServices<object>(), "enumerable");
+			Benchmark(() => container.GetServices<object>(), "enumerable", 5);
 		}
 
 		[Fact(Skip = "run manually")]
@@ -124,7 +124,7 @@ namespace Maestro.Tests.Performance
 				x.For<CtorDependency>().Use.Type<CtorDependency>();
 				x.For<object>().Use.Type<object>();
 			});
-			Benchmark(() => container.GetService<CtorDependency>(), "ctor injection");
+			Benchmark(() => container.GetService<CtorDependency>(), "ctor injection", 2);
 		}
 
 		[Fact(Skip = "run manually")]
@@ -135,7 +135,7 @@ namespace Maestro.Tests.Performance
 				x.For<PropertyDependency>().Use.Type<PropertyDependency>().SetProperty(y => y.O);
 				x.For<object>().Use.Type<object>();
 			});
-			Benchmark(() => container.GetService<CtorDependency>(), "property injection");
+			Benchmark(() => container.GetService<CtorDependency>(), "property injection", 2);
 		}
 
 		[Fact(Skip = "run manually")]
@@ -148,7 +148,7 @@ namespace Maestro.Tests.Performance
 				x.For<Complex3>().Use.Type<Complex3>();
 				x.For<Complex4>().Use.Type<Complex4>();
 			});
-			Benchmark(() => container.GetService<Complex1>(), "complex");
+			Benchmark(() => container.GetService<Complex1>(), "complex", 8);
 		}
 
 		[Fact(Skip = "run manually")]
@@ -162,7 +162,8 @@ namespace Maestro.Tests.Performance
 				x.For<Complex4>().Use.Type<Complex4>();
 			});
 			var concurrentWorkers = Environment.ProcessorCount;
-			Benchmark(() => container.GetService<Complex1>(), $"complex ({concurrentWorkers} workers)", concurrentWorkers);
+			var instances = 8 * concurrentWorkers;
+			Benchmark(() => container.GetService<Complex1>(), $"complex ({concurrentWorkers} workers)", instances, concurrentWorkers);
 		}
 
 		[Fact(Skip = "run manually")]
@@ -170,10 +171,10 @@ namespace Maestro.Tests.Performance
 		{
 			var parentContainer = new Container(x => x.For<CtorDependency>().Use.Type<CtorDependency>());
 			var childContainer = parentContainer.GetChildContainer(x => x.For<object>().Use.Type<object>());
-			Benchmark(() => childContainer.GetService<CtorDependency>(), "child container");
+			Benchmark(() => childContainer.GetService<CtorDependency>(), "child container", 2);
 		}
 
-		private void Benchmark(Action action, string info, int concurrentWorkers = 1)
+		private void Benchmark(Action action, string info, int instances, int concurrentWorkers = 1)
 		{
 			Execute(action, 1);
 			GC.Collect();
@@ -184,7 +185,7 @@ namespace Maestro.Tests.Performance
 			var stopwatch = Stopwatch.StartNew();
 			ExecuteTest(action, concurrentWorkers);
 			var elapsed = stopwatch.Elapsed;
-			_dictionary.Add(info, $"{elapsed.TotalMilliseconds:0} ms");
+			_dictionary.Add(info, $"{elapsed.TotalMilliseconds:0} ms, {(elapsed.TotalMilliseconds / instances):0} ms / instance");
 		}
 
 		private static void ExecuteTest(Action action, int concurrentWorkers)
