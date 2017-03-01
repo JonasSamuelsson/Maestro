@@ -185,7 +185,7 @@ namespace Maestro.Tests.Performance
 			var stopwatch = Stopwatch.StartNew();
 			ExecuteTest(action, concurrentWorkers);
 			var elapsed = stopwatch.Elapsed;
-			_dictionary.Add(info, $"{elapsed.TotalMilliseconds:0} ms, {(elapsed.TotalMilliseconds / instances):0} ms / instance");
+			_dictionary.Add(info, $"{elapsed.TotalMilliseconds:0} ms, perf-index {100 * elapsed.Ticks / (instances * Iterations):0}");
 		}
 
 		private static void ExecuteTest(Action action, int concurrentWorkers)
@@ -215,6 +215,7 @@ namespace Maestro.Tests.Performance
 			{
 				_output?.WriteLine($"{timing.Key.PadRight(keyLength)} : {timing.Value}");
 			}
+			_output.WriteLine("* perf index, lower is better");
 		}
 
 		private static string GetBuildConfig()
