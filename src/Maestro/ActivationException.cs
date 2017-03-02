@@ -1,4 +1,5 @@
 ﻿using System;
+using Maestro.Utils;
 
 namespace Maestro
 {
@@ -23,7 +24,8 @@ namespace Maestro
 		private static string CreateMessage(Type type, string name, string reason)
 		{
 			var n = string.IsNullOrEmpty(name) ? "default" : $"'{name}'";
-			return $"Unable to get {n} service of type '{type.FullName}'.{Environment.NewLine}{reason}";
+			var error = $"Could not get {n} service of type '{type.FullName}'.";
+			return ExceptionMessageBuilder.GetMessage(error, reason);
 		}
 	}
 }

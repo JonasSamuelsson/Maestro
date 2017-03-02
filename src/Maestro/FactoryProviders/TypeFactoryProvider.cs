@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Maestro.FactoryProviders.Factories;
 using Maestro.Internals;
+using Maestro.Utils;
 
 namespace Maestro.FactoryProviders
 {
@@ -57,11 +58,23 @@ namespace Maestro.FactoryProviders
 				if (factories.Count == x.parameters.Length)
 				{
 					var innerActivator = ConstructorInvokation.Create(x.ctor, factories);
-					return ctx => innerActivator(factories, ctx);
+					return ctx =>
+					{
+						try
+						{
+							return innerActivator(factories, ctx);
+						}
+						catch (Exception exception)
+						{
+							var error = $"Error instantiating '{Type.FullName}'.";
+							throw new InvalidOperationException(ExceptionMessageBuilder.GetMessage(error, exception.Message));
+						}
+					};
 				}
 			}
 
-			throw new Exception("todo");
+			var message = $"Could not find resolvable constructor for '{Type.FullName}'.";
+			throw new InvalidOperationException(message);
 		}
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)
