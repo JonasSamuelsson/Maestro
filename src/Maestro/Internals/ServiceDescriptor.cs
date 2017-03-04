@@ -4,6 +4,7 @@ using System.Linq;
 using Maestro.FactoryProviders;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
+using Maestro.Utils;
 
 namespace Maestro.Internals
 {
@@ -23,7 +24,7 @@ namespace Maestro.Internals
 				CorrelationId = CorrelationId,
 				Type = Type.MakeGenericType(genericArguments),
 				FactoryProvider = FactoryProvider.MakeGeneric(genericArguments),
-				Interceptors = Interceptors.Select(x => x.MakeGeneric(genericArguments)).ToList(),
+				Interceptors = Interceptors.Select(x => GenericInstanceFactory.Create<IInterceptor>(x, genericArguments)).ToList(),
 				Lifetime = Lifetime.MakeGeneric(genericArguments),
 				Name = Name
 			};
