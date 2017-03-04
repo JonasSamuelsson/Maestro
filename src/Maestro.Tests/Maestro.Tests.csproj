@@ -134,6 +134,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="type_listings.cs" />
     <Compile Include="type_provider_tests.cs" />
+    <Compile Include="Utils\GenericInstanceFactory_tests.cs" />
     <Compile Include="Utils\Reflector_tests.cs" />
     <Compile Include="OldTests\resolve_array_dependencies.cs" />
     <Compile Include="OldTests\resolve_dependencies.cs" />

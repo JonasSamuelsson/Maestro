@@ -141,6 +141,7 @@
     <Compile Include="Properties\CommonAssemblyInfo.cs" />
     <Compile Include="Properties\VersioningAssemblyInfo.cs" />
     <Compile Include="Utils\ExceptionMessageBuilder.cs" />
+    <Compile Include="Utils\GenericInstanceFactory.cs" />
     <Compile Include="Utils\Reflector.cs" />
     <Compile Include="Utils\ThreadSafeDictionary.cs" />
     <Compile Include="TypeExtensions.cs" />
