@@ -18,10 +18,5 @@ namespace Maestro.Configuration
 			var proxyGenerator = ProxyGeneratorFactory.GetProxyGenerator();
 			return _proxyFactory.Invoke((TInstance)instance, context, proxyGenerator);
 		}
-
-		public IInterceptor MakeGeneric(Type[] genericArguments)
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

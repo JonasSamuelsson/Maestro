@@ -38,7 +38,7 @@ namespace Maestro.Interceptors
 			_worker.Invoke(instance, context);
 		}
 
-		public override IInterceptor MakeGeneric(Type[] genericArguments)
+		public IInterceptor MakeGeneric(Type[] genericArguments)
 		{
 			return new TrySetPropertyInterceptor(_propertyName, _serviceName);
 		}
