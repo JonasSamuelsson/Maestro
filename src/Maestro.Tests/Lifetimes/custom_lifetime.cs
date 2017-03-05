@@ -27,11 +27,6 @@ namespace Maestro.Tests.Lifetimes
 				Executed = true;
 				return factory(context);
 			}
-
-			public ILifetime MakeGeneric(Type[] genericArguments)
-			{
-				throw new NotImplementedException();
-			}
 		}
 	}
 }

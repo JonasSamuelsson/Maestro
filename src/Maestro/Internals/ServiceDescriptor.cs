@@ -25,7 +25,7 @@ namespace Maestro.Internals
 				Type = Type.MakeGenericType(genericArguments),
 				FactoryProvider = FactoryProvider.MakeGeneric(genericArguments),
 				Interceptors = Interceptors.Select(x => GenericInstanceFactory.Create<IInterceptor>(x, genericArguments)).ToList(),
-				Lifetime = Lifetime.MakeGeneric(genericArguments),
+				Lifetime = GenericInstanceFactory.Create<ILifetime>(Lifetime, genericArguments),
 				Name = Name
 			};
 		}

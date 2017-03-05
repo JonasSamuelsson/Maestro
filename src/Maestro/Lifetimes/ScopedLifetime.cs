@@ -21,11 +21,6 @@ namespace Maestro.Lifetimes
 			return instance;
 		}
 
-		public ILifetime MakeGeneric(Type[] genericArguments)
-		{
-			return new ScopedLifetime();
-		}
-
 		private void ContextOnDisposed(IContext context)
 		{
 			lock (_dictionary) _dictionary.Remove(context);
