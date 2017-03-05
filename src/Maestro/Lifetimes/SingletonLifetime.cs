@@ -16,11 +16,6 @@ namespace Maestro.Lifetimes
 			return _instance;
 		}
 
-		public ILifetime MakeGeneric(Type[] genericArguments)
-		{
-			return new SingletonLifetime();
-		}
-
 		public override string ToString()
 		{
 			return "Singleton";
