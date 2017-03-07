@@ -1,5 +1,3 @@
-using System;
-using Maestro.Interceptors;
 using Maestro.Internals;
 
 namespace Maestro.Configuration
@@ -13,10 +11,9 @@ namespace Maestro.Configuration
 
 		internal override IFactoryInstanceExpression<TInstance> Parent => this;
 
-		public IFactoryInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor)
+		public IFactoryInstanceExpression<T> As<T>()
 		{
-			Intercept(interceptor);
-			return new FactoryInstanceExpression<TInstanceOut>(ServiceDescriptor);
+			return new FactoryInstanceExpression<T>(ServiceDescriptor);
 		}
 	}
 }

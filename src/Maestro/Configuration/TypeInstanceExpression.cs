@@ -75,10 +75,9 @@ namespace Maestro.Configuration
 			return CtorArg(typeof(TValue), (ctx, type) => factory(ctx));
 		}
 
-		public ITypeInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor)
+		public ITypeInstanceExpression<T> As<T>()
 		{
-			Intercept(interceptor);
-			return new TypeInstanceExpression<TInstanceOut>(ServiceDescriptor);
+			return new TypeInstanceExpression<T>(ServiceDescriptor);
 		}
 	}
 }
