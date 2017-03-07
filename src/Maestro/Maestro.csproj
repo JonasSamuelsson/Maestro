@@ -59,9 +59,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
+    <Compile Include="Configuration\ConventionSelectorExpression.cs" />
     <Compile Include="Configuration\FactoryExpression.cs" />
     <Compile Include="Configuration\FactoryInstanceExpression.cs" />
     <Compile Include="Configuration\IAddServiceExpression.cs" />
+    <Compile Include="Configuration\IConventionSelectorExpression.cs" />
     <Compile Include="Configuration\IFactoryExpression.cs" />
     <Compile Include="Configuration\IFactoryInstanceExpression.cs" />
     <Compile Include="Configuration\INamedServiceExpression.cs" />
@@ -73,6 +75,7 @@
     <Compile Include="Configuration\IUseServiceExpression.cs" />
     <Compile Include="Configuration\ServiceExpression.cs" />
     <Compile Include="Configuration\ServiceInstanceExpression.cs" />
+    <Compile Include="Configuration\ServiceRegistration.cs" />
     <Compile Include="Configuration\TypeInstanceExpression.cs" />
     <Compile Include="ConstructorInvokation.cs" />
     <Compile Include="DefaultLifetimeExpression.cs" />
@@ -110,11 +113,11 @@
     <Compile Include="TypeFactoryResolvers\LazyFactoryProviderResolver.cs" />
     <Compile Include="ITypeProvider.cs" />
     <Compile Include="Utils\DiagnosticsBuilder.cs" />
-    <Compile Include="Conventions\AddConcreteClassesClosingConvention.cs" />
-    <Compile Include="Conventions\AddConcreteSubClassesConvention.cs" />
+    <Compile Include="Conventions\ConcreteClassesClosingConvention.cs" />
+    <Compile Include="Conventions\ConcreteSubClassesConvention.cs" />
     <Compile Include="Container.cs" />
     <Compile Include="Configuration\ContainerExpression.cs" />
-    <Compile Include="Conventions\UseDefaultImplementationsConvention.cs" />
+    <Compile Include="Conventions\DefaultImplementationsConvention.cs" />
     <Compile Include="Conventions\LambdaFilter.cs" />
     <Compile Include="Configuration\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />

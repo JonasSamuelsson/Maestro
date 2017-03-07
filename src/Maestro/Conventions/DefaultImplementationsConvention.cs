@@ -5,13 +5,15 @@ using Maestro.Configuration;
 
 namespace Maestro.Conventions
 {
-	internal class UseDefaultImplementationsConvention : IConvention
+	internal class DefaultImplementationsConvention : IConvention
 	{
-		private readonly Action<ITypeInstanceExpression<object>> _configureAction;
+		private readonly ServiceRegistration _registration;
+		private readonly Action<ITypeInstanceExpression<object>> _instanceConfiguration;
 
-		public UseDefaultImplementationsConvention(Action<ITypeInstanceExpression<object>> configureAction)
+		public DefaultImplementationsConvention(ServiceRegistration registration, Action<ITypeInstanceExpression<object>> instanceConfiguration)
 		{
-			_configureAction = configureAction;
+			_registration = registration;
+			_instanceConfiguration = instanceConfiguration;
 		}
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
@@ -27,8 +29,9 @@ namespace Maestro.Conventions
 				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
 				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
 				if (@class == null) continue;
-				var typeInstanceExpression = containerExpression.For(@interface).Use.Type(@class);
-				_configureAction(typeInstanceExpression);
+				var typeInstanceExpression = _registration.Invoke(@interface, @class);
+				if (typeInstanceExpression == null) continue;
+				_instanceConfiguration?.Invoke(typeInstanceExpression);
 			}
 		}
 	}

@@ -8,16 +8,17 @@ namespace Maestro.Configuration
 {
 	internal class ConventionExpression : IConventionExpression
 	{
-		private readonly IContainerExpression _containerExpression;
 		private readonly List<Type> _types;
 		private readonly List<IFilter> _filters;
 
 		public ConventionExpression(IContainerExpression containerExpression, DefaultSettings defaultSettings)
 		{
-			_containerExpression = containerExpression;
+			ContainerExpression = containerExpression;
 			_types = new List<Type>();
 			_filters = new List<IFilter>(defaultSettings.GetFilters());
 		}
+
+		public IContainerExpression ContainerExpression { get; }
 
 		public IConventionExpression Assemblies(IEnumerable<Assembly> assemblies)
 		{
@@ -60,37 +61,33 @@ namespace Maestro.Configuration
 			_filters.Add(filter);
 			return this;
 		}
-
-		public void AddConcreteSubClassesOf<T>(Action<ITypeInstanceExpression<T>> action = null)
-		{
-			AddConcreteSubClassesOf(typeof(T), expression =>
-														  {
-															  action = action ?? delegate { };
-															  var plugin = ((InstanceExpression)expression).ServiceDescriptor;
-															  action(new TypeInstanceExpression<T>(plugin));
-														  });
-		}
-
-		public void AddConcreteSubClassesOf(Type type, Action<ITypeInstanceExpression<object>> action = null)
-		{
-			With(new AddConcreteSubClassesConvention(type, action ?? delegate { }));
-		}
-
-		public void AddConcreteClassesClosing(Type genericTypeDefinition, Action<ITypeInstanceExpression<object>> action = null)
-		{
-			With(new AddConcreteClassesClosingConvention(genericTypeDefinition, action ?? delegate { }));
-		}
-
-		public void UseDefaultImplementations(Action<ITypeInstanceExpression<object>> action = null)
-		{
-			With(new UseDefaultImplementationsConvention(action ?? delegate { }));
-		}
-
+		
 		public IConventionExpression With(IConvention convention)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
-			convention.Process(types, _containerExpression);
+			convention.Process(types, ContainerExpression);
 			return this;
+		}
+
+		public IConventionSelectorExpression Use(string name = null)
+		{
+			ServiceRegistration serviceRegistration = name == null
+				? new ServiceRegistration((serviceType, instanceType) => ContainerExpression.For(serviceType).Use.Type(instanceType))
+				: (serviceType, instanceType) => ContainerExpression.For(serviceType, name).Use.Type(instanceType);
+			return new ConventionSelectorExpression(this, serviceRegistration);
+		}
+
+		public IConventionSelectorExpression TryUse(string name = null)
+		{
+			ServiceRegistration serviceRegistration = name == null
+				? new ServiceRegistration((serviceType, instanceType) => ContainerExpression.For(serviceType).TryUse.Type(instanceType))
+				: (serviceType, instanceType) => ContainerExpression.For(serviceType, name).TryUse.Type(instanceType);
+			return new ConventionSelectorExpression(this, serviceRegistration);
+		}
+
+		public IConventionSelectorExpression Add()
+		{
+			return new ConventionSelectorExpression(this, (serviceType, instanceType) => ContainerExpression.For(serviceType).Add.Type(instanceType));
 		}
 	}
 }

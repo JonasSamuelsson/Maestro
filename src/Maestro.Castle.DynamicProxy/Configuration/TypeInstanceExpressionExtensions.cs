@@ -16,7 +16,9 @@ namespace Maestro.Configuration
 		public static ITypeInstanceExpression<TOut> Proxy<TInstance, TOut>(this ITypeInstanceExpression<TInstance> typeInstanceExpression,
 			Func<TInstance, ProxyGenerator, TOut> proxyFactory)
 		{
-			return typeInstanceExpression.Intercept<TOut>(new ProxyInterceptor<TInstance, TOut>((instance, context, proxyGenerator) => proxyFactory(instance, proxyGenerator)));
+			return typeInstanceExpression
+				.Intercept(new ProxyInterceptor<TInstance, TOut>((instance, context, proxyGenerator) => proxyFactory(instance, proxyGenerator)))
+				.As<TOut>();
 		}
 
 		/// <summary>
@@ -30,7 +32,9 @@ namespace Maestro.Configuration
 		public static ITypeInstanceExpression<TOut> Proxy<TInstance, TOut>(this ITypeInstanceExpression<TInstance> typeInstanceExpression,
 			Func<TInstance, IContext, ProxyGenerator, TOut> proxyFactory)
 		{
-			return typeInstanceExpression.Intercept<TOut>(new ProxyInterceptor<TInstance, TOut>(proxyFactory));
+			return typeInstanceExpression
+				.Intercept(new ProxyInterceptor<TInstance, TOut>(proxyFactory))
+				.As<TOut>();
 		}
 	}
 }

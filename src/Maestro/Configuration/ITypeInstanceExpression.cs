@@ -1,5 +1,4 @@
 using System;
-using Maestro.Interceptors;
 
 namespace Maestro.Configuration
 {
@@ -18,11 +17,6 @@ namespace Maestro.Configuration
 		ITypeInstanceExpression<TInstance> CtorArg<TValue>(Func<TValue> factory);
 		ITypeInstanceExpression<TInstance> CtorArg<TValue>(Func<IContext, TValue> factory);
 
-		/// <summary>
-		/// Adds a func to execute against the instance.
-		/// </summary>
-		/// <param name="interceptor"></param>
-		/// <returns></returns>
-		ITypeInstanceExpression<TInstanceOut> Intercept<TInstanceOut>(IInterceptor interceptor);
+		ITypeInstanceExpression<T> As<T>();
 	}
 }

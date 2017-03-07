@@ -10,7 +10,7 @@ namespace Maestro.Tests.Conventions
 		public void should_register_concrete_sub_classes_of_provided_type()
 		{
 			var types = new[] { typeof(Implementation1), typeof(Implementation2) };
-			var container = new Container(x => x.Scan.Types(types).AddConcreteSubClassesOf<IBaseType>());
+			var container = new Container(x => x.Scan.Types(types).Add().ConcreteSubClassesOf<IBaseType>());
 
 			var instances = container.GetServices<IBaseType>().ToList();
 
@@ -24,12 +24,12 @@ namespace Maestro.Tests.Conventions
 		{
 			var types = new[] { typeof(Implementation1) };
 
-			var container1 = new Container(x => x.Scan.Types(types).AddConcreteSubClassesOf(typeof(IBaseType), y => y.Lifetime.Singleton()));
+			var container1 = new Container(x => x.Scan.Types(types).Add().ConcreteSubClassesOf(typeof(IBaseType), y => y.Lifetime.Singleton()));
 			var instance1 = container1.GetServices<IBaseType>().Single();
 			var instance2 = container1.GetServices<IBaseType>().Single();
 			instance1.ShouldBe(instance2);
 
-			var container2 = new Container(x => x.Scan.Types(types).AddConcreteSubClassesOf<IBaseType>(y => y.Lifetime.Singleton()));
+			var container2 = new Container(x => x.Scan.Types(types).Add().ConcreteSubClassesOf<IBaseType>(y => y.Lifetime.Singleton()));
 			var instance3 = container2.GetServices<IBaseType>().Single();
 			var instance4 = container2.GetServices<IBaseType>().Single();
 			instance3.ShouldBe(instance4);
