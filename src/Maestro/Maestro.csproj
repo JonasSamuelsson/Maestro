@@ -60,11 +60,9 @@
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
     <Compile Include="Configuration\ConventionSelectorExpression.cs" />
-    <Compile Include="Configuration\FactoryExpression.cs" />
     <Compile Include="Configuration\FactoryInstanceExpression.cs" />
     <Compile Include="Configuration\IAddServiceExpression.cs" />
     <Compile Include="Configuration\TypeInstanceRegistrationExpression.cs" />
-    <Compile Include="Configuration\IFactoryExpression.cs" />
     <Compile Include="Configuration\IFactoryInstanceExpression.cs" />
     <Compile Include="Configuration\INamedServiceExpression.cs" />
     <Compile Include="Configuration\InstanceExpression.cs" />
