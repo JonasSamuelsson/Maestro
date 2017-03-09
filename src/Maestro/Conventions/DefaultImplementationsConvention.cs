@@ -7,13 +7,11 @@ namespace Maestro.Conventions
 {
 	internal class DefaultImplementationsConvention : IConvention
 	{
-		private readonly ServiceRegistration _registration;
-		private readonly Action<ITypeInstanceExpression<object>> _instanceConfiguration;
+		private readonly Action<TypeInstanceRegistrationExpression<object>> _serviceRegistration;
 
-		public DefaultImplementationsConvention(ServiceRegistration registration, Action<ITypeInstanceExpression<object>> instanceConfiguration)
+		public DefaultImplementationsConvention(Action<TypeInstanceRegistrationExpression<object>> serviceRegistration)
 		{
-			_registration = registration;
-			_instanceConfiguration = instanceConfiguration;
+			_serviceRegistration = serviceRegistration;
 		}
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
@@ -29,9 +27,7 @@ namespace Maestro.Conventions
 				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
 				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
 				if (@class == null) continue;
-				var typeInstanceExpression = _registration.Invoke(@interface, @class);
-				if (typeInstanceExpression == null) continue;
-				_instanceConfiguration?.Invoke(typeInstanceExpression);
+				_serviceRegistration(new TypeInstanceRegistrationExpression<object>(containerExpression, @interface, @class));
 			}
 		}
 	}

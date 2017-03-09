@@ -16,12 +16,12 @@ namespace Maestro.Configuration
 			_defaultSettings = defaultSettings;
 		}
 
-		public IConventionExpression Scan
+		public IScanExpression Scan
 		{
 			get
 			{
 				AssertNotDisposed();
-				return new ConventionExpression(this, _defaultSettings);
+				return new ScanExpression(this, _defaultSettings);
 			}
 		}
 
