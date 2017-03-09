@@ -6,12 +6,12 @@ namespace Maestro
 {
 	public static class ScannerExtensions
 	{
-		public static IConventionExpression Where(this IConventionExpression expression, Func<Type, bool> predicate)
+		public static IScanExpression Where(this IScanExpression expression, Func<Type, bool> predicate)
 		{
 			return expression.Matching(predicate);
 		}
 
-		public static void Using(this IConventionExpression expression, IConvention convention)
+		public static void Using(this IScanExpression expression, IConvention convention)
 		{
 			expression.With(convention);
 		}

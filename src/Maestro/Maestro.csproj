@@ -63,7 +63,7 @@
     <Compile Include="Configuration\FactoryExpression.cs" />
     <Compile Include="Configuration\FactoryInstanceExpression.cs" />
     <Compile Include="Configuration\IAddServiceExpression.cs" />
-    <Compile Include="Configuration\IConventionSelectorExpression.cs" />
+    <Compile Include="Configuration\TypeInstanceRegistrationExpression.cs" />
     <Compile Include="Configuration\IFactoryExpression.cs" />
     <Compile Include="Configuration\IFactoryInstanceExpression.cs" />
     <Compile Include="Configuration\INamedServiceExpression.cs" />
@@ -75,7 +75,6 @@
     <Compile Include="Configuration\IUseServiceExpression.cs" />
     <Compile Include="Configuration\ServiceExpression.cs" />
     <Compile Include="Configuration\ServiceInstanceExpression.cs" />
-    <Compile Include="Configuration\ServiceRegistration.cs" />
     <Compile Include="Configuration\TypeInstanceExpression.cs" />
     <Compile Include="ConstructorInvokation.cs" />
     <Compile Include="DefaultLifetimeExpression.cs" />
@@ -121,8 +120,8 @@
     <Compile Include="Conventions\LambdaFilter.cs" />
     <Compile Include="Configuration\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />
-    <Compile Include="Configuration\ConventionExpression.cs" />
-    <Compile Include="Configuration\IConventionExpression.cs" />
+    <Compile Include="Configuration\ScanExpression.cs" />
+    <Compile Include="Configuration\IScanExpression.cs" />
     <Compile Include="Configuration\IDefaultFilterExpression.cs" />
     <Compile Include="Configuration\IDefaultSettingsExpression.cs" />
     <Compile Include="Configuration\ILifetimeExpression.cs" />
