@@ -15,8 +15,6 @@ namespace Maestro.Tests
 
 			Should.Throw<ObjectDisposedException>(() => { var @default = expression.Default; });
 
-			Should.Throw<ObjectDisposedException>(() => { var scan = expression.Scan; });
-
 			Should.Throw<ObjectDisposedException>(() => expression.For(typeof(object)));
 			Should.Throw<ObjectDisposedException>(() => expression.For(typeof(object), string.Empty));
 
@@ -25,6 +23,8 @@ namespace Maestro.Tests
 
 			Should.Throw<ObjectDisposedException>(() => expression.For(typeof(object)));
 			Should.Throw<ObjectDisposedException>(() => expression.For<object>());
+
+			Should.Throw<ObjectDisposedException>(() => expression.Scan(delegate { }));
 		}
 	}
 }

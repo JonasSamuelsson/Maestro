@@ -16,15 +16,6 @@ namespace Maestro.Configuration
 			_defaultSettings = defaultSettings;
 		}
 
-		public IScanExpression Scan
-		{
-			get
-			{
-				AssertNotDisposed();
-				return new ScanExpression(this, _defaultSettings);
-			}
-		}
-
 		public IDefaultSettingsExpression Default
 		{
 			get
@@ -62,6 +53,12 @@ namespace Maestro.Configuration
 			if (name == null) throw new ArgumentNullException();
 			AssertNotDisposed();
 			return new ServiceExpression<T>(typeof(T), name, _kernel, _defaultSettings);
+		}
+
+		public void Scan(Action<IScanExpression> scan)
+		{
+			AssertNotDisposed();
+			scan(new ScanExpression(this, _defaultSettings));
 		}
 
 		private void AssertNotDisposed()
