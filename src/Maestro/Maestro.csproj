@@ -119,7 +119,6 @@
     <Compile Include="Configuration\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />
     <Compile Include="Configuration\ScanExpression.cs" />
-    <Compile Include="Configuration\IScanExpression.cs" />
     <Compile Include="Configuration\IDefaultFilterExpression.cs" />
     <Compile Include="Configuration\IDefaultSettingsExpression.cs" />
     <Compile Include="Configuration\ILifetimeExpression.cs" />

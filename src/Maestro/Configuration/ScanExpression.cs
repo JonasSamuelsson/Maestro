@@ -6,68 +6,115 @@ using Maestro.Conventions;
 
 namespace Maestro.Configuration
 {
-	internal class ScanExpression : IScanExpression
+	public class ScanExpression
 	{
 		private readonly IContainerExpression _containerExpression;
 		private readonly List<Type> _types;
 		private readonly List<IFilter> _filters;
 
-		public ScanExpression(IContainerExpression containerExpression, DefaultSettings defaultSettings)
+		internal ScanExpression(IContainerExpression containerExpression, DefaultSettings defaultSettings)
 		{
 			_containerExpression = containerExpression;
 			_types = new List<Type>();
 			_filters = new List<IFilter>(defaultSettings.GetFilters());
 		}
 
-		public IScanExpression Assemblies(IEnumerable<Assembly> assemblies)
+		/// <summary>
+		/// Starting point for using out of box conventions.
+		/// </summary>
+		public ConventionSelectorExpression For => new ConventionSelectorExpression(this);
+
+		/// <summary>
+		/// Adds all types in <paramref name="assemblies"/> to the list of types to process.
+		/// </summary>
+		/// <param name="assemblies"></param>
+		/// <returns></returns>
+		public ScanExpression Assemblies(IEnumerable<Assembly> assemblies)
 		{
 			return Types(assemblies.SelectMany(x => x.GetTypes()));
 		}
 
-		public IScanExpression Assembly(Assembly assembly)
+		/// <summary>
+		/// Adds all types in <paramref name="assembly"/> to the list of types to process.
+		/// </summary>
+		/// <param name="assembly"></param>
+		/// <returns></returns>
+		public ScanExpression Assembly(Assembly assembly)
 		{
 			return Assemblies(new[] { assembly });
 		}
 
-		public IScanExpression AssemblyContaining<T>()
+		/// <summary>
+		/// Adds all types in the assembly containing type <typeparamref name="T"/> to the list of types to process.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public ScanExpression AssemblyContaining<T>()
 		{
 			return AssemblyContaining(typeof(T));
 		}
 
-		public IScanExpression AssemblyContaining(Type type)
+		/// <summary>
+		/// Adds all types in the assembly containing type <paramref name="type"/> to the list of types to process.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public ScanExpression AssemblyContaining(Type type)
 		{
 			return Assembly(type.Assembly);
 		}
 
-		public IScanExpression AssemblyContainingTypeOf(object o)
+		/// <summary>
+		/// Adds all types in the assembly containing type of <paramref name="o"/> to the list of types to process.
+		/// </summary>
+		/// <param name="o"></param>
+		/// <returns></returns>
+		public ScanExpression AssemblyContainingTypeOf(object o)
 		{
 			return AssemblyContaining(o.GetType());
 		}
 
-		public IScanExpression Types(IEnumerable<Type> types)
+		/// <summary>
+		/// Adds provided types to the list of types to process.
+		/// </summary>
+		/// <param name="types"></param>
+		/// <returns></returns>
+		public ScanExpression Types(IEnumerable<Type> types)
 		{
 			_types.AddRange(types);
 			return this;
 		}
 
-		public IScanExpression Matching(Func<Type, bool> predicate)
+		/// <summary>
+		/// Filter types to those matching <paramref name="predicate"/>.
+		/// </summary>
+		/// <param name="predicate"></param>
+		/// <returns></returns>
+		public ScanExpression Matching(Func<Type, bool> predicate)
 		{
 			return Matching(new LambdaFilter(predicate));
 		}
 
-		public IScanExpression Matching(IFilter filter)
+		/// <summary>
+		/// Filter types to those matching <paramref name="filter"/>.
+		/// </summary>
+		/// <param name="filter"></param>
+		/// <returns></returns>
+		public ScanExpression Matching(IFilter filter)
 		{
 			_filters.Add(filter);
 			return this;
 		}
 
-		public IScanExpression With(IConvention convention)
+		/// <summary>
+		/// Uses <paramref name="convention"/> to configure the container.
+		/// </summary>
+		/// <param name="convention"></param>
+		public ScanExpression With(IConvention convention)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
 			convention.Process(types, _containerExpression);
 			return this;
 		}
-
-		public ConventionSelectorExpression For => new ConventionSelectorExpression(this);
 	}
 }

@@ -14,7 +14,7 @@ namespace Maestro.Configuration
 		/// <summary>
 		/// Used for conventional configuration.
 		/// </summary>
-		void Scan(Action<IScanExpression> scan);
+		void Scan(Action<ScanExpression> scan);
 
 		/// <summary>
 		/// Used to setup default convention filters, lifetimes etc.
