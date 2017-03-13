@@ -11,7 +11,12 @@ namespace Maestro.Tests.Conventions
 		{
 			var ns = typeof(IFoobar1).Namespace;
 
-			var container = new Container(x => x.Scan.AssemblyContainingTypeOf(this).Matching(y => y.Namespace != null && y.Namespace.StartsWith(ns)).For.DefaultImplementations(z => z.Use()));
+			var container = new Container(x => x.Scan(_ =>
+			{
+				_.AssemblyContainingTypeOf(this);
+				_.Matching(y => y.Namespace?.StartsWith(ns) == true);
+				_.For.DefaultImplementations(z => z.Use());
+			}));
 
 			Should.NotThrow(() => container.GetService<IFoobar1>());
 			Should.NotThrow(() => container.GetService<IFoobar2>());
@@ -22,7 +27,11 @@ namespace Maestro.Tests.Conventions
 		[Fact]
 		public void should_support_instance_configuration()
 		{
-			var container = new Container(x => x.Scan.Types(new[] { typeof(IFoobar1), typeof(Foobar1) }).For.DefaultImplementations(z => z.Use().Lifetime.Singleton()));
+			var container = new Container(x => x.Scan(_ =>
+			{
+				_.Types(new[] { typeof(IFoobar1), typeof(Foobar1) });
+				_.For.DefaultImplementations(z => z.Use().Lifetime.Singleton());
+			}));
 
 			var instance1 = container.GetService<IFoobar1>();
 			var instance2 = container.GetService<IFoobar1>();

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Maestro.Conventions;
 using Shouldly;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.Conventions
@@ -17,7 +17,7 @@ namespace Maestro.Tests.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan.Types(types).With(convention));
+			container.Configure(x => x.Scan(_ => _.Types(types).With(convention)));
 
 			convention.ProcessedTypes.ShouldBe(types);
 		}
@@ -28,10 +28,7 @@ namespace Maestro.Tests.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan
-											  .Types(new[] { typeof(object), typeof(int) })
-											  .Matching(t => t.IsClass)
-											  .With(convention));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Matching(t => t.IsClass).With(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(object) });
 		}
@@ -42,10 +39,7 @@ namespace Maestro.Tests.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan
-											  .Types(new[] { typeof(object), typeof(int) })
-											  .Matching(new IsClassFilter())
-											  .With(convention));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Matching(new IsClassFilter()).With(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(object) });
 		}
@@ -56,11 +50,7 @@ namespace Maestro.Tests.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan
-											  .Types(new[] { typeof(object), typeof(int), typeof(string) })
-											  .Matching(t => t.IsClass)
-											  .Matching(t => t.Name.Contains("n"))
-											  .With(convention));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int), typeof(string) }).Matching(t => t.IsClass).Matching(t => t.Name.Contains("n")).With(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(string) });
 		}
