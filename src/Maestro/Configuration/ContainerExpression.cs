@@ -55,7 +55,7 @@ namespace Maestro.Configuration
 			return new ServiceExpression<T>(typeof(T), name, _kernel, _defaultSettings);
 		}
 
-		public void Scan(Action<IScanExpression> scan)
+		public void Scan(Action<ScanExpression> scan)
 		{
 			AssertNotDisposed();
 			scan(new ScanExpression(this, _defaultSettings));
