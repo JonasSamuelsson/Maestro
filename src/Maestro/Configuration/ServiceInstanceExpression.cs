@@ -27,28 +27,28 @@ namespace Maestro.Configuration
 			Kernel.Add(plugin, ThrowIfDuplicate);
 		}
 
-		public IFactoryInstanceExpression<object> Factory(Func<object> factory)
+		public IFactoryInstanceConfigurator<object> Factory(Func<object> factory)
 		{
 			return Factory(_ => factory());
 		}
 
-		public IFactoryInstanceExpression<object> Factory(Func<IContext, object> factory)
+		public IFactoryInstanceConfigurator<object> Factory(Func<IContext, object> factory)
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(factory));
 			return Kernel.Add(plugin, ThrowIfDuplicate)
-				? new FactoryInstanceExpression<object>(plugin)
+				? new FactoryInstanceConfigurator<object>(plugin)
 				: null;
 		}
 
-		public ITypeInstanceExpression<object> Type(Type type)
+		public ITypeInstanceConfigurator<object> Type(Type type)
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type, Name));
 			return Kernel.Add(plugin, ThrowIfDuplicate)
-				? new TypeInstanceExpression<object>(plugin)
+				? new TypeInstanceConfigurator<object>(plugin)
 				: null;
 		}
 
-		public ITypeInstanceExpression<object> Self()
+		public ITypeInstanceConfigurator<object> Self()
 		{
 			return Type(ServiceType);
 		}
@@ -70,28 +70,28 @@ namespace Maestro.Configuration
 			Kernel.Add(plugin, ThrowIfDuplicate);
 		}
 
-		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : TService
+		public IFactoryInstanceConfigurator<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : TService
 		{
 			return Factory(_ => factory());
 		}
 
-		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<IContext, TInstance> factory) where TInstance : TService
+		public IFactoryInstanceConfigurator<TInstance> Factory<TInstance>(Func<IContext, TInstance> factory) where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(ctx => factory(ctx)));
 			return Kernel.Add(plugin, ThrowIfDuplicate)
-				? new FactoryInstanceExpression<TInstance>(plugin)
+				? new FactoryInstanceConfigurator<TInstance>(plugin)
 				: null;
 		}
 
-		public ITypeInstanceExpression<TInstance> Type<TInstance>() where TInstance : TService
+		public ITypeInstanceConfigurator<TInstance> Type<TInstance>() where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance), Name));
 			return Kernel.Add(plugin, ThrowIfDuplicate)
-				? new TypeInstanceExpression<TInstance>(plugin)
+				? new TypeInstanceConfigurator<TInstance>(plugin)
 				: null;
 		}
 
-		ITypeInstanceExpression<TService> IServiceInstanceExpression<TService>.Self()
+		ITypeInstanceConfigurator<TService> IServiceInstanceExpression<TService>.Self()
 		{
 			return Type<TService>();
 		}
