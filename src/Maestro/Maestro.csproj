@@ -62,7 +62,7 @@
     <Compile Include="Configuration\ConventionSelector.cs" />
     <Compile Include="Configuration\FactoryInstanceConfigurator.cs" />
     <Compile Include="Configuration\IAddServiceConfigurator.cs" />
-    <Compile Include="Configuration\TypeInstanceRegistrationExpression.cs" />
+    <Compile Include="Configuration\ConventionalTypeInstanceRegistrator.cs" />
     <Compile Include="Configuration\IFactoryInstanceConfigurator.cs" />
     <Compile Include="Configuration\INamedServiceConfigurator.cs" />
     <Compile Include="Configuration\InstanceConfigurator.cs" />

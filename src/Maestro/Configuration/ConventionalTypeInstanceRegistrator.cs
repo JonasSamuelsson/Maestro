@@ -2,13 +2,13 @@
 
 namespace Maestro.Configuration
 {
-	public class TypeInstanceRegistrationExpression<T>
+	public class ConventionalTypeInstanceRegistrator<T>
 	{
 		private readonly ContainerConfigurator _containerConfigurator;
 		private readonly Type _serviceType;
 		private readonly Type _instanceType;
 
-		public TypeInstanceRegistrationExpression(ContainerConfigurator containerConfigurator, Type serviceType, Type instanceType)
+		public ConventionalTypeInstanceRegistrator(ContainerConfigurator containerConfigurator, Type serviceType, Type instanceType)
 		{
 			_containerConfigurator = containerConfigurator;
 			_serviceType = serviceType;

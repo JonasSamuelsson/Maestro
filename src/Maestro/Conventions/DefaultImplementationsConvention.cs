@@ -7,9 +7,9 @@ namespace Maestro.Conventions
 {
 	internal class DefaultImplementationsConvention : IConvention
 	{
-		private readonly Action<TypeInstanceRegistrationExpression<object>> _serviceRegistration;
+		private readonly Action<ConventionalTypeInstanceRegistrator<object>> _serviceRegistration;
 
-		public DefaultImplementationsConvention(Action<TypeInstanceRegistrationExpression<object>> serviceRegistration)
+		public DefaultImplementationsConvention(Action<ConventionalTypeInstanceRegistrator<object>> serviceRegistration)
 		{
 			_serviceRegistration = serviceRegistration;
 		}
@@ -27,7 +27,7 @@ namespace Maestro.Conventions
 				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
 				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
 				if (@class == null) continue;
-				_serviceRegistration(new TypeInstanceRegistrationExpression<object>(containerConfigurator, @interface, @class));
+				_serviceRegistration(new ConventionalTypeInstanceRegistrator<object>(containerConfigurator, @interface, @class));
 			}
 		}
 	}

@@ -8,9 +8,9 @@ namespace Maestro.Conventions
 	internal class ConcreteSubClassesConvention<T> : IConvention
 	{
 		private readonly Type _baseType;
-		private readonly Action<TypeInstanceRegistrationExpression<T>> _serviceRegistration;
+		private readonly Action<ConventionalTypeInstanceRegistrator<T>> _serviceRegistration;
 
-		public ConcreteSubClassesConvention(Type baseType, Action<TypeInstanceRegistrationExpression<T>> serviceRegistration)
+		public ConcreteSubClassesConvention(Type baseType, Action<ConventionalTypeInstanceRegistrator<T>> serviceRegistration)
 		{
 			_baseType = baseType;
 			_serviceRegistration = serviceRegistration;
@@ -20,7 +20,7 @@ namespace Maestro.Conventions
 		{
 			foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
 			{
-				_serviceRegistration(new TypeInstanceRegistrationExpression<T>(containerConfigurator, _baseType, type));
+				_serviceRegistration(new ConventionalTypeInstanceRegistrator<T>(containerConfigurator, _baseType, type));
 			}
 		}
 	}
