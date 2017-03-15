@@ -6,13 +6,13 @@ using Maestro.Conventions;
 
 namespace Maestro.Configuration
 {
-	public class ScanExpression
+	public class Scanner
 	{
 		private readonly ContainerConfigurator _containerConfigurator;
 		private readonly List<Type> _types;
 		private readonly List<IFilter> _filters;
 
-		internal ScanExpression(ContainerConfigurator containerConfigurator, DefaultSettings defaultSettings)
+		internal Scanner(ContainerConfigurator containerConfigurator, DefaultSettings defaultSettings)
 		{
 			_containerConfigurator = containerConfigurator;
 			_types = new List<Type>();
@@ -29,7 +29,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="assemblies"></param>
 		/// <returns></returns>
-		public ScanExpression Assemblies(IEnumerable<Assembly> assemblies)
+		public Scanner Assemblies(IEnumerable<Assembly> assemblies)
 		{
 			return Types(assemblies.SelectMany(x => x.GetTypes()));
 		}
@@ -39,7 +39,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="assembly"></param>
 		/// <returns></returns>
-		public ScanExpression Assembly(Assembly assembly)
+		public Scanner Assembly(Assembly assembly)
 		{
 			return Assemblies(new[] { assembly });
 		}
@@ -49,7 +49,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public ScanExpression AssemblyContaining<T>()
+		public Scanner AssemblyContaining<T>()
 		{
 			return AssemblyContaining(typeof(T));
 		}
@@ -59,7 +59,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public ScanExpression AssemblyContaining(Type type)
+		public Scanner AssemblyContaining(Type type)
 		{
 			return Assembly(type.Assembly);
 		}
@@ -69,7 +69,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="o"></param>
 		/// <returns></returns>
-		public ScanExpression AssemblyContainingTypeOf(object o)
+		public Scanner AssemblyContainingTypeOf(object o)
 		{
 			return AssemblyContaining(o.GetType());
 		}
@@ -79,7 +79,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="types"></param>
 		/// <returns></returns>
-		public ScanExpression Types(IEnumerable<Type> types)
+		public Scanner Types(IEnumerable<Type> types)
 		{
 			_types.AddRange(types);
 			return this;
@@ -90,7 +90,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public ScanExpression Matching(Func<Type, bool> predicate)
+		public Scanner Matching(Func<Type, bool> predicate)
 		{
 			return Matching(new LambdaFilter(predicate));
 		}
@@ -100,7 +100,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="filter"></param>
 		/// <returns></returns>
-		public ScanExpression Matching(IFilter filter)
+		public Scanner Matching(IFilter filter)
 		{
 			_filters.Add(filter);
 			return this;
@@ -110,7 +110,7 @@ namespace Maestro.Configuration
 		/// Uses <paramref name="convention"/> to configure the container.
 		/// </summary>
 		/// <param name="convention"></param>
-		public ScanExpression With(IConvention convention)
+		public Scanner With(IConvention convention)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
 			convention.Process(types, _containerConfigurator);

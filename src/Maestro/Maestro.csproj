@@ -117,7 +117,7 @@
     <Compile Include="Conventions\LambdaFilter.cs" />
     <Compile Include="Configuration\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />
-    <Compile Include="Configuration\ScanExpression.cs" />
+    <Compile Include="Configuration\Scanner.cs" />
     <Compile Include="Configuration\IDefaultFilterExpression.cs" />
     <Compile Include="Configuration\IDefaultSettingsExpression.cs" />
     <Compile Include="Configuration\IInstanceConfigurator.cs" />

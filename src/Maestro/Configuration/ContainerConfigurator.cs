@@ -55,10 +55,10 @@ namespace Maestro.Configuration
 			return new ServiceConfigurator<T>(typeof(T), name, _kernel, _defaultSettings);
 		}
 
-		public void Scan(Action<ScanExpression> scan)
+		public void Scan(Action<Scanner> scan)
 		{
 			AssertNotDisposed();
-			scan(new ScanExpression(this, _defaultSettings));
+			scan(new Scanner(this, _defaultSettings));
 		}
 
 		private void AssertNotDisposed()
