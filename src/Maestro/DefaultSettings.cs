@@ -10,9 +10,9 @@ namespace Maestro
 		private Func<ILifetime> _lifetimeFactory = () => TransientLifetime.Instance;
 		private readonly IList<IFilter> _filters = new List<IFilter>();
 
-		ILifetimeExpression<IDefaultSettingsExpression> IDefaultSettingsExpression.Lifetime
+		LifetimeSelector<IDefaultSettingsExpression> IDefaultSettingsExpression.Lifetime
 		{
-			get { return new DefaultLifetimeExpression<IDefaultSettingsExpression>(this, x => _lifetimeFactory = x); }
+			get { return new LifetimeSelector<IDefaultSettingsExpression>(this, lifetimeFactory => _lifetimeFactory = lifetimeFactory); }
 		}
 
 		IDefaultFilterExpression IDefaultSettingsExpression.Filters

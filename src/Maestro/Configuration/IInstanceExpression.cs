@@ -6,7 +6,7 @@ namespace Maestro.Configuration
 {
 	public interface IInstanceExpression<TInstance, TParent>
 	{
-		ILifetimeExpression<TParent> Lifetime { get; }
+		LifetimeSelector<TParent> Lifetime { get; }
 
 		/// <summary>
 		/// Adds an action to execute against the instance.
