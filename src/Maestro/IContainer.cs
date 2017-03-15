@@ -10,10 +10,10 @@ namespace Maestro
 		/// Adds configuration to the container.
 		/// </summary>
 		/// <param name="action"></param>
-		void Configure(Action<IContainerExpression> action);
+		void Configure(Action<ContainerConfigurator> action);
 
 		IContainer GetChildContainer();
-		IContainer GetChildContainer(Action<IContainerExpression> action);
+		IContainer GetChildContainer(Action<ContainerConfigurator> action);
 
 		/// <summary>
 		/// Gets an instance of type <paramref name="type"/> named <paramref name="name"/>.

@@ -8,13 +8,13 @@ namespace Maestro.Configuration
 {
 	public class ScanExpression
 	{
-		private readonly IContainerExpression _containerExpression;
+		private readonly ContainerConfigurator _containerConfigurator;
 		private readonly List<Type> _types;
 		private readonly List<IFilter> _filters;
 
-		internal ScanExpression(IContainerExpression containerExpression, DefaultSettings defaultSettings)
+		internal ScanExpression(ContainerConfigurator containerConfigurator, DefaultSettings defaultSettings)
 		{
-			_containerExpression = containerExpression;
+			_containerConfigurator = containerConfigurator;
 			_types = new List<Type>();
 			_filters = new List<IFilter>(defaultSettings.GetFilters());
 		}
@@ -113,7 +113,7 @@ namespace Maestro.Configuration
 		public ScanExpression With(IConvention convention)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
-			convention.Process(types, _containerExpression);
+			convention.Process(types, _containerConfigurator);
 			return this;
 		}
 	}

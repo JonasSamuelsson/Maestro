@@ -4,13 +4,13 @@ namespace Maestro.Configuration
 {
 	public class TypeInstanceRegistrationExpression<T>
 	{
-		private readonly IContainerExpression _containerExpression;
+		private readonly ContainerConfigurator _containerConfigurator;
 		private readonly Type _serviceType;
 		private readonly Type _instanceType;
 
-		public TypeInstanceRegistrationExpression(IContainerExpression containerExpression, Type serviceType, Type instanceType)
+		public TypeInstanceRegistrationExpression(ContainerConfigurator containerConfigurator, Type serviceType, Type instanceType)
 		{
-			_containerExpression = containerExpression;
+			_containerConfigurator = containerConfigurator;
 			_serviceType = serviceType;
 			_instanceType = instanceType;
 		}
@@ -18,20 +18,20 @@ namespace Maestro.Configuration
 		public ITypeInstanceExpression<T> Use(string name = null)
 		{
 			return name == null
-				? _containerExpression.For(_serviceType).Use.Type(_instanceType).As<T>()
-				: _containerExpression.For(_serviceType, name).Use.Type(_instanceType).As<T>();
+				? _containerConfigurator.For(_serviceType).Use.Type(_instanceType).As<T>()
+				: _containerConfigurator.For(_serviceType, name).Use.Type(_instanceType).As<T>();
 		}
 
 		public ITypeInstanceExpression<T> TryUse(string name = null)
 		{
 			return name == null
-				? _containerExpression.For(_serviceType).TryUse.Type(_instanceType).As<T>()
-				: _containerExpression.For(_serviceType, name).TryUse.Type(_instanceType).As<T>();
+				? _containerConfigurator.For(_serviceType).TryUse.Type(_instanceType).As<T>()
+				: _containerConfigurator.For(_serviceType, name).TryUse.Type(_instanceType).As<T>();
 		}
 
 		public ITypeInstanceExpression<T> Add()
 		{
-			return _containerExpression.For(_serviceType).Add.Type(_instanceType).As<T>();
+			return _containerConfigurator.For(_serviceType).Add.Type(_instanceType).As<T>();
 		}
 	}
 }

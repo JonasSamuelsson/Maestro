@@ -4,13 +4,13 @@ using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	internal class ContainerExpression : IContainerExpression, IDisposable
+	public class ContainerConfigurator : IDisposable
 	{
 		private bool _disposed = false;
 		private readonly Kernel _kernel;
 		private readonly DefaultSettings _defaultSettings;
 
-		public ContainerExpression(Kernel kernel, DefaultSettings defaultSettings)
+		internal ContainerConfigurator(Kernel kernel, DefaultSettings defaultSettings)
 		{
 			_kernel = kernel;
 			_defaultSettings = defaultSettings;
@@ -64,7 +64,7 @@ namespace Maestro.Configuration
 		private void AssertNotDisposed()
 		{
 			if (_disposed == false) return;
-			throw new ObjectDisposedException(nameof(IContainerExpression));
+			throw new ObjectDisposedException(nameof(ContainerConfigurator));
 		}
 
 		public void Dispose()
