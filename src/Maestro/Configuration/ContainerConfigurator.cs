@@ -16,12 +16,12 @@ namespace Maestro.Configuration
 			_defaultSettings = defaultSettings;
 		}
 
-		public IDefaultSettingsExpression Default
+		public DefaultsConfigurator Defaults
 		{
 			get
 			{
 				AssertNotDisposed();
-				return _defaultSettings;
+				return new DefaultsConfigurator(_defaultSettings);
 			}
 		}
 

@@ -60,7 +60,7 @@ namespace Maestro.Configuration
 				Name = name,
 				Type = ServiceType,
 				FactoryProvider = factoryProvider,
-				Lifetime = DefaultSettings.GetLifetime()
+				Lifetime = DefaultSettings.LifetimeFactory()
 			};
 		}
 
