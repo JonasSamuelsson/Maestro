@@ -18,34 +18,34 @@ namespace Maestro.Configuration
 		internal Kernel Kernel { get; }
 		internal DefaultSettings DefaultSettings { get; set; }
 
-		IServiceInstanceExpression IUseServiceConfigurator.Use
+		IInstanceKindSelector IUseServiceConfigurator.Use
 		{
-			get { return new ServiceInstanceExpression<object>(Type, Name, Kernel, DefaultSettings, true); }
+			get { return new InstanceKindSelector<object>(Type, Name, Kernel, DefaultSettings, true); }
 		}
 
-		IServiceInstanceExpression ITryUseServiceConfigurator.TryUse
+		IInstanceKindSelector ITryUseServiceConfigurator.TryUse
 		{
-			get { return new ServiceInstanceExpression<object>(Type, Name, Kernel, DefaultSettings, false); }
+			get { return new InstanceKindSelector<object>(Type, Name, Kernel, DefaultSettings, false); }
 		}
 
-		IServiceInstanceExpression IAddServiceConfigurator.Add
+		IInstanceKindSelector IAddServiceConfigurator.Add
 		{
-			get { return new ServiceInstanceExpression<object>(Type, ServiceNames.Anonymous, Kernel, DefaultSettings, true); }
+			get { return new InstanceKindSelector<object>(Type, ServiceNames.Anonymous, Kernel, DefaultSettings, true); }
 		}
 
-		IServiceInstanceExpression<TService> IUseServiceConfigurator<TService>.Use
+		IInstanceKindSelector<TService> IUseServiceConfigurator<TService>.Use
 		{
-			get { return new ServiceInstanceExpression<TService>(Type, Name, Kernel, DefaultSettings, true); }
+			get { return new InstanceKindSelector<TService>(Type, Name, Kernel, DefaultSettings, true); }
 		}
 
-		IServiceInstanceExpression<TService> ITryUseServiceConfigurator<TService>.TryUse
+		IInstanceKindSelector<TService> ITryUseServiceConfigurator<TService>.TryUse
 		{
-			get { return new ServiceInstanceExpression<TService>(Type, Name, Kernel, DefaultSettings, false); }
+			get { return new InstanceKindSelector<TService>(Type, Name, Kernel, DefaultSettings, false); }
 		}
 
-		IServiceInstanceExpression<TService> IAddServiceConfigurator<TService>.Add
+		IInstanceKindSelector<TService> IAddServiceConfigurator<TService>.Add
 		{
-			get { return new ServiceInstanceExpression<TService>(Type, ServiceNames.Anonymous, Kernel, DefaultSettings, true); }
+			get { return new InstanceKindSelector<TService>(Type, ServiceNames.Anonymous, Kernel, DefaultSettings, true); }
 		}
 	}
 }

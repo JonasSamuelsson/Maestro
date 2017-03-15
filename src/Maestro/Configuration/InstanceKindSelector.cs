@@ -4,9 +4,9 @@ using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	internal class ServiceInstanceExpression<TService> : IServiceInstanceExpression, IServiceInstanceExpression<TService>
+	internal class InstanceKindSelector<TService> : IInstanceKindSelector, IInstanceKindSelector<TService>
 	{
-		public ServiceInstanceExpression(Type serviceType, string name, Kernel kernel, DefaultSettings defaultSettings, bool throwIfDuplicate)
+		public InstanceKindSelector(Type serviceType, string name, Kernel kernel, DefaultSettings defaultSettings, bool throwIfDuplicate)
 		{
 			ServiceType = serviceType;
 			Name = name;
@@ -91,7 +91,7 @@ namespace Maestro.Configuration
 				: null;
 		}
 
-		ITypeInstanceConfigurator<TService> IServiceInstanceExpression<TService>.Self()
+		ITypeInstanceConfigurator<TService> IInstanceKindSelector<TService>.Self()
 		{
 			return Type<TService>();
 		}

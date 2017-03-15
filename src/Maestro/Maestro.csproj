@@ -67,12 +67,12 @@
     <Compile Include="Configuration\INamedServiceConfigurator.cs" />
     <Compile Include="Configuration\InstanceConfigurator.cs" />
     <Compile Include="Configuration\IServiceConfigurator.cs" />
-    <Compile Include="Configuration\IServiceInstanceExpression.cs" />
+    <Compile Include="Configuration\IInstanceKindSelector.cs" />
     <Compile Include="Configuration\ITryUseServiceConfigurator.cs" />
     <Compile Include="Configuration\ITypeInstanceConfigurator.cs" />
     <Compile Include="Configuration\IUseServiceConfigurator.cs" />
     <Compile Include="Configuration\ServiceConfigurator.cs" />
-    <Compile Include="Configuration\ServiceInstanceExpression.cs" />
+    <Compile Include="Configuration\InstanceKindSelector.cs" />
     <Compile Include="Configuration\TypeInstanceConfigurator.cs" />
     <Compile Include="ConstructorInvokation.cs" />
     <Compile Include="Diagnostics\Service.cs" />

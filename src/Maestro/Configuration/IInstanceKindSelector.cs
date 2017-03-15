@@ -2,7 +2,7 @@
 
 namespace Maestro.Configuration
 {
-	public interface IServiceInstanceExpression
+	public interface IInstanceKindSelector
 	{
 		void Instance(object instance);
 		IFactoryInstanceConfigurator<object> Factory(Func<object> factory);
@@ -11,7 +11,7 @@ namespace Maestro.Configuration
 		ITypeInstanceConfigurator<object> Self();
 	}
 
-	public interface IServiceInstanceExpression<T>
+	public interface IInstanceKindSelector<T>
 	{
 		void Instance<TInstance>(TInstance instance) where TInstance : T;
 		IFactoryInstanceConfigurator<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : T;

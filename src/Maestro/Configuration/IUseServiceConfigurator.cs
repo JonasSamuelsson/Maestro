@@ -2,11 +2,11 @@
 {
 	public interface IUseServiceConfigurator
 	{
-		IServiceInstanceExpression Use { get; }
+		IInstanceKindSelector Use { get; }
 	}
 
 	public interface IUseServiceConfigurator<T>
 	{
-		IServiceInstanceExpression<T> Use { get; }
+		IInstanceKindSelector<T> Use { get; }
 	}
 }

@@ -2,11 +2,11 @@
 {
 	public interface ITryUseServiceConfigurator
 	{
-		IServiceInstanceExpression TryUse { get; }
+		IInstanceKindSelector TryUse { get; }
 	}
 
 	public interface ITryUseServiceConfigurator<T>
 	{
-		IServiceInstanceExpression<T> TryUse { get; }
+		IInstanceKindSelector<T> TryUse { get; }
 	}
 }
