@@ -16,11 +16,11 @@ namespace Maestro.Conventions
 			_serviceRegistration = serviceRegistration;
 		}
 
-		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
+		public void Process(IEnumerable<Type> types, ContainerConfigurator containerConfigurator)
 		{
 			foreach (var type in types.Where(x => x.IsConcreteSubClassOf(_baseType)))
 			{
-				_serviceRegistration(new TypeInstanceRegistrationExpression<T>(containerExpression, _baseType, type));
+				_serviceRegistration(new TypeInstanceRegistrationExpression<T>(containerConfigurator, _baseType, type));
 			}
 		}
 	}

@@ -113,7 +113,7 @@
     <Compile Include="Conventions\ConcreteClassesClosingConvention.cs" />
     <Compile Include="Conventions\ConcreteSubClassesConvention.cs" />
     <Compile Include="Container.cs" />
-    <Compile Include="Configuration\ContainerExpression.cs" />
+    <Compile Include="Configuration\ContainerConfigurator.cs" />
     <Compile Include="Conventions\DefaultImplementationsConvention.cs" />
     <Compile Include="Conventions\LambdaFilter.cs" />
     <Compile Include="Configuration\DefaultFilterExpression.cs" />
@@ -132,7 +132,6 @@
     <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
     <Compile Include="Lifetimes\ILifetime.cs" />
     <Compile Include="IContainer.cs" />
-    <Compile Include="Configuration\IContainerExpression.cs" />
     <Compile Include="Lifetimes\ScopedLifetime.cs" />
     <Compile Include="Lifetimes\SingletonLifetime.cs" />
     <Compile Include="Lifetimes\TransientLifetime.cs" />
