@@ -22,9 +22,9 @@ namespace Maestro.Configuration
 
 		internal abstract TParent Parent { get; }
 
-		public ILifetimeExpression<TParent> Lifetime
+		public LifetimeSelector<TParent> Lifetime
 		{
-			get { return new LifetimeExpression<TParent>(Parent, lifetime => ServiceDescriptor.Lifetime = lifetime); }
+			get { return new LifetimeSelector<TParent>(Parent, factory => ServiceDescriptor.Lifetime = factory()); }
 		}
 
 		public TParent Intercept(Action<TInstance> interceptor)

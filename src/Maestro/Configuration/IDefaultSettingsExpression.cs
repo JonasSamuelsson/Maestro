@@ -5,7 +5,7 @@
 		/// <summary>
 		/// Uses to configure the default lifetime to use if one isn't explicitly defined.
 		/// </summary>
-		ILifetimeExpression<IDefaultSettingsExpression> Lifetime { get; }
+		LifetimeSelector<IDefaultSettingsExpression> Lifetime { get; }
 
 		/// <summary>
 		/// Used to configure global filters.

@@ -75,7 +75,6 @@
     <Compile Include="Configuration\ServiceInstanceExpression.cs" />
     <Compile Include="Configuration\TypeInstanceExpression.cs" />
     <Compile Include="ConstructorInvokation.cs" />
-    <Compile Include="DefaultLifetimeExpression.cs" />
     <Compile Include="Diagnostics\Service.cs" />
     <Compile Include="Diagnostics\Configuration.cs" />
     <Compile Include="EnumerableExtensions.cs" />
@@ -121,9 +120,8 @@
     <Compile Include="Configuration\ScanExpression.cs" />
     <Compile Include="Configuration\IDefaultFilterExpression.cs" />
     <Compile Include="Configuration\IDefaultSettingsExpression.cs" />
-    <Compile Include="Configuration\ILifetimeExpression.cs" />
     <Compile Include="Configuration\IInstanceExpression.cs" />
-    <Compile Include="Configuration\LifetimeExpression.cs" />
+    <Compile Include="Configuration\LifetimeSelector.cs" />
     <Compile Include="IFilter.cs" />
     <Compile Include="Conventions\IConvention.cs" />
     <Compile Include="Interceptors\ActionInterceptor.cs" />

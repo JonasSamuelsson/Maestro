@@ -52,7 +52,7 @@ namespace Maestro.Microsoft.DependencyInjection
 				 .Use.Instance(descriptor.ImplementationInstance);
 		}
 
-		private static void Use<T>(this ILifetimeExpression<T> expression, ServiceLifetime descriptorLifetime)
+		private static void Use<T>(this LifetimeSelector<T> expression, ServiceLifetime descriptorLifetime)
 		{
 			switch (descriptorLifetime)
 			{

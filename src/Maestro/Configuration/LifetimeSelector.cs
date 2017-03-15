@@ -3,12 +3,12 @@ using Maestro.Lifetimes;
 
 namespace Maestro.Configuration
 {
-	internal class LifetimeExpression<TParent> : ILifetimeExpression<TParent>
+	public class LifetimeSelector<TParent>
 	{
 		private readonly TParent _parent;
-		private readonly Action<ILifetime> _action;
+		private readonly Action<Func<ILifetime>> _action;
 
-		public LifetimeExpression(TParent parent, Action<ILifetime> action)
+		internal LifetimeSelector(TParent parent, Action<Func<ILifetime>> action)
 		{
 			_parent = parent;
 			_action = action;
@@ -36,7 +36,7 @@ namespace Maestro.Configuration
 
 		public TParent Use(ILifetime lifetime)
 		{
-			_action(lifetime);
+			_action(() => lifetime);
 			return _parent;
 		}
 	}
