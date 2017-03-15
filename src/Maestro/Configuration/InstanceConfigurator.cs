@@ -5,22 +5,15 @@ using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	internal abstract class InstanceExpression
+	internal abstract class InstanceConfigurator<TInstance, TParent> : IInstanceConfigurator<TInstance, TParent>
 	{
-		protected InstanceExpression(ServiceDescriptor serviceDescriptor)
+		protected InstanceConfigurator(ServiceDescriptor serviceDescriptor)
 		{
 			ServiceDescriptor = serviceDescriptor;
 		}
 
-		internal ServiceDescriptor ServiceDescriptor { get; }
-	}
-	internal abstract class InstanceExpression<TInstance, TParent> : InstanceExpression, IInstanceExpression<TInstance, TParent>
-	{
-		protected InstanceExpression(ServiceDescriptor serviceDescriptor) : base(serviceDescriptor)
-		{
-		}
-
 		internal abstract TParent Parent { get; }
+		internal ServiceDescriptor ServiceDescriptor { get; }
 
 		public LifetimeSelector<TParent> Lifetime
 		{

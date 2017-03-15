@@ -10,13 +10,13 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <typeparam name="TInstance"></typeparam>
 		/// <typeparam name="TOut"></typeparam>
-		/// <param name="factoryInstanceExpression"></param>
+		/// <param name="factoryInstanceConfigurator"></param>
 		/// <param name="proxyFactory"></param>
 		/// <returns></returns>
-		public static IFactoryInstanceExpression<TOut> Proxy<TInstance, TOut>(this IFactoryInstanceExpression<TInstance> factoryInstanceExpression,
+		public static IFactoryInstanceConfigurator<TOut> Proxy<TInstance, TOut>(this IFactoryInstanceConfigurator<TInstance> factoryInstanceConfigurator,
 			Func<TInstance, ProxyGenerator, TOut> proxyFactory)
 		{
-			return factoryInstanceExpression
+			return factoryInstanceConfigurator
 				.Intercept(new ProxyInterceptor<TInstance, TOut>((instance, context, proxyGenerator) => proxyFactory(instance, proxyGenerator)))
 				.As<TOut>();
 		}
@@ -26,13 +26,13 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <typeparam name="TInstance"></typeparam>
 		/// <typeparam name="TOut"></typeparam>
-		/// <param name="factoryInstanceExpression"></param>
+		/// <param name="factoryInstanceConfigurator"></param>
 		/// <param name="proxyFactory"></param>
 		/// <returns></returns>
-		public static IFactoryInstanceExpression<TOut> Proxy<TInstance, TOut>(this IFactoryInstanceExpression<TInstance> factoryInstanceExpression,
+		public static IFactoryInstanceConfigurator<TOut> Proxy<TInstance, TOut>(this IFactoryInstanceConfigurator<TInstance> factoryInstanceConfigurator,
 			Func<TInstance, IContext, ProxyGenerator, TOut> proxyFactory)
 		{
-			return factoryInstanceExpression
+			return factoryInstanceConfigurator
 				.Intercept(new ProxyInterceptor<TInstance, TOut>(proxyFactory))
 				.As<TOut>();
 		}
