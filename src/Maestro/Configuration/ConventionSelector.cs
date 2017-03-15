@@ -5,31 +5,31 @@ namespace Maestro.Configuration
 {
 	public class ConventionSelector
 	{
-		private readonly ScanExpression _scanExpression;
+		private readonly Scanner _scanner;
 
-		internal ConventionSelector(ScanExpression scanExpression)
+		internal ConventionSelector(Scanner scanner)
 		{
-			_scanExpression = scanExpression;
+			_scanner = scanner;
 		}
 
-		public ScanExpression ConcreteSubClassesOf<T>(Action<TypeInstanceRegistrationExpression<T>> serviceRegistration)
+		public Scanner ConcreteSubClassesOf<T>(Action<TypeInstanceRegistrationExpression<T>> serviceRegistration)
 		{
-			return _scanExpression.With(new ConcreteSubClassesConvention<T>(typeof(T), serviceRegistration));
+			return _scanner.With(new ConcreteSubClassesConvention<T>(typeof(T), serviceRegistration));
 		}
 
-		public ScanExpression ConcreteSubClassesOf(Type type, Action<TypeInstanceRegistrationExpression<object>> serviceRegistration)
+		public Scanner ConcreteSubClassesOf(Type type, Action<TypeInstanceRegistrationExpression<object>> serviceRegistration)
 		{
-			return _scanExpression.With(new ConcreteSubClassesConvention<object>(type, serviceRegistration));
+			return _scanner.With(new ConcreteSubClassesConvention<object>(type, serviceRegistration));
 		}
 
-		public ScanExpression ConcreteClassesClosing(Type genericTypeDefinition, Action<TypeInstanceRegistrationExpression<object>> serviceRegistration)
+		public Scanner ConcreteClassesClosing(Type genericTypeDefinition, Action<TypeInstanceRegistrationExpression<object>> serviceRegistration)
 		{
-			return _scanExpression.With(new ConcreteClassesClosingConvention(genericTypeDefinition, serviceRegistration));
+			return _scanner.With(new ConcreteClassesClosingConvention(genericTypeDefinition, serviceRegistration));
 		}
 
-		public ScanExpression DefaultImplementations(Action<TypeInstanceRegistrationExpression<object>> serviceRegistration)
+		public Scanner DefaultImplementations(Action<TypeInstanceRegistrationExpression<object>> serviceRegistration)
 		{
-			return _scanExpression.With(new DefaultImplementationsConvention(serviceRegistration));
+			return _scanner.With(new DefaultImplementationsConvention(serviceRegistration));
 		}
 	}
 }
