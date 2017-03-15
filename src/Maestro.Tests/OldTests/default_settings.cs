@@ -11,19 +11,6 @@ namespace Maestro.Tests
 	public class default_settings
 	{
 		[Fact]
-		public void configured_filter_should_be_used_in_conventional_registrations()
-		{
-			var types = new[] { typeof(object), typeof(int) };
-			var convention = new Convention();
-			new Container(x =>
-							  {
-								  x.Default.Filters.Add(t => !t.Name.Contains("n"));
-								  x.Scan(_ => _.Types(types).With(convention));
-							  });
-			convention.Types.ShouldBe(new[] { typeof(object) });
-		}
-
-		[Fact]
 		public void default_lifetime_should_be_transient()
 		{
 			var container = new Container(x => x.For<object>().Use.Self());
@@ -39,10 +26,10 @@ namespace Maestro.Tests
 		{
 			var container = new Container(x =>
 			{
-				x.Default.Lifetime.Transient();
+				x.Defaults.Lifetime.Transient();
 				x.For<object>("transient").Use.Self();
 
-				x.Default.Lifetime.Singleton();
+				x.Defaults.Lifetime.Singleton();
 				x.For<object>("singleton").Use.Self();
 			});
 

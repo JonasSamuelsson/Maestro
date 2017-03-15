@@ -113,8 +113,7 @@ namespace Maestro.Configuration
 
 		internal void Execute(ContainerConfigurator containerConfigurator, DefaultSettings defaultSettings)
 		{
-			var filters = _filters.Concat(defaultSettings.GetFilters()).ToList();
-			var types = _types.Distinct().Where(t => filters.All(f => f.IsMatch(t))).ToList();
+			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t))).ToList();
 			_conventions.ForEach(c => c.Process(types, containerConfigurator));
 		}
 	}

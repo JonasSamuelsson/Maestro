@@ -13,7 +13,7 @@ namespace Maestro.Tests
 			ContainerConfigurator containerConfigurator = null;
 			new Container().Configure(x => containerConfigurator = x);
 
-			Should.Throw<ObjectDisposedException>(() => { var @default = containerConfigurator.Default; });
+			Should.Throw<ObjectDisposedException>(() => { var @default = containerConfigurator.Defaults; });
 
 			Should.Throw<ObjectDisposedException>(() => containerConfigurator.For(typeof(object)));
 			Should.Throw<ObjectDisposedException>(() => containerConfigurator.For(typeof(object), string.Empty));

@@ -71,6 +71,7 @@
     <Compile Include="Configuration\ITryUseServiceConfigurator.cs" />
     <Compile Include="Configuration\ITypeInstanceConfigurator.cs" />
     <Compile Include="Configuration\IUseServiceConfigurator.cs" />
+    <Compile Include="Configuration\LifetimeSelector.cs" />
     <Compile Include="Configuration\ServiceConfigurator.cs" />
     <Compile Include="Configuration\InstanceKindSelector.cs" />
     <Compile Include="Configuration\TypeInstanceConfigurator.cs" />
@@ -115,13 +116,11 @@
     <Compile Include="Configuration\ContainerConfigurator.cs" />
     <Compile Include="Conventions\DefaultImplementationsConvention.cs" />
     <Compile Include="Conventions\LambdaFilter.cs" />
-    <Compile Include="Configuration\DefaultFilterExpression.cs" />
     <Compile Include="DefaultSettings.cs" />
     <Compile Include="Configuration\Scanner.cs" />
-    <Compile Include="Configuration\IDefaultFilterExpression.cs" />
-    <Compile Include="Configuration\IDefaultSettingsExpression.cs" />
+    <Compile Include="Configuration\DefaultsConfigurator.cs" />
     <Compile Include="Configuration\IInstanceConfigurator.cs" />
-    <Compile Include="Configuration\LifetimeSelector.cs" />
+    <Compile Include="Configuration\DefaultLifetimeSelector.cs" />
     <Compile Include="IFilter.cs" />
     <Compile Include="Conventions\IConvention.cs" />
     <Compile Include="Interceptors\ActionInterceptor.cs" />
