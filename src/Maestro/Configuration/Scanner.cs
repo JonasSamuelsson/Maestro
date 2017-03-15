@@ -8,16 +8,11 @@ namespace Maestro.Configuration
 {
 	public class Scanner
 	{
-		private readonly ContainerConfigurator _containerConfigurator;
-		private readonly List<Type> _types;
-		private readonly List<IFilter> _filters;
+		private readonly List<IConvention> _conventions = new List<IConvention>();
+		private readonly List<IFilter> _filters = new List<IFilter>();
+		private readonly List<Type> _types = new List<Type>();
 
-		internal Scanner(ContainerConfigurator containerConfigurator, DefaultSettings defaultSettings)
-		{
-			_containerConfigurator = containerConfigurator;
-			_types = new List<Type>();
-			_filters = new List<IFilter>(defaultSettings.GetFilters());
-		}
+		internal Scanner() { }
 
 		/// <summary>
 		/// Starting point for using out of box conventions.
@@ -112,9 +107,15 @@ namespace Maestro.Configuration
 		/// <param name="convention"></param>
 		public Scanner With(IConvention convention)
 		{
-			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t)));
-			convention.Process(types, _containerConfigurator);
+			_conventions.Add(convention);
 			return this;
+		}
+
+		internal void Execute(ContainerConfigurator containerConfigurator, DefaultSettings defaultSettings)
+		{
+			var filters = _filters.Concat(defaultSettings.GetFilters()).ToList();
+			var types = _types.Distinct().Where(t => filters.All(f => f.IsMatch(t))).ToList();
+			_conventions.ForEach(c => c.Process(types, containerConfigurator));
 		}
 	}
 }
