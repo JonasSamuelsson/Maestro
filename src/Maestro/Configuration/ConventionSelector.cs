@@ -3,11 +3,11 @@ using Maestro.Conventions;
 
 namespace Maestro.Configuration
 {
-	public class ConventionSelectorExpression
+	public class ConventionSelector
 	{
 		private readonly ScanExpression _scanExpression;
 
-		internal ConventionSelectorExpression(ScanExpression scanExpression)
+		internal ConventionSelector(ScanExpression scanExpression)
 		{
 			_scanExpression = scanExpression;
 		}

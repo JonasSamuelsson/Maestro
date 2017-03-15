@@ -22,7 +22,7 @@ namespace Maestro.Configuration
 		/// <summary>
 		/// Starting point for using out of box conventions.
 		/// </summary>
-		public ConventionSelectorExpression For => new ConventionSelectorExpression(this);
+		public ConventionSelector For => new ConventionSelector(this);
 
 		/// <summary>
 		/// Adds all types in <paramref name="assemblies"/> to the list of types to process.

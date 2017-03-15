@@ -59,7 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
-    <Compile Include="Configuration\ConventionSelectorExpression.cs" />
+    <Compile Include="Configuration\ConventionSelector.cs" />
     <Compile Include="Configuration\FactoryInstanceConfigurator.cs" />
     <Compile Include="Configuration\IAddServiceConfigurator.cs" />
     <Compile Include="Configuration\TypeInstanceRegistrationExpression.cs" />
