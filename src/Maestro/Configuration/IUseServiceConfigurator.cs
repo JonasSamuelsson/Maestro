@@ -1,11 +1,11 @@
 ﻿namespace Maestro.Configuration
 {
-	public interface IUseServiceExpression
+	public interface IUseServiceConfigurator
 	{
 		IServiceInstanceExpression Use { get; }
 	}
 
-	public interface IUseServiceExpression<T>
+	public interface IUseServiceConfigurator<T>
 	{
 		IServiceInstanceExpression<T> Use { get; }
 	}

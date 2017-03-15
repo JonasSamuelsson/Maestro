@@ -27,32 +27,32 @@ namespace Maestro.Configuration
 
 		public IList<ITypeProvider> TypeProviders => _kernel.TypeProviders;
 
-		public IServiceExpression For(Type type)
+		public IServiceConfigurator For(Type type)
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type, ServiceNames.Default, _kernel, _defaultSettings);
+			return new ServiceConfigurator<object>(type, ServiceNames.Default, _kernel, _defaultSettings);
 		}
 
-		public INamedServiceExpression For(Type type, string name)
+		public INamedServiceConfigurator For(Type type, string name)
 		{
 			if (type == null) throw new ArgumentNullException();
 			if (name == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type, name, _kernel, _defaultSettings);
+			return new ServiceConfigurator<object>(type, name, _kernel, _defaultSettings);
 		}
 
-		public IServiceExpression<T> For<T>()
+		public IServiceConfigurator<T> For<T>()
 		{
 			AssertNotDisposed();
-			return new ServiceExpression<T>(typeof(T), ServiceNames.Default, _kernel, _defaultSettings);
+			return new ServiceConfigurator<T>(typeof(T), ServiceNames.Default, _kernel, _defaultSettings);
 		}
 
-		public INamedServiceExpression<T> For<T>(string name)
+		public INamedServiceConfigurator<T> For<T>(string name)
 		{
 			if (name == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<T>(typeof(T), name, _kernel, _defaultSettings);
+			return new ServiceConfigurator<T>(typeof(T), name, _kernel, _defaultSettings);
 		}
 
 		public void Scan(Action<ScanExpression> scan)
