@@ -41,7 +41,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Maestro.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -52,10 +52,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="Maestro.snk" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActivationException.cs" />
@@ -141,6 +137,11 @@
     <Compile Include="Utils\ThreadSafeDictionary.cs" />
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="Utils\ThreadSafeList.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Maestro.snk">
+      <Link>Maestro.snk</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
