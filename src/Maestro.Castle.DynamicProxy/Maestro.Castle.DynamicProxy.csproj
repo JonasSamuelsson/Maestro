@@ -42,7 +42,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\Maestro\Maestro.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
@@ -62,7 +62,7 @@
     <Compile Include="ProxyGeneratorFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Maestro\Maestro.snk">
+    <None Include="..\Maestro.snk">
       <Link>Maestro.snk</Link>
     </None>
     <None Include="packages.config" />
