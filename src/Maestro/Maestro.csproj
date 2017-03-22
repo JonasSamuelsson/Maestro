@@ -1,154 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E07CB006-2C92-4CC5-B6FB-053A4BE849EB}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Maestro</RootNamespace>
+    <TargetFramework>netstandard1.1</TargetFramework>
     <AssemblyName>Maestro</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <RootNamespace>Maestro</RootNamespace>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>D:\Dev\GitHub\Maestro\src\Maestro.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>CS1591</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Maestro.xml</DocumentationFile>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>CS1591</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Compile Remove="Properties\*" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="ActivationException.cs" />
-    <Compile Include="Configuration\ConventionSelector.cs" />
-    <Compile Include="Configuration\FactoryInstanceConfigurator.cs" />
-    <Compile Include="Configuration\IAddServiceConfigurator.cs" />
-    <Compile Include="Configuration\ConventionalTypeInstanceRegistrator.cs" />
-    <Compile Include="Configuration\IFactoryInstanceConfigurator.cs" />
-    <Compile Include="Configuration\INamedServiceConfigurator.cs" />
-    <Compile Include="Configuration\InstanceConfigurator.cs" />
-    <Compile Include="Configuration\IServiceConfigurator.cs" />
-    <Compile Include="Configuration\IInstanceKindSelector.cs" />
-    <Compile Include="Configuration\ITryUseServiceConfigurator.cs" />
-    <Compile Include="Configuration\ITypeInstanceConfigurator.cs" />
-    <Compile Include="Configuration\IUseServiceConfigurator.cs" />
-    <Compile Include="Configuration\LifetimeSelector.cs" />
-    <Compile Include="Configuration\ServiceConfigurator.cs" />
-    <Compile Include="Configuration\InstanceKindSelector.cs" />
-    <Compile Include="Configuration\TypeInstanceConfigurator.cs" />
-    <Compile Include="ConstructorInvokation.cs" />
-    <Compile Include="Diagnostics\Service.cs" />
-    <Compile Include="Diagnostics\Configuration.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="FactoryProviders\Factories\IFactory.cs" />
-    <Compile Include="FactoryProviders\Factories\Factory.cs" />
-    <Compile Include="Interceptors\FuncInterceptor.cs" />
-    <Compile Include="Interceptors\PropertySetter.cs" />
-    <Compile Include="Interceptors\TrySetPropertyInterceptor.cs" />
-    <Compile Include="Internals\EnumerableTypeBuilder.cs" />
-    <Compile Include="Internals\IPipeline.cs" />
-    <Compile Include="Internals\ComposedPipeline.cs" />
-    <Compile Include="Internals\PipelineType.cs" />
-    <Compile Include="Internals\ServiceFamily.cs" />
-    <Compile Include="Internals\ServiceNames.cs" />
-    <Compile Include="Internals\ServiceRequest.cs" />
-    <Compile Include="Lifetimes\INextStep.cs" />
-    <Compile Include="TypeFactoryResolvers\ConcreteClosedClassFactoryProviderResolver.cs" />
-    <Compile Include="Internals\Context.cs" />
-    <Compile Include="FactoryProviders\InstanceFactoryProvider.cs" />
-    <Compile Include="IContext.cs" />
-    <Compile Include="FactoryProviders\IFactoryProvider.cs" />
-    <Compile Include="Internals\Kernel.cs" />
-    <Compile Include="FactoryProviders\LambdaFactoryProvider.cs" />
-    <Compile Include="Internals\Pipeline.cs" />
-    <Compile Include="Internals\PipelineCache.cs" />
-    <Compile Include="Internals\ServiceDescriptor.cs" />
-    <Compile Include="Internals\ServiceDescriptorLookup.cs" />
-    <Compile Include="TypeFactoryResolvers\EmptyEnumerableFactoryProviderResolver.cs" />
-    <Compile Include="TypeFactoryResolvers\FuncFactoryProviderResolver.cs" />
-    <Compile Include="TypeFactoryResolvers\IFactoryProviderResolver.cs" />
-    <Compile Include="FactoryProviders\TypeFactoryProvider.cs" />
-    <Compile Include="TypeFactoryResolvers\LazyFactoryProviderResolver.cs" />
-    <Compile Include="ITypeProvider.cs" />
-    <Compile Include="Utils\DiagnosticsBuilder.cs" />
-    <Compile Include="Conventions\ConcreteClassesClosingConvention.cs" />
-    <Compile Include="Conventions\ConcreteSubClassesConvention.cs" />
-    <Compile Include="Container.cs" />
-    <Compile Include="Configuration\ContainerConfigurator.cs" />
-    <Compile Include="Conventions\DefaultImplementationsConvention.cs" />
-    <Compile Include="Conventions\LambdaFilter.cs" />
-    <Compile Include="DefaultSettings.cs" />
-    <Compile Include="Configuration\Scanner.cs" />
-    <Compile Include="Configuration\DefaultsConfigurator.cs" />
-    <Compile Include="Configuration\IInstanceConfigurator.cs" />
-    <Compile Include="Configuration\DefaultLifetimeSelector.cs" />
-    <Compile Include="IFilter.cs" />
-    <Compile Include="Conventions\IConvention.cs" />
-    <Compile Include="Interceptors\ActionInterceptor.cs" />
-    <Compile Include="Interceptors\IInterceptor.cs" />
-    <Compile Include="Interceptors\Interceptor.cs" />
-    <Compile Include="Interceptors\SetPropertyInterceptor.cs" />
-    <Compile Include="Lifetimes\ILifetime.cs" />
-    <Compile Include="IContainer.cs" />
-    <Compile Include="Lifetimes\ScopedLifetime.cs" />
-    <Compile Include="Lifetimes\SingletonLifetime.cs" />
-    <Compile Include="Lifetimes\TransientLifetime.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\CommonAssemblyInfo.cs" />
-    <Compile Include="Properties\VersioningAssemblyInfo.cs" />
-    <Compile Include="Utils\ExceptionMessageBuilder.cs" />
-    <Compile Include="Utils\GenericInstanceFactory.cs" />
-    <Compile Include="Utils\Reflector.cs" />
-    <Compile Include="Utils\ThreadSafeDictionary.cs" />
-    <Compile Include="TypeExtensions.cs" />
-    <Compile Include="Utils\ThreadSafeList.cs" />
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="..\Maestro.snk">
-      <Link>Maestro.snk</Link>
-    </None>
+    <None Include="..\Maestro.snk" Link="Maestro.snk" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

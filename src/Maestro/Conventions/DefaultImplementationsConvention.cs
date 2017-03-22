@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Maestro.Configuration;
 
 namespace Maestro.Conventions
@@ -18,7 +19,7 @@ namespace Maestro.Conventions
 		{
 			types = types as IList<Type> ?? types.ToList();
 
-			var interfaces = types.Where(x => x.IsInterface);
+			var interfaces = types.Where(x => x.IsInterface());
 			var classes = types.Where(x => x.IsConcreteClass()).GroupBy(x => x.Namespace ?? string.Empty).ToDictionary(x => x.Key, x => x.ToList());
 
 			foreach (var @interface in interfaces)

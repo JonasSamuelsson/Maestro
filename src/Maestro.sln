@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro", "Maestro\Maestro.csproj", "{E07CB006-2C92-4CC5-B6FB-053A4BE849EB}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{DE4F0E5E-F742-45D9-B011-DCFA614B0AA6}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		Maestro.snk = Maestro.snk
+		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.V1ApiCompatibilityShim", "Maestro.V1ApiCompatibilityShim\Maestro.V1ApiCompatibilityShim.csproj", "{E4CBF5D4-DDD7-4205-9807-6A78C6135838}"

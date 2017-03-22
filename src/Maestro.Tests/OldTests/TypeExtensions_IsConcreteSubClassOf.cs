@@ -12,7 +12,7 @@ namespace Maestro.Tests
 		[Theory, ClassData(typeof(TestData))]
 		public void should_determine_if_type_is_concrete_sub_class_of_basetype(Type type, Type basetype, bool expected)
 		{
-			var reason = string.Format("{0} {1} concrete sub class {2}", GetName(type), expected ? "is" : "is not", GetName(basetype));
+			var reason = $"{GetName(type)} {(expected ? "is" : "is not")} concrete sub class of {GetName(basetype)}";
 			type.IsConcreteSubClassOf(basetype).ShouldBe(expected, reason);
 		}
 
@@ -21,7 +21,7 @@ namespace Maestro.Tests
 			var types = type.GetGenericArguments();
 			return types.Length == 0
 				? type.Name
-				: type.Name.Replace("`" + types.Length, string.Format("<{0}>", string.Join(", ", types.Select(GetName))));
+				: type.Name.Replace("`" + types.Length, $"<{string.Join(", ", types.Select(GetName))}>");
 		}
 
 		private interface IInterface { }
@@ -36,9 +36,6 @@ namespace Maestro.Tests
 		private class Class<T> : Class { }
 		private class Class<T1, T2> : Class<T1> { }
 		private abstract class AbstractClass : Class { }
-		private class GenericClass1<T1, T2> : Class<T1, int> { }
-		private class GenericClass2<T1, T2> : Class<T1, T1> { }
-		private class GenericClassNotFollowingTypeArgNamingConvention<U> : Class<U> { }
 
 		public class TestData : IEnumerable<object[]>
 		{
@@ -60,23 +57,18 @@ namespace Maestro.Tests
 					typeof (Class<>),
 					typeof (Class<int>),
 					typeof (Class<,>),
-					typeof (Class<int, int>)
+					typeof (Class<int, int>),
+					typeof (AbstractClass)
 				};
 
-				IEnumerable<Type> enumerable;
-				var objectses = from type in types
-									 from basetype in types
-									 select new object[] { type, basetype, ConcreteSubClasses.TryGetValue(basetype, out enumerable) && enumerable.Contains(type) };
+				IEnumerable<Type> concreteSubClasses = null;
 
-				var objects = new[]
-				{
-					new object[] {typeof (AbstractClass), typeof (Class), false},
-					new object[] {typeof (GenericClass1<,>), typeof (Class<,>), false},
-					new object[] {typeof (GenericClass2<,>), typeof (Class<,>), false},
-					new object[] {typeof (GenericClassNotFollowingTypeArgNamingConvention<>), typeof (Class<>), true},
-				};
+				var enumerable = from type in types
+									  from basetype in types
+									  let hasConcreteSubClasses = ConcreteSubClasses.TryGetValue(basetype, out concreteSubClasses)
+									  select new object[] { type, basetype, hasConcreteSubClasses && concreteSubClasses.Contains(type) };
 
-				return objectses.Concat(objects).GetEnumerator();
+				return enumerable.GetEnumerator();
 			}
 
 			IEnumerator IEnumerable.GetEnumerator()
@@ -87,17 +79,14 @@ namespace Maestro.Tests
 			private static readonly Dictionary<Type, IEnumerable<Type>> ConcreteSubClasses = new[]
 			{
 				new {type = typeof (Implementation), basetype = typeof (IInterface)},
-				new {type = typeof (Implementation<>), basetype = typeof (IInterface<>)},
 				new {type = typeof (Implementation<int>), basetype = typeof (IInterface)},
 				new {type = typeof (Implementation<int>), basetype = typeof (IInterface<int>)},
-				new {type = typeof (Implementation<,>), basetype = typeof (IInterface<,>)},
 				new {type = typeof (Implementation<int,int>), basetype = typeof (IInterface)},
 				new {type = typeof (Implementation<int,int>), basetype = typeof (IInterface<int>)},
 				new {type = typeof (Implementation<int,int>), basetype = typeof (IInterface<int,int>)},
 				new {type = typeof (Class<int>), basetype = typeof (Class)},
 				new {type = typeof (Class<int,int>), basetype = typeof (Class)},
 				new {type = typeof (Class<int,int>), basetype = typeof (Class<int>)},
-				new {type = typeof (GenericClassNotFollowingTypeArgNamingConvention<>), basetype = typeof (Class<>)}
 			}.GroupBy(x => x.basetype).ToDictionary(x => x.Key, x => x.Select(y => y.type).ToList().AsEnumerable());
 		}
 	}
