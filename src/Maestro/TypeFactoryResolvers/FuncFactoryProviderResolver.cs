@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using Maestro.FactoryProviders;
 using Maestro.Internals;
 
@@ -17,7 +18,7 @@ namespace Maestro.TypeFactoryResolvers
 			var wrapperType = typeof(Wrapper<>).MakeGenericType(serviceType);
 			var ctx = (Context)context;
 			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.Kernel);
-			var getFuncMethod = wrapperType.GetMethod("GetFunc");
+			var getFuncMethod = wrapperType.GetMethod("GetFunc", new Type[] { });
 			var lambda = new Func<IContext, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
 			factoryProvider = new LambdaFactoryProvider(lambda);
 			return true;

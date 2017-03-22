@@ -9,12 +9,12 @@ namespace Maestro.Tests.Conventions
 		[Fact]
 		public void should_register_default_implementations()
 		{
-			var ns = typeof(IFoobar1).Namespace;
+			var @namespace = typeof(IFoobar1).Namespace;
 
 			var container = new Container(x => x.Scan(_ =>
 			{
 				_.AssemblyContainingTypeOf(this);
-				_.Matching(y => y.Namespace?.StartsWith(ns) == true);
+				_.Matching(y => y.Namespace == @namespace);
 				_.For.DefaultImplementations(z => z.Use());
 			}));
 

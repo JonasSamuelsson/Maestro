@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Maestro.Tests</RootNamespace>
     <AssemblyName>Maestro.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <TargetFrameworkProfile />
@@ -82,12 +82,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Maestro\Properties\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Maestro\Properties\VersioningAssemblyInfo.cs">
-      <Link>Properties\VersioningAssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="CommonServiceLocator\adapter_tests.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Factories\Self_type_tests.cs" />
