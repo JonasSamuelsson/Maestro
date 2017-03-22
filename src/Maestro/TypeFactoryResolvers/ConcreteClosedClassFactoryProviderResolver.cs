@@ -26,7 +26,7 @@ namespace Maestro.TypeFactoryResolvers
 
 		private static IEnumerable<TypeFactoryProvider> GetFactoryProviders(Type type, string name, IContext context)
 		{
-			return from ctor in type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)
+			return from ctor in type.GetConstructors()
 					 let parameters = ctor.GetParameters()
 					 orderby parameters.Length descending
 					 where parameters.All(p => context.CanGetService(p.ParameterType, name))

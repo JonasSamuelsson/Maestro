@@ -18,9 +18,7 @@ namespace Maestro.Utils
 
 		private static Func<object, Type[], object> GetFactory(Type type)
 		{
-			var bindingFlags = BindingFlags.Instance | BindingFlags.Public;
-
-			var method = type.GetMethod("MakeGeneric", bindingFlags);
+			var method = type.GetMethod("MakeGeneric", new Type[] { typeof(Type[]) });
 			if (method != null)
 			{
 				var parameters = method.GetParameters();
@@ -34,7 +32,7 @@ namespace Maestro.Utils
 				}
 			}
 
-			if (type.GetConstructors(bindingFlags).Any(x => x.GetParameters().Length == 0))
+			if (type.GetConstructors().Any(x => x.GetParameters().Length == 0))
 			{
 				return (source, types) => Activator.CreateInstance(type);
 			}
