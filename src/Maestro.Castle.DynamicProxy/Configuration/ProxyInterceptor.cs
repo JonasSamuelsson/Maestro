@@ -1,10 +1,9 @@
 ﻿using System;
 using Castle.DynamicProxy;
-using IInterceptor = Maestro.Interceptors.IInterceptor;
 
 namespace Maestro.Configuration
 {
-	internal class ProxyInterceptor<TInstance, TOut> : IInterceptor
+	internal class ProxyInterceptor<TInstance, TOut> : Maestro.Interceptors.IInterceptor
 	{
 		private readonly Func<TInstance, IContext, ProxyGenerator, TOut> _proxyFactory;
 
