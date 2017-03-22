@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <AssemblyName>Maestro.Castle.DynamicProxy</AssemblyName>
-    <RootNamespace>Maestro.Castle.DynamicProxy</RootNamespace>
+    <RootNamespace>Maestro</RootNamespace>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>

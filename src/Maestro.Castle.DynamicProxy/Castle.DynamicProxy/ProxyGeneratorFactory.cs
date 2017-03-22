@@ -1,7 +1,7 @@
 ﻿using System;
 using Castle.DynamicProxy;
 
-namespace Maestro
+namespace Maestro.Castle.DynamicProxy
 {
 	public static class ProxyGeneratorFactory
 	{
