@@ -5,12 +5,8 @@
     <AssemblyName>Maestro</AssemblyName>
     <RootNamespace>Maestro</RootNamespace>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>D:\Dev\GitHub\Maestro\src\Maestro.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Properties\*" />
-  </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
