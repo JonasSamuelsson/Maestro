@@ -5,9 +5,9 @@ using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	internal abstract class InstanceConfigurator<TInstance, TParent> : IInstanceConfigurator<TInstance, TParent>
+	internal abstract class InstanceExpression<TInstance, TParent> : IInstanceExpression<TInstance, TParent>
 	{
-		protected InstanceConfigurator(ServiceDescriptor serviceDescriptor)
+		protected InstanceExpression(ServiceDescriptor serviceDescriptor)
 		{
 			ServiceDescriptor = serviceDescriptor;
 		}
