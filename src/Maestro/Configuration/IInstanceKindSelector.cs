@@ -5,18 +5,18 @@ namespace Maestro.Configuration
 	public interface IInstanceKindSelector
 	{
 		void Instance(object instance);
-		IFactoryInstanceConfigurator<object> Factory(Func<object> factory);
-		IFactoryInstanceConfigurator<object> Factory(Func<IContext, object> factory);
-		ITypeInstanceConfigurator<object> Type(Type type);
-		ITypeInstanceConfigurator<object> Self();
+		IFactoryInstanceExpression<object> Factory(Func<object> factory);
+		IFactoryInstanceExpression<object> Factory(Func<IContext, object> factory);
+		ITypeInstanceExpression<object> Type(Type type);
+		ITypeInstanceExpression<object> Self();
 	}
 
 	public interface IInstanceKindSelector<T>
 	{
 		void Instance<TInstance>(TInstance instance) where TInstance : T;
-		IFactoryInstanceConfigurator<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : T;
-		IFactoryInstanceConfigurator<TInstance> Factory<TInstance>(Func<IContext, TInstance> factory) where TInstance : T;
-		ITypeInstanceConfigurator<TInstance> Type<TInstance>() where TInstance : T;
-		ITypeInstanceConfigurator<T> Self();
+		IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : T;
+		IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<IContext, TInstance> factory) where TInstance : T;
+		ITypeInstanceExpression<TInstance> Type<TInstance>() where TInstance : T;
+		ITypeInstanceExpression<T> Self();
 	}
 }

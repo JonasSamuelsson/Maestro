@@ -1,11 +1,11 @@
 namespace Maestro.Configuration
 {
-	public interface IAddServiceConfigurator
+	public interface IAddServiceExpression
 	{
 		IInstanceKindSelector Add { get; }
 	}
 
-	public interface IAddServiceConfigurator<T>
+	public interface IAddServiceExpression<T>
 	{
 		IInstanceKindSelector<T> Add { get; }
 	}

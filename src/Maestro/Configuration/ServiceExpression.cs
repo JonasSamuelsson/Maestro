@@ -3,9 +3,9 @@ using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	internal class ServiceConfigurator<TService> : IServiceConfigurator, IServiceConfigurator<TService>, INamedServiceConfigurator, INamedServiceConfigurator<TService>
+	internal class ServiceExpression<TService> : IServiceExpression, IServiceExpression<TService>, INamedServiceExpression, INamedServiceExpression<TService>
 	{
-		internal ServiceConfigurator(Type type, string name, Kernel kernel, DefaultSettings defaultSettings)
+		internal ServiceExpression(Type type, string name, Kernel kernel, DefaultSettings defaultSettings)
 		{
 			Type = type;
 			Name = name;
@@ -18,32 +18,32 @@ namespace Maestro.Configuration
 		internal Kernel Kernel { get; }
 		internal DefaultSettings DefaultSettings { get; set; }
 
-		IInstanceKindSelector IUseServiceConfigurator.Use
+		IInstanceKindSelector IUseServiceExpression.Use
 		{
 			get { return new InstanceKindSelector<object>(Type, Name, Kernel, DefaultSettings, true); }
 		}
 
-		IInstanceKindSelector ITryUseServiceConfigurator.TryUse
+		IInstanceKindSelector ITryUseServiceExpression.TryUse
 		{
 			get { return new InstanceKindSelector<object>(Type, Name, Kernel, DefaultSettings, false); }
 		}
 
-		IInstanceKindSelector IAddServiceConfigurator.Add
+		IInstanceKindSelector IAddServiceExpression.Add
 		{
 			get { return new InstanceKindSelector<object>(Type, ServiceNames.Anonymous, Kernel, DefaultSettings, true); }
 		}
 
-		IInstanceKindSelector<TService> IUseServiceConfigurator<TService>.Use
+		IInstanceKindSelector<TService> IUseServiceExpression<TService>.Use
 		{
 			get { return new InstanceKindSelector<TService>(Type, Name, Kernel, DefaultSettings, true); }
 		}
 
-		IInstanceKindSelector<TService> ITryUseServiceConfigurator<TService>.TryUse
+		IInstanceKindSelector<TService> ITryUseServiceExpression<TService>.TryUse
 		{
 			get { return new InstanceKindSelector<TService>(Type, Name, Kernel, DefaultSettings, false); }
 		}
 
-		IInstanceKindSelector<TService> IAddServiceConfigurator<TService>.Add
+		IInstanceKindSelector<TService> IAddServiceExpression<TService>.Add
 		{
 			get { return new InstanceKindSelector<TService>(Type, ServiceNames.Anonymous, Kernel, DefaultSettings, true); }
 		}

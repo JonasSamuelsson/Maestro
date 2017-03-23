@@ -1,11 +1,11 @@
 ﻿namespace Maestro.Configuration
 {
-	public interface ITryUseServiceConfigurator
+	public interface ITryUseServiceExpression
 	{
 		IInstanceKindSelector TryUse { get; }
 	}
 
-	public interface ITryUseServiceConfigurator<T>
+	public interface ITryUseServiceExpression<T>
 	{
 		IInstanceKindSelector<T> TryUse { get; }
 	}

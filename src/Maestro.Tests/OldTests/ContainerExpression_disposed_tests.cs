@@ -10,21 +10,21 @@ namespace Maestro.Tests
 		[Fact]
 		public void should_throw_if_container_expression_is_accessed_outside_of_closure()
 		{
-			ContainerConfigurator containerConfigurator = null;
-			new Container().Configure(x => containerConfigurator = x);
+			ContainerExpression containerExpression = null;
+			new Container().Configure(x => containerExpression = x);
 
-			Should.Throw<ObjectDisposedException>(() => { var @default = containerConfigurator.Defaults; });
+			Should.Throw<ObjectDisposedException>(() => { var @default = containerExpression.Defaults; });
 
-			Should.Throw<ObjectDisposedException>(() => containerConfigurator.For(typeof(object)));
-			Should.Throw<ObjectDisposedException>(() => containerConfigurator.For(typeof(object), string.Empty));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.For(typeof(object)));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.For(typeof(object), string.Empty));
 
-			Should.Throw<ObjectDisposedException>(() => containerConfigurator.For<object>());
-			Should.Throw<ObjectDisposedException>(() => containerConfigurator.For<object>(string.Empty));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.For<object>());
+			Should.Throw<ObjectDisposedException>(() => containerExpression.For<object>(string.Empty));
 
-			Should.Throw<ObjectDisposedException>(() => containerConfigurator.For(typeof(object)));
-			Should.Throw<ObjectDisposedException>(() => containerConfigurator.For<object>());
+			Should.Throw<ObjectDisposedException>(() => containerExpression.For(typeof(object)));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.For<object>());
 
-			Should.Throw<ObjectDisposedException>(() => containerConfigurator.Scan(delegate { }));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.Scan(delegate { }));
 		}
 	}
 }

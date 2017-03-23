@@ -15,7 +15,7 @@ namespace Maestro.Conventions
 			_serviceRegistration = serviceRegistration;
 		}
 
-		public void Process(IEnumerable<Type> types, ContainerConfigurator containerConfigurator)
+		public void Process(IEnumerable<Type> types, ContainerExpression containerExpression)
 		{
 			types = types as IList<Type> ?? types.ToList();
 
@@ -28,7 +28,7 @@ namespace Maestro.Conventions
 				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
 				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
 				if (@class == null) continue;
-				_serviceRegistration(new ConventionalTypeInstanceRegistrator<object>(containerConfigurator, @interface, @class));
+				_serviceRegistration(new ConventionalTypeInstanceRegistrator<object>(containerExpression, @interface, @class));
 			}
 		}
 	}

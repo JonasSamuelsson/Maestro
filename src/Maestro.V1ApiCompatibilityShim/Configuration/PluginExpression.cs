@@ -4,145 +4,145 @@ namespace Maestro.Configuration
 {
 	internal class PluginExpression : IPluginExpression, IDefaultPluginExpression
 	{
-		private readonly IServiceConfigurator _serviceConfigurator;
-		private readonly IServiceConfigurator _servicesConfigurator;
+		private readonly IServiceExpression _serviceExpression;
+		private readonly IServiceExpression _servicesExpression;
 
-		public PluginExpression(IServiceConfigurator serviceConfigurator, IServiceConfigurator servicesConfigurator)
+		public PluginExpression(IServiceExpression serviceExpression, IServiceExpression servicesExpression)
 		{
-			_serviceConfigurator = serviceConfigurator;
-			_servicesConfigurator = servicesConfigurator;
+			_serviceExpression = serviceExpression;
+			_servicesExpression = servicesExpression;
 		}
 
 		public void Use(object instance)
 		{
-			_serviceConfigurator.Use.Instance(instance);
+			_serviceExpression.Use.Instance(instance);
 		}
 
-		public IFactoryInstanceConfigurator<object> Use(Func<object> factory)
+		public IFactoryInstanceExpression<object> Use(Func<object> factory)
 		{
-			return _serviceConfigurator.Use.Factory(factory);
+			return _serviceExpression.Use.Factory(factory);
 		}
 
-		public IFactoryInstanceConfigurator<object> Use(Func<IContext, object> factory)
+		public IFactoryInstanceExpression<object> Use(Func<IContext, object> factory)
 		{
-			return _serviceConfigurator.Use.Factory(factory);
+			return _serviceExpression.Use.Factory(factory);
 		}
 
-		public ITypeInstanceConfigurator<object> Use(Type type)
+		public ITypeInstanceExpression<object> Use(Type type)
 		{
-			return _serviceConfigurator.Use.Type(type);
+			return _serviceExpression.Use.Type(type);
 		}
 
 		public void TryUse(object instance)
 		{
-			_serviceConfigurator.TryUse.Instance(instance);
+			_serviceExpression.TryUse.Instance(instance);
 		}
 
-		public IFactoryInstanceConfigurator<object> TryUse(Func<object> factory)
+		public IFactoryInstanceExpression<object> TryUse(Func<object> factory)
 		{
-			return _serviceConfigurator.TryUse.Factory(factory);
+			return _serviceExpression.TryUse.Factory(factory);
 		}
 
-		public IFactoryInstanceConfigurator<object> TryUse(Func<IContext, object> factory)
+		public IFactoryInstanceExpression<object> TryUse(Func<IContext, object> factory)
 		{
-			return _serviceConfigurator.TryUse.Factory(factory);
+			return _serviceExpression.TryUse.Factory(factory);
 		}
 
-		public ITypeInstanceConfigurator<object> TryUse(Type type)
+		public ITypeInstanceExpression<object> TryUse(Type type)
 		{
-			return _serviceConfigurator.TryUse.Type(type);
+			return _serviceExpression.TryUse.Type(type);
 		}
 
 		public void Add(object instance)
 		{
-			_servicesConfigurator.Add.Instance(instance);
+			_servicesExpression.Add.Instance(instance);
 		}
 
-		public IFactoryInstanceConfigurator<object> Add(Func<object> factory)
+		public IFactoryInstanceExpression<object> Add(Func<object> factory)
 		{
-			return _servicesConfigurator.Add.Factory(factory);
+			return _servicesExpression.Add.Factory(factory);
 		}
 
-		public IFactoryInstanceConfigurator<object> Add(Func<IContext, object> factory)
+		public IFactoryInstanceExpression<object> Add(Func<IContext, object> factory)
 		{
-			return _servicesConfigurator.Add.Factory(factory);
+			return _servicesExpression.Add.Factory(factory);
 		}
 
-		public ITypeInstanceConfigurator<object> Add(Type type)
+		public ITypeInstanceExpression<object> Add(Type type)
 		{
-			return _servicesConfigurator.Add.Type(type);
+			return _servicesExpression.Add.Type(type);
 		}
 	}
 
 	internal class PluginExpression<T> : IPluginExpression<T>, IDefaultPluginExpression<T>
 	{
-		private readonly IServiceConfigurator<T> _serviceConfigurator;
-		private readonly IServiceConfigurator<T> _servicesConfigurator;
+		private readonly IServiceExpression<T> _serviceExpression;
+		private readonly IServiceExpression<T> _servicesExpression;
 
-		public PluginExpression(IServiceConfigurator<T> serviceConfigurator, IServiceConfigurator<T> servicesConfigurator)
+		public PluginExpression(IServiceExpression<T> serviceExpression, IServiceExpression<T> servicesExpression)
 		{
-			_serviceConfigurator = serviceConfigurator;
-			_servicesConfigurator = servicesConfigurator;
+			_serviceExpression = serviceExpression;
+			_servicesExpression = servicesExpression;
 		}
 
 		public void Use(T instance)
 		{
-			_serviceConfigurator.Use.Instance(instance);
+			_serviceExpression.Use.Instance(instance);
 		}
 
-		public IFactoryInstanceConfigurator<TInstance> Use<TInstance>(Func<TInstance> factory) where TInstance : T
+		public IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<TInstance> factory) where TInstance : T
 		{
-			return _serviceConfigurator.Use.Factory(factory);
+			return _serviceExpression.Use.Factory(factory);
 		}
 
-		public IFactoryInstanceConfigurator<TInstance> Use<TInstance>(Func<IContext, TInstance> factory) where TInstance : T
+		public IFactoryInstanceExpression<TInstance> Use<TInstance>(Func<IContext, TInstance> factory) where TInstance : T
 		{
-			return _serviceConfigurator.Use.Factory(factory);
+			return _serviceExpression.Use.Factory(factory);
 		}
 
-		public ITypeInstanceConfigurator<TInstance> Use<TInstance>() where TInstance : T
+		public ITypeInstanceExpression<TInstance> Use<TInstance>() where TInstance : T
 		{
-			return _serviceConfigurator.Use.Type<TInstance>();
+			return _serviceExpression.Use.Type<TInstance>();
 		}
 
 		public void TryUse(T instance)
 		{
-			_serviceConfigurator.TryUse.Instance(instance);
+			_serviceExpression.TryUse.Instance(instance);
 		}
 
-		public IFactoryInstanceConfigurator<TInstance> TryUse<TInstance>(Func<TInstance> factory) where TInstance : T
+		public IFactoryInstanceExpression<TInstance> TryUse<TInstance>(Func<TInstance> factory) where TInstance : T
 		{
-			return _serviceConfigurator.TryUse.Factory(factory);
+			return _serviceExpression.TryUse.Factory(factory);
 		}
 
-		public IFactoryInstanceConfigurator<TInstance> TryUse<TInstance>(Func<IContext, TInstance> factory) where TInstance : T
+		public IFactoryInstanceExpression<TInstance> TryUse<TInstance>(Func<IContext, TInstance> factory) where TInstance : T
 		{
-			return _serviceConfigurator.TryUse.Factory(factory);
+			return _serviceExpression.TryUse.Factory(factory);
 		}
 
-		public ITypeInstanceConfigurator<TInstance> TryUse<TInstance>() where TInstance : T
+		public ITypeInstanceExpression<TInstance> TryUse<TInstance>() where TInstance : T
 		{
-			return _serviceConfigurator.TryUse.Type<TInstance>();
+			return _serviceExpression.TryUse.Type<TInstance>();
 		}
 
 		public void Add(T instance)
 		{
-			_servicesConfigurator.Add.Instance(instance);
+			_servicesExpression.Add.Instance(instance);
 		}
 
-		public IFactoryInstanceConfigurator<TInstance> Add<TInstance>(Func<TInstance> factory) where TInstance : T
+		public IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<TInstance> factory) where TInstance : T
 		{
-			return _servicesConfigurator.Add.Factory(factory);
+			return _servicesExpression.Add.Factory(factory);
 		}
 
-		public IFactoryInstanceConfigurator<TInstance> Add<TInstance>(Func<IContext, TInstance> factory) where TInstance : T
+		public IFactoryInstanceExpression<TInstance> Add<TInstance>(Func<IContext, TInstance> factory) where TInstance : T
 		{
-			return _servicesConfigurator.Add.Factory(factory);
+			return _servicesExpression.Add.Factory(factory);
 		}
 
-		public ITypeInstanceConfigurator<TInstance> Add<TInstance>() where TInstance : T
+		public ITypeInstanceExpression<TInstance> Add<TInstance>() where TInstance : T
 		{
-			return _servicesConfigurator.Add.Type<TInstance>();
+			return _servicesExpression.Add.Type<TInstance>();
 		}
 	}
 }

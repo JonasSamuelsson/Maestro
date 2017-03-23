@@ -4,20 +4,20 @@ using Maestro.Castle.DynamicProxy;
 
 namespace Maestro.Configuration
 {
-	public static class TypeInstanceConfiguratorExtensions
+	public static class TypeInstanceExpressionExtensions
 	{
 		/// <summary>
 		/// Adds a pransparent proxy interceptor to the pipeline.
 		/// </summary>
 		/// <typeparam name="TInstance"></typeparam>
 		/// <typeparam name="TOut"></typeparam>
-		/// <param name="typeInstanceConfigurator"></param>
+		/// <param name="typeInstanceExpression"></param>
 		/// <param name="proxyFactory"></param>
 		/// <returns></returns>
-		public static ITypeInstanceConfigurator<TOut> Proxy<TInstance, TOut>(this ITypeInstanceConfigurator<TInstance> typeInstanceConfigurator,
+		public static ITypeInstanceExpression<TOut> Proxy<TInstance, TOut>(this ITypeInstanceExpression<TInstance> typeInstanceExpression,
 			Func<TInstance, ProxyGenerator, TOut> proxyFactory)
 		{
-			return typeInstanceConfigurator
+			return typeInstanceExpression
 				.Intercept(new ProxyInterceptor<TInstance, TOut>((instance, context, proxyGenerator) => proxyFactory(instance, proxyGenerator)))
 				.As<TOut>();
 		}
@@ -27,13 +27,13 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <typeparam name="TInstance"></typeparam>
 		/// <typeparam name="TOut"></typeparam>
-		/// <param name="typeInstanceConfigurator"></param>
+		/// <param name="typeInstanceExpression"></param>
 		/// <param name="proxyFactory"></param>
 		/// <returns></returns>
-		public static ITypeInstanceConfigurator<TOut> Proxy<TInstance, TOut>(this ITypeInstanceConfigurator<TInstance> typeInstanceConfigurator,
+		public static ITypeInstanceExpression<TOut> Proxy<TInstance, TOut>(this ITypeInstanceExpression<TInstance> typeInstanceExpression,
 			Func<TInstance, IContext, ProxyGenerator, TOut> proxyFactory)
 		{
-			return typeInstanceConfigurator
+			return typeInstanceExpression
 				.Intercept(new ProxyInterceptor<TInstance, TOut>(proxyFactory))
 				.As<TOut>();
 		}

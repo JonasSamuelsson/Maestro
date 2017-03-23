@@ -4,7 +4,7 @@ using Maestro.Interceptors;
 
 namespace Maestro.Configuration
 {
-	public interface IInstanceConfigurator<TInstance, TParent>
+	public interface IInstanceExpression<TInstance, TParent>
 	{
 		LifetimeSelector<TParent> Lifetime { get; }
 

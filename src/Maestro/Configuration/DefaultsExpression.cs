@@ -1,10 +1,10 @@
 ﻿namespace Maestro.Configuration
 {
-	public class DefaultsConfigurator
+	public class DefaultsExpression
 	{
 		private readonly DefaultSettings _defaultSettings;
 
-		internal DefaultsConfigurator(DefaultSettings defaultSettings)
+		internal DefaultsExpression(DefaultSettings defaultSettings)
 		{
 			_defaultSettings = defaultSettings;
 		}

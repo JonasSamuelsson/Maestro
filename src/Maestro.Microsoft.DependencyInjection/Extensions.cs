@@ -28,11 +28,11 @@ namespace Maestro.Microsoft.DependencyInjection
 			});
 		}
 
-		private static void Register(this ContainerConfigurator containerConfigurator, ServiceDescriptor descriptor)
+		private static void Register(this ContainerExpression containerExpression, ServiceDescriptor descriptor)
 		{
 			if (descriptor.ImplementationType != null)
 			{
-				containerConfigurator.For(descriptor.ServiceType)
+				containerExpression.For(descriptor.ServiceType)
 					 .Use.Type(descriptor.ImplementationType)
 					 .Lifetime.Use(descriptor.Lifetime);
 
@@ -41,14 +41,14 @@ namespace Maestro.Microsoft.DependencyInjection
 
 			if (descriptor.ImplementationFactory != null)
 			{
-				containerConfigurator.For(descriptor.ServiceType)
+				containerExpression.For(descriptor.ServiceType)
 					 .Use.Factory(GetFactory(descriptor))
 					 .Lifetime.Use(descriptor.Lifetime);
 
 				return;
 			}
 
-			containerConfigurator.For(descriptor.ServiceType)
+			containerExpression.For(descriptor.ServiceType)
 				 .Use.Instance(descriptor.ImplementationInstance);
 		}
 
