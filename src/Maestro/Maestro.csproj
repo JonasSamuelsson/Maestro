@@ -6,6 +6,15 @@
     <RootNamespace>Maestro</RootNamespace>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
+    <Version>2.0.0-beta1</Version>
+    <Company />
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Description>Maestro is a dependency injection / inversion of control library.</Description>
+    <Authors>Jonas Samuelsson</Authors>
+    <PackageLicenseUrl>https://github.com/JonasSamuelsson/Maestro/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/JonasSamuelsson/Maestro</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/JonasSamuelsson/Maestro</RepositoryUrl>
+    <PackageTags>maestro container ioc di</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
