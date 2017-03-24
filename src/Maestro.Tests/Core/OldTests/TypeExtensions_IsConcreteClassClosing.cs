@@ -12,62 +12,75 @@ namespace Maestro.Tests.Core
 		[Theory, ClassData(typeof(TestData))]
 		public void should_determine_if_class_is_concrete_and_closes_genericTypeDefinition(Type type, Type typeDefinition, bool expected, Type genericType)
 		{
-			var reason = string.Format("{0} {1} concrete class closing {2}", GetName(type), expected ? "is" : "is not", GetName(typeDefinition));
-			Type outType;
-			var result = type.IsConcreteClassClosing(typeDefinition, out outType);
-			result.ShouldBe(expected, reason);
+			var result = type.IsConcreteClassClosing(typeDefinition, out Type outType);
+			result.ShouldBe(expected, () => $"{GetName(type)} {(expected ? "is" : "is not")} concrete class closing {GetName(typeDefinition)}");
 			outType.ShouldBe(genericType);
 		}
 
-		static string GetName(Type type)
+		private static string GetName(Type type)
 		{
 			var types = type.GetGenericArguments();
 			return types.Length == 0
 				? type.Name
-				: type.Name.Replace("`" + types.Length, string.Format("<{0}>", string.Join(", ", types.Select(GetName))));
+				: type.Name.Replace("`" + types.Length, $"<{string.Join(", ", types.Select(GetName))}>");
 		}
 
-		private interface IInterface<T> { }
-		private class Implementation<T> : IInterface<T> { }
-		private class ImplementationInt : Implementation<int> { }
+		private interface IInterface1<T> { }
+		private interface IInterface2<T> : IInterface1<T> { }
+		private class Implementation1<T> : IInterface2<T> { }
+		private class Implementation2<T> : Implementation1<T> { }
+		private class ImplementationInt : Implementation2<int> { }
 
 		private class TestData : IEnumerable<object[]>
 		{
-			public IEnumerator<object[]> GetEnumerator()
-			{
-				var typeDefinitions = new[]
-				{
-					typeof (IInterface<>),
-					typeof (Implementation<>),
-				};
-				var types = new[]
-				{
-					typeof (IInterface<>),
-					typeof (Implementation<>),
-					typeof (Implementation<int>)
-				};
-
-				foreach (var type in types)
-					foreach (var typeDefinition in typeDefinitions)
-					{
-						var item = Valid.FirstOrDefault(x => x.type == type && x.definition == typeDefinition);
-						var isValid = item != null;
-						yield return new object[] { type, typeDefinition, isValid, isValid ? item.generic : default(Type) };
-					}
-			}
-
 			IEnumerator IEnumerable.GetEnumerator()
 			{
 				return GetEnumerator();
 			}
 
-			private static readonly dynamic[] Valid = new[]
+			public IEnumerator<object[]> GetEnumerator()
 			{
-				new {type = typeof (Implementation<int>), definition = typeof (IInterface<>), generic = typeof (IInterface<int>)},
-				new {type = typeof (Implementation<int>), definition = typeof (Implementation<>), generic = typeof (Implementation<int>)},
-				new {type = typeof (ImplementationInt), definition = typeof (IInterface<>), generic = typeof (IInterface<int>)},
-				new {type = typeof (ImplementationInt), definition = typeof (Implementation<>), generic = typeof (Implementation<int>)}
-			};
+				return GetData().GetEnumerator();
+			}
+
+			private IEnumerable<object[]> GetData()
+			{
+				var types = new[]
+				{
+					typeof(IInterface1<>),
+					typeof(IInterface1<int>),
+					typeof(IInterface2<>),
+					typeof(IInterface2<int>),
+					typeof(Implementation1<>),
+					typeof(Implementation1<int>),
+					typeof(Implementation2<>),
+					typeof(Implementation2<int>),
+					typeof(ImplementationInt)
+				};
+
+				var validCombinations = new[]
+				{
+					new { gtd = typeof(IInterface1<>),     t = typeof(Implementation1<int>), gt = typeof(IInterface1<int>)     },
+					new { gtd = typeof(IInterface1<>),     t = typeof(Implementation2<int>), gt = typeof(IInterface1<int>)     },
+					new { gtd = typeof(IInterface1<>),     t = typeof(ImplementationInt),    gt = typeof(IInterface1<int>)     },
+					new { gtd = typeof(IInterface2<>),     t = typeof(Implementation1<int>), gt = typeof(IInterface2<int>)     },
+					new { gtd = typeof(IInterface2<>),     t = typeof(Implementation2<int>), gt = typeof(IInterface2<int>)     },
+					new { gtd = typeof(IInterface2<>),     t = typeof(ImplementationInt),    gt = typeof(IInterface2<int>)     },
+					new { gtd = typeof(Implementation1<>), t = typeof(Implementation1<int>), gt = typeof(Implementation1<int>) },
+					new { gtd = typeof(Implementation1<>), t = typeof(Implementation2<int>), gt = typeof(Implementation1<int>) },
+					new { gtd = typeof(Implementation1<>), t = typeof(ImplementationInt),    gt = typeof(Implementation1<int>) },
+					new { gtd = typeof(Implementation2<>), t = typeof(Implementation2<int>), gt = typeof(Implementation2<int>) },
+					new { gtd = typeof(Implementation2<>), t = typeof(ImplementationInt),    gt = typeof(Implementation2<int>) }
+				};
+
+				return from type in types
+						 from genericTypeDefinition in types
+						 where genericTypeDefinition.IsGenericTypeDefinition
+						 let validCombination = validCombinations.SingleOrDefault(x => x.t == type && x.gtd == genericTypeDefinition)
+						 let isValid = validCombination != null
+						 let genericType = isValid ? validCombination.gt : null
+						 select new object[] { type, genericTypeDefinition, isValid, genericType };
+			}
 		}
 	}
 }
