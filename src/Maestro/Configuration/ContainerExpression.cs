@@ -4,7 +4,7 @@ using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	public class ContainerExpression : IDisposable
+   internal class ContainerExpression : IDisposable, IContainerExpression
 	{
 		private bool _disposed = false;
 		private readonly Kernel _kernel;
@@ -16,7 +16,7 @@ namespace Maestro.Configuration
 			_defaultSettings = defaultSettings;
 		}
 
-		public DefaultsExpression Defaults
+		public IDefaultsExpression Defaults
 		{
 			get
 			{
@@ -55,7 +55,7 @@ namespace Maestro.Configuration
 			return new ServiceExpression<T>(typeof(T), name, _kernel, _defaultSettings);
 		}
 
-		public void Scan(Action<Scanner> action)
+		public void Scan(Action<IScanner> action)
 		{
 			AssertNotDisposed();
 			var scanner = new Scanner();

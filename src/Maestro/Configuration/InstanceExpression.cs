@@ -15,7 +15,7 @@ namespace Maestro.Configuration
 		internal abstract TParent Parent { get; }
 		internal ServiceDescriptor ServiceDescriptor { get; }
 
-		public LifetimeSelector<TParent> Lifetime
+		public ILifetimeSelector<TParent> Lifetime
 		{
 			get { return new LifetimeSelector<TParent>(Parent, factory => ServiceDescriptor.Lifetime = factory()); }
 		}

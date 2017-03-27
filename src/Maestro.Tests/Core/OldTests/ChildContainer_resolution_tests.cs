@@ -32,10 +32,10 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x => x.For<object>().Add.Instance("fail"))
 				.GetChildContainer(x =>
-				{
-					x.For<object>().Add.Instance("fail");
-					x.For<IEnumerable<object>>().Use.Instance(new[] { "1" });
-				})
+			   {
+			      x.For<object>().Add.Instance("fail");
+			      x.For<IEnumerable<object>>().Use.Instance(new[] { "1" });
+			   })
 				.GetChildContainer(x => x.For<object>().Add.Instance("2"));
 
 			container.GetServices<object>().ShouldBe(new[] { "2", "1" });

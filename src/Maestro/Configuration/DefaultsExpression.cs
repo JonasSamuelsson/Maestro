@@ -1,6 +1,6 @@
 ﻿namespace Maestro.Configuration
 {
-	public class DefaultsExpression
+	internal class DefaultsExpression : IDefaultsExpression
 	{
 		private readonly DefaultSettings _defaultSettings;
 
@@ -9,6 +9,6 @@
 			_defaultSettings = defaultSettings;
 		}
 
-		public DefaultLifetimeSelector Lifetime => new DefaultLifetimeSelector(lifetimeFactory => _defaultSettings.LifetimeFactory = lifetimeFactory);
+		public IDefaultLifetimeSelector Lifetime => new DefaultLifetimeSelector(lifetimeFactory => _defaultSettings.LifetimeFactory = lifetimeFactory);
 	}
 }

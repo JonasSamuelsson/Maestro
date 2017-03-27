@@ -10,7 +10,7 @@ namespace Maestro.Tests.Core
 		[Fact]
 		public void should_throw_if_container_expression_is_accessed_outside_of_closure()
 		{
-			ContainerExpression containerExpression = null;
+			IContainerExpression containerExpression = null;
 			new Container().Configure(x => containerExpression = x);
 
 			Should.Throw<ObjectDisposedException>(() => { var @default = containerExpression.Defaults; });

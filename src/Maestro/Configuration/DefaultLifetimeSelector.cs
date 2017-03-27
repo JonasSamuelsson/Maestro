@@ -3,7 +3,7 @@ using Maestro.Lifetimes;
 
 namespace Maestro.Configuration
 {
-	public class DefaultLifetimeSelector
+	internal class DefaultLifetimeSelector : IDefaultLifetimeSelector
 	{
 		private readonly Action<Func<ILifetime>> _action;
 
