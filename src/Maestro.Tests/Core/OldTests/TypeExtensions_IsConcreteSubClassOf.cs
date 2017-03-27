@@ -12,7 +12,7 @@ namespace Maestro.Tests.Core
 		[Theory, ClassData(typeof(TestData))]
 		public void should_determine_if_type_is_concrete_sub_class_of_basetype(Type type, Type basetype, bool expected)
 		{
-			var reason = $"{GetName(type)} {(expected ? "is" : "is not")} concrete sub class of {GetName(basetype)}";
+			var reason = $"{(expected ? "Expected" : "Did not expect")} {GetName(type)} to be concrete sub class of {GetName(basetype)}";
 			type.IsConcreteSubClassOf(basetype).ShouldBe(expected, reason);
 		}
 
@@ -26,15 +26,10 @@ namespace Maestro.Tests.Core
 
 		private interface IInterface { }
 		private interface IInterface<T> : IInterface { }
-		private interface IInterface<T1, T2> : IInterface<T1> { }
-
-		private class Implementation : IInterface { }
-		private class Implementation<T> : IInterface<T> { }
-		private class Implementation<T1, T2> : IInterface<T1, T2> { }
-
-		private class Class { }
-		private class Class<T> : Class { }
-		private class Class<T1, T2> : Class<T1> { }
+		private interface IInterfaceOfInt : IInterface<int> { }
+		private class Class : IInterface { }
+		private class Class<T> : Class, IInterface<T> { }
+		private class ClassOfInt : Class<int>, IInterfaceOfInt { }
 		private abstract class AbstractClass : Class { }
 
 		public class TestData : IEnumerable<object[]>
@@ -43,22 +38,13 @@ namespace Maestro.Tests.Core
 			{
 				var types = new[]
 				{
-					typeof (IInterface),
-					typeof (IInterface<>),
-					typeof (IInterface<int>),
-					typeof (IInterface<,>),
-					typeof (IInterface<int, int>),
-					typeof (Implementation),
-					typeof (Implementation<>),
-					typeof (Implementation<int>),
-					typeof (Implementation<,>),
-					typeof (Implementation<int, int>),
-					typeof (Class),
-					typeof (Class<>),
-					typeof (Class<int>),
-					typeof (Class<,>),
-					typeof (Class<int, int>),
-					typeof (AbstractClass)
+					typeof(IInterface),
+					typeof(IInterface<>),
+					typeof(IInterfaceOfInt),
+					typeof(Class),
+					typeof(Class<>),
+					typeof(ClassOfInt),
+					typeof(AbstractClass)
 				};
 
 				IEnumerable<Type> concreteSubClasses = null;
@@ -78,16 +64,11 @@ namespace Maestro.Tests.Core
 
 			private static readonly Dictionary<Type, IEnumerable<Type>> ConcreteSubClasses = new[]
 			{
-				new {type = typeof (Implementation), basetype = typeof (IInterface)},
-				new {type = typeof (Implementation<int>), basetype = typeof (IInterface)},
-				new {type = typeof (Implementation<int>), basetype = typeof (IInterface<int>)},
-				new {type = typeof (Implementation<int,int>), basetype = typeof (IInterface)},
-				new {type = typeof (Implementation<int,int>), basetype = typeof (IInterface<int>)},
-				new {type = typeof (Implementation<int,int>), basetype = typeof (IInterface<int,int>)},
-				new {type = typeof (Class<int>), basetype = typeof (Class)},
-				new {type = typeof (Class<int,int>), basetype = typeof (Class)},
-				new {type = typeof (Class<int,int>), basetype = typeof (Class<int>)},
-			}.GroupBy(x => x.basetype).ToDictionary(x => x.Key, x => x.Select(y => y.type).ToList().AsEnumerable());
+				new {basetype = typeof(IInterface),      concreteSubTypes = new[] {typeof(Class), typeof(ClassOfInt)}},
+				new {basetype = typeof(IInterface<>),    concreteSubTypes = new[] {typeof(Class<>)}},
+				new {basetype = typeof(IInterfaceOfInt), concreteSubTypes = new[] {typeof(ClassOfInt)}},
+				new {basetype = typeof(Class),           concreteSubTypes = new[] {typeof(ClassOfInt)}}
+			}.ToDictionary(x => x.basetype, x => x.concreteSubTypes.AsEnumerable());
 		}
 	}
 }
