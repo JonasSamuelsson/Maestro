@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.1</TargetFramework>
+    <TargetFrameworks>net452;netstandard1.1</TargetFrameworks>
     <AssemblyName>Maestro</AssemblyName>
     <RootNamespace>Maestro</RootNamespace>
     <SignAssembly>True</SignAssembly>
