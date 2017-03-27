@@ -2,7 +2,7 @@ using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	class FactoryInstanceExpression<TInstance> : InstanceExpression<TInstance, IFactoryInstanceExpression<TInstance>>, IFactoryInstanceExpression<TInstance>
+	internal class FactoryInstanceExpression<TInstance> : InstanceExpression<TInstance, IFactoryInstanceExpression<TInstance>>, IFactoryInstanceExpression<TInstance>
 	{
 		public FactoryInstanceExpression(ServiceDescriptor serviceDescriptor)
 			: base(serviceDescriptor)

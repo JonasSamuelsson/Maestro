@@ -15,7 +15,7 @@ namespace Maestro.Conventions
 			_serviceRegistration = serviceRegistration;
 		}
 
-		public void Process(IEnumerable<Type> types, ContainerExpression containerExpression)
+		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
 			types = types as IList<Type> ?? types.ToList();
 

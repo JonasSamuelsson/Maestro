@@ -19,16 +19,16 @@ namespace Maestro.Microsoft.DependencyInjection
 		{
 			container.Configure(x =>
 			{
-				x.For<IServiceProvider>().Use.Factory(ctx => new MaestroServiceProvider(ctx));
+			   x.For<IServiceProvider>().Use.Factory(ctx => new MaestroServiceProvider(ctx));
 
-				foreach (var descriptor in descriptors)
-				{
-					x.Register(descriptor);
-				}
+			   foreach (var descriptor in descriptors)
+			   {
+			      x.Register(descriptor);
+			   }
 			});
 		}
 
-		private static void Register(this ContainerExpression containerExpression, ServiceDescriptor descriptor)
+		private static void Register(this IContainerExpression containerExpression, ServiceDescriptor descriptor)
 		{
 			if (descriptor.ImplementationType != null)
 			{
@@ -52,7 +52,7 @@ namespace Maestro.Microsoft.DependencyInjection
 				 .Use.Instance(descriptor.ImplementationInstance);
 		}
 
-		private static void Use<T>(this LifetimeSelector<T> expression, ServiceLifetime descriptorLifetime)
+		private static void Use<T>(this ILifetimeSelector<T> expression, ServiceLifetime descriptorLifetime)
 		{
 			switch (descriptorLifetime)
 			{

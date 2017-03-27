@@ -64,7 +64,7 @@ namespace Maestro.Tests.Core.Conventions
 
 			public IEnumerable<Type> ProcessedTypes { get; private set; }
 
-			public void Process(IEnumerable<Type> types, ContainerExpression containerExpression)
+			public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 			{
 				ProcessedTypes = types.ToList();
 			}

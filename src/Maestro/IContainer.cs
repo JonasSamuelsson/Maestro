@@ -6,14 +6,14 @@ namespace Maestro
 {
 	public interface IContainer : IDisposable
 	{
-		/// <summary>
-		/// Adds configuration to the container.
-		/// </summary>
-		/// <param name="action"></param>
-		void Configure(Action<ContainerExpression> action);
+	   /// <summary>
+	   /// Adds configuration to the container.
+	   /// </summary>
+	   /// <param name="action"></param>
+	   void Configure(Action<IContainerExpression> action);
 
 		IContainer GetChildContainer();
-		IContainer GetChildContainer(Action<ContainerExpression> action);
+		IContainer GetChildContainer(Action<IContainerExpression> action);
 
 		/// <summary>
 		/// Gets an instance of type <paramref name="type"/> named <paramref name="name"/>.
