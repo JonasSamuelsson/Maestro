@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Shouldly;
+﻿using Shouldly;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Maestro.Tests.Core.Factories
@@ -19,10 +19,10 @@ namespace Maestro.Tests.Core.Factories
 			var container = new Container(x =>
 			{
 				x.For<INoDependencies>().Use.Type<NoDependencies>();
-				x.For<IOneDependency>().Use.Type<RequiredDependency>();
+				x.For<IOneDependency<INoDependencies>>().Use.Type<RequiredDependency<INoDependencies>>();
 			});
 
-			var instance = container.GetService<IOneDependency>();
+			var instance = container.GetService<IOneDependency<INoDependencies>>();
 
 			instance.Dependency.ShouldNotBe(null);
 		}
@@ -33,10 +33,10 @@ namespace Maestro.Tests.Core.Factories
 			var container = new Container(x =>
 			{
 				x.For<INoDependencies>().Use.Type<NoDependencies>();
-				x.For<IOneDependency>().Use.Type<OptionalDependency>();
+				x.For<IOneDependency<INoDependencies>>().Use.Type<OptionalDependency<INoDependencies>>();
 			});
 
-			var instance = container.GetService<IOneDependency>();
+			var instance = container.GetService<IOneDependency<INoDependencies>>();
 
 			instance.Dependency.ShouldNotBe(null);
 		}
@@ -44,12 +44,12 @@ namespace Maestro.Tests.Core.Factories
 		[Fact]
 		public void should_reevaluate_constructor_to_use_when_config_changes()
 		{
-			var container = new Container(x => x.For<IOneDependency>().Use.Type<OptionalDependency>());
-			var instance = container.GetService<IOneDependency>();
+			var container = new Container(x => x.For<IOneDependency<INoDependencies>>().Use.Type<OptionalDependency<INoDependencies>>());
+			var instance = container.GetService<IOneDependency<INoDependencies>>();
 			instance.Dependency.ShouldBe(null);
 
 			container.Configure(x => x.For<INoDependencies>().Use.Type<NoDependencies>());
-			instance = container.GetService<IOneDependency>();
+			instance = container.GetService<IOneDependency<INoDependencies>>();
 			instance.Dependency.ShouldNotBe(null);
 		}
 
@@ -106,55 +106,30 @@ namespace Maestro.Tests.Core.Factories
 			{
 				x.For<string>().Use.Instance("Object");
 
-				x.For<Root<object>>().Add.Self().CtorArg("dependency", "Object");
-				x.For<Root<object>>().Add.Self().CtorArg("dependency", () => "Object");
-				x.For<Root<object>>().Add.Self().CtorArg("dependency", ctx => ctx.GetService<string>());
-				x.For<Root<object>>().Add.Self().CtorArg("dependency", (ctx, type) => type.Name);
-				x.For(typeof(Root<>)).Add.Self().CtorArg("dependency", "Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg("dependency", "Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg("dependency", () => "Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg("dependency", ctx => ctx.GetService<string>());
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg("dependency", (ctx, type) => type.Name);
+				x.For(typeof(OptionalDependency<>)).Add.Self().CtorArg("dependency", "Object");
 
-				x.For<Root<object>>().Add.Self().CtorArg(typeof(object), "Object");
-				x.For<Root<object>>().Add.Self().CtorArg(typeof(object), () => "Object");
-				x.For<Root<object>>().Add.Self().CtorArg(typeof(object), ctx => ctx.GetService<string>());
-				x.For(typeof(Root<>)).Add.Self().CtorArg(typeof(object), "Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg(typeof(object), "Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg(typeof(object), () => "Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg(typeof(object), ctx => ctx.GetService<string>());
+				x.For(typeof(OptionalDependency<>)).Add.Self().CtorArg(typeof(object), "Object");
 
-				x.For<Root<object>>().Add.Self().CtorArg<object>("Object");
-				x.For<Root<object>>().Add.Self().CtorArg<object>(() => "Object");
-				x.For<Root<object>>().Add.Self().CtorArg<object>(ctx => ctx.GetService<string>());
-				x.For(typeof(Root<>)).Add.Self().CtorArg<object>("Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg<object>("Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg<object>(() => "Object");
+				x.For<OptionalDependency<object>>().Add.Self().CtorArg<object>(ctx => ctx.GetService<string>());
+				x.For(typeof(OptionalDependency<>)).Add.Self().CtorArg<object>("Object");
 			});
 
-			container.GetServices<Root<object>>().ShouldAllBe(x => "Object".Equals(x.Dependency));
+			container.GetServices<OptionalDependency<object>>().ShouldAllBe(x => "Object".Equals(x.Dependency));
 		}
 
 		interface INoDependencies
 		{ }
 
-		interface IOneDependency
-		{
-			INoDependencies Dependency { get; }
-		}
-
 		class NoDependencies : INoDependencies { }
-		class NoDependencies1 : NoDependencies { }
-		class NoDependencies2 : NoDependencies { }
-
-		class OptionalDependency : IOneDependency
-		{
-			public OptionalDependency() { }
-
-			public OptionalDependency(INoDependencies dependency)
-			{
-				Dependency = dependency;
-			}
-
-			public INoDependencies Dependency { get; }
-		}
-
-		class RequiredDependency : OptionalDependency
-		{
-			public RequiredDependency(INoDependencies dependency) : base(dependency)
-			{ }
-		}
 
 		interface INoDependencies<T>
 		{ }
@@ -179,15 +154,11 @@ namespace Maestro.Tests.Core.Factories
 			public T Dependency { get; }
 		}
 
-		class Root<T>
+		class RequiredDependency<T> : OptionalDependency<T>
 		{
-			public Root() { }
-			public Root(T dependency)
-			{
-				Dependency = dependency;
-			}
+			public RequiredDependency(T dependency) : base(dependency) { }
+		}
 
-			public T Dependency { get; }
 		}
 	}
 }
