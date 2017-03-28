@@ -8,7 +8,7 @@
     <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
     <Version>2.0.0-beta2</Version>
     <Company />
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Description>Maestro is a dependency injection / inversion of control library.</Description>
     <Authors>Jonas Samuelsson</Authors>
     <PackageLicenseUrl>https://github.com/JonasSamuelsson/Maestro/blob/master/LICENSE</PackageLicenseUrl>

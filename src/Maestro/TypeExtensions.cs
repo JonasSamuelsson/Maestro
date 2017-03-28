@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace Maestro
 {
@@ -57,35 +55,27 @@ namespace Maestro
 			return type.IsClass() && type != typeof(string) && !type.IsAbstract();
 		}
 
-		public static bool IsConcreteSubClassOf(this Type type, Type basetype)
+		public static bool IsConcreteClassOf(this Type type, Type basetype, out Type genericType)
 		{
-			if (type == basetype)
-				return false;
+			genericType = null;
 
 			if (type.IsAbstract() || !type.IsClass())
 				return false;
 
-			if (type.IsGenericTypeDefinition() ^ basetype.IsGenericTypeDefinition())
-				return false;
-
 			if (!basetype.IsGenericTypeDefinition())
-				return basetype.IsAssignableFrom(type);
+				return !type.IsGenericTypeDefinition() && basetype.IsAssignableFrom(type);
 
-			var args = basetype.GetGenericArguments();
-			var typeArgs = type.GetGenericArguments();
+			var typeIsGenericTypeDefinition = type.IsGenericTypeDefinition();
+			var types = basetype.IsClass() ? type.GetClasses() : type.GetInterfaces();
+			foreach (var t in types)
+			{
+				if (!t.IsGenericType()) continue;
+				if (basetype != t.GetGenericTypeDefinition()) continue;
+				if (!typeIsGenericTypeDefinition) genericType = t;
+				return true;
+			}
 
-			if (args.Length != typeArgs.Length)
-				return false;
-
-			var typeDefinitions =
-				from t in basetype.IsClass() ? type.GetClasses() : type.GetInterfaces()
-				where t.IsGenericType()
-				// ReSharper disable once ConditionIsAlwaysTrueOrFalse
-				let tArgs = t.GetGenericArguments().Where(x => x.FullName == null).Distinct().ToArray()
-				where args.Length == tArgs.Length
-				select t.GetGenericTypeDefinition();
-
-			return typeDefinitions.Any(x => x == basetype);
+			return false;
 		}
 	}
 }

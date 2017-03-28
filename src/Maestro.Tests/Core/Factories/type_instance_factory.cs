@@ -159,6 +159,18 @@ namespace Maestro.Tests.Core.Factories
 			public RequiredDependency(T dependency) : base(dependency) { }
 		}
 
+		[Fact]
+		public void should_not_try_to_invoke_static_constructor()
+		{
+			var container = new Container(x => x.For<Unresolvable>().Use.Self());
+
+		   Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
+		}
+
+		class Unresolvable
+		{
+			static Unresolvable() { }
+			public Unresolvable(int i) { }
 		}
 	}
 }

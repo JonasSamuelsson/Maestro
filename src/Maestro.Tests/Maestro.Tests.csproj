@@ -86,6 +86,7 @@
     <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\Factories\Self_type_tests.cs" />
     <Compile Include="Castle.DynamicProxy\dynamic_proxy_tests.cs" />
+    <Compile Include="Core\Utils\NetStandardPolyfills_tests.cs" />
     <Compile Include="Microsoft.DependencyInjection\microsoft_dependency_injection_tests.cs" />
     <Compile Include="Core\OldTests\ChildContainer_resolution_tests.cs" />
     <Compile Include="Core\OldTests\child_container.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Core\Context\context_can_get_tests.cs" />
     <Compile Include="Core\Context\Context_tests.cs" />
     <Compile Include="Core\Conventions\add_concrete_classes_closing_convention.cs" />
+    <Compile Include="Core\Conventions\ConcreteClassesOfConvention_tests.cs" />
     <Compile Include="Core\Conventions\conventional_registration.cs" />
     <Compile Include="Core\Conventions\use_default_implementation_convention.cs" />
     <Compile Include="Core\OldTests\default_settings.cs" />

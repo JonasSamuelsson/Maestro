@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Maestro.Utils
 {
@@ -18,8 +16,8 @@ namespace Maestro.Utils
 
 		private static Func<object, Type[], object> GetFactory(Type type)
 		{
-			var method = type.GetMethod("MakeGeneric", new Type[] { typeof(Type[]) });
-			if (method != null)
+			var method = type.GetMethodOrNull("MakeGeneric", new[] { typeof(Type[]) });
+			if(method != null)
 			{
 				var parameters = method.GetParameters();
 				if (parameters.Length == 1)

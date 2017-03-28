@@ -1,5 +1,5 @@
-﻿using System;
-using Shouldly;
+﻿using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.Core.TypeFactoryResolvers
@@ -42,6 +42,18 @@ namespace Maestro.Tests.Core.TypeFactoryResolvers
 
 			container.Configure(x => x.For<int>().Use.Instance(1));
 			Should.Throw<ActivationException>(() => container.GetService<int[]>());
+		}
+
+		[Fact]
+		public void should_not_get_type_with_static_ctor()
+		{
+			new Container().TryGetService(out Unresolvable instance).ShouldBe(false);
+		}
+
+		class Unresolvable
+		{
+			static Unresolvable() { }
+			public Unresolvable(int i) { }
 		}
 	}
 }

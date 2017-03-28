@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Linq;
+using System.Reflection;
 
 namespace Maestro
 {
@@ -29,22 +29,64 @@ namespace Maestro
 
 		public static IEnumerable<Type> GetInterfaces(this Type type)
 		{
-			return type.GetTypeInfo().ImplementedInterfaces;
+			var interfaces = new HashSet<Type>();
+
+			if (type.IsInterface())
+			{
+				interfaces.Add(type);
+			}
+
+			foreach (var @interface in type.GetTypeInfo().ImplementedInterfaces)
+			{
+				interfaces.Add(@interface);
+			}
+
+			return interfaces;
 		}
 
 		public static IEnumerable<ConstructorInfo> GetConstructors(this Type type)
 		{
-			return type.GetTypeInfo().DeclaredConstructors;
+			return type.GetTypeInfo().DeclaredConstructors.Where(x => !x.IsStatic);
 		}
 
 		public static PropertyInfo GetProperty(this Type type, string name)
 		{
-			return type.GetRuntimeProperty(name);
+			return (from p in type.GetRuntimeProperties()
+					  where p.Name == name
+					  let method = p.GetMethod ?? p.SetMethod
+					  let isStatic = method.IsStatic
+					  where !isStatic
+					  select p).Single();
 		}
 
-		public static MethodInfo GetMethod(this Type type, string name, Type[] parameters)
+		public static MethodInfo GetMethod(this Type type, string name, Type[] parameterTypes)
 		{
-			return type.GetRuntimeMethod(name, parameters);
+			var method = type.GetMethodOrNull(name, parameterTypes);
+			if (method != null) return method;
+			throw new InvalidOperationException($"Can't get method {type.FullName}.{name}({string.Join(", ", parameterTypes.Select(x => x.FullName))})");
+		}
+
+		public static MethodInfo GetMethodOrNull(this Type type, string name, Type[] parameterTypes)
+		{
+			foreach (var method in type.GetRuntimeMethods())
+			{
+				if (method.Name != name) continue;
+
+				var @params = method.GetParameters();
+				if (@params.Length != parameterTypes.Length) continue;
+
+				for (var i = 0; i < @params.Length; i++)
+				{
+					if (@params[i].ParameterType != parameterTypes[i]) goto nextMethod;
+				}
+
+				return method;
+
+				nextMethod:
+				;
+			}
+
+			return null;
 		}
 
 		public static MethodInfo GetSetMethod(this PropertyInfo property)
@@ -54,7 +96,10 @@ namespace Maestro
 
 		public static Type[] GetGenericArguments(this Type type)
 		{
-			return type.GetTypeInfo().GenericTypeArguments;
+			var typeInfo = type.GetTypeInfo();
+			return typeInfo.ContainsGenericParameters
+				? typeInfo.GenericTypeParameters
+				: typeInfo.GenericTypeArguments;
 		}
 
 		public static bool IsAbstract(this Type type)
