@@ -38,18 +38,14 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<int>().Use.Instance(1);
-				x.For<string>().Use.Instance("foobar");
+				x.For<string>().Use.Instance("success");
 				x.For(typeof(Instance<>)).Use.Type(typeof(Instance<>)).Lifetime.Singleton();
 			});
 
-			var instance1 = container.GetService<Instance<int>>();
-			var instance2 = container.GetService<Instance<int>>();
-			var instance3 = container.GetService<Instance<string>>();
-			var instance4 = container.GetService<Instance<string>>();
+			var instance1 = container.GetService<Instance<string>>();
+			var instance2 = container.GetService<Instance<string>>();
 
-			instance1.Value.ShouldBe(instance2.Value);
-			instance3.Value.ShouldBe(instance4.Value);
+			instance1.ShouldBe(instance2);
 		}
 
 		[Fact]
