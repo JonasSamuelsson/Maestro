@@ -94,7 +94,6 @@
     <Compile Include="Core\Context\context_can_get_tests.cs" />
     <Compile Include="Core\Context\Context_tests.cs" />
     <Compile Include="Core\Conventions\add_concrete_classes_closing_convention.cs" />
-    <Compile Include="Core\Conventions\add_concrete_sub_classes_convention.cs" />
     <Compile Include="Core\Conventions\conventional_registration.cs" />
     <Compile Include="Core\Conventions\use_default_implementation_convention.cs" />
     <Compile Include="Core\OldTests\default_settings.cs" />
@@ -134,7 +133,7 @@
     <Compile Include="Core\OldTests\try_get_instance.cs" />
     <Compile Include="Core\OldTests\try_use.cs" />
     <Compile Include="Core\OldTests\TypeExtensions_IsConcreteClassClosing.cs" />
-    <Compile Include="Core\OldTests\TypeExtensions_IsConcreteSubClassOf.cs" />
+    <Compile Include="Core\OldTests\TypeExtensions_IsConcreteClassOf.cs" />
     <Compile Include="Core\TypeFactoryResolvers\ConcreteClosedClassFactoryResolver_tests.cs" />
     <Compile Include="Core\TypeFactoryResolvers\FuncFactoryResolver_tests.cs" />
     <Compile Include="Core\TypeFactoryResolvers\LazyFactoryResolver_tests.cs" />
