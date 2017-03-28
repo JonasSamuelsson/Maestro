@@ -12,14 +12,14 @@ namespace Maestro.Configuration
 			_scanner = scanner;
 		}
 
-		public IScanner ConcreteSubClassesOf<T>(Action<ConventionalTypeInstanceRegistrator<T>> serviceRegistration)
+		public IScanner ConcreteClassesOf<T>(Action<ConventionalTypeInstanceRegistrator<T>> serviceRegistration)
 		{
-			return _scanner.With(new ConcreteSubClassesConvention<T>(typeof(T), serviceRegistration));
+			return _scanner.With(new ConcreteClassesOfConvention<T>(typeof(T), serviceRegistration));
 		}
 
-		public IScanner ConcreteSubClassesOf(Type type, Action<ConventionalTypeInstanceRegistrator<object>> serviceRegistration)
+		public IScanner ConcreteClassesOf(Type type, Action<ConventionalTypeInstanceRegistrator<object>> serviceRegistration)
 		{
-			return _scanner.With(new ConcreteSubClassesConvention<object>(type, serviceRegistration));
+			return _scanner.With(new ConcreteClassesOfConvention<object>(type, serviceRegistration));
 		}
 
 		public IScanner ConcreteClassesClosing(Type genericTypeDefinition, Action<ConventionalTypeInstanceRegistrator<object>> serviceRegistration)
