@@ -59,7 +59,7 @@ namespace Maestro.Configuration
       /// </summary>
       /// <param name="predicate"></param>
       /// <returns></returns>
-      IScanner Matching(Func<Type, bool> predicate);
+      IScanner Where(Func<Type, bool> predicate);
 
       /// <summary>
       /// Filter types to those matching <paramref name="filter"/>.

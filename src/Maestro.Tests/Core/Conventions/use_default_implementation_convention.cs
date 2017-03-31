@@ -13,7 +13,7 @@ namespace Maestro.Tests.Core.Conventions
 			var container = new Container(x => x.Scan(_ =>
 			{
 				_.AssemblyContainingTypeOf(this);
-				_.Matching(y => y.Namespace == @namespace);
+				_.Where(y => y.Namespace == @namespace);
 				_.For.DefaultImplementations(z => z.Use());
 			}));
 

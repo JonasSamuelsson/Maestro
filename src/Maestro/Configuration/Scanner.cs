@@ -85,7 +85,7 @@ namespace Maestro.Configuration
       /// </summary>
       /// <param name="predicate"></param>
       /// <returns></returns>
-      public IScanner Matching(Func<Type, bool> predicate)
+      public IScanner Where(Func<Type, bool> predicate)
       {
          return Matching(new LambdaFilter(predicate));
       }
