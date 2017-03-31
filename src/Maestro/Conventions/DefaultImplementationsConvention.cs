@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Maestro.Configuration;
 
 namespace Maestro.Conventions
@@ -17,17 +16,19 @@ namespace Maestro.Conventions
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
-			types = types as IList<Type> ?? types.ToList();
+			types = types as IReadOnlyCollection<Type> ?? types.ToList();
 
-			var interfaces = types.Where(x => x.IsInterface());
-			var classes = types.Where(x => x.IsConcreteClass()).GroupBy(x => x.Namespace ?? string.Empty).ToDictionary(x => x.Key, x => x.ToList());
+			var interfaces = types.Where(x => x.IsInterface() && x.Name.StartsWith("I"));
+		   var classes = types
+		      .Where(x => x.IsConcreteClass())
+		      .ToDictionary(x => x.FullName);
 
 			foreach (var @interface in interfaces)
 			{
-				List<Type> list;
-				if (!classes.TryGetValue(@interface.Namespace ?? string.Empty, out list)) continue;
-				var @class = list.SingleOrDefault(x => x.Name == @interface.Name.Substring(1));
-				if (@class == null) continue;
+			   var key = @interface.FullName;
+			   key = key.Remove(key.Length - @interface.Name.Length) + @interface.Name.Substring(1);
+			   Type @class;
+			   if (!classes.TryGetValue(key, out @class)) continue;
 				_serviceRegistration(new ConventionalTypeInstanceRegistrator<object>(containerExpression, @interface, @class));
 			}
 		}
