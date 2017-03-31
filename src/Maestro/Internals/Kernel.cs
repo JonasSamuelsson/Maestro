@@ -222,7 +222,13 @@ namespace Maestro.Internals
 
 		public void Populate(Diagnostics.Configuration configuration)
 		{
-			_serviceDescriptorLookup.Populate(configuration);
+			_serviceDescriptorLookup.Populate(configuration.Services);
+
+			if (_parent != null)
+			{
+				configuration.Parent = new Diagnostics.Configuration();
+				_parent.Populate(configuration.Parent);
+			}
 		}
 	}
 }

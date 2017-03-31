@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Maestro.Configuration;
+using Maestro.Diagnostics;
 
 namespace Maestro
 {
 	public interface IContainer : IDisposable
 	{
+		IDiagnostics Diagnostics { get; }
+
 	   /// <summary>
 	   /// Adds configuration to the container.
 	   /// </summary>

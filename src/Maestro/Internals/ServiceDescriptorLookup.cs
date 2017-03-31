@@ -110,10 +110,8 @@ namespace Maestro.Internals
 			// todo
 		}
 
-		public void Populate(Diagnostics.Configuration configuration)
+		public void Populate(List<Service> services)
 		{
-			var services = new List<Service>();
-
 			foreach (var serviceFamily in _serviceFamilies.OrderBy(x => x.Key.FullName).Select(x => x.Value))
 			{
 				var serviceDescriptors = serviceFamily.NamedServices
@@ -133,8 +131,6 @@ namespace Maestro.Internals
 					});
 				}
 			}
-
-			configuration.Services = services;
 		}
 	}
 }

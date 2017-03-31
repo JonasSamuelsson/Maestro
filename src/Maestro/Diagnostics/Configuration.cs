@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -6,40 +7,67 @@ namespace Maestro.Diagnostics
 {
 	internal class Configuration
 	{
-		public IEnumerable<Service> Services { get; internal set; }
+		public Configuration Parent { get; set; }
+		public List<Service> Services { get; set; } = new List<Service>();
 
-		public override string ToString()
+		public string ToString(Func<Type, bool> serviceFilter)
 		{
-			var rows = new List<string[]> { new[] { "Service type", "Name", "Provider", "Lifetime", "Instance type" } };
-			foreach (var service in Services)
-			{
-				rows.Add(new[]
-				{
-					service.ServiceType.ToString(),
-					GetServiceName(service),
-					service.Provider,
-					service.Lifetime,
-					service.InstanceType?.FullName ?? string.Empty
-				});
-			}
+			var serviceCollections = GetServiceCollections(serviceFilter).ToList();
 
-			var lengths = rows.First()
-				.Select((_, i) => rows.Max(x => x[i].Length))
+			serviceCollections.ForEach(x => x.Insert(0, new[] { "Service type", "Name", "Kind", "Lifetime", "Instance type" }));
+
+			var allServices = serviceCollections.SelectMany(x => x).ToList();
+			var widths = allServices
+				.First()
+				.Select((_, i) => allServices.Max(x => x[i].Length))
 				.ToList();
+
+			serviceCollections.ForEach(services => services.Insert(1, widths.Select(width => new string('=', width)).ToArray()));
 
 			var builder = new StringBuilder();
 
-			foreach (var row in rows)
+			var parent = false;
+			foreach (var services in serviceCollections)
 			{
-				for (var i = 0; i < row.Length; i++)
+				if (parent)
 				{
-					builder.Append(row[i].PadRight(lengths[i] + 2));
+					builder.AppendLine();
+					builder.AppendLine(" Parent");
+					builder.AppendLine("====================");
+					builder.AppendLine();
 				}
 
-				builder.AppendLine();
+				foreach (var service in services)
+				{
+					for (var i = 0; i < service.Length; i++)
+					{
+						builder.Append(service[i].PadRight(widths[i] + 2));
+					}
+
+					builder.AppendLine();
+				}
+
+				parent = true;
 			}
 
 			return builder.ToString();
+		}
+
+		private IEnumerable<List<string[]>> GetServiceCollections(Func<Type, bool> serviceFilter)
+		{
+			for (var config = this; config != null; config = config.Parent)
+			{
+				yield return Services
+					.Where(service => serviceFilter(service.ServiceType))
+					.Select(service => new[]
+					{
+						service.ServiceType.ToString(),
+						GetServiceName(service),
+						service.Provider,
+						service.Lifetime,
+						service.InstanceType?.FullName ?? string.Empty
+					}).ToList();
+			}
 		}
 
 		private static string GetServiceName(Service service)
