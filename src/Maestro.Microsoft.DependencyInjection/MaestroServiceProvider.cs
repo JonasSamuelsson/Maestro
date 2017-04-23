@@ -1,22 +1,28 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Maestro.Microsoft.DependencyInjection
 {
-	internal class MaestroServiceProvider : IServiceProvider
+	public class MaestroServiceProvider : IServiceProvider, ISupportRequiredService
 	{
-		private readonly IContext _context;
+		private readonly IContainer _container;
 
-		public MaestroServiceProvider(IContext context)
+		public MaestroServiceProvider(IContainer container)
 		{
-			_context = context;
+			_container = container;
 		}
 
 		public object GetService(Type serviceType)
 		{
 			object instance;
-			return _context.TryGetService(serviceType, out instance)
+			return _container.TryGetService(serviceType, out instance)
 				? instance
 				: null;
+		}
+
+		public object GetRequiredService(Type serviceType)
+		{
+			return _container.GetService(serviceType);
 		}
 	}
 }

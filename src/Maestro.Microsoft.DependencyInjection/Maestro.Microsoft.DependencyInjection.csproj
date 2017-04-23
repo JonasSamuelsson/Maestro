@@ -6,6 +6,15 @@
     <RootNamespace>Maestro.Microsoft.DependencyInjection</RootNamespace>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
+    <Version>1.0.0-beta3</Version>
+    <Authors>Jonas Samuelsson</Authors>
+    <Company>Jonas Samuelsson</Company>
+    <Product>Maestro</Product>
+    <Description />
+    <PackageLicenseUrl>https://github.com/JonasSamuelsson/Maestro/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/JonasSamuelsson/Maestro</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/JonasSamuelsson/Maestro</RepositoryUrl>
+    <PackageTags>maestro container ioc di microsoft</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,11 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Maestro" Version="2.0.0-beta4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Maestro\Maestro.csproj" />
   </ItemGroup>
 
 </Project>

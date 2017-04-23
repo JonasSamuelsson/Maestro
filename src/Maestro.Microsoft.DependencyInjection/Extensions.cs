@@ -19,7 +19,7 @@ namespace Maestro.Microsoft.DependencyInjection
 		{
 			container.Configure(x =>
 			{
-			   x.For<IServiceProvider>().Use.Factory(ctx => new MaestroServiceProvider(ctx));
+			   x.For<IServiceProvider>().Use.Instance(new MaestroServiceProvider(container));
 
 			   foreach (var descriptor in descriptors)
 			   {
@@ -74,7 +74,5 @@ namespace Maestro.Microsoft.DependencyInjection
 		{
 			return context => descriptor.ImplementationFactory(context.GetService<IServiceProvider>());
 		}
-
-		private class Marker { }
 	}
 }
