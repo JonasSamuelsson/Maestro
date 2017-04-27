@@ -7,9 +7,9 @@ namespace Maestro.Conventions
 {
 	internal class DefaultImplementationsConvention : IConvention
 	{
-		private readonly Action<ConventionalTypeInstanceRegistrator<object>> _serviceRegistration;
+		private readonly Action<IConventionalServiceTypeSelector<object>> _serviceRegistration;
 
-		public DefaultImplementationsConvention(Action<ConventionalTypeInstanceRegistrator<object>> serviceRegistration)
+		public DefaultImplementationsConvention(Action<IConventionalServiceTypeSelector<object>> serviceRegistration)
 		{
 			_serviceRegistration = serviceRegistration;
 		}
@@ -19,17 +19,17 @@ namespace Maestro.Conventions
 			types = types as IReadOnlyCollection<Type> ?? types.ToList();
 
 			var interfaces = types.Where(x => x.IsInterface() && x.Name.StartsWith("I"));
-		   var classes = types
-		      .Where(x => x.IsConcreteClass())
-		      .ToDictionary(x => x.FullName);
+			var classes = types
+				.Where(x => x.IsConcreteClass())
+				.ToDictionary(x => x.FullName);
 
 			foreach (var @interface in interfaces)
 			{
-			   var key = @interface.FullName;
-			   key = key.Remove(key.Length - @interface.Name.Length) + @interface.Name.Substring(1);
-			   Type @class;
-			   if (!classes.TryGetValue(key, out @class)) continue;
-				_serviceRegistration(new ConventionalTypeInstanceRegistrator<object>(containerExpression, @interface, @class));
+				var key = @interface.FullName;
+				key = key.Remove(key.Length - @interface.Name.Length) + @interface.Name.Substring(1);
+				Type @class;
+				if (!classes.TryGetValue(key, out @class)) continue;
+				_serviceRegistration(new ConventionalServiceTypeSelector<object>(containerExpression, @interface, @class));
 			}
 		}
 	}

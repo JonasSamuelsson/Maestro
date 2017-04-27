@@ -2,7 +2,7 @@
 
 namespace Maestro.Configuration
 {
-	public class ConventionalTypeInstanceRegistrator<T>
+	internal class ConventionalTypeInstanceRegistrator<T> : IConventionalTypeInstanceRegistrator<T>
 	{
 		private readonly IContainerExpression _containerExpression;
 		private readonly Type _serviceType;
