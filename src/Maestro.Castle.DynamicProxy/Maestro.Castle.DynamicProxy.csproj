@@ -1,24 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>net452;netstandard1.3</TargetFrameworks>
-    <AssemblyName>Maestro.Castle.DynamicProxy</AssemblyName>
-    <RootNamespace>Maestro</RootNamespace>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFrameworks>net452;netstandard1.3</TargetFrameworks>
+      <AssemblyName>Maestro.Castle.DynamicProxy</AssemblyName>
+      <RootNamespace>Maestro</RootNamespace>
+      <SignAssembly>True</SignAssembly>
+      <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
+      <Version>1.0.0-beta1</Version>
+      <Authors>Jonas Samuelsson</Authors>
+      <Company>Jonas Samuelsson</Company>
+      <Product>Maestro</Product>
+      <Description />
+      <PackageLicenseUrl>https://github.com/JonasSamuelsson/Maestro/blob/master/LICENSE</PackageLicenseUrl>
+      <PackageProjectUrl>https://github.com/JonasSamuelsson/Maestro</PackageProjectUrl>
+      <RepositoryUrl>https://github.com/JonasSamuelsson/Maestro</RepositoryUrl>
+      <PackageTags>maestro container ioc di microsoft castle dynamic proxy interception aop</PackageTags>
+   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
+   <ItemGroup>
+      <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\Maestro.snk" Link="Maestro.snk" />
-  </ItemGroup>
+   <ItemGroup>
+      <None Include="..\Maestro.snk" Link="Maestro.snk" />
+   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="4.0.0" />
-    <PackageReference Include="Maestro" Version="2.0.0-beta4" />
-  </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Castle.Core" Version="4.0.0" />
+      <PackageReference Include="Maestro" Version="2.0.0-beta6" />
+   </ItemGroup>
 
 </Project>
