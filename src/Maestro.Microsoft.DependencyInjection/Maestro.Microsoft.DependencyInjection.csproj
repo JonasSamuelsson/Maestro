@@ -6,7 +6,7 @@
       <RootNamespace>Maestro.Microsoft.DependencyInjection</RootNamespace>
       <SignAssembly>True</SignAssembly>
       <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
-      <Version>1.0.0-beta3</Version>
+      <Version>1.0.0-beta4</Version>
       <Authors>Jonas Samuelsson</Authors>
       <Company>Jonas Samuelsson</Company>
       <Product>Maestro</Product>
@@ -26,7 +26,7 @@
    </ItemGroup>
 
    <ItemGroup>
-      <PackageReference Include="Maestro" Version="2.0.0-beta4" />
+      <PackageReference Include="Maestro" Version="2.0.0-beta6" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
       <PackageReference Include="System.ComponentModel" Version="4.3.0" />
       <PackageReference Include="System.Runtime" Version="4.3.0" />
