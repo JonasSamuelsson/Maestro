@@ -82,7 +82,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonServiceLocator\adapter_tests.cs" />
     <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\Factories\Self_type_tests.cs" />
     <Compile Include="Castle.DynamicProxy\dynamic_proxy_tests.cs" />
@@ -143,10 +142,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Maestro.CommonServiceLocator\Maestro.CommonServiceLocator.csproj">
-      <Project>{E79795D3-6C35-4846-91C1-D9E66C61E394}</Project>
-      <Name>Maestro.CommonServiceLocator</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj">
       <Project>{B8474763-52FB-4201-9F3F-CE1D20785C49}</Project>
       <Name>Maestro.Microsoft.DependencyInjection</Name>
