@@ -13,25 +13,32 @@ namespace Maestro.Internals
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate = true)
 		{
 			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, type => new ServiceFamily { Type = type });
+			var serviceDescriptorName = serviceDescriptor.Name;
 
-			try
+			if (serviceDescriptorName == ServiceNames.Anonymous)
 			{
-				if (serviceDescriptor.Name == ServiceNames.Anonymous)
+				serviceFamily.AnonymousServices.Add(serviceDescriptor);
+			}
+			else
+			{
+				try
 				{
-					serviceFamily.AnonymousServices.Add(serviceDescriptor);
+					serviceFamily.NamedServices.Add(serviceDescriptorName, serviceDescriptor);
 				}
-				else
+				catch (ArgumentException)
 				{
-					serviceFamily.NamedServices.Add(serviceDescriptor.Name, serviceDescriptor);
+					if (throwIfDuplicate)
+					{
+						var msg = serviceDescriptorName == ServiceNames.Default
+							? $"Default service of type '{serviceDescriptor.Type.FullName}' has already been registered."
+							: $"Service named '{serviceDescriptorName}' of type '{serviceDescriptor.Type.FullName}' has already been registered.";
+						throw new DuplicateServiceRegistrationException(msg);
+					}
+					return false;
 				}
+			}
 
-				return true;
-			}
-			catch (ArgumentException)
-			{
-				if (throwIfDuplicate) throw;
-				return false;
-			}
+			return true;
 		}
 
 		public bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
