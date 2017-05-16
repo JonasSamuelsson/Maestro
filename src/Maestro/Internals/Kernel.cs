@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Maestro.Diagnostics;
+using System.Linq;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
@@ -16,12 +16,9 @@ namespace Maestro.Internals
 
 		public event EventHandler ConfigurationChanged;
 
-		public Kernel() : this(new ServiceDescriptorLookup())
-		{ }
-
-		public Kernel(ServiceDescriptorLookup serviceDescriptorLookup)
+		public Kernel()
 		{
-			_serviceDescriptorLookup = serviceDescriptorLookup;
+			_serviceDescriptorLookup = new ServiceDescriptorLookup();
 			_pipelineCache = new PipelineCache<long>();
 			_factoryProviderResolvers = new IFactoryProviderResolver[]
 											{
@@ -37,6 +34,8 @@ namespace Maestro.Internals
 			_parent = kernel;
 			_parent.ConfigurationChanged += ParentConfigurationChanged;
 		}
+
+		public DefaultSettings DefaultSettings { get; } = new DefaultSettings();
 
 		private void ParentConfigurationChanged(object sender, EventArgs e)
 		{
@@ -122,6 +121,11 @@ namespace Maestro.Internals
 								IEnumerable<ServiceDescriptor> serviceDescriptors;
 								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out serviceDescriptors))
 								{
+									if (kernel.DefaultSettings.GetServicesOrder == GetServicesOrder.Ordered)
+									{
+										serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder);
+									}
+
 									foreach (var descriptor in serviceDescriptors)
 									{
 										compoundPipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));

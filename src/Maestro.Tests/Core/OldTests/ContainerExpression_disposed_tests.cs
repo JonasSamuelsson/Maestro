@@ -13,7 +13,7 @@ namespace Maestro.Tests.Core
 			IContainerExpression containerExpression = null;
 			new Container().Configure(x => containerExpression = x);
 
-			Should.Throw<ObjectDisposedException>(() => { var @default = containerExpression.Defaults; });
+			Should.Throw<ObjectDisposedException>(() => { var @default = containerExpression.Settings; });
 
 			Should.Throw<ObjectDisposedException>(() => containerExpression.For(typeof(object)));
 			Should.Throw<ObjectDisposedException>(() => containerExpression.For(typeof(object), string.Empty));

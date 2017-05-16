@@ -10,5 +10,11 @@
 		}
 
 		public IDefaultLifetimeSelector Lifetime => new DefaultLifetimeSelector(lifetimeFactory => _defaultSettings.LifetimeFactory = lifetimeFactory);
+
+		public GetServicesOrder GetServicesOrder
+		{
+			get { return _defaultSettings.GetServicesOrder; }
+			set { _defaultSettings.GetServicesOrder = value; }
+		}
 	}
 }

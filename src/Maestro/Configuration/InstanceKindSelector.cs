@@ -6,19 +6,17 @@ namespace Maestro.Configuration
 {
 	internal class InstanceKindSelector<TService> : IInstanceKindSelector, IInstanceKindSelector<TService>
 	{
-		public InstanceKindSelector(Type serviceType, string name, Kernel kernel, DefaultSettings defaultSettings, bool throwIfDuplicate)
+		public InstanceKindSelector(Type serviceType, string name, Kernel kernel, bool throwIfDuplicate)
 		{
 			ServiceType = serviceType;
 			Name = name;
 			Kernel = kernel;
-			DefaultSettings = defaultSettings;
 			ThrowIfDuplicate = throwIfDuplicate;
 		}
 
 		internal Type ServiceType { get; }
 		internal string Name { get; set; }
 		internal Kernel Kernel { get; }
-		internal DefaultSettings DefaultSettings { get; set; }
 		public bool ThrowIfDuplicate { get; set; }
 
 		public void Instance(object instance)
@@ -60,7 +58,7 @@ namespace Maestro.Configuration
 				Name = name,
 				Type = ServiceType,
 				FactoryProvider = factoryProvider,
-				Lifetime = DefaultSettings.LifetimeFactory()
+				Lifetime = Kernel.DefaultSettings.LifetimeFactory()
 			};
 		}
 

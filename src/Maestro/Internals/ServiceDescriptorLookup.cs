@@ -8,10 +8,16 @@ namespace Maestro.Internals
 {
 	internal class ServiceDescriptorLookup : IDisposable
 	{
+		private int _counter = 1;
 		private readonly ThreadSafeDictionary<Type, ServiceFamily> _serviceFamilies = new ThreadSafeDictionary<Type, ServiceFamily>();
 
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate = true)
 		{
+			if (serviceDescriptor.SortOrder == 0)
+			{
+				serviceDescriptor.SortOrder = _counter++;
+			}
+
 			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, type => new ServiceFamily { Type = type });
 			var serviceDescriptorName = serviceDescriptor.Name;
 

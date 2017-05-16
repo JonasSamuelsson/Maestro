@@ -10,7 +10,6 @@ namespace Maestro
 	{
 		private readonly Guid _id;
 		private readonly Kernel _kernel;
-		private readonly DefaultSettings _defaultSettings;
 		private event Action<Guid> DisposedEvent;
 
 		/// <summary>
@@ -32,14 +31,13 @@ namespace Maestro
 		{
 			_id = Guid.NewGuid();
 			_kernel = kernel;
-			_defaultSettings = new DefaultSettings();
 		}
 
 		public IDiagnostics Diagnostics => new Diagnostics.Diagnostics(_kernel);
 
 		public void Configure(Action<IContainerExpression> action)
 		{
-			using (var containerExpression = new ContainerExpression(_kernel, _defaultSettings))
+			using (var containerExpression = new ContainerExpression(_kernel))
 				action(containerExpression);
 		}
 

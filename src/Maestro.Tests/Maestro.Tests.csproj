@@ -85,6 +85,7 @@
     <Compile Include="Core\Extensions.cs" />
     <Compile Include="Core\Factories\Self_type_tests.cs" />
     <Compile Include="Castle.DynamicProxy\dynamic_proxy_tests.cs" />
+    <Compile Include="Core\get_services_order.cs" />
     <Compile Include="Core\Utils\NetStandardPolyfills_tests.cs" />
     <Compile Include="Microsoft.DependencyInjection\microsoft_dependency_injection_tests.cs" />
     <Compile Include="Core\OldTests\ChildContainer_resolution_tests.cs" />

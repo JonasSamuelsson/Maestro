@@ -111,7 +111,7 @@ namespace Maestro.Configuration
          return this;
       }
 
-      internal void Execute(ContainerExpression containerExpression, DefaultSettings defaultSettings)
+      internal void Execute(ContainerExpression containerExpression)
       {
          var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t))).ToList();
          _conventions.ForEach(c => c.Process(types, containerExpression));

@@ -16,6 +16,7 @@ namespace Maestro.Internals
 		public IFactoryProvider FactoryProvider { get; set; }
 		public List<IInterceptor> Interceptors { get; set; } = new List<IInterceptor>();
 		public ILifetime Lifetime { get; set; } = TransientLifetime.Instance;
+		public int SortOrder { get; set; }
 
 		public ServiceDescriptor MakeGeneric(Type[] genericArguments)
 		{
@@ -26,7 +27,8 @@ namespace Maestro.Internals
 				FactoryProvider = FactoryProvider.MakeGeneric(genericArguments),
 				Interceptors = Interceptors.Select(x => GenericInstanceFactory.Create<IInterceptor>(x, genericArguments)).ToList(),
 				Lifetime = GenericInstanceFactory.Create<ILifetime>(Lifetime, genericArguments),
-				Name = Name
+				Name = Name,
+				SortOrder = SortOrder
 			};
 		}
 	}

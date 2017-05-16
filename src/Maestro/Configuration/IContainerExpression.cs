@@ -5,7 +5,7 @@ namespace Maestro.Configuration
 {
    public interface IContainerExpression
    {
-      IDefaultsExpression Defaults { get; }
+      IDefaultsExpression Settings { get; }
       IList<ITypeProvider> TypeProviders { get; }
 
       IServiceExpression For(Type type);
