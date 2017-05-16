@@ -26,10 +26,10 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.Settings.Lifetime.Transient();
+				x.Config.DefaultLifetime.Transient();
 				x.For<object>("transient").Use.Self();
 
-				x.Settings.Lifetime.Singleton();
+				x.Config.DefaultLifetime.Singleton();
 				x.For<object>("singleton").Use.Self();
 			});
 

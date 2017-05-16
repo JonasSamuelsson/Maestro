@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.Configuration;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
@@ -35,7 +36,7 @@ namespace Maestro.Internals
 			_parent.ConfigurationChanged += ParentConfigurationChanged;
 		}
 
-		public DefaultSettings DefaultSettings { get; } = new DefaultSettings();
+		public Config Config { get; } = new Config();
 
 		private void ParentConfigurationChanged(object sender, EventArgs e)
 		{
@@ -121,7 +122,7 @@ namespace Maestro.Internals
 								IEnumerable<ServiceDescriptor> serviceDescriptors;
 								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out serviceDescriptors))
 								{
-									if (kernel.DefaultSettings.GetServicesOrder == GetServicesOrder.Ordered)
+									if (kernel.Config.GetServicesOrder == GetServicesOrder.Ordered)
 									{
 										serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder);
 									}

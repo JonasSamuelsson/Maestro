@@ -1,8 +1,8 @@
 ﻿namespace Maestro.Configuration
 {
-	public interface IDefaultsExpression
+	public interface IConfigExpression
 	{
-		IDefaultLifetimeSelector Lifetime { get; }
+		IDefaultLifetimeSelector DefaultLifetime { get; }
 		GetServicesOrder GetServicesOrder { get; set; }
 	}
 }
