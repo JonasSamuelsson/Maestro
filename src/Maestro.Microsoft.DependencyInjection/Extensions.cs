@@ -19,12 +19,14 @@ namespace Maestro.Microsoft.DependencyInjection
 		{
 			container.Configure(x =>
 			{
-			   x.For<IServiceProvider>().Use.Instance(new MaestroServiceProvider(container));
+				x.Config.GetServicesOrder = GetServicesOrder.Ordered;
 
-			   foreach (var descriptor in descriptors)
-			   {
-			      x.Register(descriptor);
-			   }
+				x.For<IServiceProvider>().Use.Instance(new MaestroServiceProvider(container));
+
+				foreach (var descriptor in descriptors)
+				{
+					x.Register(descriptor);
+				}
 			});
 		}
 
