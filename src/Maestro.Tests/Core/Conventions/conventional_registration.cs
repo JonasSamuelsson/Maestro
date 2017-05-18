@@ -17,7 +17,7 @@ namespace Maestro.Tests.Core.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan(_ => _.Types(types).With(convention)));
+			container.Configure(x => x.Scan(_ => _.Types(types).Using(convention)));
 
 			convention.ProcessedTypes.ShouldBe(types);
 		}
@@ -28,7 +28,7 @@ namespace Maestro.Tests.Core.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Where(t => t.IsClass).With(convention)));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Where(t => t.IsClass).Using(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(object) });
 		}
@@ -39,7 +39,7 @@ namespace Maestro.Tests.Core.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Matching(new IsClassFilter()).With(convention)));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Matching(new IsClassFilter()).Using(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(object) });
 		}
@@ -50,7 +50,7 @@ namespace Maestro.Tests.Core.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int), typeof(string) }).Where(t => t.IsClass).Where(t => t.Name.Contains("n")).With(convention)));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int), typeof(string) }).Where(t => t.IsClass).Where(t => t.Name.Contains("n")).Using(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(string) });
 		}
