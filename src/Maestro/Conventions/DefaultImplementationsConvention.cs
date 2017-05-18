@@ -7,11 +7,11 @@ namespace Maestro.Conventions
 {
 	internal class DefaultImplementationsConvention : IConvention
 	{
-		private readonly Action<IConventionalServiceTypeSelector<object>> _serviceRegistration;
+		private readonly Action<IConventionalTypeInstanceExpression<object>> _action;
 
-		public DefaultImplementationsConvention(Action<IConventionalServiceTypeSelector<object>> serviceRegistration)
+		public DefaultImplementationsConvention(Action<IConventionalTypeInstanceExpression<object>> action)
 		{
-			_serviceRegistration = serviceRegistration;
+			_action = action;
 		}
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
@@ -29,7 +29,7 @@ namespace Maestro.Conventions
 				key = key.Remove(key.Length - @interface.Name.Length) + @interface.Name.Substring(1);
 				Type @class;
 				if (!classes.TryGetValue(key, out @class)) continue;
-				_serviceRegistration(new ConventionalServiceTypeSelector<object>(containerExpression, @interface, @class));
+				_action(new ConventionalTypeInstanceExpression<object>(containerExpression, @interface, @class));
 			}
 		}
 	}

@@ -15,11 +15,6 @@ namespace Maestro.Configuration
 		internal Scanner() { }
 
 		/// <summary>
-		/// Starting point for using out of box conventions.
-		/// </summary>
-		public IConventionSelector For => new ConventionSelector(this);
-
-		/// <summary>
 		/// Adds all types in <paramref name="assemblies"/> to the list of types to process.
 		/// </summary>
 		/// <param name="assemblies"></param>
@@ -114,6 +109,26 @@ namespace Maestro.Configuration
 		public IScanner Using<TConvention>() where TConvention : IConvention, new()
 		{
 			return Using(new TConvention());
+		}
+
+		public IScanner ForConcreteClassesOf<T>(Action<IConventionalTypeInstanceExpression<T>> action)
+		{
+			return Using(new ConcreteClassesOfConvention<T>(typeof(T), action));
+		}
+
+		public IScanner ForConcreteClassesOf(Type type, Action<IConventionalTypeInstanceExpression<object>> action)
+		{
+			return Using(new ConcreteClassesOfConvention<object>(type, action));
+		}
+
+		public IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalTypeInstanceExpression<object>> action)
+		{
+			return Using(new ConcreteClassesClosingConvention(genericTypeDefinition, action));
+		}
+
+		public IScanner ForDefaultImplementations(Action<IConventionalTypeInstanceExpression<object>> action)
+		{
+			return Using(new DefaultImplementationsConvention(action));
 		}
 
 		internal void Execute(ContainerExpression containerExpression)

@@ -7,12 +7,12 @@ namespace Maestro.Conventions
 	internal class ConcreteClassesClosingConvention : IConvention
 	{
 		private readonly Type _genericTypeDefinition;
-		private readonly Action<IConventionalServiceTypeSelector<object>> _serviceRegistration;
+		private readonly Action<IConventionalTypeInstanceExpression<object>> _action;
 
-		public ConcreteClassesClosingConvention(Type genericTypeDefinition, Action<IConventionalServiceTypeSelector<object>> serviceRegistration)
+		public ConcreteClassesClosingConvention(Type genericTypeDefinition, Action<IConventionalTypeInstanceExpression<object>> action)
 		{
 			_genericTypeDefinition = genericTypeDefinition;
-			_serviceRegistration = serviceRegistration;
+			_action = action;
 		}
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
@@ -21,7 +21,7 @@ namespace Maestro.Conventions
 			{
 				Type genericType;
 				if (!type.IsConcreteClassClosing(_genericTypeDefinition, out genericType)) continue;
-				_serviceRegistration(new ConventionalServiceTypeSelector<object>(containerExpression, genericType, type));
+				_action(new ConventionalTypeInstanceExpression<object>(containerExpression, genericType, type));
 			}
 		}
 	}

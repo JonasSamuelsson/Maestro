@@ -8,11 +8,6 @@ namespace Maestro.Configuration
 	public interface IScanner
 	{
 		/// <summary>
-		/// Starting point for using out of box conventions.
-		/// </summary>
-		IConventionSelector For { get; }
-
-		/// <summary>
 		/// Adds all types in <paramref name="assemblies"/> to the list of types to process.
 		/// </summary>
 		/// <param name="assemblies"></param>
@@ -78,5 +73,10 @@ namespace Maestro.Configuration
 		/// Instantiates and uses <typeparamref name="TConvention"/> to configure the container.
 		/// </summary>
 		IScanner Using<TConvention>() where TConvention : IConvention, new();
+
+		IScanner ForConcreteClassesOf<T>(Action<IConventionalTypeInstanceExpression<T>> action);
+		IScanner ForConcreteClassesOf(Type type, Action<IConventionalTypeInstanceExpression<object>> action);
+		IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalTypeInstanceExpression<object>> action);
+		IScanner ForDefaultImplementations(Action<IConventionalTypeInstanceExpression<object>> action);
 	}
 }

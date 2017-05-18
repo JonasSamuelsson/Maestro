@@ -8,20 +8,20 @@ namespace Maestro.Conventions
 	internal class ConcreteClassesOfConvention<T> : IConvention
 	{
 		private readonly Type _baseType;
-		private readonly Action<IConventionalServiceTypeSelector<T>> _serviceRegistration;
+		private readonly Action<IConventionalTypeInstanceExpression<T>> _action;
 
-		public ConcreteClassesOfConvention(Type baseType, Action<IConventionalServiceTypeSelector<T>> serviceRegistration)
+		public ConcreteClassesOfConvention(Type baseType, Action<IConventionalTypeInstanceExpression<T>> action)
 		{
 			_baseType = baseType;
-			_serviceRegistration = serviceRegistration;
+			_action = action;
 		}
 
 		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
 		{
-		   Type genericType = null;
+			Type genericType = null;
 			foreach (var type in types.Where(x => x.IsConcreteClassOf(_baseType, out genericType)))
 			{
-				_serviceRegistration(new ConventionalServiceTypeSelector<T>(containerExpression, genericType ?? _baseType, type));
+				_action(new ConventionalTypeInstanceExpression<T>(containerExpression, genericType ?? _baseType, type));
 			}
 		}
 	}

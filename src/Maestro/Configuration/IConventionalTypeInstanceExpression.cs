@@ -1,6 +1,6 @@
 ﻿namespace Maestro.Configuration
 {
-	public interface IConventionalTypeInstanceRegistrator<T>
+	public interface IConventionalTypeInstanceExpression<T>
 	{
 		ITypeInstanceExpression<T> Use(string name = null);
 		ITypeInstanceExpression<T> TryUse(string name = null);
