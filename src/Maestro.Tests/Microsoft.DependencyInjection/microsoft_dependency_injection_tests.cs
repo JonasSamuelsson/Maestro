@@ -86,6 +86,22 @@ namespace Maestro.Tests.Microsoft.DependencyInjection
 			container.GetService<object>().ShouldBe(container.GetService<object>());
 		}
 
+		[Fact]
+		public void should_handle_multiple_registrations_for_the_same_service_type()
+		{
+			var descriptors = new[]
+			{
+				new ServiceDescriptor(typeof(object), "one"),
+				new ServiceDescriptor(typeof(object), "two"),
+				new ServiceDescriptor(typeof(object), "three")
+			};
+
+			var container = new Container();
+			container.Populate(descriptors);
+
+			container.GetServices<object>().ShouldBe(new[] { "one", "two", "three" });
+		}
+
 		private class TestType { }
 	}
 }

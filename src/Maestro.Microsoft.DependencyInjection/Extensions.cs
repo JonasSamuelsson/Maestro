@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro.Microsoft.DependencyInjection
 {
@@ -23,35 +24,41 @@ namespace Maestro.Microsoft.DependencyInjection
 
 				x.For<IServiceProvider>().Use.Instance(new MaestroServiceProvider(container));
 
+				descriptors = descriptors as IReadOnlyCollection<ServiceDescriptor> ?? descriptors.ToList();
+				var lookup = descriptors.ToLookup(sd => sd.ServiceType);
+
 				foreach (var descriptor in descriptors)
 				{
-					x.Register(descriptor);
+					var single = lookup[descriptor.ServiceType].Count() == 1;
+					x.Register(descriptor, se => single ? se.Use : se.Add);
 				}
 			});
 		}
 
-		private static void Register(this IContainerExpression containerExpression, ServiceDescriptor descriptor)
+		private static void Register(this IContainerExpression containerExpression, ServiceDescriptor descriptor, Func<IServiceExpression, IInstanceKindSelector> f)
 		{
+			var instanceKindSelector = f(containerExpression.For(descriptor.ServiceType));
+
 			if (descriptor.ImplementationType != null)
 			{
-				containerExpression.For(descriptor.ServiceType)
-					 .Use.Type(descriptor.ImplementationType)
-					 .Lifetime.Use(descriptor.Lifetime);
+				instanceKindSelector
+					.Type(descriptor.ImplementationType)
+					.Lifetime.Use(descriptor.Lifetime);
 
 				return;
 			}
 
 			if (descriptor.ImplementationFactory != null)
 			{
-				containerExpression.For(descriptor.ServiceType)
-					 .Use.Factory(GetFactory(descriptor))
-					 .Lifetime.Use(descriptor.Lifetime);
+				instanceKindSelector
+					.Factory(GetFactory(descriptor))
+					.Lifetime.Use(descriptor.Lifetime);
 
 				return;
 			}
 
-			containerExpression.For(descriptor.ServiceType)
-				 .Use.Instance(descriptor.ImplementationInstance);
+			instanceKindSelector
+				.Instance(descriptor.ImplementationInstance);
 		}
 
 		private static void Use<T>(this ILifetimeSelector<T> expression, ServiceLifetime descriptorLifetime)
