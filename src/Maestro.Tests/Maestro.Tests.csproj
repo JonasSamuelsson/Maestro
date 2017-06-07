@@ -111,7 +111,7 @@
     <Compile Include="Core\OldTests\get_unregistered_concrete_class.cs" />
     <Compile Include="Core\Interception\intercept_instance.cs" />
     <Compile Include="Core\Interception\interception_tests.cs" />
-    <Compile Include="Core\Lifetimes\scoped_lifetime.cs" />
+    <Compile Include="Core\Lifetimes\container_scoped_lifetime.cs" />
     <Compile Include="Core\Lifetimes\custom_lifetime.cs" />
     <Compile Include="Core\Lifetimes\singleton_lifetime.cs" />
     <Compile Include="Core\Lifetimes\transient_lifetime.cs" />
