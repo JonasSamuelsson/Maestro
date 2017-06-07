@@ -6,8 +6,6 @@ namespace Maestro
 {
 	public interface IContext
 	{
-		event Action<IContext> Disposed;
-
 		IEnumerable<ServiceRequest> CallStack { get; }
 
 		bool CanGetService<T>(string name = ServiceNames.Default);

@@ -19,7 +19,7 @@ namespace Maestro.Configuration
 
 		public void Scoped()
 		{
-			Use<ScopedLifetime>();
+			Use<ContainerScopedLifetime>();
 		}
 
 		public void Singleton()
