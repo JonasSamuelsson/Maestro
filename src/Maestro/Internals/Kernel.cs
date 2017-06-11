@@ -1,11 +1,11 @@
-﻿using Maestro.Configuration;
-using Maestro.FactoryProviders;
-using Maestro.TypeFactoryResolvers;
-using Maestro.Utils;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.Configuration;
+using Maestro.FactoryProviders;
+using Maestro.TypeFactoryResolvers;
+using Maestro.Utils;
 
 namespace Maestro.Internals
 {
@@ -29,15 +29,20 @@ namespace Maestro.Internals
 												new ConcreteClosedClassFactoryProviderResolver(),
 												new EmptyEnumerableFactoryProviderResolver()
 											};
+			Root = this;
 		}
 
 		public Kernel(Kernel parent) : this()
 		{
 			_parent = parent;
 			_parent.ConfigurationChanged += ParentConfigurationChanged;
+			Root = _parent.Root;
 		}
 
 		public Config Config { get; } = new Config();
+		public IList<ITypeProvider> TypeProviders { get; } = new List<ITypeProvider>();
+		public ConcurrentDictionary<object, Lazy<object>> InstanceCache { get; } = new ConcurrentDictionary<object, Lazy<object>>();
+		public Kernel Root { get; private set; }
 
 		private void ParentConfigurationChanged(object sender, EventArgs e)
 		{
@@ -47,9 +52,6 @@ namespace Maestro.Internals
 				ConfigurationChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
-
-		public IList<ITypeProvider> TypeProviders { get; } = new List<ITypeProvider>();
-		public ConcurrentDictionary<object, Lazy<object>> InstanceCache { get; } = new ConcurrentDictionary<object, Lazy<object>>();
 
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
 		{

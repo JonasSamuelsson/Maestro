@@ -12,8 +12,10 @@ namespace Maestro.Tests.Core.Lifetimes
 
 			var o1 = container.GetService<object>();
 			var o2 = container.GetService<object>();
+			var o3 = container.GetChildContainer().GetService<object>();
 
 			o1.ShouldBe(o2);
+			o1.ShouldBe(o3);
 		}
 	}
 }
