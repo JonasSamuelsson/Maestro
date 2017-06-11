@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro.Internals
 {
@@ -225,6 +225,12 @@ namespace Maestro.Internals
 
 		public void Dispose()
 		{
+			InstanceCache.Values
+				.Where(x => x.IsValueCreated)
+				.Select(x => x.Value)
+				.OfType<IDisposable>()
+				.ForEach(x => x.Dispose());
+
 			if (_parent == null) return;
 			_parent.ConfigurationChanged -= ParentConfigurationChanged;
 		}

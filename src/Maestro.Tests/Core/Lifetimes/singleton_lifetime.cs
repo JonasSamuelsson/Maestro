@@ -1,4 +1,5 @@
 ﻿using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.Core.Lifetimes
@@ -16,6 +17,36 @@ namespace Maestro.Tests.Core.Lifetimes
 
 			o1.ShouldBe(o2);
 			o1.ShouldBe(o3);
+		}
+
+		[Fact]
+		public void should_dispose_instances_with_root_container()
+		{
+			var rootContainer = new Container(x => x.For<Disposable>().Use.Self().Lifetime.Singleton());
+			var childContainer = rootContainer.GetChildContainer();
+
+			var o1 = rootContainer.GetService<Disposable>();
+			var o2 = childContainer.GetService<Disposable>();
+
+			childContainer.Dispose();
+
+			o1.Disposed.ShouldBeFalse();
+			o2.Disposed.ShouldBeFalse();
+
+			rootContainer.Dispose();
+
+			o1.Disposed.ShouldBeTrue();
+			o2.Disposed.ShouldBeTrue();
+		}
+
+		private class Disposable : IDisposable
+		{
+			public bool Disposed { get; private set; }
+
+			public void Dispose()
+			{
+				Disposed = true;
+			}
 		}
 	}
 }
