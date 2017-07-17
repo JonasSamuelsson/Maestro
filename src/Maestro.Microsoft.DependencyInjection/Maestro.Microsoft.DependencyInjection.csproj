@@ -26,10 +26,21 @@
    </ItemGroup>
 
    <ItemGroup>
-      <PackageReference Include="Maestro" Version="2.0.0-beta6" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
       <PackageReference Include="System.ComponentModel" Version="4.3.0" />
       <PackageReference Include="System.Runtime" Version="4.3.0" />
+      <!-- PackageReferences BEGIN
+      <PackageReference Include="Maestro" Version="2.0.0-beta6" />
+      PackageReferences END -->
+   </ItemGroup>
+
+   <ItemGroup>
+      <!-- ProjectReferences BEGIN -->
+      <ProjectReference Include="..\Maestro\Maestro.csproj">
+         <Project>{e07cb006-2c92-4cc5-b6fb-053a4be849eb}</Project>
+         <Name>Maestro</Name>
+      </ProjectReference>
+      <!-- ProjectReferences END -->
    </ItemGroup>
 
 </Project>
