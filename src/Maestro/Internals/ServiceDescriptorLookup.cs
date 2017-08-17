@@ -78,7 +78,7 @@ namespace Maestro.Internals
 		public bool TryGetServiceDescriptors(Type type, out IEnumerable<ServiceDescriptor> serviceDescriptors)
 		{
 			ServiceFamily serviceFamily;
-			var result = new List<ServiceDescriptor>();
+			var result = new ThreadSafeList<ServiceDescriptor>();
 
 			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
 			{

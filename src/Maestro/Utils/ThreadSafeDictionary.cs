@@ -16,6 +16,9 @@ namespace Maestro.Utils
 			_dictionary = dictionary.ToDictionary(x => x.Key, x => x.Value);
 		}
 
+		public int Count => _dictionary.Count;
+		public IEnumerable<TValue> Values => _dictionary.Values;
+
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
 		{
 			return _dictionary.GetEnumerator();
