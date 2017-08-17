@@ -18,6 +18,16 @@ namespace Maestro.Utils
 			}
 		}
 
+		public void AddRange(IEnumerable<T> items)
+		{
+			lock (_root)
+			{
+				var list = new List<T>(_list);
+				list.AddRange(items);
+				_list = list;
+			}
+		}
+
 		public IEnumerator<T> GetEnumerator()
 		{
 			return _list.GetEnumerator();

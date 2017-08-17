@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+using Maestro.Utils;
 
 namespace Maestro.Internals
 {
 	class PipelineCache<TKey>
 	{
-		private readonly Dictionary<TKey, IPipeline> _dictionary = new Dictionary<TKey, IPipeline>();
+		private readonly ThreadSafeDictionary<TKey, IPipeline> _dictionary = new ThreadSafeDictionary<TKey, IPipeline>();
 
 		public void Add(TKey key, IPipeline pipeline)
 		{
