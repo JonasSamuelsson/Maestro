@@ -5,8 +5,6 @@ namespace Maestro.Lifetimes
 {
 	internal class SingletonLifetime : ILifetime
 	{
-		private object _instance;
-
 		public object Execute(IContext context, Func<IContext, object> factory)
 		{
 			var ctx = (Context)context;
