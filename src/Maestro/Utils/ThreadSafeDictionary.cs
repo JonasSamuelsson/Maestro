@@ -32,7 +32,7 @@ namespace Maestro.Utils
 				_dictionary = new Dictionary<TKey, TValue>(_dictionary) { { key, value } };
 		}
 
-		public TValue Get(TKey key)
+		public TValue GetValue(TKey key)
 		{
 			return _dictionary[key];
 		}
@@ -50,7 +50,7 @@ namespace Maestro.Utils
 			return value;
 		}
 
-		public bool TryGet(TKey key, out TValue value)
+		public bool TryGetValue(TKey key, out TValue value)
 		{
 			return _dictionary.TryGetValue(key, out value);
 		}

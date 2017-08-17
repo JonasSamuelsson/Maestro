@@ -11,7 +11,7 @@ namespace Maestro.Interceptors
 		public static Action Create(PropertyInfo property)
 		{
 			Action action;
-			if (Cache.TryGet(property, out action))
+			if (Cache.TryGetValue(property, out action))
 				return action;
 
 			var target = Expression.Parameter(typeof(object), "target");

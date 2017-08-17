@@ -51,7 +51,7 @@ namespace Maestro.Internals
 		{
 			ServiceFamily serviceFamily;
 
-			if (_serviceFamilies.TryGet(type, out serviceFamily))
+			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
 			{
 				if (serviceFamily.NamedServices.TryGetValue(name, out serviceDescriptor))
 				{
@@ -80,7 +80,7 @@ namespace Maestro.Internals
 			ServiceFamily serviceFamily;
 			var result = new List<ServiceDescriptor>();
 
-			if (_serviceFamilies.TryGet(type, out serviceFamily))
+			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
 			{
 				if (serviceFamily.NamedServices.Count != 0)
 				{
