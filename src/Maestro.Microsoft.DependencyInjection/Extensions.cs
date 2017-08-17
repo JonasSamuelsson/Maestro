@@ -69,7 +69,7 @@ namespace Maestro.Microsoft.DependencyInjection
 					expression.Singleton();
 					break;
 				case ServiceLifetime.Scoped:
-					expression.Scoped();
+					expression.ContainerScoped();
 					break;
 				case ServiceLifetime.Transient:
 					expression.Transient();
