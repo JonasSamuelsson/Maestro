@@ -1,7 +1,7 @@
+using Maestro.Conventions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Maestro.Conventions;
 
 namespace Maestro.Configuration
 {
@@ -74,9 +74,9 @@ namespace Maestro.Configuration
 		/// </summary>
 		IScanner Using<TConvention>() where TConvention : IConvention, new();
 
-		IScanner ForConcreteClassesOf<T>(Action<IConventionalTypeInstanceExpression<T>> action);
-		IScanner ForConcreteClassesOf(Type type, Action<IConventionalTypeInstanceExpression<object>> action);
-		IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalTypeInstanceExpression<object>> action);
-		IScanner ForDefaultImplementations(Action<IConventionalTypeInstanceExpression<object>> action);
+		IScanner ForConcreteClassesOf<T>(Action<IConventionalServiceTypeExpression<T>> action = null);
+		IScanner ForConcreteClassesOf(Type type, Action<IConventionalServiceTypeExpression<object>> action = null);
+		IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceTypeExpression<object>> action = null);
+		IScanner ForDefaultImplementations(Action<IConventionalServiceTypeExpression<object>> action = null);
 	}
 }

@@ -8,9 +8,9 @@ namespace Maestro.Conventions
 	internal class ConcreteClassesOfConvention<T> : IConvention
 	{
 		private readonly Type _baseType;
-		private readonly Action<IConventionalTypeInstanceExpression<T>> _action;
+		private readonly Action<IConventionalServiceTypeExpression<T>> _action;
 
-		public ConcreteClassesOfConvention(Type baseType, Action<IConventionalTypeInstanceExpression<T>> action)
+		public ConcreteClassesOfConvention(Type baseType, Action<IConventionalServiceTypeExpression<T>> action)
 		{
 			_baseType = baseType;
 			_action = action;
@@ -21,7 +21,7 @@ namespace Maestro.Conventions
 			Type genericType = null;
 			foreach (var type in types.Where(x => x.IsConcreteClassOf(_baseType, out genericType)))
 			{
-				_action(new ConventionalTypeInstanceExpression<T>(containerExpression, genericType ?? _baseType, type));
+				_action(new ConventionalServiceTypeExpression<T>(containerExpression, genericType ?? _baseType, type));
 			}
 		}
 	}

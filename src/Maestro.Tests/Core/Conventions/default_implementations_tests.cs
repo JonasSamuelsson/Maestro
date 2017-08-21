@@ -3,10 +3,10 @@ using Xunit;
 
 namespace Maestro.Tests.Core.Conventions
 {
-	public class use_default_implementation_convention
+	public class default_implementations_tests
 	{
 		[Fact]
-		public void should_register_default_implementations()
+		public void should_use_default_implementations()
 		{
 			var @namespace = typeof(IFoobar1).Namespace;
 
@@ -14,7 +14,7 @@ namespace Maestro.Tests.Core.Conventions
 			{
 				_.AssemblyContainingTypeOf(this);
 				_.Where(y => y.Namespace == @namespace);
-				_.ForDefaultImplementations(z => z.Use());
+				_.ForDefaultImplementations();
 			}));
 
 			container.GetService<IFoobar1>().ShouldBeOfType<Foobar1>();
@@ -26,7 +26,7 @@ namespace Maestro.Tests.Core.Conventions
 			var container = new Container(x => x.Scan(_ =>
 			{
 				_.Types(new[] { typeof(IFoobar1), typeof(Foobar1) });
-				_.ForDefaultImplementations(z => z.Use().Lifetime.Singleton());
+				_.ForDefaultImplementations(z => z.BaseType.Use().Lifetime.Singleton());
 			}));
 
 			var instance1 = container.GetService<IFoobar1>();

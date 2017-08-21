@@ -93,10 +93,10 @@
     <Compile Include="Core\Context\context_call_stack_tests.cs" />
     <Compile Include="Core\Context\context_can_get_tests.cs" />
     <Compile Include="Core\Context\Context_tests.cs" />
-    <Compile Include="Core\Conventions\add_concrete_classes_closing_convention.cs" />
-    <Compile Include="Core\Conventions\ConcreteClassesOfConvention_tests.cs" />
+    <Compile Include="Core\Conventions\concrete_classes_closing_tests.cs" />
+    <Compile Include="Core\Conventions\concrete_classes_of_tests.cs" />
     <Compile Include="Core\Conventions\conventional_registration.cs" />
-    <Compile Include="Core\Conventions\use_default_implementation_convention.cs" />
+    <Compile Include="Core\Conventions\default_implementations_tests.cs" />
     <Compile Include="Core\OldTests\default_settings.cs" />
     <Compile Include="Core\OldTests\default_type_instance_without_dependencies.cs" />
     <Compile Include="Core\OldTests\default_type_instance_with_configured_dependencies.cs" />

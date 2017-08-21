@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Maestro.Conventions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Maestro.Conventions;
 
 namespace Maestro.Configuration
 {
@@ -111,24 +111,24 @@ namespace Maestro.Configuration
 			return Using(new TConvention());
 		}
 
-		public IScanner ForConcreteClassesOf<T>(Action<IConventionalTypeInstanceExpression<T>> action)
+		public IScanner ForConcreteClassesOf<T>(Action<IConventionalServiceTypeExpression<T>> action = null)
 		{
-			return Using(new ConcreteClassesOfConvention<T>(typeof(T), action));
+			return Using(new ConcreteClassesOfConvention<T>(typeof(T), action ?? (x => x.BaseType.Add())));
 		}
 
-		public IScanner ForConcreteClassesOf(Type type, Action<IConventionalTypeInstanceExpression<object>> action)
+		public IScanner ForConcreteClassesOf(Type type, Action<IConventionalServiceTypeExpression<object>> action = null)
 		{
-			return Using(new ConcreteClassesOfConvention<object>(type, action));
+			return Using(new ConcreteClassesOfConvention<object>(type, action ?? (x => x.BaseType.Add())));
 		}
 
-		public IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalTypeInstanceExpression<object>> action)
+		public IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceTypeExpression<object>> action = null)
 		{
-			return Using(new ConcreteClassesClosingConvention(genericTypeDefinition, action));
+			return Using(new ConcreteClassesClosingConvention(genericTypeDefinition, action ?? (x => x.BaseType.Add())));
 		}
 
-		public IScanner ForDefaultImplementations(Action<IConventionalTypeInstanceExpression<object>> action)
+		public IScanner ForDefaultImplementations(Action<IConventionalServiceTypeExpression<object>> action = null)
 		{
-			return Using(new DefaultImplementationsConvention(action));
+			return Using(new DefaultImplementationsConvention(action ?? (x => x.BaseType.Use())));
 		}
 
 		internal void Execute(ContainerExpression containerExpression)
