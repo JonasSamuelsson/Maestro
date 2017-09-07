@@ -16,9 +16,9 @@ namespace Maestro.Internals
 		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
 		private readonly Kernel _parent;
 
-		public event EventHandler ConfigurationChanged;
+		internal event EventHandler ConfigurationChanged;
 
-		public Kernel()
+		internal Kernel()
 		{
 			_serviceDescriptorLookup = new ServiceDescriptorLookup();
 			_pipelineCache = new PipelineCache<long>();
@@ -32,17 +32,17 @@ namespace Maestro.Internals
 			Root = this;
 		}
 
-		public Kernel(Kernel parent) : this()
+		internal Kernel(Kernel parent) : this()
 		{
 			_parent = parent;
 			_parent.ConfigurationChanged += ParentConfigurationChanged;
 			Root = _parent.Root;
 		}
 
-		public Config Config { get; } = new Config();
-		public IList<ITypeProvider> TypeProviders { get; } = new List<ITypeProvider>();
-		public ConcurrentDictionary<object, Lazy<object>> InstanceCache { get; } = new ConcurrentDictionary<object, Lazy<object>>();
-		public Kernel Root { get; private set; }
+		internal Config Config { get; } = new Config();
+		internal IList<ITypeProvider> TypeProviders { get; } = new List<ITypeProvider>();
+		internal ConcurrentDictionary<object, Lazy<object>> InstanceCache { get; } = new ConcurrentDictionary<object, Lazy<object>>();
+		internal Kernel Root { get; private set; }
 
 		private void ParentConfigurationChanged(object sender, EventArgs e)
 		{
@@ -53,7 +53,7 @@ namespace Maestro.Internals
 			}
 		}
 
-		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
+		internal bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
 		{
 			lock (_pipelineCache)
 			{
@@ -64,13 +64,13 @@ namespace Maestro.Internals
 			}
 		}
 
-		public bool CanGetService(Type type, string name, Context context)
+		internal bool CanGetService(Type type, string name, Context context)
 		{
 			IPipeline pipeline;
 			return TryGetPipeline(type, name, context, out pipeline);
 		}
 
-		public bool TryGetService(Type type, string name, Context context, out object instance)
+		internal bool TryGetService(Type type, string name, Context context, out object instance)
 		{
 			IPipeline pipeline;
 			instance = TryGetPipeline(type, name, context, out pipeline) ? pipeline.Execute(context) : null;
@@ -235,7 +235,7 @@ namespace Maestro.Internals
 			_parent.ConfigurationChanged -= ParentConfigurationChanged;
 		}
 
-		public void Populate(Diagnostics.Configuration configuration)
+		internal void Populate(Diagnostics.Configuration configuration)
 		{
 			_serviceDescriptorLookup.Populate(configuration.Services);
 

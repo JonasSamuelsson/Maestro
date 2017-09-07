@@ -6,7 +6,7 @@ using Maestro.Internals;
 
 namespace Maestro.TypeFactoryResolvers
 {
-	class FuncFactoryProviderResolver : IFactoryProviderResolver
+	internal class FuncFactoryProviderResolver : IFactoryProviderResolver
 	{
 		public bool TryGet(Type type, string name, IContext context, out IFactoryProvider factoryProvider)
 		{

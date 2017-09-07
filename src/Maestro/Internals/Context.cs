@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Maestro.Internals
 {
-	class Context : IContext, IDisposable
+	internal class Context : IContext, IDisposable
 	{
 		private readonly Stack<ServiceRequest> _serviceRequests = new Stack<ServiceRequest>();
 		private bool _disposed;
@@ -16,7 +16,7 @@ namespace Maestro.Internals
 		}
 
 		public IEnumerable<ServiceRequest> CallStack => _serviceRequests;
-		public Kernel Kernel { get; }
+		internal Kernel Kernel { get; }
 
 		public bool CanGetService(Type type, string name)
 		{
