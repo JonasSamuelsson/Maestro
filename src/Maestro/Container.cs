@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Maestro.Diagnostics;
 using Maestro.Internals;
+using System;
+using System.Collections.Generic;
 
 namespace Maestro
 {
@@ -55,49 +55,49 @@ namespace Maestro
 
 		public object GetService(Type type, string name = null)
 		{
-			using (var context = new Context(_kernel))
+			using (var context = new Context(this, _kernel))
 				return context.GetService(type, name);
 		}
 
 		public T GetService<T>(string name = null)
 		{
-			using (var context = new Context(_kernel))
+			using (var context = new Context(this, _kernel))
 				return context.GetService<T>(name);
 		}
 
 		public bool TryGetService(Type type, out object instance)
 		{
-			using (var context = new Context(_kernel))
+			using (var context = new Context(this, _kernel))
 				return context.TryGetService(type, out instance);
 		}
 
 		public bool TryGetService(Type type, string name, out object instance)
 		{
-			using (var context = new Context(_kernel))
+			using (var context = new Context(this, _kernel))
 				return context.TryGetService(type, name, out instance);
 		}
 
 		public bool TryGetService<T>(out T instance)
 		{
-			using (var context = new Context(_kernel))
+			using (var context = new Context(this, _kernel))
 				return context.TryGetService(out instance);
 		}
 
 		public bool TryGetService<T>(string name, out T instance)
 		{
-			using (var context = new Context(_kernel))
+			using (var context = new Context(this, _kernel))
 				return context.TryGetService(name, out instance);
 		}
 
 		public IEnumerable<object> GetServices(Type type)
 		{
-			using (var context = new Context(_kernel))
+			using (var context = new Context(this, _kernel))
 				return context.GetServices(type);
 		}
 
 		public IEnumerable<T> GetServices<T>()
 		{
-			using (var context = new Context(_kernel))
+			using (var context = new Context(this, _kernel))
 				return context.GetServices<T>();
 		}
 

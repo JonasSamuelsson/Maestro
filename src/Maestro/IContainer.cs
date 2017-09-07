@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Maestro.Diagnostics;
+using System;
+using System.Collections.Generic;
 
 namespace Maestro
 {
@@ -9,11 +9,11 @@ namespace Maestro
 	{
 		IDiagnostics Diagnostics { get; }
 
-	   /// <summary>
-	   /// Adds configuration to the container.
-	   /// </summary>
-	   /// <param name="action"></param>
-	   void Configure(Action<IContainerExpression> action);
+		/// <summary>
+		/// Adds configuration to the container.
+		/// </summary>
+		/// <param name="action"></param>
+		void Configure(Action<IContainerExpression> action);
 
 		IContainer GetChildContainer();
 		IContainer GetChildContainer(Action<IContainerExpression> action);
@@ -54,7 +54,6 @@ namespace Maestro
 		/// <param name="type"></param>
 		/// <param name="instance"></param>
 		/// <returns></returns>
-		/// <remarks>Does not swallow any exceptions.</remarks>
 		bool TryGetService(Type type, out object instance);
 
 		/// <summary>
@@ -64,7 +63,6 @@ namespace Maestro
 		/// <param name="name"></param>
 		/// <param name="instance"></param>
 		/// <returns></returns>
-		/// <remarks>Does not swallow any exceptions.</remarks>
 		bool TryGetService(Type type, string name, out object instance);
 
 		/// <summary>
@@ -72,7 +70,6 @@ namespace Maestro
 		/// </summary>
 		/// <param name="instance"></param>
 		/// <returns></returns>
-		/// <remarks>Does not swallow any exceptions.</remarks>
 		bool TryGetService<T>(out T instance);
 
 		/// <summary>
@@ -81,7 +78,6 @@ namespace Maestro
 		/// <param name="name"></param>
 		/// <param name="instance"></param>
 		/// <returns></returns>
-		/// <remarks>Does not swallow any exceptions.</remarks>
 		bool TryGetService<T>(string name, out T instance);
 	}
 }

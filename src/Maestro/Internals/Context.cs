@@ -10,11 +10,13 @@ namespace Maestro.Internals
 		private readonly Stack<ServiceRequest> _serviceRequests = new Stack<ServiceRequest>();
 		private bool _disposed;
 
-		public Context(Kernel kernel)
+		public Context(IContainer container, Kernel kernel)
 		{
+			Container = container;
 			Kernel = kernel;
 		}
 
+		public IContainer Container { get; }
 		public IEnumerable<ServiceRequest> CallStack => _serviceRequests;
 		internal Kernel Kernel { get; }
 

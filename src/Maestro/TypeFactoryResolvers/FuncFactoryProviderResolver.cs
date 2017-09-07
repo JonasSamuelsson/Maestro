@@ -1,8 +1,7 @@
-using System;
-using System.Linq;
-using System.Reflection;
 using Maestro.FactoryProviders;
 using Maestro.Internals;
+using System;
+using System.Linq;
 
 namespace Maestro.TypeFactoryResolvers
 {
@@ -17,7 +16,7 @@ namespace Maestro.TypeFactoryResolvers
 
 			var wrapperType = typeof(Wrapper<>).MakeGenericType(serviceType);
 			var ctx = (Context)context;
-			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.Kernel);
+			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.Container, ctx.Kernel);
 			var getFuncMethod = wrapperType.GetMethod("GetFunc", new Type[] { });
 			var lambda = new Func<IContext, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
 			factoryProvider = new LambdaFactoryProvider(lambda);
@@ -27,14 +26,17 @@ namespace Maestro.TypeFactoryResolvers
 		class Wrapper<T>
 		{
 			private readonly string _name;
+			private readonly IContainer _container;
 			private readonly Kernel _kernel;
 
-			public Wrapper(string name, Kernel kernel)
+			public Wrapper(string name, IContainer container, Kernel kernel)
 			{
 				_name = name;
+				_container = container;
 				_kernel = kernel;
 			}
 
+			// ReSharper disable once UnusedMember.Local
 			public Func<T> GetFunc()
 			{
 				return GetInstance;
@@ -42,7 +44,7 @@ namespace Maestro.TypeFactoryResolvers
 
 			private T GetInstance()
 			{
-				using (var context = new Context(_kernel))
+				using (var context = new Context(_container, _kernel))
 					return context.GetService<T>(_name);
 			}
 		}
