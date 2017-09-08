@@ -1,36 +1,28 @@
 ﻿using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace Maestro.Utils
 {
 	class ThreadSafeList<T> : IEnumerable<T>
 	{
-		private readonly object _root = new object();
-		private List<T> _list = new List<T>();
+		private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
 
-		public int Count => _list.Count;
+		public int Count => _queue.Count;
 
 		public void Add(T item)
 		{
-			lock (_root)
-			{
-				_list = new List<T>(_list) { item };
-			}
+			_queue.Enqueue(item);
 		}
 
 		public void AddRange(IEnumerable<T> items)
 		{
-			lock (_root)
-			{
-				var list = new List<T>(_list);
-				list.AddRange(items);
-				_list = list;
-			}
+			items.ForEach(_queue.Enqueue);
 		}
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			return _list.GetEnumerator();
+			return _queue.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
