@@ -11,7 +11,7 @@ namespace Maestro.Interceptors
 		public static Action Create(PropertyInfo property)
 		{
 			Action action;
-			if (Cache.TryGetValue(property, out action))
+			if (Cache.TryGet(property, out action))
 				return action;
 
 			var target = Expression.Parameter(typeof(object), "target");
@@ -20,7 +20,7 @@ namespace Maestro.Interceptors
 			var typedValue = Expression.Convert(value, property.PropertyType);
 			var assignment = Expression.Assign(Expression.Property(typedTarget, property), typedValue);
 			action = Expression.Lambda<Action>(assignment, target, value).Compile();
-			Cache.Set(property, action);
+			Cache.AddOrUpdate(property, action);
 			return action;
 		}
 

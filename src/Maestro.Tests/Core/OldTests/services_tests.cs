@@ -1,4 +1,5 @@
 ﻿using Shouldly;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -15,7 +16,7 @@ namespace Maestro.Tests.Core
 				x.For<object>().Add.Instance("3");
 			});
 
-			container.GetServices<object>().ShouldBe(new[] { "1", "2", "3" });
+			container.GetServices<object>().OrderBy(s => s).ShouldBe(new[] { "1", "2", "3" });
 		}
 	}
 }

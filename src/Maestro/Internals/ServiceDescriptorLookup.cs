@@ -1,8 +1,8 @@
+using Maestro.Diagnostics;
+using Maestro.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Maestro.Diagnostics;
-using Maestro.Utils;
 
 namespace Maestro.Internals
 {
@@ -31,7 +31,7 @@ namespace Maestro.Internals
 				{
 					serviceFamily.NamedServices.Add(serviceDescriptorName, serviceDescriptor);
 				}
-				catch (ArgumentException)
+				catch
 				{
 					if (throwIfDuplicate)
 					{
@@ -51,9 +51,9 @@ namespace Maestro.Internals
 		{
 			ServiceFamily serviceFamily;
 
-			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
+			if (_serviceFamilies.TryGet(type, out serviceFamily))
 			{
-				if (serviceFamily.NamedServices.TryGetValue(name, out serviceDescriptor))
+				if (serviceFamily.NamedServices.TryGet(name, out serviceDescriptor))
 				{
 					return true;
 				}
@@ -80,7 +80,7 @@ namespace Maestro.Internals
 			ServiceFamily serviceFamily;
 			var result = new ThreadSafeList<ServiceDescriptor>();
 
-			if (_serviceFamilies.TryGetValue(type, out serviceFamily))
+			if (_serviceFamilies.TryGet(type, out serviceFamily))
 			{
 				if (serviceFamily.NamedServices.Count != 0)
 				{

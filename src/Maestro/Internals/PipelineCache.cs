@@ -8,7 +8,7 @@ namespace Maestro.Internals
 
 		public void Add(TKey key, IPipeline pipeline)
 		{
-			_dictionary.Add(key, pipeline);
+			_dictionary.AddOrUpdate(key, pipeline);
 		}
 
 		public void Clear()
@@ -18,7 +18,7 @@ namespace Maestro.Internals
 
 		public bool TryGet(TKey key, out IPipeline pipeline)
 		{
-			return _dictionary.TryGetValue(key, out pipeline);
+			return _dictionary.TryGet(key, out pipeline);
 		}
 	}
 }
