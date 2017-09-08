@@ -53,13 +53,25 @@ namespace Maestro
 			return childContainer;
 		}
 
-		public object GetService(Type type, string name = null)
+		public object GetService(Type type)
+		{
+			using (var context = new Context(this, _kernel))
+				return context.GetService(type, ServiceNames.Default);
+		}
+
+		public object GetService(Type type, string name)
 		{
 			using (var context = new Context(this, _kernel))
 				return context.GetService(type, name);
 		}
 
-		public T GetService<T>(string name = null)
+		public T GetService<T>()
+		{
+			using (var context = new Context(this, _kernel))
+				return context.GetService<T>(ServiceNames.Default);
+		}
+
+		public T GetService<T>(string name)
 		{
 			using (var context = new Context(this, _kernel))
 				return context.GetService<T>(name);

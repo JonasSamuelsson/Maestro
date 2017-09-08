@@ -68,6 +68,11 @@ namespace Maestro.Internals
 			}
 		}
 
+		public object GetService(Type type)
+		{
+			return GetService(type, ServiceNames.Default);
+		}
+
 		public object GetService(Type type, string name)
 		{
 			name = GetValueOrDefaultName(name);
@@ -89,6 +94,11 @@ namespace Maestro.Internals
 			{
 				throw CreateActivationException(type, name, exception);
 			}
+		}
+
+		public T GetService<T>()
+		{
+			return GetService<T>(ServiceNames.Default);
 		}
 
 		public T GetService<T>(string name)
