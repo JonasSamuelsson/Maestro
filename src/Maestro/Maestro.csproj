@@ -1,28 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <AssemblyName>Maestro</AssemblyName>
-    <RootNamespace>Maestro</RootNamespace>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
-    <Version>2.0.0-beta9</Version>
-    <Company />
-    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Description>Maestro is a dependency injection / inversion of control library.</Description>
-    <Authors>Jonas Samuelsson</Authors>
-    <PackageLicenseUrl>https://github.com/JonasSamuelsson/Maestro/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/JonasSamuelsson/Maestro</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/JonasSamuelsson/Maestro</RepositoryUrl>
-    <PackageTags>maestro container ioc di</PackageTags>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFrameworks>netstandard2.0</TargetFrameworks>
+      <AssemblyName>Maestro</AssemblyName>
+      <RootNamespace>Maestro</RootNamespace>
+      <SignAssembly>True</SignAssembly>
+      <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
+      <Version>2.0.0-beta10</Version>
+      <Company />
+      <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+      <Description>Maestro is a dependency injection / inversion of control library.</Description>
+      <Authors>Jonas Samuelsson</Authors>
+      <PackageLicenseUrl>https://github.com/JonasSamuelsson/Maestro/blob/master/LICENSE</PackageLicenseUrl>
+      <PackageProjectUrl>https://github.com/JonasSamuelsson/Maestro</PackageProjectUrl>
+      <RepositoryUrl>https://github.com/JonasSamuelsson/Maestro</RepositoryUrl>
+      <PackageTags>maestro container ioc di</PackageTags>
+      <FileVersion>2.0.0.0</FileVersion>
+      <AssemblyVersion>2.0.0.0</AssemblyVersion>
+   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
+   <ItemGroup>
+      <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\Maestro.snk" Link="Maestro.snk" />
-  </ItemGroup>
+   <ItemGroup>
+      <None Include="..\Maestro.snk" Link="Maestro.snk" />
+   </ItemGroup>
 
 </Project>
