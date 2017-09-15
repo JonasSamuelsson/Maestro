@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Maestro.Internals;
+using System;
 
 namespace Maestro.Interceptors
 {
 	internal class TrySetPropertyInterceptor : Interceptor<object>
 	{
+		private static readonly PropertyProvider PropertyProvider = new PropertyProvider();
+
 		private readonly string _propertyName;
 		private readonly string _serviceName;
 		private Action<object, IContext> _worker;
@@ -23,7 +26,14 @@ namespace Maestro.Interceptors
 
 		private void Initialize(object instance, IContext context)
 		{
-			var property = instance.GetType().GetProperty(_propertyName);
+			var type = instance.GetType();
+			var property = PropertyProvider.GetProperty(type, _propertyName);
+
+			if (property == null)
+			{
+				throw new InvalidOperationException($"Could not find property '{type.FullName}.{_propertyName}");
+			}
+
 			var setter = PropertySetter.Create(property);
 
 			_worker = (o, ctx) =>
