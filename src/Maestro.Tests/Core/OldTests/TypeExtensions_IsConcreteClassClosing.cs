@@ -75,7 +75,7 @@ namespace Maestro.Tests.Core
 
 				return from type in types
 						 from genericTypeDefinition in types
-						 where genericTypeDefinition.IsGenericTypeDefinition
+						 where genericTypeDefinition.IsGenericTypeDefinition()
 						 let validCombination = validCombinations.SingleOrDefault(x => x.t == type && x.gtd == genericTypeDefinition)
 						 let isValid = validCombination != null
 						 let genericType = isValid ? validCombination.gt : null

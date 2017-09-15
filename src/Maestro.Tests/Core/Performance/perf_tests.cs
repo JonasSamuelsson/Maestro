@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Management;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -24,7 +23,7 @@ namespace Maestro.Tests.Core.Performance
 				{"build config", GetBuildConfig()},
 				{"iterations", Iterations},
 				{"cpu count", Environment.ProcessorCount},
-				{"cpu speed", new ManagementObject("Win32_Processor.DeviceID='CPU0'")["CurrentClockSpeed"]}
+				//{"cpu speed", new ManagementObject("Win32_Processor.DeviceID='CPU0'")["CurrentClockSpeed"]}
 			};
 		}
 
@@ -178,8 +177,6 @@ namespace Maestro.Tests.Core.Performance
 		{
 			Execute(action, 1);
 			GC.Collect();
-			GC.WaitForFullGCApproach();
-			GC.WaitForFullGCComplete();
 			GC.WaitForPendingFinalizers();
 
 			var stopwatch = Stopwatch.StartNew();

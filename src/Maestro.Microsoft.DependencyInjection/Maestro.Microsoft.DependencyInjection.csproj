@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
-      <TargetFrameworks>netstandard2.0</TargetFrameworks>
+      <TargetFramework>netstandard2.0</TargetFramework>
       <AssemblyName>Maestro.Microsoft.DependencyInjection</AssemblyName>
       <RootNamespace>Maestro.Microsoft.DependencyInjection</RootNamespace>
       <SignAssembly>True</SignAssembly>
@@ -27,8 +27,6 @@
 
    <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
-      <PackageReference Include="System.ComponentModel" Version="4.3.0" />
-      <PackageReference Include="System.Runtime" Version="4.3.0" />
       
       <!-- PackageReferences BEGIN -->
       <!-- <PackageReference Include="Maestro" Version="2.0.0-rc1" /> -->

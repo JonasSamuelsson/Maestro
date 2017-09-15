@@ -28,7 +28,7 @@ namespace Maestro.Tests.Core.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Where(t => t.IsClass).Using(convention)));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Where(t => t.IsClass()).Using(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(object) });
 		}
@@ -50,7 +50,7 @@ namespace Maestro.Tests.Core.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int), typeof(string) }).Where(t => t.IsClass).Where(t => t.Name.Contains("n")).Using(convention)));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int), typeof(string) }).Where(t => t.IsClass()).Where(t => t.Name.Contains("n")).Using(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(string) });
 		}
@@ -74,7 +74,7 @@ namespace Maestro.Tests.Core.Conventions
 		{
 			public bool IsMatch(Type type)
 			{
-				return type.IsClass;
+				return type.IsClass();
 			}
 		}
 	}
