@@ -120,12 +120,7 @@ namespace Maestro.Configuration
 		{
 			return Intercept(new TrySetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: false));
 		}
-
-		public TParent TrySetPropertyIfExists<TValue>(Expression<Func<TInstance, TValue>> property)
-		{
-			return TrySetPropertyIfExists(GetPropertyName(property));
-		}
-
+		
 		private static string GetPropertyName<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
 			return ((MemberExpression)property.Body).Member.Name;
