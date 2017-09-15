@@ -1,4 +1,6 @@
 ﻿using Shouldly;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.Core.Interception
@@ -64,6 +66,32 @@ namespace Maestro.Tests.Core.Interception
 			});
 
 			container.GetServices<Wrapper<string>>().ForEach(x => x.Value.ShouldBe("success"));
+		}
+
+		[Fact]
+		public void SetPropertyIfExists_should_not_throw_if_property_doesnt_exist()
+		{
+			var container = new Container(x =>
+			{
+				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar");
+				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar", 0);
+				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar", () => throw new InvalidOperationException());
+				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar", (ctx) => throw new InvalidOperationException());
+				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar", (ctx, type) => throw new InvalidOperationException());
+			});
+
+			container.GetServices<Wrapper<string>>().Count().ShouldBe(5);
+		}
+
+		[Fact]
+		public void TrySetPropertyIfExists_should_not_throw_if_property_doesnt_exist()
+		{
+			var container = new Container(x =>
+			{
+				x.For<Wrapper<string>>().Use.Self().TrySetPropertyIfExists("foobar");
+			});
+
+			container.GetService<Wrapper<string>>();
 		}
 
 		class Wrapper<T>

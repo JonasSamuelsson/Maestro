@@ -1,7 +1,7 @@
-using System;
-using System.Linq.Expressions;
 using Maestro.Interceptors;
 using Maestro.Internals;
+using System;
+using System.Linq.Expressions;
 
 namespace Maestro.Configuration
 {
@@ -38,7 +38,7 @@ namespace Maestro.Configuration
 
 		public TParent SetProperty(string property)
 		{
-			return Intercept(new SetPropertyInterceptor(property, ServiceDescriptor.Name));
+			return Intercept(new SetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: true));
 		}
 
 		public TParent SetProperty(string property, object value)
@@ -53,12 +53,37 @@ namespace Maestro.Configuration
 
 		public TParent SetProperty(string property, Func<IContext, object> factory)
 		{
-			return Intercept(new SetPropertyInterceptor(property, (ctx, type) => factory(ctx)));
+			return SetProperty(property, (ctx, type) => factory(ctx));
 		}
 
 		public TParent SetProperty(string property, Func<IContext, Type, object> factory)
 		{
-			return Intercept(new SetPropertyInterceptor(property, factory));
+			return Intercept(new SetPropertyInterceptor(property, factory, throwIfPropertyDoesntExist: true));
+		}
+
+		public TParent SetPropertyIfExists(string property)
+		{
+			return Intercept(new SetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: false));
+		}
+
+		public TParent SetPropertyIfExists(string property, object value)
+		{
+			return SetPropertyIfExists(property, (ctx, type) => value);
+		}
+
+		public TParent SetPropertyIfExists(string property, Func<object> factory)
+		{
+			return SetPropertyIfExists(property, (ctx, type) => factory());
+		}
+
+		public TParent SetPropertyIfExists(string property, Func<IContext, object> factory)
+		{
+			return SetPropertyIfExists(property, (ctx, type) => factory(ctx));
+		}
+
+		public TParent SetPropertyIfExists(string property, Func<IContext, Type, object> factory)
+		{
+			return Intercept(new SetPropertyInterceptor(property, factory, throwIfPropertyDoesntExist: false));
 		}
 
 		public TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
@@ -83,12 +108,22 @@ namespace Maestro.Configuration
 
 		public TParent TrySetProperty(string property)
 		{
-			return Intercept(new TrySetPropertyInterceptor(property, ServiceDescriptor.Name));
+			return Intercept(new TrySetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: true));
 		}
 
 		public TParent TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
 			return TrySetProperty(GetPropertyName(property));
+		}
+
+		public TParent TrySetPropertyIfExists(string property)
+		{
+			return Intercept(new TrySetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: false));
+		}
+
+		public TParent TrySetPropertyIfExists<TValue>(Expression<Func<TInstance, TValue>> property)
+		{
+			return TrySetPropertyIfExists(GetPropertyName(property));
 		}
 
 		private static string GetPropertyName<TValue>(Expression<Func<TInstance, TValue>> property)

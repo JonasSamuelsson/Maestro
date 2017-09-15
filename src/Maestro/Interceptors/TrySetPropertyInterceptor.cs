@@ -9,13 +9,15 @@ namespace Maestro.Interceptors
 
 		private readonly string _propertyName;
 		private readonly string _serviceName;
+		private readonly bool _throwIfPropertyDoesntExist;
 		private Action<object, IContext> _worker;
 
-		public TrySetPropertyInterceptor(string propertyName, string serviceName)
+		public TrySetPropertyInterceptor(string propertyName, string serviceName, bool throwIfPropertyDoesntExist)
 		{
 			_propertyName = propertyName;
 			_serviceName = serviceName;
-			_worker = Initialize;
+			_throwIfPropertyDoesntExist = throwIfPropertyDoesntExist;
+			_worker = InitializeWorker;
 		}
 
 		public override object Execute(object instance, IContext context)
@@ -24,14 +26,18 @@ namespace Maestro.Interceptors
 			return instance;
 		}
 
-		private void Initialize(object instance, IContext context)
+		private void InitializeWorker(object instance, IContext context)
 		{
 			var type = instance.GetType();
 			var property = PropertyProvider.GetProperty(type, _propertyName);
 
 			if (property == null)
 			{
-				throw new InvalidOperationException($"Could not find property '{type.FullName}.{_propertyName}");
+				if (_throwIfPropertyDoesntExist)
+					throw new InvalidOperationException($"Could not find property '{type.FullName}.{_propertyName}'.");
+
+				_worker = (o, ctx) => { };
+				return;
 			}
 
 			var setter = PropertySetter.Create(property);
@@ -48,7 +54,7 @@ namespace Maestro.Interceptors
 
 		public IInterceptor MakeGeneric(Type[] genericArguments)
 		{
-			return new TrySetPropertyInterceptor(_propertyName, _serviceName);
+			return new TrySetPropertyInterceptor(_propertyName, _serviceName, _throwIfPropertyDoesntExist);
 		}
 
 		public override string ToString()
