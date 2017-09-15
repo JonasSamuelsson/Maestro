@@ -1,15 +1,17 @@
+using Maestro.FactoryProviders.Factories;
+using Maestro.Internals;
+using Maestro.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Maestro.FactoryProviders.Factories;
-using Maestro.Internals;
-using Maestro.Utils;
 
 namespace Maestro.FactoryProviders
 {
 	class TypeFactoryProvider : IFactoryProvider
 	{
+		private static readonly ConstructorProvider ConstructorProvider = new ConstructorProvider();
+
 		public TypeFactoryProvider(Type type, string name)
 		{
 			Type = type;
@@ -29,9 +31,8 @@ namespace Maestro.FactoryProviders
 
 		private Func<IContext, object> GetActivator(ConstructorInfo constructor, string name, IContext context)
 		{
-			var ctors = from ctor in constructor != null ? new[] { constructor } : Type.GetConstructors()
+			var ctors = from ctor in constructor != null ? new[] { constructor } : ConstructorProvider.GetConstructors(Type)
 							let parameters = ctor.GetParameters()
-							orderby parameters.Length descending
 							select new { ctor, parameters };
 
 			foreach (var x in ctors)

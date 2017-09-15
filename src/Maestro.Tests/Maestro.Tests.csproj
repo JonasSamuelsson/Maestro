@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject>Maestro.Tests.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
