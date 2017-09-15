@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro", "Maestro\Maestro.csproj", "{E07CB006-2C92-4CC5-B6FB-053A4BE849EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro", "Maestro\Maestro.csproj", "{E07CB006-2C92-4CC5-B6FB-053A4BE849EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Tests", "Maestro.Tests\Maestro.Tests.csproj", "{641763B1-DDDE-4435-B06C-413A1B6A825B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Castle.DynamicProxy", "Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj", "{F74C9100-D385-4573-B973-0B534E1FB976}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Castle.DynamicProxy", "Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj", "{F74C9100-D385-4573-B973-0B534E1FB976}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{DE4F0E5E-F742-45D9-B011-DCFA614B0AA6}"
 	ProjectSection(SolutionItems) = preProject
@@ -16,7 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Microsoft.DependencyInjection", "Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj", "{B8474763-52FB-4201-9F3F-CE1D20785C49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.DependencyInjection", "Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj", "{B8474763-52FB-4201-9F3F-CE1D20785C49}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.AspNetCore", "Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj", "{AAD9343C-F282-46BC-8FEB-971FD5C6BD56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,8 +42,15 @@ Global
 		{B8474763-52FB-4201-9F3F-CE1D20785C49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B8474763-52FB-4201-9F3F-CE1D20785C49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B8474763-52FB-4201-9F3F-CE1D20785C49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAD9343C-F282-46BC-8FEB-971FD5C6BD56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAD9343C-F282-46BC-8FEB-971FD5C6BD56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAD9343C-F282-46BC-8FEB-971FD5C6BD56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAD9343C-F282-46BC-8FEB-971FD5C6BD56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {083A5284-62C5-47ED-A84F-D014239F99F9}
 	EndGlobalSection
 EndGlobal

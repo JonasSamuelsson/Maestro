@@ -18,21 +18,31 @@ namespace Maestro.Microsoft.DependencyInjection
 		/// <param name="descriptors">The service descriptors.</param>
 		public static void Populate(this IContainer container, IEnumerable<ServiceDescriptor> descriptors)
 		{
-			container.Configure(x =>
+			container.Configure(x => x.Populate(descriptors));
+		}
+
+		public static void Populate(this ContainerBuilder builder, IEnumerable<ServiceDescriptor> descriptors)
+		{
+			builder.Configure(x => x.Populate(descriptors));
+		}
+
+		public static void Populate(this IContainerExpression expression, IEnumerable<ServiceDescriptor> descriptors)
+		{
+			var x = expression;
+
+			x.Config.GetServicesOrder = GetServicesOrder.Ordered;
+
+			x.For<IServiceProvider>().Use.Factory(ctx => new MaestroServiceProvider(ctx.Container));
+			x.For<IServiceScopeFactory>().Use.Factory(ctx => new MaestroServiceScopeFactory(ctx.Container));
+
+			descriptors = descriptors as IReadOnlyCollection<ServiceDescriptor> ?? descriptors.ToList();
+			var lookup = descriptors.ToLookup(sd => sd.ServiceType);
+
+			foreach (var descriptor in descriptors)
 			{
-				x.Config.GetServicesOrder = GetServicesOrder.Ordered;
-
-				x.For<IServiceProvider>().Use.Instance(new MaestroServiceProvider(container));
-
-				descriptors = descriptors as IReadOnlyCollection<ServiceDescriptor> ?? descriptors.ToList();
-				var lookup = descriptors.ToLookup(sd => sd.ServiceType);
-
-				foreach (var descriptor in descriptors)
-				{
-					var single = lookup[descriptor.ServiceType].Count() == 1;
-					x.Register(descriptor, se => single ? se.Use : se.Add);
-				}
-			});
+				var single = lookup[descriptor.ServiceType].Count() == 1;
+				x.Register(descriptor, se => single ? se.Use : se.Add);
+			}
 		}
 
 		private static void Register(this IContainerExpression containerExpression, ServiceDescriptor descriptor, Func<IServiceExpression, IInstanceKindSelector> f)

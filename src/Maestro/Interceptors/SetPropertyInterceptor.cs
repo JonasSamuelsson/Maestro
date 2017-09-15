@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Reflection;
 
 namespace Maestro.Interceptors
 {
 	internal class SetPropertyInterceptor : Interceptor<object>
 	{
-		// todo : perf
-
 		private readonly string _propertyName;
 		private readonly string _serviceName;
 		private readonly Func<IContext, Type, object> _factory;

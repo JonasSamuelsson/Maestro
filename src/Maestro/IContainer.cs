@@ -14,9 +14,11 @@ namespace Maestro
 		/// </summary>
 		/// <param name="action"></param>
 		void Configure(Action<IContainerExpression> action);
+		void Configure(ContainerBuilder builder);
 
 		IContainer GetChildContainer();
 		IContainer GetChildContainer(Action<IContainerExpression> action);
+		IContainer GetChildContainer(ContainerBuilder builder);
 
 		/// <summary>
 		/// Gets the default instance of type <paramref name="type"/>.

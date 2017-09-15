@@ -2,6 +2,7 @@ using Maestro.Diagnostics;
 using Maestro.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Maestro.Internals
@@ -120,7 +121,19 @@ namespace Maestro.Internals
 
 		public void Dispose()
 		{
-			// todo
+			_serviceFamilies.Values.ForEach(sf =>
+			{
+				sf.AnonymousServices.ForEach(DisposeServiceDescriptor);
+				sf.NamedServices.Values.ForEach(DisposeServiceDescriptor);
+			});
+		}
+
+		[SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
+		private static void DisposeServiceDescriptor(ServiceDescriptor sd)
+		{
+			(sd.FactoryProvider as IDisposable)?.Dispose();
+			sd.Interceptors.OfType<IDisposable>().ForEach(x => x.Dispose());
+			(sd.Lifetime as IDisposable)?.Dispose();
 		}
 
 		public void Populate(List<Service> services)
