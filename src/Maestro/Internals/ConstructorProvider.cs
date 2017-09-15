@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Maestro.Internals
 {
-	public class ConstructorProvider
+	internal class ConstructorProvider
 	{
 		public IEnumerable<ConstructorInfo> GetConstructors(Type type)
 		{
