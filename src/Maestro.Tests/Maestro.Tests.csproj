@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>C:\dev\GitHub\Maestro\src\Maestro.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
