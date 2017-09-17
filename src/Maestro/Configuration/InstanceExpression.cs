@@ -36,54 +36,29 @@ namespace Maestro.Configuration
 			return Parent;
 		}
 
-		public TParent SetProperty(string property)
+		public TParent SetProperty(string property, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
 		{
-			return Intercept(new SetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: true));
+			return Intercept(new SetPropertyInterceptor(property, propertyNotFoundAction, ServiceDescriptor.Name));
 		}
 
-		public TParent SetProperty(string property, object value)
+		public TParent SetProperty(string property, object value, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
 		{
-			return SetProperty(property, (ctx, type) => value);
+			return SetProperty(property, (ctx, type) => value, propertyNotFoundAction);
 		}
 
-		public TParent SetProperty(string property, Func<object> factory)
+		public TParent SetProperty(string property, Func<object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
 		{
-			return SetProperty(property, (ctx, type) => factory());
+			return SetProperty(property, (ctx, type) => factory(), propertyNotFoundAction);
 		}
 
-		public TParent SetProperty(string property, Func<IContext, object> factory)
+		public TParent SetProperty(string property, Func<IContext, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
 		{
-			return SetProperty(property, (ctx, type) => factory(ctx));
+			return SetProperty(property, (ctx, type) => factory(ctx), propertyNotFoundAction);
 		}
 
-		public TParent SetProperty(string property, Func<IContext, Type, object> factory)
+		public TParent SetProperty(string property, Func<IContext, Type, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
 		{
-			return Intercept(new SetPropertyInterceptor(property, factory, throwIfPropertyDoesntExist: true));
-		}
-
-		public TParent SetPropertyIfExists(string property)
-		{
-			return Intercept(new SetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: false));
-		}
-
-		public TParent SetPropertyIfExists(string property, object value)
-		{
-			return SetPropertyIfExists(property, (ctx, type) => value);
-		}
-
-		public TParent SetPropertyIfExists(string property, Func<object> factory)
-		{
-			return SetPropertyIfExists(property, (ctx, type) => factory());
-		}
-
-		public TParent SetPropertyIfExists(string property, Func<IContext, object> factory)
-		{
-			return SetPropertyIfExists(property, (ctx, type) => factory(ctx));
-		}
-
-		public TParent SetPropertyIfExists(string property, Func<IContext, Type, object> factory)
-		{
-			return Intercept(new SetPropertyInterceptor(property, factory, throwIfPropertyDoesntExist: false));
+			return Intercept(new SetPropertyInterceptor(property, propertyNotFoundAction, factory));
 		}
 
 		public TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
@@ -106,9 +81,9 @@ namespace Maestro.Configuration
 			return SetProperty(GetPropertyName(property), (ctx, type) => factory(ctx));
 		}
 
-		public TParent TrySetProperty(string property)
+		public TParent TrySetProperty(string property, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
 		{
-			return Intercept(new TrySetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: true));
+			return Intercept(new TrySetPropertyInterceptor(property, propertyNotFoundAction, ServiceDescriptor.Name));
 		}
 
 		public TParent TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property)
@@ -116,11 +91,6 @@ namespace Maestro.Configuration
 			return TrySetProperty(GetPropertyName(property));
 		}
 
-		public TParent TrySetPropertyIfExists(string property)
-		{
-			return Intercept(new TrySetPropertyInterceptor(property, ServiceDescriptor.Name, throwIfPropertyDoesntExist: false));
-		}
-		
 		private static string GetPropertyName<TValue>(Expression<Func<TInstance, TValue>> property)
 		{
 			return ((MemberExpression)property.Body).Member.Name;

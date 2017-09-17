@@ -35,7 +35,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <returns></returns>
 		/// <remarks>Throws if the property type can't be resolved.</remarks>
-		TParent SetProperty(string property);
+		TParent SetProperty(string property, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value <paramref name="value"/>.
@@ -43,7 +43,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		TParent SetProperty(string property, object value);
+		TParent SetProperty(string property, object value, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
@@ -51,7 +51,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-		TParent SetProperty(string property, Func<object> factory);
+		TParent SetProperty(string property, Func<object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 
 		/// <summary>
 		/// Set property <paramref name="property"/> with value from <paramref name="factory"/>.
@@ -59,21 +59,10 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-		TParent SetProperty(string property, Func<IContext, object> factory);
+		TParent SetProperty(string property, Func<IContext, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 
-		TParent SetProperty(string property, Func<IContext, Type, object> factory);
-
-
-		TParent SetPropertyIfExists(string property);
-
-		TParent SetPropertyIfExists(string property, object value);
-
-		TParent SetPropertyIfExists(string property, Func<object> factory);
-
-		TParent SetPropertyIfExists(string property, Func<IContext, object> factory);
-
-		TParent SetPropertyIfExists(string property, Func<IContext, Type, object> factory);
-
+		TParent SetProperty(string property, Func<IContext, Type, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
+		
 		/// <summary>
 		/// Set property <paramref name="property"/>.
 		/// </summary>
@@ -110,10 +99,8 @@ namespace Maestro.Configuration
 		/// <returns></returns>
 		TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
 
-		TParent TrySetProperty(string property);
+		TParent TrySetProperty(string property, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 
 		TParent TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
-
-		TParent TrySetPropertyIfExists(string property);
-	}
+}
 }

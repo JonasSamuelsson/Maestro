@@ -1,5 +1,6 @@
 ﻿using Maestro.Internals;
 using System;
+using Maestro.Configuration;
 
 namespace Maestro.Interceptors
 {
@@ -9,14 +10,14 @@ namespace Maestro.Interceptors
 
 		private readonly string _propertyName;
 		private readonly string _serviceName;
-		private readonly bool _throwIfPropertyDoesntExist;
+		private readonly PropertyNotFoundAction _propertyNotFoundAction;
 		private Action<object, IContext> _worker;
 
-		public TrySetPropertyInterceptor(string propertyName, string serviceName, bool throwIfPropertyDoesntExist)
+		public TrySetPropertyInterceptor(string propertyName, PropertyNotFoundAction propertyNotFoundAction, string serviceName)
 		{
 			_propertyName = propertyName;
 			_serviceName = serviceName;
-			_throwIfPropertyDoesntExist = throwIfPropertyDoesntExist;
+			_propertyNotFoundAction = propertyNotFoundAction;
 			_worker = InitializeWorker;
 		}
 
@@ -33,7 +34,7 @@ namespace Maestro.Interceptors
 
 			if (property == null)
 			{
-				if (_throwIfPropertyDoesntExist)
+				if (_propertyNotFoundAction == PropertyNotFoundAction.Throw)
 					throw new InvalidOperationException($"Could not find property '{type.FullName}.{_propertyName}'.");
 
 				_worker = (o, ctx) => { };
@@ -54,7 +55,7 @@ namespace Maestro.Interceptors
 
 		public IInterceptor MakeGeneric(Type[] genericArguments)
 		{
-			return new TrySetPropertyInterceptor(_propertyName, _serviceName, _throwIfPropertyDoesntExist);
+			return new TrySetPropertyInterceptor(_propertyName, _propertyNotFoundAction, _serviceName);
 		}
 
 		public override string ToString()

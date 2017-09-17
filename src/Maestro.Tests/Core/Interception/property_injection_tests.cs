@@ -1,4 +1,5 @@
-﻿using Shouldly;
+﻿using Maestro.Configuration;
+using Shouldly;
 using System;
 using System.Linq;
 using Xunit;
@@ -69,26 +70,26 @@ namespace Maestro.Tests.Core.Interception
 		}
 
 		[Fact]
-		public void SetPropertyIfExists_should_not_throw_if_property_doesnt_exist()
+		public void SetProperty_should_have_the_ability_to_ignore_properties_that_doesnt_exist()
 		{
 			var container = new Container(x =>
 			{
-				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar");
-				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar", 0);
-				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar", () => throw new InvalidOperationException());
-				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar", (ctx) => throw new InvalidOperationException());
-				x.For<Wrapper<string>>().Add.Self().SetPropertyIfExists("foobar", (ctx, type) => throw new InvalidOperationException());
+				x.For<Wrapper<string>>().Add.Self().SetProperty("foobar", PropertyNotFoundAction.Ignore);
+				x.For<Wrapper<string>>().Add.Self().SetProperty("foobar", 0, PropertyNotFoundAction.Ignore);
+				x.For<Wrapper<string>>().Add.Self().SetProperty("foobar", () => throw new InvalidOperationException(), PropertyNotFoundAction.Ignore);
+				x.For<Wrapper<string>>().Add.Self().SetProperty("foobar", ctx => throw new InvalidOperationException(), PropertyNotFoundAction.Ignore);
+				x.For<Wrapper<string>>().Add.Self().SetProperty("foobar", (ctx, type) => throw new InvalidOperationException(), PropertyNotFoundAction.Ignore);
 			});
 
 			container.GetServices<Wrapper<string>>().Count().ShouldBe(5);
 		}
 
 		[Fact]
-		public void TrySetPropertyIfExists_should_not_throw_if_property_doesnt_exist()
+		public void TrySetProperty_should_have_the_ability_to_ignore_properties_that_doesnt_exist()
 		{
 			var container = new Container(x =>
 			{
-				x.For<Wrapper<string>>().Use.Self().TrySetPropertyIfExists("foobar");
+				x.For<Wrapper<string>>().Use.Self().TrySetProperty("foobar", PropertyNotFoundAction.Ignore);
 			});
 
 			container.GetService<Wrapper<string>>();

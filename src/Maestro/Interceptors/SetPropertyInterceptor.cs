@@ -1,4 +1,5 @@
-﻿using Maestro.Internals;
+﻿using Maestro.Configuration;
+using Maestro.Internals;
 using System;
 
 namespace Maestro.Interceptors
@@ -8,25 +9,25 @@ namespace Maestro.Interceptors
 		private static readonly PropertyProvider PropertyProvider = new PropertyProvider();
 
 		private readonly string _propertyName;
+		private readonly PropertyNotFoundAction _propertyNotFoundAction;
 		private readonly string _serviceName;
-		private readonly bool _throwIfPropertyDoesntExist;
 		private readonly Func<IContext, Type, object> _factory;
 		private Action<object, IContext> _worker;
 
-		public SetPropertyInterceptor(string propertyName, string serviceName, bool throwIfPropertyDoesntExist)
+		public SetPropertyInterceptor(string propertyName, PropertyNotFoundAction propertyNotFoundAction, string serviceName)
 		{
 			_propertyName = propertyName;
+			_propertyNotFoundAction = propertyNotFoundAction;
 			_serviceName = serviceName;
-			_throwIfPropertyDoesntExist = throwIfPropertyDoesntExist;
 			_factory = (ctx, type) => ctx.GetService(type, _serviceName);
 			_worker = InitializeWorker;
 		}
 
-		public SetPropertyInterceptor(string propertyName, Func<IContext, Type, object> factory, bool throwIfPropertyDoesntExist)
+		public SetPropertyInterceptor(string propertyName, PropertyNotFoundAction propertyNotFoundAction, Func<IContext, Type, object> factory)
 		{
 			_propertyName = propertyName;
+			_propertyNotFoundAction = propertyNotFoundAction;
 			_factory = factory;
-			_throwIfPropertyDoesntExist = throwIfPropertyDoesntExist;
 			_worker = InitializeWorker;
 		}
 
@@ -43,7 +44,7 @@ namespace Maestro.Interceptors
 
 			if (property == null)
 			{
-				if (_throwIfPropertyDoesntExist)
+				if (_propertyNotFoundAction == PropertyNotFoundAction.Throw)
 					throw new InvalidOperationException($"Could not find property '{type.FullName}.{_propertyName}'.");
 
 				_worker = (o, ctx) => { };
@@ -58,8 +59,8 @@ namespace Maestro.Interceptors
 		public IInterceptor MakeGeneric(Type[] genericArguments)
 		{
 			return _serviceName != null
-				? new SetPropertyInterceptor(_propertyName, _serviceName, _throwIfPropertyDoesntExist)
-				: new SetPropertyInterceptor(_propertyName, _factory, _throwIfPropertyDoesntExist);
+				? new SetPropertyInterceptor(_propertyName, _propertyNotFoundAction, _serviceName)
+				: new SetPropertyInterceptor(_propertyName, _propertyNotFoundAction, _factory);
 		}
 
 		public override string ToString()
