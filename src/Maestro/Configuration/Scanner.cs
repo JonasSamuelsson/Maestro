@@ -111,24 +111,24 @@ namespace Maestro.Configuration
 			return Using(new TConvention());
 		}
 
-		public IScanner ForConcreteClassesOf<T>(Action<IConventionalServiceTypeExpression<T>> action = null)
+		public IScanner ForConcreteClassesOf<T>(Action<IConventionalServiceExpression<T>> action = null)
 		{
-			return Using(new ConcreteClassesOfConvention<T>(typeof(T), action ?? (x => x.BaseType.Add())));
+			return Using(new ConcreteClassesOfConvention<T>(typeof(T), action ?? (x => x.Add())));
 		}
 
-		public IScanner ForConcreteClassesOf(Type type, Action<IConventionalServiceTypeExpression<object>> action = null)
+		public IScanner ForConcreteClassesOf(Type type, Action<IConventionalServiceExpression<object>> action = null)
 		{
-			return Using(new ConcreteClassesOfConvention<object>(type, action ?? (x => x.BaseType.Add())));
+			return Using(new ConcreteClassesOfConvention<object>(type, action ?? (x => x.Add())));
 		}
 
-		public IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceTypeExpression<object>> action = null)
+		public IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceExpression<object>> action = null)
 		{
-			return Using(new ConcreteClassesClosingConvention(genericTypeDefinition, action ?? (x => x.BaseType.Add())));
+			return Using(new ConcreteClassesClosingConvention(genericTypeDefinition, action ?? (x => x.Add())));
 		}
 
-		public IScanner ForDefaultImplementations(Action<IConventionalServiceTypeExpression<object>> action = null)
+		public IScanner ForDefaultImplementations(Action<IConventionalServiceExpression<object>> action = null)
 		{
-			return Using(new DefaultImplementationsConvention(action ?? (x => x.BaseType.Use())));
+			return Using(new DefaultImplementationsConvention(action ?? (x => x.Use())));
 		}
 
 		internal void Execute(ContainerExpression containerExpression)

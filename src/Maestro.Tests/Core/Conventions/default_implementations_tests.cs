@@ -26,7 +26,7 @@ namespace Maestro.Tests.Core.Conventions
 			var container = new Container(x => x.Scan(_ =>
 			{
 				_.Types(new[] { typeof(IFoobar1), typeof(Foobar1) });
-				_.ForDefaultImplementations(z => z.BaseType.Use().Lifetime.Singleton());
+				_.ForDefaultImplementations(z => z.Use().Lifetime.Singleton());
 			}));
 
 			var instance1 = container.GetService<IFoobar1>();

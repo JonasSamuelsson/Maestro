@@ -29,13 +29,13 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
       
       <!-- PackageReferences BEGIN -->
-      <PackageReference Include="Maestro" Version="2.0.0-rc2" />
+      <!-- <PackageReference Include="Maestro" Version="2.0.0-rc2" /> -->
       <!-- PackageReferences END -->
    </ItemGroup>
 
    <ItemGroup>
       <!-- ProjectReferences BEGIN -->
-      <!-- <ProjectReference Include="..\Maestro\Maestro.csproj" /> -->
+      <ProjectReference Include="..\Maestro\Maestro.csproj" />
       <!-- ProjectReferences END -->
    </ItemGroup>
 

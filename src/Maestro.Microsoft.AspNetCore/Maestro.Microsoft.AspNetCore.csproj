@@ -21,15 +21,15 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" />
     
     <!-- PackageReferences BEGIN -->
-    <PackageReference Include="Maestro" Version="2.0.0-rc2" />
-    <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="1.0.0-rc3" />
+    <!-- <PackageReference Include="Maestro" Version="2.0.0-rc2" /> -->
+    <!-- <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="1.0.0-rc3" /> -->
     <!-- PackageReferences END -->
   </ItemGroup>
 
   <ItemGroup>
     <!-- ProjectReferences BEGIN -->
-    <!-- <ProjectReference Include="..\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj" /> -->
-    <!-- <ProjectReference Include="..\Maestro\Maestro.csproj" /> -->
+    <ProjectReference Include="..\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj" />
+    <ProjectReference Include="..\Maestro\Maestro.csproj" />
     <!-- ProjectReferences END -->
   </ItemGroup>
 

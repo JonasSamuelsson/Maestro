@@ -1,41 +1,41 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
-    <ApplicationIcon />
-    <OutputType>Exe</OutputType>
-    <StartupObject>Maestro.Tests.Program</StartupObject>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>netcoreapp2.0</TargetFramework>
+      <SignAssembly>true</SignAssembly>
+      <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
+      <ApplicationIcon />
+      <OutputType>Exe</OutputType>
+      <StartupObject>Maestro.Tests.Program</StartupObject>
+   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Shouldly" Version="2.8.3" />
-    <PackageReference Include="xunit" Version="2.3.0" />
-    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0" />
-  </ItemGroup>
+   <ItemGroup>
+      <PackageReference Include="Shouldly" Version="2.8.3" />
+      <PackageReference Include="xunit" Version="2.3.0" />
+      <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0" />
+   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="..\Maestro.snk" Link="Maestro.snk" />
-  </ItemGroup>
+   <ItemGroup>
+      <None Include="..\Maestro.snk" Link="Maestro.snk" />
+   </ItemGroup>
 
-  <ItemGroup>
+   <ItemGroup>
       <PackageReference Include="Castle.Core" Version="4.1.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
-      
-      <!-- ProjectReferences BEGIN -->
-      <!-- <PackageReference Include="Maestro" Version="2.0.0-rc2" /> -->
-      <!-- <PackageReference Include="Maestro.Castle.DynamicProxy" Version="1.0.0-rc2" /> -->
-      <!-- <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="1.0.0-rc2" /> -->
-      <!-- ProjectReferences END -->
-  </ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
 
-  <ItemGroup>
-    <!-- ProjectReferences BEGIN -->
-    <ProjectReference Include="..\Maestro\Maestro.csproj" />
-    <ProjectReference Include="..\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj" />
-    <ProjectReference Include="..\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj" />
-    <!-- ProjectReferences END -->
-  </ItemGroup>
+      <!-- ProjectReferences BEGIN -->
+      <PackageReference Include="Maestro" Version="2.0.0-rc2" />
+      <PackageReference Include="Maestro.Castle.DynamicProxy" Version="1.0.0-rc2" />
+      <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="1.0.0-rc2" />
+      <!-- ProjectReferences END -->
+   </ItemGroup>
+
+   <ItemGroup>
+      <!-- ProjectReferences BEGIN -->
+      <ProjectReference Include="..\Maestro\Maestro.csproj" />
+      <ProjectReference Include="..\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj" />
+      <ProjectReference Include="..\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj" />
+      <!-- ProjectReferences END -->
+   </ItemGroup>
 
 </Project>
