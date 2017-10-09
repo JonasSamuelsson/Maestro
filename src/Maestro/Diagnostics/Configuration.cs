@@ -57,7 +57,7 @@ namespace Maestro.Diagnostics
 		{
 			for (var config = this; config != null; config = config.Parent)
 			{
-				yield return Services
+				yield return config.Services
 					.Where(service => serviceFilter(service.ServiceType))
 					.Select(service => new[]
 					{
@@ -73,9 +73,9 @@ namespace Maestro.Diagnostics
 		private static string GetServiceName(Service service)
 		{
 			return service.Name == null
-				? "{anonymous}"
+				? "{{anonymous}}"
 				: service.Name == string.Empty
-					? "{default}"
+					? "{{default}}"
 					: service.Name;
 		}
 	}

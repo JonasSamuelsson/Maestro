@@ -1,4 +1,5 @@
-﻿using Maestro.Tests.Core.Internals;
+﻿using Maestro.Tests.Core.Diagnostics;
+using Maestro.Tests.Core.Internals;
 
 namespace Maestro.Tests
 {
@@ -6,7 +7,7 @@ namespace Maestro.Tests
 	{
 		static void Main()
 		{
-			new ConstructorProviderTests().Should_get_instance_constructors();
+			new WhatDoIHave_tests().WhatDoIHave();
 		}
 	}
 }
