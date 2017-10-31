@@ -32,8 +32,8 @@ namespace Maestro.Microsoft.DependencyInjection
 
 			x.Config.GetServicesOrder = GetServicesOrder.Ordered;
 
-			x.For<IServiceProvider>().Use.Factory(ctx => new MaestroServiceProvider(ctx.Container));
-			x.For<IServiceScopeFactory>().Use.Factory(ctx => new MaestroServiceScopeFactory(ctx.Container));
+			x.Use<IServiceProvider>().Factory(ctx => new MaestroServiceProvider(ctx.Container));
+			x.Use<IServiceScopeFactory>().Factory(ctx => new MaestroServiceScopeFactory(ctx.Container));
 
 			descriptors = descriptors as IReadOnlyCollection<ServiceDescriptor> ?? descriptors.ToList();
 			var lookup = descriptors.ToLookup(sd => sd.ServiceType);
@@ -41,17 +41,17 @@ namespace Maestro.Microsoft.DependencyInjection
 			foreach (var descriptor in descriptors)
 			{
 				var single = lookup[descriptor.ServiceType].Count() == 1;
-				x.Register(descriptor, se => single ? se.Use : se.Add);
+				x.Register(descriptor, (c, t) => single ? c.Use(t) : c.Add(t));
 			}
 		}
 
-		private static void Register(this IContainerExpression containerExpression, ServiceDescriptor descriptor, Func<IServiceExpression, IInstanceKindSelector> f)
+		private static void Register(this IContainerExpression containerExpression, ServiceDescriptor descriptor, Func<IContainerExpression, Type, IServiceExpression> f)
 		{
-			var instanceKindSelector = f(containerExpression.For(descriptor.ServiceType));
+			var serviceExpression = f(containerExpression, descriptor.ServiceType);
 
 			if (descriptor.ImplementationType != null)
 			{
-				instanceKindSelector
+				serviceExpression
 					.Type(descriptor.ImplementationType)
 					.Lifetime.Use(descriptor.Lifetime);
 
@@ -60,14 +60,14 @@ namespace Maestro.Microsoft.DependencyInjection
 
 			if (descriptor.ImplementationFactory != null)
 			{
-				instanceKindSelector
+				serviceExpression
 					.Factory(GetFactory(descriptor))
 					.Lifetime.Use(descriptor.Lifetime);
 
 				return;
 			}
 
-			instanceKindSelector
+			serviceExpression
 				.Instance(descriptor.ImplementationInstance);
 		}
 

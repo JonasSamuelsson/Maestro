@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Shouldly;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -13,9 +13,9 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<TypeWithArrayOfObjectDependency>().Use.Type<TypeWithArrayOfObjectDependency>();
-				x.For<object>().Add.Type<object>();
-				x.For<object>().Add.Type<EventArgs>();
+				x.Use<TypeWithArrayOfObjectDependency>().Type<TypeWithArrayOfObjectDependency>();
+				x.Add<object>().Type<object>();
+				x.Add<object>().Type<EventArgs>();
 			});
 
 			var instance = container.GetService<TypeWithArrayOfObjectDependency>();
@@ -28,7 +28,7 @@ namespace Maestro.Tests.Core
 		[Todo]
 		public void should_use_empty_enumerable_if_enumerated_type_is_not_registered_and_not_value_type()
 		{
-			var container = new Container(x => x.For<TypeWithArrayOfObjectDependency>().Use.Type<TypeWithArrayOfObjectDependency>());
+			var container = new Container(x => x.Use<TypeWithArrayOfObjectDependency>().Type<TypeWithArrayOfObjectDependency>());
 
 			var instance = container.GetService<TypeWithArrayOfObjectDependency>();
 
@@ -49,10 +49,10 @@ namespace Maestro.Tests.Core
 
 			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBeNull();
 
-			container.Configure(x => x.For<int>().Add.Instance(0));
+			container.Configure(x => x.Add<int>().Instance(0));
 			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBeNull();
 
-			container.Configure(x => x.For<int[]>().Use.Instance(array));
+			container.Configure(x => x.Use<int[]>().Instance(array));
 			container.GetService<TypeWithArrayOfValueTypeDependency>().Ints.ShouldBe(array);
 		}
 

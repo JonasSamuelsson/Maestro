@@ -1,49 +1,97 @@
 using System;
+using Maestro.FactoryProviders;
 using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	internal class ServiceExpression<TService> : IServiceExpression, IServiceExpression<TService>, INamedServiceExpression, INamedServiceExpression<TService>
+	internal class ServiceExpression<TService> : IServiceExpression, IServiceExpression<TService>
 	{
-		internal ServiceExpression(Type type, string name, Kernel kernel)
+		public ServiceExpression(Type serviceType, string name, Kernel kernel, bool throwIfDuplicate)
 		{
-			Type = type;
+			ServiceType = serviceType;
 			Name = name;
 			Kernel = kernel;
+			ThrowIfDuplicate = throwIfDuplicate;
 		}
 
-		internal Type Type { get; }
+		internal Type ServiceType { get; }
 		internal string Name { get; set; }
 		internal Kernel Kernel { get; }
+		public bool ThrowIfDuplicate { get; set; }
 
-		IInstanceKindSelector IUseServiceExpression.Use
+		public void Instance(object instance)
 		{
-			get { return new InstanceKindSelector<object>(Type, Name, Kernel, true); }
+			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
+			Kernel.Add(plugin, ThrowIfDuplicate);
 		}
 
-		IInstanceKindSelector ITryUseServiceExpression.TryUse
+		public IFactoryInstanceExpression<object> Factory(Func<object> factory)
 		{
-			get { return new InstanceKindSelector<object>(Type, Name, Kernel, false); }
+			return Factory(_ => factory());
 		}
 
-		IInstanceKindSelector IAddServiceExpression.Add
+		public IFactoryInstanceExpression<object> Factory(Func<IContext, object> factory)
 		{
-			get { return new InstanceKindSelector<object>(Type, ServiceNames.Anonymous, Kernel, true); }
+			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(factory));
+			return Kernel.Add(plugin, ThrowIfDuplicate)
+				? new FactoryInstanceExpression<object>(plugin)
+				: null;
 		}
 
-		IInstanceKindSelector<TService> IUseServiceExpression<TService>.Use
+		public ITypeInstanceExpression<object> Type(Type type)
 		{
-			get { return new InstanceKindSelector<TService>(Type, Name, Kernel, true); }
+			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type, Name));
+			return Kernel.Add(plugin, ThrowIfDuplicate)
+				? new TypeInstanceExpression<object>(plugin)
+				: null;
 		}
 
-		IInstanceKindSelector<TService> ITryUseServiceExpression<TService>.TryUse
+		public ITypeInstanceExpression<object> Self()
 		{
-			get { return new InstanceKindSelector<TService>(Type, Name, Kernel, false); }
+			return Type(ServiceType);
 		}
 
-		IInstanceKindSelector<TService> IAddServiceExpression<TService>.Add
+		private ServiceDescriptor CreatePlugin(string name, IFactoryProvider factoryProvider)
 		{
-			get { return new InstanceKindSelector<TService>(Type, ServiceNames.Anonymous, Kernel, true); }
+			return new ServiceDescriptor
+			{
+				Name = name,
+				Type = ServiceType,
+				FactoryProvider = factoryProvider,
+				Lifetime = Kernel.Config.LifetimeFactory()
+			};
+		}
+
+		public void Instance<TInstance>(TInstance instance) where TInstance : TService
+		{
+			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
+			Kernel.Add(plugin, ThrowIfDuplicate);
+		}
+
+		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : TService
+		{
+			return Factory(_ => factory());
+		}
+
+		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<IContext, TInstance> factory) where TInstance : TService
+		{
+			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(ctx => factory(ctx)));
+			return Kernel.Add(plugin, ThrowIfDuplicate)
+				? new FactoryInstanceExpression<TInstance>(plugin)
+				: null;
+		}
+
+		public ITypeInstanceExpression<TInstance> Type<TInstance>() where TInstance : TService
+		{
+			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance), Name));
+			return Kernel.Add(plugin, ThrowIfDuplicate)
+				? new TypeInstanceExpression<TInstance>(plugin)
+				: null;
+		}
+
+		ITypeInstanceExpression<TService> IServiceExpression<TService>.Self()
+		{
+			return Type<TService>();
 		}
 	}
 }

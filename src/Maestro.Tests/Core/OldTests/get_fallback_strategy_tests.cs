@@ -10,7 +10,7 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<object>().Use.Instance("success");
+				x.Use<object>().Instance("success");
 			});
 
 			container.GetService<object>("test").ShouldBe("success");
@@ -37,10 +37,10 @@ namespace Maestro.Tests.Core
 
 			// child type provider
 
-			parentContainer.Configure(x => x.For<Foo<string>>().Use.Type<Foo<string>>().SetProperty(y => y.Value, "parent"));
+			parentContainer.Configure(x => x.Use<Foo<string>>().Type<Foo<string>>().SetProperty(y => y.Value, "parent"));
 			childContainer.GetService<Foo<string>>("test").Value.ShouldBe("parent");
 
-			childContainer.Configure(x => x.For<Foo<string>>().Use.Type<Foo<string>>().SetProperty(y => y.Value, "child"));
+			childContainer.Configure(x => x.Use<Foo<string>>().Type<Foo<string>>().SetProperty(y => y.Value, "child"));
 			childContainer.GetService<Foo<string>>("test").Value.ShouldBe("child");
 		}
 

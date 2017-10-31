@@ -1,6 +1,6 @@
-﻿using System;
-using Maestro.Lifetimes;
+﻿using Maestro.Lifetimes;
 using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.Core.Lifetimes
@@ -11,7 +11,7 @@ namespace Maestro.Tests.Core.Lifetimes
 		public void provided_lifetime_should_be_executed()
 		{
 			var lifetime = new Lifetime();
-			var container = new Container(x => x.For<object>().Use.Type<object>().Lifetime.Use(lifetime));
+			var container = new Container(x => x.Use<object>().Type<object>().Lifetime.Use(lifetime));
 
 			container.GetService<object>();
 

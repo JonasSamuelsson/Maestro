@@ -15,23 +15,29 @@ namespace Maestro.Configuration
 			_instanceType = instanceType;
 		}
 
-		public ITypeInstanceExpression<T> Use(string name = null)
+		public ITypeInstanceExpression<T> Use()
 		{
-			return name == null
-				? _containerExpression.For(_serviceType).Use.Type(_instanceType).As<T>()
-				: _containerExpression.For(_serviceType, name).Use.Type(_instanceType).As<T>();
+			return _containerExpression.Use(_serviceType).Type(_instanceType).As<T>();
 		}
 
-		public ITypeInstanceExpression<T> TryUse(string name = null)
+		public ITypeInstanceExpression<T> Use(string name)
 		{
-			return name == null
-				? _containerExpression.For(_serviceType).TryUse.Type(_instanceType).As<T>()
-				: _containerExpression.For(_serviceType, name).TryUse.Type(_instanceType).As<T>();
+			return _containerExpression.Use(_serviceType, name).Type(_instanceType).As<T>();
+		}
+
+		public ITypeInstanceExpression<T> TryUse()
+		{
+			return _containerExpression.TryUse(_serviceType).Type(_instanceType).As<T>();
+		}
+
+		public ITypeInstanceExpression<T> TryUse(string name)
+		{
+			return _containerExpression.TryUse(_serviceType, name).Type(_instanceType).As<T>();
 		}
 
 		public ITypeInstanceExpression<T> Add()
 		{
-			return _containerExpression.For(_serviceType).Add.Type(_instanceType).As<T>();
+			return _containerExpression.Add(_serviceType).Type(_instanceType).As<T>();
 		}
 	}
 }

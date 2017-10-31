@@ -1,5 +1,5 @@
-﻿using System;
-using Shouldly;
+﻿using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -12,8 +12,8 @@ namespace Maestro.Tests.Core
 			var name = "foo";
 			var container = new Container(x =>
 			{
-				x.For<ClassWithDependency>(name).Use.Type<ClassWithDependency>();
-				x.For<object>(name).Use.Type<object>();
+				x.Use<ClassWithDependency>(name).Type<ClassWithDependency>();
+				x.Use<object>(name).Type<object>();
 			});
 
 			var o = container.GetService<ClassWithDependency>(name);
@@ -27,8 +27,8 @@ namespace Maestro.Tests.Core
 			var name = "bar";
 			var container = new Container(x =>
 			{
-				x.For<ClassWithDependency>(name).Use.Type<ClassWithDependency>();
-				x.For<object>().Use.Type<EventArgs>();
+				x.Use<ClassWithDependency>(name).Type<ClassWithDependency>();
+				x.Use<object>().Type<EventArgs>();
 			});
 
 			var o = container.GetService<ClassWithDependency>(name);

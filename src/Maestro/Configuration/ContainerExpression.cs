@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Maestro.Internals;
+using System;
 using System.Collections.Generic;
-using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
@@ -25,32 +25,69 @@ namespace Maestro.Configuration
 
 		public IList<ITypeProvider> TypeProviders => _kernel.TypeProviders;
 
-		public IServiceExpression For(Type type)
+		public IServiceExpression Use(Type type)
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type, ServiceNames.Default, _kernel);
+			return new ServiceExpression<object>(type, ServiceNames.Default, _kernel, true);
 		}
 
-		public INamedServiceExpression For(Type type, string name)
+		public IServiceExpression Use(Type type, string name)
 		{
 			if (type == null) throw new ArgumentNullException();
-			if (name == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type, name, _kernel);
+			return new ServiceExpression<object>(type, name, _kernel, true);
 		}
 
-		public IServiceExpression<T> For<T>()
+		public IServiceExpression<TService> Use<TService>()
 		{
 			AssertNotDisposed();
-			return new ServiceExpression<T>(typeof(T), ServiceNames.Default, _kernel);
+			return new ServiceExpression<TService>(typeof(TService), ServiceNames.Default, _kernel, true);
 		}
 
-		public INamedServiceExpression<T> For<T>(string name)
+		public IServiceExpression<TService> Use<TService>(string name)
 		{
-			if (name == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<T>(typeof(T), name, _kernel);
+			return new ServiceExpression<TService>(typeof(TService), name, _kernel, true);
+		}
+
+		public IServiceExpression TryUse(Type type)
+		{
+			if (type == null) throw new ArgumentNullException();
+			AssertNotDisposed();
+			return new ServiceExpression<object>(type, ServiceNames.Default, _kernel, false);
+		}
+
+		public IServiceExpression TryUse(Type type, string name)
+		{
+			if (type == null) throw new ArgumentNullException();
+			AssertNotDisposed();
+			return new ServiceExpression<object>(type, name, _kernel, false);
+		}
+
+		public IServiceExpression<TService> TryUse<TService>()
+		{
+			AssertNotDisposed();
+			return new ServiceExpression<TService>(typeof(TService), ServiceNames.Default, _kernel, false);
+		}
+
+		public IServiceExpression<TService> TryUse<TService>(string name)
+		{
+			AssertNotDisposed();
+			return new ServiceExpression<TService>(typeof(TService), name, _kernel, false);
+		}
+
+		public IServiceExpression Add(Type type)
+		{
+			if (type == null) throw new ArgumentNullException();
+			AssertNotDisposed();
+			return new ServiceExpression<object>(type,ServiceNames.Anonymous, _kernel, true);
+		}
+
+		public IServiceExpression<TService> Add<TService>()
+		{
+			AssertNotDisposed();
+			return new ServiceExpression<TService>(typeof(TService), ServiceNames.Anonymous, _kernel, true);
 		}
 
 		public void Scan(Action<IScanner> action)

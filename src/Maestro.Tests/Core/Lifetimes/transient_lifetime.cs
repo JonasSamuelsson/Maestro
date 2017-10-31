@@ -10,8 +10,8 @@ namespace Maestro.Tests.Core.Lifetimes
 		{
 			var container = new Container(x =>
 													{
-														x.For<object>().Use.Type<object>();
-														x.For<Parent>().Use.Type<Parent>();
+														x.Use<object>().Type<object>();
+														x.Use<Parent>().Type<Parent>();
 													});
 
 			var instance = container.GetService<Parent>();

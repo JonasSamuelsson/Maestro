@@ -12,7 +12,7 @@ namespace Maestro.Tests.Core.Interception
 			var i = new Instance();
 			var container = new Container(x =>
 			{
-				x.For<Instance>().Use.Factory(() => i).Intercept(new InstanceInterceptor());
+				x.Use<Instance>().Factory(() => i).Intercept(new InstanceInterceptor());
 			});
 
 			var instance = container.GetService<Instance>();
@@ -46,8 +46,8 @@ namespace Maestro.Tests.Core.Interception
 		{
 			var container = new Container(x =>
 			{
-				x.For<Wrapper<int>>("1").Use.Type<Wrapper<int>>().Intercept(instance => instance.Value = 1);
-				x.For<Wrapper<int>>("2").Use.Type<Wrapper<int>>().Intercept((instance, ctx) => instance.Value = 2);
+				x.Use<Wrapper<int>>("1").Type<Wrapper<int>>().Intercept(instance => instance.Value = 1);
+				x.Use<Wrapper<int>>("2").Type<Wrapper<int>>().Intercept((instance, ctx) => instance.Value = 2);
 			});
 
 			container.GetService<Wrapper<int>>("1").Value.ShouldBe(1);
@@ -57,7 +57,7 @@ namespace Maestro.Tests.Core.Interception
 		[Fact]
 		public void interceptors_should_be_executed_in_the_same_order_as_they_are_configured()
 		{
-			var container = new Container(x => x.For<Wrapper<string>>().Use.Type<Wrapper<string>>()
+			var container = new Container(x => x.Use<Wrapper<string>>().Type<Wrapper<string>>()
 				.Intercept(y => y.Value += 1)
 				.Intercept(y => y.Value += 2)
 				.Intercept(new StringWrapperInterceptor())
@@ -87,7 +87,7 @@ namespace Maestro.Tests.Core.Interception
 		public void interceptors_should_not_be_executed_if_instance_is_cached()
 		{
 			var counter = 0;
-			var container = new Container(x => x.For<object>().Use.Type<object>().Intercept(_ => counter++).Lifetime.Singleton());
+			var container = new Container(x => x.Use<object>().Type<object>().Intercept(_ => counter++).Lifetime.Singleton());
 
 			container.GetService<object>();
 			counter.ShouldBe(1);

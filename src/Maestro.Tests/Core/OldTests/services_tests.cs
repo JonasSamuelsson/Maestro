@@ -11,9 +11,9 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<object>().Use.Instance("1");
-				x.For<object>("foobar").Use.Instance("2");
-				x.For<object>().Add.Instance("3");
+				x.Use<object>().Instance("1");
+				x.Use<object>("foobar").Instance("2");
+				x.Add<object>().Instance("3");
 			});
 
 			container.GetServices<object>().OrderBy(s => s).ShouldBe(new[] { "1", "2", "3" });

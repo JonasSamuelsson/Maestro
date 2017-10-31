@@ -14,9 +14,9 @@ namespace Maestro.Tests.Core
 			var o3 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add.Instance(o1);
-														x.For<object>().Add.Instance(o2);
-														x.For<IEnumerable<object>>().Use.Instance(new[] { o3 });
+														x.Add<object>().Instance(o1);
+														x.Add<object>().Instance(o2);
+														x.Use<IEnumerable<object>>().Instance(new[] { o3 });
 													});
 
 			var objects = container.GetService<IEnumerable<object>>();
@@ -31,8 +31,8 @@ namespace Maestro.Tests.Core
 			var o2 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add.Instance(o1);
-														x.For<object>().Add.Instance(o2);
+														x.Add<object>().Instance(o1);
+														x.Add<object>().Instance(o2);
 													});
 
 			var objects = container.GetService<IEnumerable<object>>();
@@ -48,10 +48,10 @@ namespace Maestro.Tests.Core
 			var o3 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add.Instance(o1);
-														x.For<object>().Add.Instance(o2);
-														x.For<IEnumerable<object>>().Use.Instance(new[] { o3 });
-														x.For<Instance>().Use.Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetService<IEnumerable<object>>());
+														x.Add<object>().Instance(o1);
+														x.Add<object>().Instance(o2);
+														x.Use<IEnumerable<object>>().Instance(new[] { o3 });
+														x.Use<Instance>().Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetService<IEnumerable<object>>());
 													});
 
 			var instance = container.GetService<Instance>();
@@ -66,9 +66,9 @@ namespace Maestro.Tests.Core
 			var o2 = new object();
 			var container = new Container(x =>
 													{
-														x.For<object>().Add.Instance(o1);
-														x.For<object>().Add.Instance(o2);
-														x.For<Instance>().Use.Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetService<IEnumerable<object>>());
+														x.Add<object>().Instance(o1);
+														x.Add<object>().Instance(o2);
+														x.Use<Instance>().Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetService<IEnumerable<object>>());
 													});
 
 			var instance = container.GetService<Instance>();

@@ -9,7 +9,7 @@ namespace Maestro.Tests.Core.Factories
 		[Fact]
 		public void should_instantiate_type_with_no_dependencies()
 		{
-			var container = new Container(x => x.For<INoDependencies>().Use.Type<NoDependencies>());
+			var container = new Container(x => x.Use<INoDependencies>().Type<NoDependencies>());
 			container.GetService<INoDependencies>();
 		}
 
@@ -18,8 +18,8 @@ namespace Maestro.Tests.Core.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.For<INoDependencies>().Use.Type<NoDependencies>();
-				x.For<IOneDependency<INoDependencies>>().Use.Type<RequiredDependency<INoDependencies>>();
+				x.Use<INoDependencies>().Type<NoDependencies>();
+				x.Use<IOneDependency<INoDependencies>>().Type<RequiredDependency<INoDependencies>>();
 			});
 
 			var instance = container.GetService<IOneDependency<INoDependencies>>();
@@ -32,8 +32,8 @@ namespace Maestro.Tests.Core.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.For<INoDependencies>().Use.Type<NoDependencies>();
-				x.For<IOneDependency<INoDependencies>>().Use.Type<OptionalDependency<INoDependencies>>();
+				x.Use<INoDependencies>().Type<NoDependencies>();
+				x.Use<IOneDependency<INoDependencies>>().Type<OptionalDependency<INoDependencies>>();
 			});
 
 			var instance = container.GetService<IOneDependency<INoDependencies>>();
@@ -44,11 +44,11 @@ namespace Maestro.Tests.Core.Factories
 		[Fact]
 		public void should_reevaluate_constructor_to_use_when_config_changes()
 		{
-			var container = new Container(x => x.For<IOneDependency<INoDependencies>>().Use.Type<OptionalDependency<INoDependencies>>());
+			var container = new Container(x => x.Use<IOneDependency<INoDependencies>>().Type<OptionalDependency<INoDependencies>>());
 			var instance = container.GetService<IOneDependency<INoDependencies>>();
 			instance.Dependency.ShouldBe(null);
 
-			container.Configure(x => x.For<INoDependencies>().Use.Type<NoDependencies>());
+			container.Configure(x => x.Use<INoDependencies>().Type<NoDependencies>());
 			instance = container.GetService<IOneDependency<INoDependencies>>();
 			instance.Dependency.ShouldNotBe(null);
 		}
@@ -56,7 +56,7 @@ namespace Maestro.Tests.Core.Factories
 		[Fact]
 		public void should_instantiate_open_generic_type()
 		{
-			var container = new Container(x => x.For(typeof(INoDependencies<>)).Use.Type(typeof(NoDependencies<>)));
+			var container = new Container(x => x.Use(typeof(INoDependencies<>)).Type(typeof(NoDependencies<>)));
 			container.GetService<INoDependencies<NoDependencies>>();
 		}
 
@@ -74,7 +74,7 @@ namespace Maestro.Tests.Core.Factories
 		public void should_get_type_with_enumerable_dependency()
 		{
 			var dependency = new NoDependencies();
-			var container = new Container(x => x.For<INoDependencies>().Add.Instance(dependency));
+			var container = new Container(x => x.Add<INoDependencies>().Instance(dependency));
 
 			var instance = container.GetService<OptionalDependency<IEnumerable<INoDependencies>>>();
 
@@ -88,8 +88,8 @@ namespace Maestro.Tests.Core.Factories
 			var strings = new[] { "1", "2", "3" };
 			var container = new Container(x =>
 													{
-														x.For<IEnumerable<int>>().Use.Instance(ints);
-														x.For<IEnumerable<string>>().Use.Instance(strings);
+														x.Use<IEnumerable<int>>().Instance(ints);
+														x.Use<IEnumerable<string>>().Instance(strings);
 													});
 
 			var instanceWithInts = container.GetService<OptionalDependency<IEnumerable<int>>>();
@@ -104,23 +104,23 @@ namespace Maestro.Tests.Core.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.For<string>().Use.Instance("Object");
+				x.Use<string>().Instance("Object");
 
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg("dependency", "Object");
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg("dependency", () => "Object");
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg("dependency", ctx => ctx.GetService<string>());
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg("dependency", (ctx, type) => type.Name);
-				x.For(typeof(OptionalDependency<>)).Add.Self().CtorArg("dependency", "Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg("dependency", "Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg("dependency", () => "Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg("dependency", ctx => ctx.GetService<string>());
+				x.Add<OptionalDependency<object>>().Self().CtorArg("dependency", (ctx, type) => type.Name);
+				x.Add(typeof(OptionalDependency<>)).Self().CtorArg("dependency", "Object");
 
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg(typeof(object), "Object");
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg(typeof(object), () => "Object");
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg(typeof(object), ctx => ctx.GetService<string>());
-				x.For(typeof(OptionalDependency<>)).Add.Self().CtorArg(typeof(object), "Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg(typeof(object), "Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg(typeof(object), () => "Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg(typeof(object), ctx => ctx.GetService<string>());
+				x.Add(typeof(OptionalDependency<>)).Self().CtorArg(typeof(object), "Object");
 
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg<object>("Object");
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg<object>(() => "Object");
-				x.For<OptionalDependency<object>>().Add.Self().CtorArg<object>(ctx => ctx.GetService<string>());
-				x.For(typeof(OptionalDependency<>)).Add.Self().CtorArg<object>("Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg<object>("Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg<object>(() => "Object");
+				x.Add<OptionalDependency<object>>().Self().CtorArg<object>(ctx => ctx.GetService<string>());
+				x.Add(typeof(OptionalDependency<>)).Self().CtorArg<object>("Object");
 			});
 
 			container.GetServices<OptionalDependency<object>>().ShouldAllBe(x => "Object".Equals(x.Dependency));
@@ -162,9 +162,9 @@ namespace Maestro.Tests.Core.Factories
 		[Fact]
 		public void should_not_try_to_invoke_static_constructor()
 		{
-			var container = new Container(x => x.For<Unresolvable>().Use.Self());
+			var container = new Container(x => x.Use<Unresolvable>().Self());
 
-		   Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
+			Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
 		}
 
 		class Unresolvable

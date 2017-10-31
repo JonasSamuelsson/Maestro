@@ -2,8 +2,10 @@
 {
 	public interface IConventionalServiceExpression<T>
 	{
-		ITypeInstanceExpression<T> Use(string name = null);
-		ITypeInstanceExpression<T> TryUse(string name = null);
+		ITypeInstanceExpression<T> Use();
+		ITypeInstanceExpression<T> Use(string name);
+		ITypeInstanceExpression<T> TryUse();
+		ITypeInstanceExpression<T> TryUse(string name);
 		ITypeInstanceExpression<T> Add();
 	}
 }

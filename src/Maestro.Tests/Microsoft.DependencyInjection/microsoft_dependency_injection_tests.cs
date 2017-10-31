@@ -61,7 +61,7 @@ namespace Maestro.Tests.Microsoft.DependencyInjection
 			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Scoped) };
 
 			var objects = new List<object>();
-			var container = new Container(x => x.For<string>().Use.Factory(ctx =>
+			var container = new Container(x => x.Use<string>().Factory(ctx =>
 			{
 				objects.Add(ctx.GetService<object>());
 				objects.Add(ctx.GetService<object>());

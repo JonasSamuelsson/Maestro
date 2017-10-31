@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using Castle.DynamicProxy;
+﻿using Castle.DynamicProxy;
 using Maestro.Configuration;
 using Shouldly;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Maestro.Tests.Castle.DynamicProxy
@@ -15,9 +15,9 @@ namespace Maestro.Tests.Castle.DynamicProxy
 
 			var container = new Container(x =>
 			{
-				x.For<IInterface>("x").Use.Factory(() => new Implementation())
+				x.Use<IInterface>("x").Factory(() => new Implementation())
 					.Proxy((y, generator) => generator.CreateInterfaceProxyWithTarget<IInterface>(y, interceptor));
-				x.For<IInterface>("y").Use.Factory(() => new Implementation())
+				x.Use<IInterface>("y").Factory(() => new Implementation())
 					.Proxy((y, ctx, generator) => generator.CreateInterfaceProxyWithTarget<IInterface>(y, interceptor));
 			});
 
@@ -36,9 +36,9 @@ namespace Maestro.Tests.Castle.DynamicProxy
 
 			var container = new Container(x =>
 			{
-				x.For<IInterface>("x").Use.Type<Implementation>()
+				x.Use<IInterface>("x").Type<Implementation>()
 					.Proxy((y, generator) => generator.CreateInterfaceProxyWithTarget<IInterface>(y, interceptor));
-				x.For<IInterface>("y").Use.Type<Implementation>()
+				x.Use<IInterface>("y").Type<Implementation>()
 					.Proxy((y, ctx, generator) => generator.CreateInterfaceProxyWithTarget<IInterface>(y, interceptor));
 			});
 

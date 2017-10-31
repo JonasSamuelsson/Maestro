@@ -10,24 +10,20 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <PackageReference Include="Shouldly" Version="2.8.3" />
-      <PackageReference Include="xunit" Version="2.3.0" />
-      <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.0" />
-   </ItemGroup>
-
-   <ItemGroup>
-      <None Include="..\Maestro.snk" Link="Maestro.snk" />
+      <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
    </ItemGroup>
 
    <ItemGroup>
       <PackageReference Include="Castle.Core" Version="4.1.0" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+      <PackageReference Include="Shouldly" Version="2.8.3" />
+      <PackageReference Include="xunit" Version="2.3.1" />
 
-      <!-- ProjectReferences BEGIN -->
-      <PackageReference Include="Maestro" Version="2.0.0-rc2" />
-      <PackageReference Include="Maestro.Castle.DynamicProxy" Version="1.0.0-rc2" />
-      <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="1.0.0-rc2" />
-      <!-- ProjectReferences END -->
+      <!-- PackageReferences BEGIN -->
+      <!--<PackageReference Include="Maestro" Version="2.0.0-rc2" />-->
+      <!--<PackageReference Include="Maestro.Castle.DynamicProxy" Version="1.0.0-rc2" />-->
+      <!--<PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="1.0.0-rc2" />-->
+      <!-- PackageReferences END -->
    </ItemGroup>
 
    <ItemGroup>
@@ -36,6 +32,10 @@
       <ProjectReference Include="..\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj" />
       <ProjectReference Include="..\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj" />
       <!-- ProjectReferences END -->
+   </ItemGroup>
+
+   <ItemGroup>
+      <None Include="..\Maestro.snk" Link="Maestro.snk" />
    </ItemGroup>
 
 </Project>

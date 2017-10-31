@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Shouldly;
+using System.Collections.Generic;
 using System.Linq;
-using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -12,10 +12,10 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<Parent>().Use.Type<Parent>();
-				x.For<IChild>().Add.Type<Child1>();
-				x.For<IChild>().Add.Type<Child2>();
-				x.For<IChild>().Add.Type<Child3>();
+				x.Use<Parent>().Type<Parent>();
+				x.Add<IChild>().Type<Child1>();
+				x.Add<IChild>().Type<Child2>();
+				x.Add<IChild>().Type<Child3>();
 			});
 
 			var parent = container.GetService<Parent>();

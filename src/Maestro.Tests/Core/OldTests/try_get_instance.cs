@@ -1,5 +1,5 @@
-﻿using System;
-using Shouldly;
+﻿using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -19,7 +19,7 @@ namespace Maestro.Tests.Core
 			container.TryGetService(out disposable).ShouldBe(false);
 			disposable.ShouldBe(null);
 
-			container.Configure(x => x.For<IDisposable>("xyz").Use.Type<Disposable>());
+			container.Configure(x => x.Use<IDisposable>("xyz").Type<Disposable>());
 
 			container.TryGetService(out disposable).ShouldBe(false);
 			disposable.ShouldBe(null);
@@ -37,7 +37,7 @@ namespace Maestro.Tests.Core
 			container.TryGetService(out o).ShouldBe(true);
 			o.ShouldNotBe(null);
 
-			container.Configure(x => x.For<IDisposable>().Use.Type<Disposable>());
+			container.Configure(x => x.Use<IDisposable>().Type<Disposable>());
 
 			container.TryGetService(typeof(IDisposable), out o).ShouldBe(true);
 			o.ShouldNotBe(null);
@@ -47,7 +47,7 @@ namespace Maestro.Tests.Core
 			disposable.ShouldNotBe(null);
 
 			var namedDisposable = new Disposable();
-			container.Configure(x => x.For<IDisposable>("xyz").Use.Instance(namedDisposable));
+			container.Configure(x => x.Use<IDisposable>("xyz").Instance(namedDisposable));
 
 			TestClassWithDisposable testClassWithDisposable;
 			container.TryGetService(out testClassWithDisposable).ShouldBe(true);

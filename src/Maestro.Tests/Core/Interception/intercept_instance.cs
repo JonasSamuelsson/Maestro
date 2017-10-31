@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Maestro.Interceptors;
+﻿using Maestro.Interceptors;
 using Shouldly;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Maestro.Tests.Core.Interception
@@ -12,7 +12,7 @@ namespace Maestro.Tests.Core.Interception
 		{
 			var list = new List<string>();
 
-			new Container(x => x.For<object>().Use.Self()
+			new Container(x => x.Use<object>().Self()
 				.Intercept(_ => list.Add("one"))
 				.Intercept(_ => list.Add("two"))
 				.Intercept(_ => list.Add("three")))
@@ -26,7 +26,7 @@ namespace Maestro.Tests.Core.Interception
 		{
 			var counter = 0;
 
-			var container = new Container(x => x.For<object>().Use.Self()
+			var container = new Container(x => x.Use<object>().Self()
 				.Intercept(_ => counter++)
 				.Lifetime.Singleton());
 
@@ -41,7 +41,7 @@ namespace Maestro.Tests.Core.Interception
 		{
 			var @object = new object();
 
-			var container = new Container(x => x.For<object>().Use.Factory(() => @object)
+			var container = new Container(x => x.Use<object>().Factory(() => @object)
 				.Intercept(new FuncInterceptor<object>((instance, ctx) => new Wrapper(instance)))
 				.As<Wrapper>()
 				.Intercept(y => y.Text = "success"));
@@ -55,7 +55,7 @@ namespace Maestro.Tests.Core.Interception
 		[Fact]
 		public void type_instance_should_support_instance_replacement_with_wrapper_configuration()
 		{
-			var container = new Container(x => x.For<object>().Use.Self()
+			var container = new Container(x => x.Use<object>().Self()
 				.Intercept(new FuncInterceptor<object>((instance, ctx) => new Wrapper(instance)))
 				.As<Wrapper>()
 				.Intercept(y => y.Text = "success"));

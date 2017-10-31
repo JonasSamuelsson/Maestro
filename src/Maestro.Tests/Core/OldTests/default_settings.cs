@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Maestro.Conventions;
 using Shouldly;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -13,7 +13,7 @@ namespace Maestro.Tests.Core
 		[Fact]
 		public void default_lifetime_should_be_transient()
 		{
-			var container = new Container(x => x.For<object>().Use.Self());
+			var container = new Container(x => x.Use<object>().Self());
 
 			var instance1 = container.GetService<object>();
 			var instance2 = container.GetService<object>();
@@ -27,10 +27,10 @@ namespace Maestro.Tests.Core
 			var container = new Container(x =>
 			{
 				x.Config.DefaultLifetime.Transient();
-				x.For<object>("transient").Use.Self();
+				x.Use<object>("transient").Self();
 
 				x.Config.DefaultLifetime.Singleton();
-				x.For<object>("singleton").Use.Self();
+				x.Use<object>("singleton").Self();
 			});
 
 			var transient1 = container.GetService<object>("transient");

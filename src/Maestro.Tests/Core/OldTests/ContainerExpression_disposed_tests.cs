@@ -1,6 +1,6 @@
-﻿using System;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -15,14 +15,14 @@ namespace Maestro.Tests.Core
 
 			Should.Throw<ObjectDisposedException>(() => { var @default = containerExpression.Config; });
 
-			Should.Throw<ObjectDisposedException>(() => containerExpression.For(typeof(object)));
-			Should.Throw<ObjectDisposedException>(() => containerExpression.For(typeof(object), string.Empty));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.Use(typeof(object)));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.Use(typeof(object), string.Empty));
 
-			Should.Throw<ObjectDisposedException>(() => containerExpression.For<object>());
-			Should.Throw<ObjectDisposedException>(() => containerExpression.For<object>(string.Empty));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.Use<object>());
+			Should.Throw<ObjectDisposedException>(() => containerExpression.Use<object>(string.Empty));
 
-			Should.Throw<ObjectDisposedException>(() => containerExpression.For(typeof(object)));
-			Should.Throw<ObjectDisposedException>(() => containerExpression.For<object>());
+			Should.Throw<ObjectDisposedException>(() => containerExpression.Use(typeof(object)));
+			Should.Throw<ObjectDisposedException>(() => containerExpression.Use<object>());
 
 			Should.Throw<ObjectDisposedException>(() => containerExpression.Scan(delegate { }));
 		}

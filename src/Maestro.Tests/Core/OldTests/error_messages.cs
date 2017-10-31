@@ -9,8 +9,8 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<A>().Use.Self();
-				x.For<B>().Use.Self();
+				x.Use<A>().Self();
+				x.Use<B>().Self();
 			});
 
 			Should.Throw<ActivationException>(() => container.GetService<A>());
@@ -21,8 +21,8 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<A>().Use.Self();
-				x.For<B>().Use.Self();
+				x.Use<A>().Self();
+				x.Use<B>().Self();
 			});
 
 			Should.Throw<ActivationException>(() => container.GetService<A>());
@@ -33,8 +33,8 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<A>().Use.Self();
-				x.For<B>().Use.Self();
+				x.Use<A>().Self();
+				x.Use<B>().Self();
 			});
 
 			Should.Throw<ActivationException>(() => container.GetServices<A>());
@@ -48,8 +48,8 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<A>().Use.Factory(ctx => new A(ctx.GetService<B>()));
-				x.For<B>().Use.Self();
+				x.Use<A>().Factory(ctx => new A(ctx.GetService<B>()));
+				x.Use<B>().Self();
 			});
 
 			Should.Throw<ActivationException>(() => container.GetService<A>()).Message.ShouldBeNull();
@@ -60,8 +60,8 @@ namespace Maestro.Tests.Core
 		{
 			var container = new Container(x =>
 			{
-				x.For<A>().Use.Factory(ctx => new A(ctx.GetService<B>()));
-				x.For<B>().Use.Self();
+				x.Use<A>().Factory(ctx => new A(ctx.GetService<B>()));
+				x.Use<B>().Self();
 			});
 
 			A instance;

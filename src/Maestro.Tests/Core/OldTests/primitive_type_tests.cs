@@ -1,5 +1,5 @@
-﻿using System;
-using Shouldly;
+﻿using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -12,7 +12,7 @@ namespace Maestro.Tests.Core
 		[Fact]
 		public void should_resolve_registered_instance()
 		{
-			var container = new Container(x => x.For(PrimitiveType).Use.Instance(ExpectedValue));
+			var container = new Container(x => x.Use(PrimitiveType).Instance(ExpectedValue));
 
 			var instance = container.GetService(PrimitiveType);
 
@@ -40,7 +40,7 @@ namespace Maestro.Tests.Core
 		[Fact]
 		public void should_resolve_all_with_registered_instance()
 		{
-			var container = new Container(x => x.For(PrimitiveType).Add.Instance(ExpectedValue));
+			var container = new Container(x => x.Add(PrimitiveType).Instance(ExpectedValue));
 
 			var instance = container.GetServices(PrimitiveType);
 

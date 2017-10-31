@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Shouldly;
+﻿using Shouldly;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -25,8 +25,8 @@ namespace Maestro.Tests.Core
 			var @string = "foobar";
 			var container = new Container(x =>
 													{
-														x.For<int>().Add.Instance(@int);
-														x.For<string>().Add.Instance(@string);
+														x.Add<int>().Instance(@int);
+														x.Add<string>().Instance(@string);
 													});
 
 			var ints = container.GetServices<int>();
@@ -45,11 +45,11 @@ namespace Maestro.Tests.Core
 			var name = "yada yada";
 			var container = new Container(x =>
 			{
-				x.For<Foo>().Use.Type<Foo>();
-				x.For<Foo>(name).Use.Type<Foo>();
+				x.Use<Foo>().Type<Foo>();
+				x.Use<Foo>(name).Type<Foo>();
 
-				x.For<object>().Use.Instance(@defaultDependency);
-				x.For<object>(name).Use.Instance(namedDependency);
+				x.Use<object>().Instance(@defaultDependency);
+				x.Use<object>(name).Instance(namedDependency);
 			});
 
 			var foos = container.GetServices<Foo>().ToList();

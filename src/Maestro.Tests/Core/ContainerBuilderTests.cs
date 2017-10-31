@@ -9,7 +9,7 @@ namespace Maestro.Tests.Core
 		[Fact]
 		public void ShouldConfigureContainer()
 		{
-			var builder = new ContainerBuilder(x => x.For<IInterface>().Use.Type<Class>());
+			var builder = new ContainerBuilder(x => x.Use<IInterface>().Type<Class>());
 			var container = new Container(builder);
 			container.GetService<IInterface>().ShouldBeOfType<Class>();
 		}
