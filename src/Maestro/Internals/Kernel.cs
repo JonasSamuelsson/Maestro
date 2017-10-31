@@ -79,12 +79,13 @@ namespace Maestro.Internals
 
 		private bool TryGetPipeline(Type type, string name, Context context, out IPipeline pipeline)
 		{
-			var pipelineKey = GetPipelineCacheKey(type, name);
-			if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
+			var serviceKey = GetServiceKey(type, name);
+
+			if (!_pipelineCache.TryGet(serviceKey, out pipeline))
 			{
 				lock (_pipelineCache)
 				{
-					if (!_pipelineCache.TryGet(pipelineKey, out pipeline))
+					if (!_pipelineCache.TryGet(serviceKey, out pipeline))
 					{
 						Type elementType;
 						var isGenericEnumerable = Reflector.IsGenericEnumerable(type, out elementType);
@@ -95,7 +96,7 @@ namespace Maestro.Internals
 							if (TryGetServiceDescriptor(type, name, out serviceDescriptor))
 							{
 								pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
-								_pipelineCache.Add(pipelineKey, pipeline);
+								_pipelineCache.Add(serviceKey, pipeline);
 								return true;
 							}
 						}
@@ -142,7 +143,7 @@ namespace Maestro.Internals
 
 							if (compoundPipeline.Any())
 							{
-								_pipelineCache.Add(pipelineKey, compoundPipeline);
+								_pipelineCache.Add(serviceKey, compoundPipeline);
 								pipeline = compoundPipeline;
 								return true;
 							}
@@ -161,7 +162,7 @@ namespace Maestro.Internals
 									FactoryProvider = new TypeFactoryProvider(instanceType, name)
 								};
 								pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
-								_pipelineCache.Add(pipelineKey, pipeline);
+								_pipelineCache.Add(serviceKey, pipeline);
 								return true;
 							}
 						}
@@ -178,7 +179,7 @@ namespace Maestro.Internals
 							};
 							var pipelineType = isGenericEnumerable ? PipelineType.Services : PipelineType.Service;
 							pipeline = CreatePipeline(pipelineType, serviceDescriptor, context);
-							_pipelineCache.Add(pipelineKey, pipeline);
+							_pipelineCache.Add(serviceKey, pipeline);
 							return true;
 						}
 
@@ -195,7 +196,7 @@ namespace Maestro.Internals
 			return new Pipeline(pipelineType, serviceDescriptor.FactoryProvider.GetFactory(context), serviceDescriptor.Interceptors, serviceDescriptor.Lifetime);
 		}
 
-		private static long GetPipelineCacheKey(Type type, string name)
+		private static long GetServiceKey(Type type, string name)
 		{
 			long key = type.GetHashCode();
 			key = (key << 32);

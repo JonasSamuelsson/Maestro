@@ -64,11 +64,22 @@ namespace Maestro.Internals
 			Type[] genericArguments;
 			if (Reflector.IsGeneric(type, out genericTypeDefinition, out genericArguments))
 			{
-				if (TryGetServiceDescriptor(genericTypeDefinition, name, out serviceDescriptor))
+				lock (_serviceFamilies)
 				{
-					serviceDescriptor = serviceDescriptor.MakeGeneric(genericArguments);
-					Add(serviceDescriptor);
-					return true;
+					if (_serviceFamilies.TryGet(type, out serviceFamily))
+					{
+						if (serviceFamily.NamedServices.TryGet(name, out serviceDescriptor))
+						{
+							return true;
+						}
+					}
+
+					if (TryGetServiceDescriptor(genericTypeDefinition, name, out serviceDescriptor))
+					{
+						serviceDescriptor = serviceDescriptor.MakeGeneric(genericArguments);
+						Add(serviceDescriptor);
+						return true;
+					}
 				}
 			}
 
