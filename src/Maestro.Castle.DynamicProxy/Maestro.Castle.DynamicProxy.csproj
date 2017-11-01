@@ -6,7 +6,7 @@
       <RootNamespace>Maestro</RootNamespace>
       <SignAssembly>True</SignAssembly>
       <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
-      <Version>1.0.0-beta1</Version>
+      <Version>1.0.0</Version>
       <Authors>Jonas Samuelsson</Authors>
       <Company>Jonas Samuelsson</Company>
       <Product>Maestro</Product>
@@ -29,13 +29,13 @@
       <PackageReference Include="Castle.Core" Version="4.1.0" />
 
       <!-- <PackageReferences> -->
-      <!-- <PackageReference Include="Maestro" Version="2.0.0-rc1" /> -->
+       <PackageReference Include="Maestro" Version="2.0.0" /> 
       <!-- </PackageReferences> -->
    </ItemGroup>
 
    <ItemGroup>
       <!-- <ProjectReferences> -->
-      <ProjectReference Include="..\Maestro\Maestro.csproj" />
+      <!--<ProjectReference Include="..\Maestro\Maestro.csproj" />-->
       <!-- </ProjectReferences> -->
    </ItemGroup>
 
