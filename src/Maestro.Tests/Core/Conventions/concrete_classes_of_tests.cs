@@ -10,7 +10,7 @@ namespace Maestro.Tests.Core.Conventions
 		public void should_add_concrete_classes_of_provided_type()
 		{
 			var types = new[] { typeof(Class) };
-			var container = new Container(x => x.Scan(_ => _.Types(types).ForConcreteClassesOf<IInterface>()));
+			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesOf<IInterface>()));
 
 			container.GetServices<IInterface>().Single().ShouldBeOfType<Class>();
 		}
@@ -19,7 +19,7 @@ namespace Maestro.Tests.Core.Conventions
 		public void should_add_concrete_classes_of_provided_generic_type_definition()
 		{
 			var types = new[] { typeof(Class<>), typeof(ClassOfInt) };
-			var container = new Container(x => x.Scan(_ => _.Types(types).ForConcreteClassesOf(typeof(IInterface<>))));
+			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesOf(typeof(IInterface<>))));
 
 			var instances = container.GetServices<IInterface<int>>().ToList();
 
@@ -32,7 +32,7 @@ namespace Maestro.Tests.Core.Conventions
 		public void should_support_instance_configuration()
 		{
 			var types = new[] { typeof(Class) };
-			var container = new Container(x => x.Scan(_ => _.Types(types).ForConcreteClassesOf(typeof(IInterface), y => y.Add().Lifetime.Singleton())));
+			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesOf(typeof(IInterface), y => y.Add().Lifetime.Singleton())));
 
 			var instances1 = container.GetServices<Class>().ToList();
 			var instances2 = container.GetServices<Class>().ToList();

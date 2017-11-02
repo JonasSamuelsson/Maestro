@@ -74,9 +74,9 @@ namespace Maestro.Configuration
 		/// </summary>
 		IScanner Using<TConvention>() where TConvention : IConvention, new();
 
-		IScanner ForConcreteClassesOf<T>(Action<IConventionalServiceExpression<T>> action = null);
-		IScanner ForConcreteClassesOf(Type type, Action<IConventionalServiceExpression<object>> action = null);
-		IScanner ForConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceExpression<object>> action = null);
-		IScanner ForDefaultImplementations(Action<IConventionalServiceExpression<object>> action = null);
+		IScanner RegisterConcreteClassesOf<T>(Action<IConventionalServiceExpression<T>> action = null);
+		IScanner RegisterConcreteClassesOf(Type type, Action<IConventionalServiceExpression<object>> action = null);
+		IScanner RegisterConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceExpression<object>> action = null);
+		IScanner RegisterDefaultImplementations(Action<IConventionalServiceExpression<object>> action = null);
 	}
 }

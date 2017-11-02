@@ -12,7 +12,7 @@ namespace Maestro.Tests.Core.Conventions
 		{
 			var types = new[] { typeof(Class<object>), typeof(ClassOfObject) };
 
-			var container = new Container(x => x.Scan(_ => _.Types(types).ForConcreteClassesClosing(typeof(IInterface<>))));
+			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesClosing(typeof(IInterface<>))));
 			container.GetServices<IInterface<object>>().Count().ShouldBe(2);
 		}
 
@@ -20,7 +20,7 @@ namespace Maestro.Tests.Core.Conventions
 		public void should_support_instance_configuration()
 		{
 			var types = new[] { typeof(Class<IDisposable>) };
-			var container = new Container(x => x.Scan(_ => _.Types(types).ForConcreteClassesClosing(typeof(IInterface<>), y => y.Use().Lifetime.Singleton())));
+			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesClosing(typeof(IInterface<>), y => y.Use().Lifetime.Singleton())));
 
 			var instance1 = container.GetService<IInterface<IDisposable>>();
 			var instance2 = container.GetService<IInterface<IDisposable>>();
