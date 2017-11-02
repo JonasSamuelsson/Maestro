@@ -7,6 +7,7 @@
       <SignAssembly>True</SignAssembly>
       <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
       <Version>2.0.0</Version>
+      <FileVersion>2.0.0.0</FileVersion>
       <Company />
       <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
       <Description>Maestro is a dependency injection / inversion of control library.</Description>
