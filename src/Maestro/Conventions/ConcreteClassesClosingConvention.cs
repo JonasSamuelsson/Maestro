@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Maestro.Configuration;
+using System;
 using System.Collections.Generic;
-using Maestro.Configuration;
 
 namespace Maestro.Conventions
 {
@@ -19,9 +19,8 @@ namespace Maestro.Conventions
 		{
 			foreach (var type in types)
 			{
-				Type genericType;
-				if (!type.IsConcreteClassClosing(_genericTypeDefinition, out genericType)) continue;
-				_action(new ConventionalServiceExpression<object>(containerExpression, genericType, type));
+				if (!type.IsConcreteClassClosing(_genericTypeDefinition, out var genericTypes)) continue;
+				genericTypes.ForEach(x => _action(new ConventionalServiceExpression<object>(containerExpression, x, type)));
 			}
 		}
 	}

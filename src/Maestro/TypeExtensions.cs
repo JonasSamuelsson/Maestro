@@ -24,13 +24,12 @@ namespace Maestro
 
 		public static bool IsConcreteClassClosing(this Type type, Type genericTypeDefinition)
 		{
-			Type genericType;
-			return type.IsConcreteClassClosing(genericTypeDefinition, out genericType);
+			return type.IsConcreteClassClosing(genericTypeDefinition, out var _);
 		}
 
-		public static bool IsConcreteClassClosing(this Type type, Type genericTypeDefinition, out Type genericType)
+		public static bool IsConcreteClassClosing(this Type type, Type genericTypeDefinition, out IReadOnlyCollection<Type> genericTypes)
 		{
-			genericType = null;
+			genericTypes = null;
 
 			if (!genericTypeDefinition.IsGenericTypeDefinition())
 				throw new ArgumentException();
@@ -38,16 +37,21 @@ namespace Maestro
 			if (!type.IsConcreteClosedClass())
 				return false;
 
+			var result = new List<Type>();
+
 			var types = genericTypeDefinition.IsClass() ? type.GetClasses() : type.GetInterfaces();
 			foreach (var prospect in types)
 			{
 				if (!prospect.IsGenericType()) continue;
 				if (prospect.GetGenericTypeDefinition() != genericTypeDefinition) continue;
-				genericType = prospect;
-				return true;
+				result.Add(prospect);
 			}
 
-			return false;
+			if (result.Count == 0)
+				return false;
+
+			genericTypes = result;
+			return true;
 		}
 
 		public static bool IsConcreteClass(this Type type)

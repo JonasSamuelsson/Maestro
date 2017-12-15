@@ -12,9 +12,9 @@ namespace Maestro.Tests.Core
 		[Theory, ClassData(typeof(TestData))]
 		public void should_determine_if_class_is_concrete_and_closes_genericTypeDefinition(Type type, Type typeDefinition, bool expected, Type genericType)
 		{
-			var result = type.IsConcreteClassClosing(typeDefinition, out Type outType);
+			var result = type.IsConcreteClassClosing(typeDefinition, out var genericTypes);
 			result.ShouldBe(expected, () => $"{GetName(type)} {(expected ? "is" : "is not")} concrete class closing {GetName(typeDefinition)}");
-			outType.ShouldBe(genericType);
+			genericTypes.ShouldContain(genericType);
 		}
 
 		private static string GetName(Type type)
