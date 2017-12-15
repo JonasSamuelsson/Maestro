@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Shouldly;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -15,6 +15,13 @@ namespace Maestro.Tests.Core
 			var result = type.IsConcreteClassClosing(typeDefinition, out var genericTypes);
 			result.ShouldBe(expected, () => $"{GetName(type)} {(expected ? "is" : "is not")} concrete class closing {GetName(typeDefinition)}");
 			genericTypes.ShouldContain(genericType);
+		}
+
+		[Fact]
+		public void should_support_multiple_generic_interface_implementations_per_class()
+		{
+			typeof(MultiImplementation).IsConcreteClassClosing(typeof(IInterface1<>), out var types).ShouldBeTrue();
+			types.ShouldBe(new[] { typeof(IInterface1<int>), typeof(IInterface1<object>) });
 		}
 
 		private static string GetName(Type type)
@@ -82,5 +89,7 @@ namespace Maestro.Tests.Core
 						 select new object[] { type, genericTypeDefinition, isValid, genericType };
 			}
 		}
+
+		private class MultiImplementation : IInterface1<int>, IInterface1<object> { }
 	}
 }
