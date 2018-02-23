@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes.Jobs;
 
 namespace Maestro.Benchmarks
 {
+	[SimpleJob(launchCount: 1, warmupCount: 5, targetCount: 20, invocationCount: 50_000)]
 	public class Benchmarks
 	{
 		private static readonly IContainer Container = new Container(x =>
