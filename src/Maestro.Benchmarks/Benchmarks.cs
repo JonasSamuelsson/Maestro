@@ -1,8 +1,9 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes.Jobs;
 
 namespace Maestro.Benchmarks
 {
-	public class Tests
+	public class Benchmarks
 	{
 		private static readonly IContainer Container = new Container(x =>
 		{
