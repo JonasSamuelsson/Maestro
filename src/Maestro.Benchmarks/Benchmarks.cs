@@ -33,7 +33,11 @@ namespace Maestro.Benchmarks
 		public static void ObjectGraph() => Container.GetService<Types.C3>();
 
 		[Benchmark]
-		public static void NewChildContainer() => Container.GetChildContainer().GetService<Types.Transient>();
+		public static void NewChildContainer()
+		{
+			using (var container = Container.GetChildContainer())
+				container.GetService<Types.Transient>();
+		}
 
 		[Benchmark]
 		public static void ReusedChildContainer() => ChildContainer.GetService<Types.Transient>();
