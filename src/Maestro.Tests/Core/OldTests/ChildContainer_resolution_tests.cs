@@ -1,6 +1,7 @@
 ﻿using Shouldly;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -30,15 +31,15 @@ namespace Maestro.Tests.Core
 		[Fact]
 		public void GetServices_should_not_resolve_from_parent_if_enumerable_instance_is_registered_in_child()
 		{
-			var container = new Container(x => x.Add<object>().Instance("fail"))
+			var container = new Container(x => x.Add<object>().Instance("failure 1"))
 				.GetChildContainer(x =>
 				{
-					x.Add<object>().Instance("fail");
-					x.Use<IEnumerable<object>>().Instance(new[] { "1" });
+					x.Add<object>().Instance("failure 2");
+					x.Use<IEnumerable<object>>().Instance(new[] { "success 1" });
 				})
-				.GetChildContainer(x => x.Add<object>().Instance("2"));
+				.GetChildContainer(x => x.Add<object>().Instance("success 2"));
 
-			container.GetServices<object>().ShouldBe(new[] { "2", "1" });
+			container.GetServices<object>().OrderBy(x => x).ShouldBe(new[] { "success 1", "success 2" });
 		}
 	}
 }

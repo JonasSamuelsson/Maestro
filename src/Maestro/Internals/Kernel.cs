@@ -66,129 +66,163 @@ namespace Maestro.Internals
 
 		internal bool CanGetService(Type type, string name, Context context)
 		{
-			IPipeline pipeline;
-			return TryGetPipeline(type, name, context, out pipeline);
+			return TryGetPipeline(type, name, context, out var pipeline);
 		}
 
 		internal bool TryGetService(Type type, string name, Context context, out object instance)
 		{
-			IPipeline pipeline;
-			instance = TryGetPipeline(type, name, context, out pipeline) ? pipeline.Execute(context) : null;
-			return instance != null;
+			if (TryGetPipeline(type, name, context, out var pipeline))
+			{
+				instance = pipeline.Execute(context);
+				return true;
+			}
+
+			instance = null;
+			return false;
 		}
 
 		private bool TryGetPipeline(Type type, string name, Context context, out IPipeline pipeline)
 		{
 			var serviceKey = GetServiceKey(type, name);
 
-			if (!_pipelineCache.TryGet(serviceKey, out pipeline))
+			if (_pipelineCache.TryGet(serviceKey, out pipeline))
+				return true;
+
+			lock (_pipelineCache)
 			{
-				lock (_pipelineCache)
+				if (_pipelineCache.TryGet(serviceKey, out pipeline))
+					return true;
+
+				var typeIsIEnumerableOfT = Reflector.IsGenericEnumerable(type, out var elementType);
+
+				if (TryGetPipelineFromServiceDesriptors(typeIsIEnumerableOfT, type, elementType, name, context, ref pipeline))
 				{
-					if (!_pipelineCache.TryGet(serviceKey, out pipeline))
+					_pipelineCache.Add(serviceKey, pipeline);
+					return true;
+				}
+
+				if (TryGetPipelineFromTypeProviders(type, name, context, ref pipeline))
+				{
+					_pipelineCache.Add(serviceKey, pipeline);
+					return true;
+				}
+
+				if (TryGetPipelineFromFactoryProviders(type, name, context, typeIsIEnumerableOfT, ref pipeline))
+				{
+					_pipelineCache.Add(serviceKey, pipeline);
+					return true;
+				}
+
+				return false;
+			}
+		}
+
+		private bool TryGetPipelineFromServiceDesriptors(bool typeIsIEnumerableOfT, Type type, Type elementType, string name, Context context, ref IPipeline pipeline)
+		{
+			return typeIsIEnumerableOfT
+				? TryGetPipelineFromServiceDesriptors(type, elementType, name, context, ref pipeline)
+				: TryGetPipelineFromServiceDesriptor(type, name, context, ref pipeline);
+		}
+
+		private bool TryGetPipelineFromServiceDesriptor(Type type, string name, Context context, ref IPipeline pipeline)
+		{
+			if (TryGetServiceDescriptor(type, name, out var serviceDescriptor))
+			{
+				pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool TryGetPipelineFromServiceDesriptors(Type type, Type elementType, string name, Context context, ref IPipeline pipeline)
+		{
+			var compoundPipeline = new ComposedPipeline(elementType);
+
+			for (var kernel = this; kernel != null; kernel = kernel._parent)
+			{
+				var currentName = name;
+
+				tryGetService:
+
+				if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, currentName, out var serviceDescriptor))
+				{
+					compoundPipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
+					pipeline = compoundPipeline;
+					return true;
+				}
+
+				var defaultName = ServiceNames.Default;
+				if (currentName != defaultName)
+				{
+					currentName = defaultName;
+					goto tryGetService;
+				}
+
+				if (kernel._serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
+				{
+					if (kernel.Config.GetServicesOrder == GetServicesOrder.Ordered)
 					{
-						Type elementType;
-						var isGenericEnumerable = Reflector.IsGenericEnumerable(type, out elementType);
+						serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder);
+					}
 
-						if (!isGenericEnumerable)
-						{
-							ServiceDescriptor serviceDescriptor;
-							if (TryGetServiceDescriptor(type, name, out serviceDescriptor))
-							{
-								pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
-								_pipelineCache.Add(serviceKey, pipeline);
-								return true;
-							}
-						}
-						else
-						{
-							var compoundPipeline = new ComposedPipeline(elementType);
-
-							for (var kernel = this; kernel != null; kernel = kernel._parent)
-							{
-								var temp = name;
-
-								tryGetService:
-
-								ServiceDescriptor serviceDescriptor;
-								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, temp, out serviceDescriptor))
-								{
-									compoundPipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
-									goto addToPipelineCache;
-								}
-
-								var defaultName = ServiceNames.Default;
-								if (temp != defaultName)
-								{
-									temp = defaultName;
-									goto tryGetService;
-								}
-
-								IEnumerable<ServiceDescriptor> serviceDescriptors;
-								if (kernel._serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out serviceDescriptors))
-								{
-									if (kernel.Config.GetServicesOrder == GetServicesOrder.Ordered)
-									{
-										serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder);
-									}
-
-									foreach (var descriptor in serviceDescriptors)
-									{
-										compoundPipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));
-									}
-								}
-							}
-
-							addToPipelineCache:
-
-							if (compoundPipeline.Any())
-							{
-								_pipelineCache.Add(serviceKey, compoundPipeline);
-								pipeline = compoundPipeline;
-								return true;
-							}
-						}
-
-						for (var kernel = this; kernel != null; kernel = kernel._parent)
-						{
-							foreach (var typeProvider in kernel.TypeProviders)
-							{
-								var instanceType = typeProvider.GetInstanceTypeOrNull(type, context);
-								if (instanceType == null) continue;
-								var serviceDescriptor = new ServiceDescriptor
-								{
-									Type = type,
-									Name = name,
-									FactoryProvider = new TypeFactoryProvider(instanceType, name)
-								};
-								pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
-								_pipelineCache.Add(serviceKey, pipeline);
-								return true;
-							}
-						}
-
-						foreach (var factoryProviderResolver in _factoryProviderResolvers)
-						{
-							IFactoryProvider factoryProvider;
-							if (!factoryProviderResolver.TryGet(type, name, context, out factoryProvider)) continue;
-							var serviceDescriptor = new ServiceDescriptor
-							{
-								Type = type,
-								Name = name,
-								FactoryProvider = factoryProvider
-							};
-							var pipelineType = isGenericEnumerable ? PipelineType.Services : PipelineType.Service;
-							pipeline = CreatePipeline(pipelineType, serviceDescriptor, context);
-							_pipelineCache.Add(serviceKey, pipeline);
-							return true;
-						}
-
-						return false;
+					foreach (var descriptor in serviceDescriptors)
+					{
+						compoundPipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));
 					}
 				}
 			}
 
-			return true;
+			if (compoundPipeline.Any())
+			{
+				pipeline = compoundPipeline;
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool TryGetPipelineFromTypeProviders(Type type, string name, Context context, ref IPipeline pipeline)
+		{
+			for (var kernel = this; kernel != null; kernel = kernel._parent)
+			{
+				foreach (var typeProvider in kernel.TypeProviders)
+				{
+					var instanceType = typeProvider.GetInstanceTypeOrNull(type, context);
+					if (instanceType == null) continue;
+					var serviceDescriptor = new ServiceDescriptor
+					{
+						Type = type,
+						Name = name,
+						FactoryProvider = new TypeFactoryProvider(instanceType, name)
+					};
+					pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool TryGetPipelineFromFactoryProviders(Type type, string name, Context context, bool typeIsIEnumerableOfT, ref IPipeline pipeline)
+		{
+			foreach (var factoryProviderResolver in _factoryProviderResolvers)
+			{
+				if (!factoryProviderResolver.TryGet(type, name, context, out var factoryProvider))
+					continue;
+
+				var serviceDescriptor = new ServiceDescriptor
+				{
+					Type = type,
+					Name = name,
+					FactoryProvider = factoryProvider
+				};
+				var pipelineType = typeIsIEnumerableOfT ? PipelineType.Services : PipelineType.Service;
+				pipeline = CreatePipeline(pipelineType, serviceDescriptor, context);
+				return true;
+			}
+
+			return false;
 		}
 
 		private static Pipeline CreatePipeline(PipelineType pipelineType, ServiceDescriptor serviceDescriptor, Context context)

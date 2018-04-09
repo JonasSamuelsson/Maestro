@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Maestro.Internals
 {
@@ -24,7 +23,7 @@ namespace Maestro.Internals
 
 		public bool Any()
 		{
-			return _pipelines.Any();
+			return _pipelines.Count != 0;
 		}
 
 		public object Execute(Context context)
