@@ -30,6 +30,16 @@ namespace Maestro.Configuration
 			return Intercept(new ActionInterceptor<TInstance>(interceptor));
 		}
 
+		public TParent Intercept(Func<TInstance, TInstance> interceptor)
+		{
+			return Intercept((instance, ctx) => interceptor(instance));
+		}
+
+		public TParent Intercept(Func<TInstance, IContext, TInstance> interceptor)
+		{
+			return Intercept(new FuncInterceptor<TInstance>(interceptor));
+		}
+
 		public TParent Intercept(IInterceptor interceptor)
 		{
 			ServiceDescriptor.Interceptors.Add(interceptor);

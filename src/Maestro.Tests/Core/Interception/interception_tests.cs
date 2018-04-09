@@ -55,6 +55,20 @@ namespace Maestro.Tests.Core.Interception
 		}
 
 		[Fact]
+		public void should_execute_provided_func()
+		{
+			var parent = new Parent();
+			var container = new Container(x =>
+			{
+				x.Use<Parent>("1").Factory(() => parent).Intercept(instance => new Child { Parent = instance });
+				x.Use<Parent>("2").Factory(() => parent).Intercept((instance, ctx) => new Child { Parent = instance });
+			});
+
+			container.GetService<Parent>("1").ShouldBeOfType<Child>().Parent.ShouldBe(parent);
+			container.GetService<Parent>("2").ShouldBeOfType<Child>().Parent.ShouldBe(parent);
+		}
+
+		[Fact]
 		public void interceptors_should_be_executed_in_the_same_order_as_they_are_configured()
 		{
 			var container = new Container(x => x.Use<Wrapper<string>>().Type<Wrapper<string>>()
@@ -67,6 +81,13 @@ namespace Maestro.Tests.Core.Interception
 			var instance = container.GetService<Wrapper<string>>();
 
 			instance.Value.ShouldBe("12345");
+		}
+
+		class Parent { }
+
+		class Child : Parent
+		{
+			public Parent Parent { get; set; }
 		}
 
 		class Wrapper<T>

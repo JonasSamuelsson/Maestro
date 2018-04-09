@@ -23,6 +23,20 @@ namespace Maestro.Configuration
 		TParent Intercept(Action<TInstance, IContext> interceptor);
 
 		/// <summary>
+		/// Adds a func that processes the instance.
+		/// </summary>
+		/// <param name="interceptor"></param>
+		/// <returns></returns>
+		TParent Intercept(Func<TInstance, TInstance> interceptor);
+
+		/// <summary>
+		/// Adds a func that processes the instance.
+		/// </summary>
+		/// <param name="interceptor"></param>
+		/// <returns></returns>
+		TParent Intercept(Func<TInstance, IContext, TInstance> interceptor);
+
+		/// <summary>
 		/// Adds <paramref name="interceptor"/> to the pipeline.
 		/// </summary>
 		/// <param name="interceptor"></param>
