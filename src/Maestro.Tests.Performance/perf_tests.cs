@@ -27,7 +27,7 @@ namespace Maestro.Tests.Core.Performance
 			};
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void Full()
 		{
 			BaselineSimple();
@@ -45,14 +45,14 @@ namespace Maestro.Tests.Core.Performance
 			ChildContainer();
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void BaselineSimple()
 		{
 			Action action = () => new object();
 			Benchmark(action, "baseline simple", 1);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void BaselineComplex()
 		{
 			Action action = () => new Complex1(
@@ -66,42 +66,42 @@ namespace Maestro.Tests.Core.Performance
 			Benchmark(action, "baseline complex", 8);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void BaselineEnumerable()
 		{
 			Action action = () => new List<object>(new[] { new object(), new object(), new object(), new object(), new object() });
 			Benchmark(action, "baseline enumerable", 5);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void Instance()
 		{
 			var container = new Container(x => x.Use<object>().Instance(new object()));
 			Benchmark(() => container.GetService<object>(), "instance", 1);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void Factory()
 		{
 			var container = new Container(x => x.Use<object>().Factory(() => new object()));
 			Benchmark(() => container.GetService<object>(), "factory", 1);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void Type()
 		{
 			var container = new Container(x => x.Use<object>().Type<object>());
 			Benchmark(() => container.GetService<object>(), "type", 1);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void Singleton()
 		{
 			var container = new Container(x => x.Use<object>().Type<object>().Lifetime.Singleton());
 			Benchmark(() => container.GetService<object>(), "singleton", 1);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void Enumerable()
 		{
 			var container = new Container(x =>
@@ -115,7 +115,7 @@ namespace Maestro.Tests.Core.Performance
 			Benchmark(() => container.GetServices<object>(), "enumerable", 5);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void CtorInjection()
 		{
 			var container = new Container(x =>
@@ -126,7 +126,7 @@ namespace Maestro.Tests.Core.Performance
 			Benchmark(() => container.GetService<CtorDependency>(), "ctor injection", 2);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void PropertyInjection()
 		{
 			var container = new Container(x =>
@@ -137,7 +137,7 @@ namespace Maestro.Tests.Core.Performance
 			Benchmark(() => container.GetService<CtorDependency>(), "property injection", 2);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void Complex()
 		{
 			var container = new Container(x =>
@@ -150,7 +150,7 @@ namespace Maestro.Tests.Core.Performance
 			Benchmark(() => container.GetService<Complex1>(), "complex", 8);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void MultiThreaded()
 		{
 			var container = new Container(x =>
@@ -165,7 +165,7 @@ namespace Maestro.Tests.Core.Performance
 			Benchmark(() => container.GetService<Complex1>(), $"complex ({concurrentWorkers} workers)", instances, concurrentWorkers);
 		}
 
-		[Fact(Skip = "run manually")]
+		[Fact]
 		public void ChildContainer()
 		{
 			var parentContainer = new Container(x => x.Use<CtorDependency>().Type<CtorDependency>());

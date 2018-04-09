@@ -1,4 +1,6 @@
-﻿namespace Maestro.Benchmarks
+﻿using Maestro.Tests.Benchmarks.Custom;
+
+namespace Maestro.Tests.Benchmarks
 {
 	class Program
 	{
@@ -6,6 +8,6 @@
 
 		//public static void Main() => BenchmarkRunner.Run<DefaultBenchmarks>();
 
-		public static void Main() => ManualBenchmark.Execute();
+		public static void Main() => MemoryConsumptionBenchmark.Execute();
 	}
 }

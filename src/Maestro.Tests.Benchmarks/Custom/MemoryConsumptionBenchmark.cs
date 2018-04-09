@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace Maestro.Benchmarks
+namespace Maestro.Tests.Benchmarks.Custom
 {
-	public class ManualBenchmark
+	public class MemoryConsumptionBenchmark
 	{
 		public static void Execute()
 		{

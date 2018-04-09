@@ -1,7 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Jobs;
 
-namespace Maestro.Benchmarks
+namespace Maestro.Tests.Benchmarks.BenchmarkDotNet
 {
 	[MemoryDiagnoser, SimpleJob(launchCount: 1, warmupCount: 5, targetCount: 20, invocationCount: 10_000)]
 	public class DefaultBenchmarks

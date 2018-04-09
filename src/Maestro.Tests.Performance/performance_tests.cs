@@ -9,8 +9,7 @@ namespace Maestro.Tests.Core.Performance
 	{
 		const int Iterations = 100 * 1000;
 
-		//[Fact]
-		[Fact(Skip = "performance")]
+		[Fact]
 		public void new_container()
 		{
 			Warmup(Baseline);
@@ -19,8 +18,7 @@ namespace Maestro.Tests.Core.Performance
 			Console.WriteLine(Measure(() => GetConfiguredContainer().GetService<C3>()) / Measure(Baseline));
 		}
 
-		//[Fact]
-		[Fact(Skip = "performance")]
+		[Fact]
 		public void child_container()
 		{
 			Warmup(Baseline);
@@ -30,8 +28,7 @@ namespace Maestro.Tests.Core.Performance
 			Console.WriteLine(Measure(() => container.GetChildContainer().GetService<C3>()) / Measure(Baseline));
 		}
 
-		//[Fact]
-		[Fact(Skip = "performance")]
+		[Fact]
 		public void reuse_container()
 		{
 			Warmup(Baseline);
@@ -41,8 +38,7 @@ namespace Maestro.Tests.Core.Performance
 			Console.WriteLine(Measure(() => container.GetService<C3>()) / Measure(Baseline));
 		}
 
-		//[Fact]
-		[Fact(Skip = "performance")]
+		[Fact]
 		public void property_injection()
 		{
 			var container = new Container(x => x.Use<P>().Type<P>().SetProperty("O", new object()));
@@ -51,8 +47,7 @@ namespace Maestro.Tests.Core.Performance
 			Compare(baseline, work);
 		}
 
-		//[Fact]
-		[Fact(Skip = "performance")]
+		[Fact]
 		public void get_generics()
 		{
 			var container = new Container(x => x.Use(typeof(IList<>)).Type(typeof(List<>)));
@@ -61,8 +56,7 @@ namespace Maestro.Tests.Core.Performance
 			Compare(baseline, work);
 		}
 
-		//[Fact]
-		[Fact(Skip = "performance")]
+		[Fact]
 		public void get_all_generics()
 		{
 			var container = new Container(x =>
