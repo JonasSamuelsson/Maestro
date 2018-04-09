@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Xunit;
 
 namespace Maestro.Tests.Core
@@ -14,6 +15,7 @@ namespace Maestro.Tests.Core
 		{
 			var result = type.IsConcreteClassClosing(typeDefinition, out var genericTypes);
 			result.ShouldBe(expected, () => $"{GetName(type)} {(expected ? "is" : "is not")} concrete class closing {GetName(typeDefinition)}");
+			if (genericType == null) return;
 			genericTypes.ShouldContain(genericType);
 		}
 
