@@ -8,6 +8,6 @@ namespace Maestro.Tests.Benchmarks
 
 		//public static void Main() => BenchmarkRunner.Run<DefaultBenchmarks>();
 
-		public static void Main() => MemoryConsumptionBenchmark.Execute();
+		public static void Main() => GetServiceBenchmark.Execute();
 	}
 }
