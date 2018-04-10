@@ -2,7 +2,7 @@
 
 namespace Maestro.Tests.Benchmarks
 {
-	class Program
+	static class Program
 	{
 		//public static void Main() => BenchmarkRunner.Run<ChildContainerBenchmark>();
 

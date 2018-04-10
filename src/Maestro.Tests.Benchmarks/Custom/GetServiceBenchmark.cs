@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Maestro.Tests.Benchmarks.Custom
@@ -8,26 +7,43 @@ namespace Maestro.Tests.Benchmarks.Custom
 	{
 		public static void Execute()
 		{
-			Execute<List<int>>();
+			Execute<EventArgs>();
 		}
 
 		private static void Execute<T>()
 		{
-			new Container().GetService<T>();
+			CreateContainer().GetService<T>();
+			Test<T>();
+		}
 
+		private static Container CreateContainer()
+		{
+			return new Container(x => x.TypeProviders.Add(new MyTypeProvider()));
+		}
+
+		private static void Test<T>()
+		{
 			for (var i = 0; i < 5; i++)
 			{
 				var stopwatch = new Stopwatch();
 
 				for (var j = 0; j < 100_000; j++)
 				{
-					var container = new Container();
+					var container = CreateContainer();
 					stopwatch.Start();
 					container.GetService<T>();
 					stopwatch.Stop();
 				}
 
 				Console.WriteLine($"{stopwatch.Elapsed.TotalMilliseconds} ms");
+			}
+		}
+
+		private class MyTypeProvider : ITypeProvider
+		{
+			public Type GetInstanceTypeOrNull(Type serviceType, IContext context)
+			{
+				return serviceType == typeof(object) ? typeof(EventArgs) : null;
 			}
 		}
 	}
