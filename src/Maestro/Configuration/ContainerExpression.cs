@@ -23,6 +23,7 @@ namespace Maestro.Configuration
 			}
 		}
 
+		public IList<Func<Type, bool>> AutoResolveFilters => _kernel.AutoResolveFilters;
 		public IList<ITypeProvider> TypeProviders => _kernel.TypeProviders;
 
 		public IServiceExpression Use(Type type)

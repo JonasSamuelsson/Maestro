@@ -11,9 +11,16 @@ namespace Maestro.Internals
 {
 	internal class Kernel : IDisposable
 	{
+		private static readonly IReadOnlyList<IFactoryProviderResolver> _factoryProviderResolvers = new IFactoryProviderResolver[]
+		{
+			new FuncFactoryProviderResolver(),
+			new LazyFactoryProviderResolver(),
+			new ConcreteClosedClassFactoryProviderResolver(),
+			new EmptyEnumerableFactoryProviderResolver()
+		};
+
 		private readonly ServiceDescriptorLookup _serviceDescriptorLookup;
 		private readonly PipelineCache<long> _pipelineCache;
-		private readonly IEnumerable<IFactoryProviderResolver> _factoryProviderResolvers;
 		private readonly Kernel _parent;
 
 		internal event EventHandler ConfigurationChanged;
@@ -22,13 +29,6 @@ namespace Maestro.Internals
 		{
 			_serviceDescriptorLookup = new ServiceDescriptorLookup();
 			_pipelineCache = new PipelineCache<long>();
-			_factoryProviderResolvers = new IFactoryProviderResolver[]
-											{
-												new FuncFactoryProviderResolver(),
-												new LazyFactoryProviderResolver(),
-												new ConcreteClosedClassFactoryProviderResolver(),
-												new EmptyEnumerableFactoryProviderResolver()
-											};
 			Root = this;
 		}
 
@@ -36,13 +36,15 @@ namespace Maestro.Internals
 		{
 			_parent = parent;
 			_parent.ConfigurationChanged += ParentConfigurationChanged;
+			AutoResolveFilters = parent.AutoResolveFilters.ToList();
 			Root = _parent.Root;
 		}
 
 		internal Config Config { get; } = new Config();
+		public IList<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
 		internal IList<ITypeProvider> TypeProviders { get; } = new List<ITypeProvider>();
 		internal ConcurrentDictionary<object, Lazy<object>> InstanceCache { get; } = new ConcurrentDictionary<object, Lazy<object>>();
-		internal Kernel Root { get; private set; }
+		internal Kernel Root { get; }
 
 		private void ParentConfigurationChanged(object sender, EventArgs e)
 		{
@@ -184,6 +186,7 @@ namespace Maestro.Internals
 
 		private bool TryGetPipelineFromTypeProviders(Type type, string name, Context context, ref IPipeline pipeline)
 		{
+			// introduce ServiceTypeFactoryProvider
 			for (var kernel = this; kernel != null; kernel = kernel._parent)
 			{
 				foreach (var typeProvider in kernel.TypeProviders)
@@ -206,6 +209,9 @@ namespace Maestro.Internals
 
 		private bool TryGetPipelineFromFactoryProviders(Type type, string name, Context context, bool typeIsIEnumerableOfT, ref IPipeline pipeline)
 		{
+			if (AutoResolveFilters.Any() && !AutoResolveFilters.Any(x => x(type)))
+				return false;
+
 			foreach (var factoryProviderResolver in _factoryProviderResolvers)
 			{
 				if (!factoryProviderResolver.TryGet(type, name, context, out var factoryProvider))

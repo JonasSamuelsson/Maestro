@@ -6,6 +6,7 @@ namespace Maestro.Configuration
 	public interface IContainerExpression
 	{
 		IConfigExpression Config { get; }
+		IList<Func<Type, bool>> AutoResolveFilters { get; }
 		IList<ITypeProvider> TypeProviders { get; }
 
 		IServiceExpression Use(Type type);
