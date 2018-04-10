@@ -13,7 +13,7 @@ namespace Maestro.Utils
 		public static bool IsGenericEnumerable(Type type, out Type elementType)
 		{
 			elementType = null;
-			if (!type.IsGenericType()) return false;
+			if (!type.IsGenericType) return false;
 			var genericTypeDefinition = type.GetGenericTypeDefinition();
 			if (genericTypeDefinition != typeof(IEnumerable<>)) return false;
 			elementType = type.GetGenericArguments()[0];
@@ -22,7 +22,7 @@ namespace Maestro.Utils
 
 		public static bool IsPrimitive(Type type)
 		{
-			return type.IsValueType() || type == typeof(string) || type == typeof(object);
+			return type.IsValueType || type == typeof(string) || type == typeof(object);
 		}
 
 		public static bool IsGeneric(Type type, out Type genericTypeDefinition, out Type[] genericArguments)
@@ -30,12 +30,12 @@ namespace Maestro.Utils
 			genericTypeDefinition = null;
 			genericArguments = null;
 
-			if (!type.IsGenericType())
+			if (!type.IsGenericType)
 			{
 				return false;
 			}
 
-			if (type.IsGenericTypeDefinition())
+			if (type.IsGenericTypeDefinition)
 			{
 				return false;
 			}

@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Maestro.FactoryProviders;
 using Maestro.Utils;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Maestro.TypeFactoryResolvers
 {
@@ -19,18 +18,60 @@ namespace Maestro.TypeFactoryResolvers
 			if (type.IsConcreteClassClosing(typeof(Func<>))) return false;
 			if (type.IsConcreteClassClosing(typeof(Lazy<>))) return false;
 
-			factoryProvider = GetFactoryProviders(type, name, context).FirstOrDefault();
+			var candidates = new List<Candidate>();
 
-			return factoryProvider != null;
+			var ctors = type.GetConstructors();
+			for (var i = 0; i < ctors.Length; i++)
+			{
+				var ctor = ctors[i];
+				candidates.Add(new Candidate(ctor));
+			}
+
+			candidates.Sort(CandidateComparer.Instance);
+
+			for (var ci = 0; ci < candidates.Count; ci++)
+			{
+				var candidate = candidates[ci];
+				var parameters = candidate.Parameters;
+				var match = true;
+
+				for (var pi = 0; pi < parameters.Length; pi++)
+				{
+					var parameter = parameters[pi];
+					if (context.CanGetService(parameter.ParameterType, name)) continue;
+					match = false;
+					break;
+				}
+
+				if (!match) continue;
+
+				factoryProvider = new TypeFactoryProvider(type, name) { Constructor = candidate.Ctor };
+				return true;
+			}
+
+			return false;
 		}
 
-		private static IEnumerable<TypeFactoryProvider> GetFactoryProviders(Type type, string name, IContext context)
+		private class Candidate
 		{
-			return from ctor in type.GetConstructors()
-					 let parameters = ctor.GetParameters()
-					 orderby parameters.Length descending
-					 where parameters.All(p => context.CanGetService(p.ParameterType, name))
-					 select new TypeFactoryProvider(type, name) { Constructor = ctor };
+			public Candidate(ConstructorInfo ctor)
+			{
+				Ctor = ctor;
+				Parameters = ctor.GetParameters();
+			}
+
+			public ConstructorInfo Ctor { get; }
+			public ParameterInfo[] Parameters { get; }
+		}
+
+		private class CandidateComparer : IComparer<Candidate>
+		{
+			public static readonly IComparer<Candidate> Instance = new CandidateComparer();
+
+			public int Compare(Candidate x, Candidate y)
+			{
+				return y.Parameters.Length.CompareTo(x.Parameters.Length);
+			}
 		}
 	}
 }

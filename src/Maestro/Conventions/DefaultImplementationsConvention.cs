@@ -18,7 +18,7 @@ namespace Maestro.Conventions
 		{
 			types = types as IReadOnlyCollection<Type> ?? types.ToList();
 
-			var interfaces = types.Where(x => x.IsInterface() && x.Name.StartsWith("I"));
+			var interfaces = types.Where(x => x.IsInterface && x.Name.StartsWith("I"));
 			var classes = types
 				.Where(x => x.IsConcreteClass())
 				.ToDictionary(x => x.FullName);

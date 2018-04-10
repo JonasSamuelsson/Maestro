@@ -5,21 +5,25 @@ namespace Maestro
 {
 	internal static class TypeExtensions
 	{
-		private static IEnumerable<Type> GetClasses(this Type @class)
+		private static IReadOnlyList<Type> GetClasses(this Type @class)
 		{
-			if (!@class.IsClass())
+			if (!@class.IsClass)
 				throw new InvalidOperationException();
+
+			var result = new List<Type>();
 
 			do
 			{
-				yield return @class;
-				@class = @class.GetBaseType();
+				result.Add(@class);
+				@class = @class.BaseType;
 			} while (@class != null);
+
+			return result;
 		}
 
 		public static bool IsConcreteClosedClass(this Type type)
 		{
-			return type.IsConcreteClass() && !type.IsGenericTypeDefinition();
+			return type.IsConcreteClass() && !type.IsGenericTypeDefinition;
 		}
 
 		public static bool IsConcreteClassClosing(this Type type, Type genericTypeDefinition)
@@ -31,20 +35,52 @@ namespace Maestro
 		{
 			genericTypes = null;
 
-			if (!genericTypeDefinition.IsGenericTypeDefinition())
+			if (!genericTypeDefinition.IsGenericTypeDefinition)
 				throw new ArgumentException();
 
 			if (!type.IsConcreteClosedClass())
 				return false;
 
+			return genericTypeDefinition.IsClass
+				? IsConcreteClassClosingClass(type, genericTypeDefinition, ref genericTypes)
+				: genericTypeDefinition.IsInterface
+					? IsConcreteClassClosingInterface(type, genericTypeDefinition, ref genericTypes)
+					: throw new InvalidOperationException();
+		}
+
+		private static bool IsConcreteClassClosingClass(Type type, Type genericClassDefinition, ref IReadOnlyCollection<Type> genericTypes)
+		{
+			while (type != null)
+			{
+				var t = type;
+				type = type.BaseType;
+
+				if (!t.IsGenericType)
+					continue;
+
+				var genericTypeDefinition = t.GetGenericTypeDefinition();
+
+				if (genericTypeDefinition != genericClassDefinition)
+					continue;
+
+				genericTypes = new[] { t };
+				return true;
+			}
+
+			return false;
+		}
+
+		private static bool IsConcreteClassClosingInterface(Type type, Type genericInterfaceDefinition, ref IReadOnlyCollection<Type> genericTypes)
+		{
 			var result = new List<Type>();
 
-			var types = genericTypeDefinition.IsClass() ? type.GetClasses() : type.GetInterfaces();
-			foreach (var prospect in types)
+			var types = type.GetInterfaces();
+			for (var i = 0; i < types.Length; i++)
 			{
-				if (!prospect.IsGenericType()) continue;
-				if (prospect.GetGenericTypeDefinition() != genericTypeDefinition) continue;
-				result.Add(prospect);
+				var t = types[i];
+				if (!t.IsGenericType) continue;
+				if (t.GetGenericTypeDefinition() != genericInterfaceDefinition) continue;
+				result.Add(t);
 			}
 
 			if (result.Count == 0)
@@ -56,24 +92,26 @@ namespace Maestro
 
 		public static bool IsConcreteClass(this Type type)
 		{
-			return type.IsClass() && type != typeof(string) && !type.IsAbstract();
+			return type.IsClass && type != typeof(string) && !type.IsAbstract;
 		}
 
 		public static bool IsConcreteClassOf(this Type type, Type basetype, out Type genericType)
 		{
 			genericType = null;
 
-			if (type.IsAbstract() || !type.IsClass())
+			if (!type.IsConcreteClass())
 				return false;
 
-			if (!basetype.IsGenericTypeDefinition())
-				return !type.IsGenericTypeDefinition() && basetype.IsAssignableFrom(type);
+			if (!basetype.IsGenericTypeDefinition)
+				return !type.IsGenericTypeDefinition && basetype.IsAssignableFrom(type);
 
-			var typeIsGenericTypeDefinition = type.IsGenericTypeDefinition();
-			var types = basetype.IsClass() ? type.GetClasses() : type.GetInterfaces();
-			foreach (var t in types)
+			var typeIsGenericTypeDefinition = type.IsGenericTypeDefinition;
+			var types = basetype.IsClass ? type.GetClasses() : type.GetInterfaces();
+
+			for (var i = 0; i < types.Count; i++)
 			{
-				if (!t.IsGenericType()) continue;
+				var t = types[i];
+				if (!t.IsGenericType) continue;
 				if (basetype != t.GetGenericTypeDefinition()) continue;
 				if (!typeIsGenericTypeDefinition) genericType = t;
 				return true;

@@ -51,7 +51,7 @@ namespace Maestro.Configuration
 		/// <returns></returns>
 		public IScanner AssemblyContaining(Type type)
 		{
-			return Assembly(type.GetAssembly());
+			return Assembly(type.Assembly);
 		}
 
 		/// <summary>

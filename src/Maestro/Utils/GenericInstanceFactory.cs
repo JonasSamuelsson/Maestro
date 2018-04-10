@@ -16,8 +16,9 @@ namespace Maestro.Utils
 
 		private static Func<object, Type[], object> GetFactory(Type type)
 		{
-			var method = type.GetMethodOrNull("MakeGeneric", new[] { typeof(Type[]) });
-			if(method != null)
+			var method = type.GetMethod("MakeGeneric", new[] { typeof(Type[]) });
+
+			if (method != null)
 			{
 				var parameters = method.GetParameters();
 				if (parameters.Length == 1)
