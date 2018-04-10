@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Maestro.Utils
 {
@@ -8,8 +7,7 @@ namespace Maestro.Utils
 	{
 		public static bool IsGenericEnumerable(Type type)
 		{
-			Type elementType;
-			return IsGenericEnumerable(type, out elementType);
+			return IsGenericEnumerable(type, out _);
 		}
 
 		public static bool IsGenericEnumerable(Type type, out Type elementType)
@@ -18,7 +16,7 @@ namespace Maestro.Utils
 			if (!type.IsGenericType()) return false;
 			var genericTypeDefinition = type.GetGenericTypeDefinition();
 			if (genericTypeDefinition != typeof(IEnumerable<>)) return false;
-			elementType = type.GetGenericArguments().Single();
+			elementType = type.GetGenericArguments()[0];
 			return true;
 		}
 

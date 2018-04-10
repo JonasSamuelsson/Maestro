@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Maestro.Internals
 {
-	class ComposedPipeline : IPipeline
+	class EnumerablePipeline : IPipeline
 	{
 		private readonly List<IPipeline> _pipelines = new List<IPipeline>();
 		private readonly IPipelineEngine _pipelineEngine;
 
-		public ComposedPipeline(Type elementType)
+		public EnumerablePipeline(Type elementType)
 		{
 			var pipelineEngineType = typeof(PipelineEngine<>).MakeGenericType(elementType);
 			_pipelineEngine = (IPipelineEngine)Activator.CreateInstance(pipelineEngineType);
@@ -21,10 +21,7 @@ namespace Maestro.Internals
 			_pipelines.Add(pipeline);
 		}
 
-		public bool Any()
-		{
-			return _pipelines.Count != 0;
-		}
+		public bool Any => _pipelines.Count != 0;
 
 		public object Execute(Context context)
 		{

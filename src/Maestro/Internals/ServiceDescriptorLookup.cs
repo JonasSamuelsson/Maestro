@@ -50,9 +50,7 @@ namespace Maestro.Internals
 
 		public bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
 		{
-			ServiceFamily serviceFamily;
-
-			if (_serviceFamilies.TryGet(type, out serviceFamily))
+			if (_serviceFamilies.TryGet(type, out var serviceFamily))
 			{
 				if (serviceFamily.NamedServices.TryGet(name, out serviceDescriptor))
 				{
@@ -60,9 +58,7 @@ namespace Maestro.Internals
 				}
 			}
 
-			Type genericTypeDefinition;
-			Type[] genericArguments;
-			if (Reflector.IsGeneric(type, out genericTypeDefinition, out genericArguments))
+			if (Reflector.IsGeneric(type, out var genericTypeDefinition, out var genericArguments))
 			{
 				lock (_serviceFamilies)
 				{
@@ -87,12 +83,11 @@ namespace Maestro.Internals
 			return false;
 		}
 
-		public bool TryGetServiceDescriptors(Type type, out IEnumerable<ServiceDescriptor> serviceDescriptors)
+		public bool TryGetServiceDescriptors(Type type, out IReadOnlyList<ServiceDescriptor> serviceDescriptors)
 		{
-			ServiceFamily serviceFamily;
-			var result = new ThreadSafeList<ServiceDescriptor>();
+			var result = new List<ServiceDescriptor>();
 
-			if (_serviceFamilies.TryGet(type, out serviceFamily))
+			if (_serviceFamilies.TryGet(type, out var serviceFamily))
 			{
 				if (serviceFamily.NamedServices.Count != 0)
 				{
@@ -105,18 +100,18 @@ namespace Maestro.Internals
 				}
 			}
 
-			Type genericTypeDefinition;
-			Type[] genericArguments;
-			if (Reflector.IsGeneric(type, out genericTypeDefinition, out genericArguments))
+			if (Reflector.IsGeneric(type, out var genericTypeDefinition, out var genericArguments))
 			{
-				if (TryGetServiceDescriptors(genericTypeDefinition, out serviceDescriptors))
+				// todo performance - no linq
+				IReadOnlyList<ServiceDescriptor> descriptors = new List<ServiceDescriptor>();
+				if (TryGetServiceDescriptors(genericTypeDefinition, out descriptors))
 				{
-					serviceDescriptors = serviceDescriptors
+					descriptors = descriptors
 						.Where(x => result.All(y => x.CorrelationId != y.CorrelationId))
 						.Select(x => x.MakeGeneric(genericArguments))
 						.ToList();
-					foreach (var serviceDescriptor in serviceDescriptors) Add(serviceDescriptor);
-					result.AddRange(serviceDescriptors);
+					foreach (var serviceDescriptor in descriptors) Add(serviceDescriptor);
+					result.AddRange(descriptors);
 				}
 			}
 

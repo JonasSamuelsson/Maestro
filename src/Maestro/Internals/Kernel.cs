@@ -11,7 +11,7 @@ namespace Maestro.Internals
 {
 	internal class Kernel : IDisposable
 	{
-		private static readonly IReadOnlyList<IFactoryProviderResolver> _factoryProviderResolvers = new IFactoryProviderResolver[]
+		private static readonly IReadOnlyList<IFactoryProviderResolver> FactoryProviderResolvers = new IFactoryProviderResolver[]
 		{
 			new FuncFactoryProviderResolver(),
 			new LazyFactoryProviderResolver(),
@@ -139,7 +139,7 @@ namespace Maestro.Internals
 
 		private bool TryGetPipelineFromServiceDesriptors(Type type, Type elementType, string name, Context context, ref IPipeline pipeline)
 		{
-			var compoundPipeline = new ComposedPipeline(elementType);
+			var enumerablePipeline = new EnumerablePipeline(elementType);
 
 			for (var kernel = this; kernel != null; kernel = kernel._parent)
 			{
@@ -149,8 +149,8 @@ namespace Maestro.Internals
 
 				if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, currentName, out var serviceDescriptor))
 				{
-					compoundPipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
-					pipeline = compoundPipeline;
+					enumerablePipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
+					pipeline = enumerablePipeline;
 					return true;
 				}
 
@@ -165,19 +165,20 @@ namespace Maestro.Internals
 				{
 					if (kernel.Config.GetServicesOrder == GetServicesOrder.Ordered)
 					{
-						serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder);
+						serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder).ToList();
 					}
 
-					foreach (var descriptor in serviceDescriptors)
+					for (var i = 0; i < serviceDescriptors.Count; i++)
 					{
-						compoundPipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));
+						var descriptor = serviceDescriptors[i];
+						enumerablePipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));
 					}
 				}
 			}
 
-			if (compoundPipeline.Any())
+			if (enumerablePipeline.Any)
 			{
-				pipeline = compoundPipeline;
+				pipeline = enumerablePipeline;
 				return true;
 			}
 
@@ -189,8 +190,9 @@ namespace Maestro.Internals
 			// introduce ServiceTypeFactoryProvider
 			for (var kernel = this; kernel != null; kernel = kernel._parent)
 			{
-				foreach (var typeProvider in kernel.TypeProviders)
+				for (var i = 0; i < kernel.TypeProviders.Count; i++)
 				{
+					var typeProvider = kernel.TypeProviders[i];
 					var instanceType = typeProvider.GetInstanceTypeOrNull(type, context);
 					if (instanceType == null) continue;
 					var serviceDescriptor = new ServiceDescriptor
@@ -209,11 +211,25 @@ namespace Maestro.Internals
 
 		private bool TryGetPipelineFromFactoryProviders(Type type, string name, Context context, bool typeIsIEnumerableOfT, ref IPipeline pipeline)
 		{
-			if (AutoResolveFilters.Any() && !AutoResolveFilters.Any(x => x(type)))
-				return false;
-
-			foreach (var factoryProviderResolver in _factoryProviderResolvers)
+			if (AutoResolveFilters.Count != 0)
 			{
+				var match = false;
+
+				for (var i = 0; i < AutoResolveFilters.Count; i++)
+				{
+					var filter = AutoResolveFilters[i];
+					if (!filter.Invoke(type)) continue;
+					match = true;
+					break;
+				}
+
+				if (!match) return false;
+			}
+
+			for (var i = 0; i < FactoryProviderResolvers.Count; i++)
+			{
+				var factoryProviderResolver = FactoryProviderResolvers[i];
+
 				if (!factoryProviderResolver.TryGet(type, name, context, out var factoryProvider))
 					continue;
 
