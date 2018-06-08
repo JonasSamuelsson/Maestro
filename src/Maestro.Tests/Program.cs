@@ -1,5 +1,4 @@
-﻿using Maestro.Tests.Core.Diagnostics;
-using Maestro.Tests.Core.Internals;
+﻿using Maestro.Tests.Diagnostics;
 
 namespace Maestro.Tests
 {
