@@ -1,13 +1,12 @@
-﻿using Maestro.Microsoft.DependencyInjection;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
-namespace Maestro.Tests.Microsoft.DependencyInjection
+namespace Maestro.Microsoft.DependencyInjection.Tests
 {
-	public class microsoft_dependency_injection_tests
+	public class ServiceRegistrationTests
 	{
 		[Fact]
 		public void should_handle_factory_registrations()

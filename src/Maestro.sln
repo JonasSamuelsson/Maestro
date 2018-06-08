@@ -10,7 +10,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{DE4F0E5E-F742-45D9-B011-DCFA614B0AA6}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		Maestro.snk = Maestro.snk
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
@@ -22,7 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests", "Maestro.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests.Benchmarks", "Maestro.Tests.Benchmarks\Maestro.Tests.Benchmarks.csproj", "{A4160EA6-40CE-428E-B6C4-0148E511D9BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Tests.Performance", "Maestro.Tests.Performance\Maestro.Tests.Performance.csproj", "{C0223516-831D-4180-AF9B-6FA76EFDF59E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests.Performance", "Maestro.Tests.Performance\Maestro.Tests.Performance.csproj", "{C0223516-831D-4180-AF9B-6FA76EFDF59E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.DependencyInjection.Tests", "Maestro.Microsoft.DependencyInjection.Tests\Maestro.Microsoft.DependencyInjection.Tests.csproj", "{2D6682A7-89DD-4F15-8838-90A90A4E4CC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +59,10 @@ Global
 		{C0223516-831D-4180-AF9B-6FA76EFDF59E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0223516-831D-4180-AF9B-6FA76EFDF59E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0223516-831D-4180-AF9B-6FA76EFDF59E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D6682A7-89DD-4F15-8838-90A90A4E4CC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D6682A7-89DD-4F15-8838-90A90A4E4CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D6682A7-89DD-4F15-8838-90A90A4E4CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D6682A7-89DD-4F15-8838-90A90A4E4CC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
