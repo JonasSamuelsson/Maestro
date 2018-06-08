@@ -28,7 +28,7 @@ namespace Maestro.Internals
 			return _lifetime.Execute(context, GetInstance);
 		}
 
-		public object GetInstance(IContext context)
+		public object GetInstance(Context context)
 		{
 			var ctx = (Context)context;
 

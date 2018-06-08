@@ -4,6 +4,6 @@ namespace Maestro
 {
 	public interface ITypeProvider
 	{
-		Type GetInstanceTypeOrNull(Type serviceType, IContext context);
+		Type GetInstanceTypeOrNull(Type serviceType, Context context);
 	}
 }

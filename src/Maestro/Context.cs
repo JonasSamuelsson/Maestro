@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Maestro.Internals;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Maestro.Internals
+namespace Maestro
 {
-	internal class Context : IContext, IDisposable
+	public class Context : IDisposable
 	{
 		private readonly Stack<ServiceRequest> _serviceRequests = new Stack<ServiceRequest>();
 		private bool _disposed;
 
-		public Context(IContainer container, Kernel kernel)
+		internal Context(IContainer container, Kernel kernel)
 		{
 			Container = container;
 			Kernel = kernel;
@@ -19,6 +20,11 @@ namespace Maestro.Internals
 		public IContainer Container { get; }
 		public IEnumerable<ServiceRequest> CallStack => _serviceRequests;
 		internal Kernel Kernel { get; }
+
+		public bool CanGetService(Type type)
+		{
+			return CanGetService(type, ServiceNames.Default);
+		}
 
 		public bool CanGetService(Type type, string name)
 		{
@@ -48,6 +54,11 @@ namespace Maestro.Internals
 			}
 		}
 
+		public bool CanGetService<T>()
+		{
+			return CanGetService<T>(ServiceNames.Default);
+		}
+
 		public bool CanGetService<T>(string name)
 		{
 			var type = typeof(T);
@@ -68,11 +79,23 @@ namespace Maestro.Internals
 			}
 		}
 
+		/// <summary>
+		/// Gets the default instance of type <paramref name="type"/>.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
+		/// <returns></returns>
 		public object GetService(Type type)
 		{
 			return GetService(type, ServiceNames.Default);
 		}
 
+		/// <summary>
+		/// Gets an instance of type <paramref name="type"/> named <paramref name="name"/>.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
+		/// <returns></returns>
 		public object GetService(Type type, string name)
 		{
 			name = GetValueOrDefaultName(name);
@@ -96,11 +119,23 @@ namespace Maestro.Internals
 			}
 		}
 
+		/// <summary>
+		/// Gets the default instance of type <typeparamref name="T"/>.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
+		/// <returns></returns>
 		public T GetService<T>()
 		{
 			return GetService<T>(ServiceNames.Default);
 		}
 
+		/// <summary>
+		/// Gets an instance of type <typeparamref name="T"/> named <paramref name="name"/>.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
+		/// <returns></returns>
 		public T GetService<T>(string name)
 		{
 			var type = typeof(T);
@@ -121,11 +156,22 @@ namespace Maestro.Internals
 			}
 		}
 
+		/// <summary>
+		/// Tries to get instance of type <typeparam name="T"/>.
+		/// </summary>
+		/// <param name="instance"></param>
+		/// <returns></returns>
 		public bool TryGetService<T>(out T instance)
 		{
 			return TryGetService(ServiceNames.Default, out instance);
 		}
 
+		/// <summary>
+		/// Tries to get instance of type <typeparam name="T"/> named <paramref name="name"/>.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="instance"></param>
+		/// <returns></returns>
 		public bool TryGetService<T>(string name, out T instance)
 		{
 			var type = typeof(T);
@@ -154,11 +200,24 @@ namespace Maestro.Internals
 			}
 		}
 
+		/// <summary>
+		/// Tries to get instance of type <paramref name="type"/>.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="instance"></param>
+		/// <returns></returns>
 		public bool TryGetService(Type type, out object instance)
 		{
 			return TryGetService(type, ServiceNames.Default, out instance);
 		}
 
+		/// <summary>
+		/// Tries to get instance of type <paramref name="type"/> named <paramref name="name"/>.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <param name="name"></param>
+		/// <param name="instance"></param>
+		/// <returns></returns>
 		public bool TryGetService(Type type, string name, out object instance)
 		{
 			var removeStackFrame = false;
@@ -187,6 +246,11 @@ namespace Maestro.Internals
 			}
 		}
 
+		/// <summary>
+		/// Gets all instances of type <paramref name="type"/>.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
 		public IEnumerable<object> GetServices(Type type)
 		{
 			var enumerableType = EnumerableTypeBuilder.Get(type);
@@ -208,6 +272,11 @@ namespace Maestro.Internals
 			}
 		}
 
+		/// <summary>
+		/// Gets all instances of type <typeparamref name="T"/>.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public IEnumerable<T> GetServices<T>()
 		{
 			var type = typeof(IEnumerable<T>);

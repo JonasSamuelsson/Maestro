@@ -20,7 +20,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		TParent Intercept(Action<TInstance, IContext> interceptor);
+		TParent Intercept(Action<TInstance, Context> interceptor);
 
 		/// <summary>
 		/// Adds a func that processes the instance.
@@ -34,7 +34,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="interceptor"></param>
 		/// <returns></returns>
-		TParent Intercept(Func<TInstance, IContext, TInstance> interceptor);
+		TParent Intercept(Func<TInstance, Context, TInstance> interceptor);
 
 		/// <summary>
 		/// Adds <paramref name="interceptor"/> to the pipeline.
@@ -73,9 +73,9 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-		TParent SetProperty(string property, Func<IContext, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
+		TParent SetProperty(string property, Func<Context, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 
-		TParent SetProperty(string property, Func<IContext, Type, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
+		TParent SetProperty(string property, Func<Context, Type, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 		
 		/// <summary>
 		/// Set property <paramref name="property"/>.
@@ -111,7 +111,7 @@ namespace Maestro.Configuration
 		/// <param name="property"></param>
 		/// <param name="factory"></param>
 		/// <returns></returns>
-		TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory);
+		TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<Context, TValue> factory);
 
 		TParent TrySetProperty(string property, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 

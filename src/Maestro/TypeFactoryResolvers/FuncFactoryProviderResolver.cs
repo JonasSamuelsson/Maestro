@@ -7,7 +7,7 @@ namespace Maestro.TypeFactoryResolvers
 {
 	internal class FuncFactoryProviderResolver : IFactoryProviderResolver
 	{
-		public bool TryGet(Type type, string name, IContext context, out IFactoryProvider factoryProvider)
+		public bool TryGet(Type type, string name, Context context, out IFactoryProvider factoryProvider)
 		{
 			factoryProvider = null;
 			if (!type.IsConcreteClassClosing(typeof(Func<>))) return false;
@@ -18,7 +18,7 @@ namespace Maestro.TypeFactoryResolvers
 			var ctx = (Context)context;
 			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.Container, ctx.Kernel);
 			var getFuncMethod = wrapperType.GetMethod("GetFunc", new Type[] { });
-			var lambda = new Func<IContext, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
+			var lambda = new Func<Context, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
 			factoryProvider = new LambdaFactoryProvider(lambda);
 			return true;
 		}

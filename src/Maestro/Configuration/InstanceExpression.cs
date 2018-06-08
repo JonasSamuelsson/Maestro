@@ -25,7 +25,7 @@ namespace Maestro.Configuration
 			return Intercept((instance, ctx) => interceptor(instance));
 		}
 
-		public TParent Intercept(Action<TInstance, IContext> interceptor)
+		public TParent Intercept(Action<TInstance, Context> interceptor)
 		{
 			return Intercept(new ActionInterceptor<TInstance>(interceptor));
 		}
@@ -35,7 +35,7 @@ namespace Maestro.Configuration
 			return Intercept((instance, ctx) => interceptor(instance));
 		}
 
-		public TParent Intercept(Func<TInstance, IContext, TInstance> interceptor)
+		public TParent Intercept(Func<TInstance, Context, TInstance> interceptor)
 		{
 			return Intercept(new FuncInterceptor<TInstance>(interceptor));
 		}
@@ -61,12 +61,12 @@ namespace Maestro.Configuration
 			return SetProperty(property, (ctx, type) => factory(), propertyNotFoundAction);
 		}
 
-		public TParent SetProperty(string property, Func<IContext, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
+		public TParent SetProperty(string property, Func<Context, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
 		{
 			return SetProperty(property, (ctx, type) => factory(ctx), propertyNotFoundAction);
 		}
 
-		public TParent SetProperty(string property, Func<IContext, Type, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
+		public TParent SetProperty(string property, Func<Context, Type, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw)
 		{
 			return Intercept(new SetPropertyInterceptor(property, propertyNotFoundAction, factory));
 		}
@@ -86,7 +86,7 @@ namespace Maestro.Configuration
 			return SetProperty(GetPropertyName(property), (ctx, type) => factory());
 		}
 
-		public TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<IContext, TValue> factory)
+		public TParent SetProperty<TValue>(Expression<Func<TInstance, TValue>> property, Func<Context, TValue> factory)
 		{
 			return SetProperty(GetPropertyName(property), (ctx, type) => factory(ctx));
 		}

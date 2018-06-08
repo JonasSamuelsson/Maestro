@@ -8,7 +8,7 @@ namespace Maestro.TypeFactoryResolvers
 {
 	internal class ConcreteClosedClassFactoryProviderResolver : IFactoryProviderResolver
 	{
-		public bool TryGet(Type type, string name, IContext context, out IFactoryProvider factoryProvider)
+		public bool TryGet(Type type, string name, Context context, out IFactoryProvider factoryProvider)
 		{
 			factoryProvider = null;
 

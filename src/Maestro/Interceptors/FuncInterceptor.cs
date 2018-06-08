@@ -4,14 +4,14 @@ namespace Maestro.Interceptors
 {
 	internal class FuncInterceptor<T> : Interceptor<T>
 	{
-		private readonly Func<T, IContext, T> _func;
+		private readonly Func<T, Context, T> _func;
 
-		public FuncInterceptor(Func<T, IContext, T> func)
+		public FuncInterceptor(Func<T, Context, T> func)
 		{
 			_func = func;
 		}
 
-		public override T Execute(T instance, IContext context)
+		public override T Execute(T instance, Context context)
 		{
 			return _func(instance, context);
 		}

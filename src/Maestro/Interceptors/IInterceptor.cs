@@ -2,6 +2,6 @@
 {
 	public interface IInterceptor
 	{
-		object Execute(object instance, IContext context);
+		object Execute(object instance, Context context);
 	}
 }

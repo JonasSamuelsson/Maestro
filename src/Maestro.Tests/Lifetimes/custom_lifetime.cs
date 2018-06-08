@@ -22,7 +22,7 @@ namespace Maestro.Tests.Lifetimes
 		{
 			public bool Executed { get; private set; }
 
-			public object Execute(IContext context, Func<IContext, object> factory)
+			public object Execute(Maestro.Context context, Func<Maestro.Context, object> factory)
 			{
 				Executed = true;
 				return factory(context);

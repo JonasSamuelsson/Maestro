@@ -9,7 +9,7 @@ namespace Maestro.TypeFactoryResolvers
 {
 	internal class EmptyEnumerableFactoryProviderResolver : IFactoryProviderResolver
 	{
-		public bool TryGet(Type type, string name, IContext context, out IFactoryProvider factoryProvider)
+		public bool TryGet(Type type, string name, Context context, out IFactoryProvider factoryProvider)
 		{
 			factoryProvider = null;
 
@@ -40,7 +40,7 @@ namespace Maestro.TypeFactoryResolvers
 
 		private class Factory<T> : IFactory
 		{
-			public object GetInstance(IContext context)
+			public object GetInstance(Context context)
 			{
 				return Enumerable.Empty<T>();
 			}

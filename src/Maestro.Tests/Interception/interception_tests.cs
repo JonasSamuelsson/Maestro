@@ -35,7 +35,7 @@ namespace Maestro.Tests.Interception
 
 		class InstanceInterceptor : Interceptor<Instance>
 		{
-			public override Instance Execute(Instance instance, IContext context)
+			public override Instance Execute(Instance instance, Maestro.Context context)
 			{
 				return new Instance(instance);
 			}
@@ -97,7 +97,7 @@ namespace Maestro.Tests.Interception
 
 		class StringWrapperInterceptor : Interceptor<Wrapper<string>>
 		{
-			public override Wrapper<string> Execute(Wrapper<string> instance, IContext context)
+			public override Wrapper<string> Execute(Wrapper<string> instance, Maestro.Context context)
 			{
 				instance.Value += 3;
 				return instance;

@@ -11,8 +11,8 @@ namespace Maestro.Interceptors
 		private readonly string _propertyName;
 		private readonly PropertyNotFoundAction _propertyNotFoundAction;
 		private readonly string _serviceName;
-		private readonly Func<IContext, Type, object> _factory;
-		private Action<object, IContext> _worker;
+		private readonly Func<Context, Type, object> _factory;
+		private Action<object, Context> _worker;
 
 		public SetPropertyInterceptor(string propertyName, PropertyNotFoundAction propertyNotFoundAction, string serviceName)
 		{
@@ -23,7 +23,7 @@ namespace Maestro.Interceptors
 			_worker = InitializeWorker;
 		}
 
-		public SetPropertyInterceptor(string propertyName, PropertyNotFoundAction propertyNotFoundAction, Func<IContext, Type, object> factory)
+		public SetPropertyInterceptor(string propertyName, PropertyNotFoundAction propertyNotFoundAction, Func<Context, Type, object> factory)
 		{
 			_propertyName = propertyName;
 			_propertyNotFoundAction = propertyNotFoundAction;
@@ -31,13 +31,13 @@ namespace Maestro.Interceptors
 			_worker = InitializeWorker;
 		}
 
-		public override object Execute(object instance, IContext context)
+		public override object Execute(object instance, Context context)
 		{
 			_worker.Invoke(instance, context);
 			return instance;
 		}
 
-		private void InitializeWorker(object instance, IContext context)
+		private void InitializeWorker(object instance, Context context)
 		{
 			var type = instance.GetType();
 			var property = PropertyProvider.GetProperty(type, _propertyName);

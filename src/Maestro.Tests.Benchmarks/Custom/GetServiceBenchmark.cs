@@ -41,7 +41,7 @@ namespace Maestro.Tests.Benchmarks.Custom
 
 		private class MyTypeProvider : ITypeProvider
 		{
-			public Type GetInstanceTypeOrNull(Type serviceType, IContext context)
+			public Type GetInstanceTypeOrNull(Type serviceType, Context context)
 			{
 				return serviceType == typeof(object) ? typeof(EventArgs) : null;
 			}
