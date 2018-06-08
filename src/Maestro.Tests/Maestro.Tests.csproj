@@ -14,9 +14,7 @@
    </ItemGroup>
 
    <ItemGroup>
-      <PackageReference Include="Castle.Core" Version="4.1.0" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
       <PackageReference Include="Shouldly" Version="3.0.0" />
       <PackageReference Include="xunit" Version="2.3.1" />
       <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
@@ -31,8 +29,6 @@
    <ItemGroup>
       <!-- ProjectReferences BEGIN -->
       <ProjectReference Include="..\Maestro\Maestro.csproj" />
-      <ProjectReference Include="..\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj" />
-      <ProjectReference Include="..\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj" />
       <!-- ProjectReferences END -->
    </ItemGroup>
 
