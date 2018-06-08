@@ -6,9 +6,9 @@ namespace Maestro.FactoryProviders
 {
 	class LambdaFactoryProvider : IFactoryProvider
 	{
-		private readonly Func<IContext, object> _factory;
+		private readonly Func<Context, object> _factory;
 
-		public LambdaFactoryProvider(Func<IContext, object> factory)
+		public LambdaFactoryProvider(Func<Context, object> factory)
 		{
 			_factory = factory;
 		}

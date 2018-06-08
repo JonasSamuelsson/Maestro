@@ -11,7 +11,7 @@ namespace Maestro.Lifetimes
 
 		public static ILifetime Instance { get; }
 
-		public object Execute(IContext context, Func<IContext, object> factory)
+		public object Execute(Context context, Func<Context, object> factory)
 		{
 			return factory(context);
 		}

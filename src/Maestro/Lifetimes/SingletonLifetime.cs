@@ -5,7 +5,7 @@ namespace Maestro.Lifetimes
 {
 	internal class SingletonLifetime : ILifetime
 	{
-		public object Execute(IContext context, Func<IContext, object> factory)
+		public object Execute(Context context, Func<Context, object> factory)
 		{
 			var ctx = (Context)context;
 			return ctx.Kernel.Root.InstanceCache.GetOrAdd(this, _ => new Lazy<object>(() => factory(context))).Value;

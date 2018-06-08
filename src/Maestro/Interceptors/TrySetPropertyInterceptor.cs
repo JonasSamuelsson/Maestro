@@ -11,7 +11,7 @@ namespace Maestro.Interceptors
 		private readonly string _propertyName;
 		private readonly string _serviceName;
 		private readonly PropertyNotFoundAction _propertyNotFoundAction;
-		private Action<object, IContext> _worker;
+		private Action<object, Context> _worker;
 
 		public TrySetPropertyInterceptor(string propertyName, PropertyNotFoundAction propertyNotFoundAction, string serviceName)
 		{
@@ -21,13 +21,13 @@ namespace Maestro.Interceptors
 			_worker = InitializeWorker;
 		}
 
-		public override object Execute(object instance, IContext context)
+		public override object Execute(object instance, Context context)
 		{
 			_worker.Invoke(instance, context);
 			return instance;
 		}
 
-		private void InitializeWorker(object instance, IContext context)
+		private void InitializeWorker(object instance, Context context)
 		{
 			var type = instance.GetType();
 			var property = PropertyProvider.GetProperty(type, _propertyName);

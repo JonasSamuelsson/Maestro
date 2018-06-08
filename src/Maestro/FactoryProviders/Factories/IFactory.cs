@@ -2,6 +2,6 @@
 {
 	interface IFactory
 	{
-		object GetInstance(IContext context);
+		object GetInstance(Context context);
 	}
 }

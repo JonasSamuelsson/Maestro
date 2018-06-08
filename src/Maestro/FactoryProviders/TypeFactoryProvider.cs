@@ -29,7 +29,7 @@ namespace Maestro.FactoryProviders
 			return new Factory(activator);
 		}
 
-		private Func<IContext, object> GetActivator(ConstructorInfo constructor, string name, IContext context)
+		private Func<Context, object> GetActivator(ConstructorInfo constructor, string name, Context context)
 		{
 			var ctors = from ctor in constructor != null ? new[] { constructor } : ConstructorProvider.GetConstructors(Type)
 							let parameters = ctor.GetParameters()
@@ -37,7 +37,7 @@ namespace Maestro.FactoryProviders
 
 			foreach (var x in ctors)
 			{
-				var factories = new List<Func<IContext, object>>();
+				var factories = new List<Func<Context, object>>();
 
 				foreach (var parameter in x.parameters)
 				{
@@ -98,7 +98,7 @@ namespace Maestro.FactoryProviders
 		{
 			public string Name { get; set; }
 			public Type Type { get; set; }
-			public Func<IContext, Type, object> Factory { get; set; }
+			public Func<Context, Type, object> Factory { get; set; }
 		}
 	}
 }

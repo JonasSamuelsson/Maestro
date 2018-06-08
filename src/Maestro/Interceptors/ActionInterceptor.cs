@@ -4,14 +4,14 @@ namespace Maestro.Interceptors
 {
 	 class ActionInterceptor<T> : Interceptor<T>
 	{
-		private readonly Action<T, IContext> _action;
+		private readonly Action<T, Context> _action;
 
-		public ActionInterceptor(Action<T, IContext> action)
+		public ActionInterceptor(Action<T, Context> action)
 		{
 			_action = action;
 		}
 
-		public override T Execute(T instance, IContext context)
+		public override T Execute(T instance, Context context)
 		{
 			_action(instance, context);
 			return instance;

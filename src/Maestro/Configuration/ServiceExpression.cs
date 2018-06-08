@@ -30,7 +30,7 @@ namespace Maestro.Configuration
 			return Factory(_ => factory());
 		}
 
-		public IFactoryInstanceExpression<object> Factory(Func<IContext, object> factory)
+		public IFactoryInstanceExpression<object> Factory(Func<Context, object> factory)
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(factory));
 			return Kernel.Add(plugin, ThrowIfDuplicate)
@@ -73,7 +73,7 @@ namespace Maestro.Configuration
 			return Factory(_ => factory());
 		}
 
-		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<IContext, TInstance> factory) where TInstance : TService
+		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<Context, TInstance> factory) where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(ctx => factory(ctx)));
 			return Kernel.Add(plugin, ThrowIfDuplicate)

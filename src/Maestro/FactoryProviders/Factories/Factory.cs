@@ -4,14 +4,14 @@ namespace Maestro.FactoryProviders.Factories
 {
 	class Factory : IFactory
 	{
-		private readonly Func<IContext, object> _activator;
+		private readonly Func<Context, object> _activator;
 
-		public Factory(Func<IContext, object> activator)
+		public Factory(Func<Context, object> activator)
 		{
 			_activator = activator;
 		}
 
-		public object GetInstance(IContext context)
+		public object GetInstance(Context context)
 		{
 			return _activator(context);
 		}

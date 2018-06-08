@@ -17,7 +17,7 @@ namespace Maestro.Tests
 
 		class TypeProvider : ITypeProvider
 		{
-			public Type GetInstanceTypeOrNull(Type serviceType, IContext context)
+			public Type GetInstanceTypeOrNull(Type serviceType, Maestro.Context context)
 			{
 				return serviceType == typeof(IFoo) ? typeof(Foo) : null;
 			}

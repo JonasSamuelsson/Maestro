@@ -4,6 +4,6 @@ namespace Maestro.Lifetimes
 {
 	public interface ILifetime
 	{
-		object Execute(IContext context, Func<IContext, object> factory);
+		object Execute(Context context, Func<Context, object> factory);
 	}
 }

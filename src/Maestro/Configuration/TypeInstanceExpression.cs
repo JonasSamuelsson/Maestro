@@ -23,12 +23,12 @@ namespace Maestro.Configuration
 			return CtorArg(argName, (ctx, type) => factory());
 		}
 
-		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<IContext, object> factory)
+		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<Context, object> factory)
 		{
 			return CtorArg(argName, (ctx, type) => factory(ctx));
 		}
 
-		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<IContext, Type, object> factory)
+		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<Context, Type, object> factory)
 		{
 			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
 			var ctorArg = new TypeFactoryProvider.CtorArg { Name = argName, Factory = factory };
@@ -46,12 +46,12 @@ namespace Maestro.Configuration
 			return CtorArg(argType, (ctx, type) => factory());
 		}
 
-		public ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<IContext, object> factory)
+		public ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<Context, object> factory)
 		{
 			return CtorArg(argType, (ctx, type) => factory(ctx));
 		}
 
-		private ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<IContext, Type, object> factory)
+		private ITypeInstanceExpression<TInstance> CtorArg(Type argType, Func<Context, Type, object> factory)
 		{
 			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
 			var ctorArg = new TypeFactoryProvider.CtorArg { Type = argType, Factory = factory };
@@ -69,7 +69,7 @@ namespace Maestro.Configuration
 			return CtorArg(typeof(TValue), (ctx, type) => factory());
 		}
 
-		public ITypeInstanceExpression<TInstance> CtorArg<TValue>(Func<IContext, TValue> factory)
+		public ITypeInstanceExpression<TInstance> CtorArg<TValue>(Func<Context, TValue> factory)
 		{
 			return CtorArg(typeof(TValue), (ctx, type) => factory(ctx));
 		}
