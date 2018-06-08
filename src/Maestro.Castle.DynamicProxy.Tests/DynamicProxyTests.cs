@@ -1,12 +1,12 @@
-﻿using Castle.DynamicProxy;
+﻿using System.Collections.Generic;
+using Castle.DynamicProxy;
 using Maestro.Configuration;
 using Shouldly;
-using System.Collections.Generic;
 using Xunit;
 
-namespace Maestro.Tests.Castle.DynamicProxy
+namespace Maestro.Castle.DynamicProxy.Tests
 {
-	public class dynamic_proxy_tests
+	public class DynamicProxyTests
 	{
 		[Fact]
 		public void should_wrap_factory_instance_with_dynamic_proxy()
