@@ -8,9 +8,7 @@ namespace Maestro
 {
 	public class Container : IContainer
 	{
-		private readonly Guid _id;
 		private readonly Kernel _kernel;
-		private event Action<Guid> DisposedEvent;
 
 		/// <summary>
 		/// Instantiates a new empty container.
@@ -38,7 +36,6 @@ namespace Maestro
 
 		private Container(Kernel kernel)
 		{
-			_id = Guid.NewGuid();
 			_kernel = kernel;
 		}
 
@@ -134,15 +131,8 @@ namespace Maestro
 				return context.GetServices<T>();
 		}
 
-		public event Action<Guid> Disposed
-		{
-			add { DisposedEvent += value; }
-			remove { DisposedEvent -= value; }
-		}
-
 		public void Dispose()
 		{
-			DisposedEvent?.Invoke(_id);
 			_kernel.Dispose();
 		}
 	}
