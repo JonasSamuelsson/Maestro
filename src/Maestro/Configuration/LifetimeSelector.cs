@@ -19,9 +19,9 @@ namespace Maestro.Configuration
 			return Use(TransientLifetime.Instance);
 		}
 
-		public TParent ContainerScoped()
+		public TParent Scoped()
 		{
-			return Use<ContainerScopedLifetime>();
+			return Use<ScopedLifetime>();
 		}
 
 		public TParent Singleton()
