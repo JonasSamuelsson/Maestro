@@ -2,8 +2,9 @@
 
 namespace Maestro.Lifetimes
 {
-	public interface ILifetime
+	internal abstract class Lifetime
 	{
-		object Execute(Context context, Func<Context, object> factory);
+		public abstract object Execute(Context context, Func<Context, object> factory);
+		public abstract Lifetime MakeGeneric(Type[] genericArguments);
 	}
 }
