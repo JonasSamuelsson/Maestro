@@ -7,7 +7,7 @@ namespace Maestro.Tests.Interception
 	public class interception_tests
 	{
 		[Fact]
-		public void should_execute_provided_interceptor()
+		public void should_support_custom_interceptors()
 		{
 			var i = new Instance();
 			var container = new Container(x =>
@@ -33,11 +33,11 @@ namespace Maestro.Tests.Interception
 			public Instance InnerInstance { get; }
 		}
 
-		class InstanceInterceptor : Interceptor<Instance>
+		class InstanceInterceptor : IInterceptor
 		{
-			public override Instance Execute(Instance instance, Maestro.Context context)
+			public object Execute(object instance, Maestro.Context context)
 			{
-				return new Instance(instance);
+				return new Instance((Instance)instance);
 			}
 		}
 
@@ -74,13 +74,11 @@ namespace Maestro.Tests.Interception
 			var container = new Container(x => x.Use<Wrapper<string>>().Type<Wrapper<string>>()
 				.Intercept(y => y.Value += 1)
 				.Intercept(y => y.Value += 2)
-				.Intercept(new StringWrapperInterceptor())
-				.Intercept(y => y.Value += 4)
-				.Intercept(y => y.Value += 5));
+				.Intercept(y => y.Value += 3));
 
 			var instance = container.GetService<Wrapper<string>>();
 
-			instance.Value.ShouldBe("12345");
+			instance.Value.ShouldBe("123");
 		}
 
 		class Parent { }
@@ -93,15 +91,6 @@ namespace Maestro.Tests.Interception
 		class Wrapper<T>
 		{
 			public T Value { get; set; }
-		}
-
-		class StringWrapperInterceptor : Interceptor<Wrapper<string>>
-		{
-			public override Wrapper<string> Execute(Wrapper<string> instance, Maestro.Context context)
-			{
-				instance.Value += 3;
-				return instance;
-			}
 		}
 
 		[Fact]

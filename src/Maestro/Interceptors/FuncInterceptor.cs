@@ -16,9 +16,14 @@ namespace Maestro.Interceptors
 			return _func(instance, context);
 		}
 
+		internal override Interceptor MakeGeneric(Type[] genericArguments)
+		{
+			return this;
+		}
+
 		public override string ToString()
 		{
-			return "func interceptor";
+			return "custom func interceptor";
 		}
 	}
 }
