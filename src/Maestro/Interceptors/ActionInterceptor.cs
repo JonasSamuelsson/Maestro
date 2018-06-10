@@ -2,7 +2,7 @@
 
 namespace Maestro.Interceptors
 {
-	 class ActionInterceptor<T> : Interceptor<T>
+	internal class ActionInterceptor<T> : Interceptor<T>
 	{
 		private readonly Action<T, Context> _action;
 
@@ -17,9 +17,14 @@ namespace Maestro.Interceptors
 			return instance;
 		}
 
+		internal override Interceptor MakeGeneric(Type[] genericArguments)
+		{
+			return this;
+		}
+
 		public override string ToString()
 		{
-			return "action interceptor";
+			return "custom action interceptor";
 		}
 	}
 }

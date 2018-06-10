@@ -1,6 +1,6 @@
-﻿using Maestro.Interceptors;
-using System;
+﻿using System;
 using System.Linq.Expressions;
+using Maestro.Interceptors;
 
 namespace Maestro.Configuration
 {
@@ -76,7 +76,7 @@ namespace Maestro.Configuration
 		TParent SetProperty(string property, Func<Context, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 
 		TParent SetProperty(string property, Func<Context, Type, object> factory, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
-		
+
 		/// <summary>
 		/// Set property <paramref name="property"/>.
 		/// </summary>
@@ -116,5 +116,5 @@ namespace Maestro.Configuration
 		TParent TrySetProperty(string property, PropertyNotFoundAction propertyNotFoundAction = PropertyNotFoundAction.Throw);
 
 		TParent TrySetProperty<TValue>(Expression<Func<TInstance, TValue>> property);
-}
+	}
 }

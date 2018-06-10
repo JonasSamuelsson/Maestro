@@ -4,7 +4,7 @@ using Maestro.Configuration;
 
 namespace Maestro.Interceptors
 {
-	internal class TrySetPropertyInterceptor : Interceptor<object>
+	internal class TrySetPropertyInterceptor : Interceptor
 	{
 		private static readonly PropertyProvider PropertyProvider = new PropertyProvider();
 
@@ -21,7 +21,7 @@ namespace Maestro.Interceptors
 			_worker = InitializeWorker;
 		}
 
-		public override object Execute(object instance, Context context)
+		internal override object Execute(object instance, Context context)
 		{
 			_worker.Invoke(instance, context);
 			return instance;
@@ -45,15 +45,14 @@ namespace Maestro.Interceptors
 
 			_worker = (o, ctx) =>
 			{
-				object service;
-				if (!ctx.TryGetService(property.PropertyType, _serviceName, out service)) return;
+				if (!ctx.TryGetService(property.PropertyType, _serviceName, out var service)) return;
 				setter(o, service);
 			};
 
 			_worker.Invoke(instance, context);
 		}
 
-		public IInterceptor MakeGeneric(Type[] genericArguments)
+		internal override Interceptor MakeGeneric(Type[] genericArguments)
 		{
 			return new TrySetPropertyInterceptor(_propertyName, _propertyNotFoundAction, _serviceName);
 		}

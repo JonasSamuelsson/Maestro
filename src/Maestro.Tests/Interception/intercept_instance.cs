@@ -42,7 +42,7 @@ namespace Maestro.Tests.Interception
 			var @object = new object();
 
 			var container = new Container(x => x.Use<object>().Factory(() => @object)
-				.Intercept(new FuncInterceptor<object>((instance, ctx) => new Wrapper(instance)))
+				.Intercept((instance, ctx) => new Wrapper(instance))
 				.As<Wrapper>()
 				.Intercept(y => y.Text = "success"));
 
@@ -56,7 +56,7 @@ namespace Maestro.Tests.Interception
 		public void type_instance_should_support_instance_replacement_with_wrapper_configuration()
 		{
 			var container = new Container(x => x.Use<object>().Self()
-				.Intercept(new FuncInterceptor<object>((instance, ctx) => new Wrapper(instance)))
+				.Intercept((instance, ctx) => new Wrapper(instance))
 				.As<Wrapper>()
 				.Intercept(y => y.Text = "success"));
 

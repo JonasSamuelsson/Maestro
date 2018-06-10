@@ -42,6 +42,12 @@ namespace Maestro.Configuration
 
 		public TParent Intercept(IInterceptor interceptor)
 		{
+			ServiceDescriptor.Interceptors.Add(new CustomInterceptor(interceptor));
+			return Parent;
+		}
+
+		private TParent Intercept(Interceptor interceptor)
+		{
 			ServiceDescriptor.Interceptors.Add(interceptor);
 			return Parent;
 		}
