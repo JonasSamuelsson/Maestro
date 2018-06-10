@@ -42,7 +42,6 @@ namespace Maestro.Internals
 
 		internal Config Config { get; } = new Config();
 		public IList<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
-		internal IList<ITypeProvider> TypeProviders { get; } = new List<ITypeProvider>();
 		internal ConcurrentDictionary<object, Lazy<object>> InstanceCache { get; } = new ConcurrentDictionary<object, Lazy<object>>();
 		internal Kernel Root { get; }
 
@@ -98,12 +97,6 @@ namespace Maestro.Internals
 				var typeIsIEnumerableOfT = Reflector.IsGenericEnumerable(type, out var elementType);
 
 				if (TryGetPipelineFromServiceDesriptors(typeIsIEnumerableOfT, type, elementType, name, context, ref pipeline))
-				{
-					_pipelineCache.Add(serviceKey, pipeline);
-					return true;
-				}
-
-				if (TryGetPipelineFromTypeProviders(type, name, context, ref pipeline))
 				{
 					_pipelineCache.Add(serviceKey, pipeline);
 					return true;
@@ -180,30 +173,6 @@ namespace Maestro.Internals
 			{
 				pipeline = enumerablePipeline;
 				return true;
-			}
-
-			return false;
-		}
-
-		private bool TryGetPipelineFromTypeProviders(Type type, string name, Context context, ref IPipeline pipeline)
-		{
-			// introduce ServiceTypeFactoryProvider
-			for (var kernel = this; kernel != null; kernel = kernel._parent)
-			{
-				for (var i = 0; i < kernel.TypeProviders.Count; i++)
-				{
-					var typeProvider = kernel.TypeProviders[i];
-					var instanceType = typeProvider.GetInstanceTypeOrNull(type, context);
-					if (instanceType == null) continue;
-					var serviceDescriptor = new ServiceDescriptor
-					{
-						Type = type,
-						Name = name,
-						FactoryProvider = new TypeFactoryProvider(instanceType, name)
-					};
-					pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
-					return true;
-				}
 			}
 
 			return false;
