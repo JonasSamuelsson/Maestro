@@ -1,5 +1,4 @@
-﻿using Maestro.Internals;
-using System;
+﻿using System;
 
 namespace Maestro.Lifetimes
 {
@@ -7,7 +6,7 @@ namespace Maestro.Lifetimes
 	{
 		public object Execute(Context context, Func<Context, object> factory)
 		{
-			var ctx = (Context)context;
+			var ctx = context;
 			return ctx.Kernel.Root.InstanceCache.GetOrAdd(this, _ => new Lazy<object>(() => factory(context))).Value;
 		}
 
