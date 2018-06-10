@@ -16,7 +16,7 @@ namespace Maestro.Conventions
 			_action = action;
 		}
 
-		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
+		public void Process(IEnumerable<Type> types, ContainerExpression containerExpression)
 		{
 			Type genericType = null;
 			foreach (var type in types.Where(x => x.IsConcreteClassOf(_baseType, out genericType)))

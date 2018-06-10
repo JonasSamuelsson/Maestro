@@ -28,7 +28,7 @@ namespace Maestro.Tests.Interception
 
 			var container = new Container(x => x.Use<object>().Self()
 				.Intercept(_ => counter++)
-				.Lifetime.Singleton());
+				.Singleton());
 
 			container.GetService<object>();
 			counter.ShouldBe(1);

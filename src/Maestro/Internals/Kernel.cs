@@ -1,5 +1,4 @@
 ﻿using Maestro.Configuration;
-using Maestro.FactoryProviders;
 using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
 using System;
@@ -40,8 +39,8 @@ namespace Maestro.Internals
 			Root = _parent.Root;
 		}
 
-		internal Config Config { get; } = new Config();
-		public IList<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
+		internal ContainerSettings Settings { get; } = new ContainerSettings();
+		internal List<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
 		internal ConcurrentDictionary<object, Lazy<object>> InstanceCache { get; } = new ConcurrentDictionary<object, Lazy<object>>();
 		internal Kernel Root { get; }
 
@@ -156,7 +155,7 @@ namespace Maestro.Internals
 
 				if (kernel._serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
 				{
-					if (kernel.Config.GetServicesOrder == GetServicesOrder.Ordered)
+					if (kernel.Settings.GetServicesOrder == GetServicesOrder.Ordered)
 					{
 						serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder).ToList();
 					}

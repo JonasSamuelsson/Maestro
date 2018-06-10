@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Maestro.Configuration
 {
-	internal class ContainerExpression : IDisposable, IContainerExpression
+	public class ContainerExpression
 	{
 		private bool _disposed = false;
 		private readonly Kernel _kernel;
@@ -14,16 +14,16 @@ namespace Maestro.Configuration
 			_kernel = kernel;
 		}
 
-		public IConfigExpression Config
+		public List<Func<Type, bool>> AutoResolveFilters => _kernel.AutoResolveFilters;
+
+		public SettingsExpression Settings
 		{
 			get
 			{
 				AssertNotDisposed();
-				return new ConfigExpression(_kernel.Config);
+				return new SettingsExpression(_kernel.Settings);
 			}
 		}
-
-		public IList<Func<Type, bool>> AutoResolveFilters => _kernel.AutoResolveFilters;
 
 		public IServiceExpression Use(Type type)
 		{
@@ -81,7 +81,7 @@ namespace Maestro.Configuration
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceExpression<object>(type,ServiceNames.Anonymous, _kernel, true);
+			return new ServiceExpression<object>(type, ServiceNames.Anonymous, _kernel, true);
 		}
 
 		public IServiceExpression<TService> Add<TService>()
@@ -90,7 +90,7 @@ namespace Maestro.Configuration
 			return new ServiceExpression<TService>(typeof(TService), ServiceNames.Anonymous, _kernel, true);
 		}
 
-		public void Scan(Action<IScanner> action)
+		public void Scan(Action<Scanner> action)
 		{
 			AssertNotDisposed();
 			var scanner = new Scanner();
@@ -101,10 +101,10 @@ namespace Maestro.Configuration
 		private void AssertNotDisposed()
 		{
 			if (_disposed == false) return;
-			throw new ObjectDisposedException(nameof(ContainerExpression));
+			throw new InvalidOperationException($"{GetType().Name} can't be used outside of config closure.");
 		}
 
-		public void Dispose()
+		internal void Dispose()
 		{
 			_disposed = true;
 		}

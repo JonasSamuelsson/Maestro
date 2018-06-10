@@ -4,11 +4,11 @@ namespace Maestro.Configuration
 {
 	internal class ConventionalServiceExpression<T> : IConventionalServiceExpression<T>
 	{
-		private readonly IContainerExpression _containerExpression;
+		private readonly ContainerExpression _containerExpression;
 		private readonly Type _serviceType;
 		private readonly Type _instanceType;
 
-		public ConventionalServiceExpression(IContainerExpression containerExpression, Type serviceType, Type instanceType)
+		public ConventionalServiceExpression(ContainerExpression containerExpression, Type serviceType, Type instanceType)
 		{
 			_containerExpression = containerExpression;
 			_serviceType = serviceType;

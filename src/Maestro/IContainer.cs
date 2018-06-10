@@ -13,11 +13,11 @@ namespace Maestro
 		/// Adds configuration to the container.
 		/// </summary>
 		/// <param name="action"></param>
-		void Configure(Action<IContainerExpression> action);
+		void Configure(Action<ContainerExpression> action);
 		void Configure(ContainerBuilder builder);
 
 		IContainer GetChildContainer();
-		IContainer GetChildContainer(Action<IContainerExpression> action);
+		IContainer GetChildContainer(Action<ContainerExpression> action);
 		IContainer GetChildContainer(ContainerBuilder builder);
 
 		/// <summary>

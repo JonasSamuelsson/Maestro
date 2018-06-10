@@ -97,7 +97,7 @@ namespace Maestro.Tests.Interception
 		public void interceptors_should_not_be_executed_if_instance_is_cached()
 		{
 			var counter = 0;
-			var container = new Container(x => x.Use<object>().Type<object>().Intercept(_ => counter++).Lifetime.Singleton());
+			var container = new Container(x => x.Use<object>().Type<object>().Intercept(_ => counter++).Singleton());
 
 			container.GetService<object>();
 			counter.ShouldBe(1);

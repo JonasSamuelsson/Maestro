@@ -19,7 +19,7 @@ namespace Maestro
 		/// <summary>
 		/// Instantiates a new container with configuration.
 		/// </summary>
-		public Container(Action<IContainerExpression> action)
+		public Container(Action<ContainerExpression> action)
 			: this()
 		{
 			Configure(action);
@@ -41,10 +41,17 @@ namespace Maestro
 
 		public IDiagnostics Diagnostics => new Diagnostics.Diagnostics(_kernel);
 
-		public void Configure(Action<IContainerExpression> action)
+		public void Configure(Action<ContainerExpression> action)
 		{
-			using (var containerExpression = new ContainerExpression(_kernel))
+			var containerExpression = new ContainerExpression(_kernel);
+			try
+			{
 				action(containerExpression);
+			}
+			finally
+			{
+				containerExpression.Dispose();
+			}
 		}
 
 		public void Configure(ContainerBuilder builder)
@@ -57,7 +64,7 @@ namespace Maestro
 			return GetChildContainer(delegate { });
 		}
 
-		public IContainer GetChildContainer(Action<IContainerExpression> action)
+		public IContainer GetChildContainer(Action<ContainerExpression> action)
 		{
 			var childContainer = new Container(new Kernel(_kernel));
 			childContainer.Configure(action);

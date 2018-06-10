@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Maestro.Interceptors;
+using System;
 using System.Linq.Expressions;
-using Maestro.Interceptors;
 
 namespace Maestro.Configuration
 {
 	public interface IInstanceExpression<TInstance, TParent>
 	{
-		ILifetimeSelector<TParent> Lifetime { get; }
+		TParent Transient();
+		TParent Scoped();
+		TParent Singleton();
 
 		/// <summary>
 		/// Adds an action to execute against the instance.

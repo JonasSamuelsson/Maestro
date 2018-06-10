@@ -14,7 +14,7 @@ namespace Maestro.Conventions
 			_action = action;
 		}
 
-		public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
+		public void Process(IEnumerable<Type> types, ContainerExpression containerExpression)
 		{
 			types = types as IReadOnlyCollection<Type> ?? types.ToList();
 

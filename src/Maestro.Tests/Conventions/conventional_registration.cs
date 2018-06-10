@@ -39,7 +39,7 @@ namespace Maestro.Tests.Conventions
 			var convention = new Convention();
 			var container = new Container();
 
-			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Matching(new IsClassFilter()).Using(convention)));
+			container.Configure(x => x.Scan(_ => _.Types(new[] { typeof(object), typeof(int) }).Where(t => t.IsClass).Using(convention)));
 
 			convention.ProcessedTypes.ShouldBe(new[] { typeof(object) });
 		}
@@ -64,17 +64,9 @@ namespace Maestro.Tests.Conventions
 
 			public IEnumerable<Type> ProcessedTypes { get; private set; }
 
-			public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
+			public void Process(IEnumerable<Type> types, ContainerExpression containerExpression)
 			{
 				ProcessedTypes = types.ToList();
-			}
-		}
-
-		public class IsClassFilter : IFilter
-		{
-			public bool IsMatch(Type type)
-			{
-				return type.IsClass;
 			}
 		}
 	}

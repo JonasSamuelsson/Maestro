@@ -1,5 +1,6 @@
 using Maestro.Interceptors;
 using Maestro.Internals;
+using Maestro.Lifetimes;
 using System;
 using System.Linq.Expressions;
 
@@ -15,9 +16,25 @@ namespace Maestro.Configuration
 		internal abstract TParent Parent { get; }
 		internal ServiceDescriptor ServiceDescriptor { get; }
 
-		public ILifetimeSelector<TParent> Lifetime
+		public TParent Transient()
 		{
-			get { return new LifetimeSelector<TParent>(Parent, factory => ServiceDescriptor.Lifetime = factory()); }
+			return Lifetime(TransientLifetime.Instance);
+		}
+
+		public TParent Scoped()
+		{
+			return Lifetime(new ScopedLifetime());
+		}
+
+		public TParent Singleton()
+		{
+			return Lifetime(new SingletonLifetime());
+		}
+
+		private TParent Lifetime(Lifetime lifetime)
+		{
+			ServiceDescriptor.Lifetime = lifetime;
+			return Parent;
 		}
 
 		public TParent Intercept(Action<TInstance> interceptor)

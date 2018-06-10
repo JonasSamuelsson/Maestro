@@ -9,8 +9,8 @@ namespace Maestro.Tests.Benchmarks.BenchmarkDotNet
 		private static readonly IContainer Container = new Container(x =>
 		{
 			x.Use<Types.Transient>().Self();
-			x.Use<Types.Scoped>().Self().Lifetime.Scoped();
-			x.Use<Types.Singleton>().Self().Lifetime.Singleton();
+			x.Use<Types.Scoped>().Self().Scoped();
+			x.Use<Types.Singleton>().Self().Singleton();
 			x.Use(typeof(Types.Generic<>)).Self();
 			x.Use<Types.WithProperty>().Self().SetProperty(y => y.Dependency);
 		});

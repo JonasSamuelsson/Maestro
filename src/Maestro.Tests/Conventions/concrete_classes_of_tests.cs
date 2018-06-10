@@ -32,7 +32,7 @@ namespace Maestro.Tests.Conventions
 		public void should_support_instance_configuration()
 		{
 			var types = new[] { typeof(Class) };
-			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesOf(typeof(IInterface), y => y.Add().Lifetime.Singleton())));
+			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesOf(typeof(IInterface), y => y.Add().Singleton())));
 
 			var instances1 = container.GetServices<Class>().ToList();
 			var instances2 = container.GetServices<Class>().ToList();

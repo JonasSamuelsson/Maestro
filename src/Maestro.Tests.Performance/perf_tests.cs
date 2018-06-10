@@ -97,7 +97,7 @@ namespace Maestro.Tests.Core.Performance
 		[Fact]
 		public void Singleton()
 		{
-			var container = new Container(x => x.Use<object>().Type<object>().Lifetime.Singleton());
+			var container = new Container(x => x.Use<object>().Type<object>().Singleton());
 			Benchmark(() => container.GetService<object>(), "singleton", 1);
 		}
 
