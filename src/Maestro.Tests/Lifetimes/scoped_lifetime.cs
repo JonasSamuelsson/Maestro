@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Shouldly;
+using System;
 using System.Collections.Generic;
-using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Lifetimes
 {
-	public class container_scoped_lifetime
+	public class scoped_lifetime
 	{
 		[Fact]
 		public void container_scoped_instances_should_return_same_instance_per_container()
 		{
-			var container = new Container(x => x.Use<object>().Type<object>().Lifetime.ContainerScoped());
+			var container = new Container(x => x.Use<object>().Type<object>().Lifetime.Scoped());
 			var childContainer1 = container.GetChildContainer();
 			var childContainer2 = container.GetChildContainer();
 
@@ -31,7 +31,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void should_handle_open_generics()
 		{
-			var container = new Container(x => x.Use(typeof(List<>)).Self().Lifetime.ContainerScoped());
+			var container = new Container(x => x.Use(typeof(List<>)).Self().Lifetime.Scoped());
 
 			var ints1 = container.GetService<List<int>>();
 			var ints2 = container.GetService<List<int>>();
@@ -45,7 +45,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void should_dispose_instances_with_container()
 		{
-			var rootContainer = new Container(x => x.Use<Disposable>().Self().Lifetime.ContainerScoped());
+			var rootContainer = new Container(x => x.Use<Disposable>().Self().Lifetime.Scoped());
 			var childContainer = rootContainer.GetChildContainer();
 
 			var rootObject = rootContainer.GetService<Disposable>();

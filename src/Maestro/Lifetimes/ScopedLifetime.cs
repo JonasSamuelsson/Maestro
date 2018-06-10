@@ -2,7 +2,7 @@
 
 namespace Maestro.Lifetimes
 {
-	internal class ContainerScopedLifetime : ILifetime
+	internal class ScopedLifetime : ILifetime
 	{
 		public object Execute(Context context, Func<Context, object> factory)
 		{
@@ -12,7 +12,7 @@ namespace Maestro.Lifetimes
 
 		public override string ToString()
 		{
-			return "Container scoped";
+			return "Scoped";
 		}
 	}
 }
