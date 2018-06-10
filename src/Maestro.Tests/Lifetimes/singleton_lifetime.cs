@@ -9,7 +9,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void singleton_instances_should_always_return_the_same_instance()
 		{
-			var container = new Container(x => x.Use<object>().Type<object>().Lifetime.Singleton());
+			var container = new Container(x => x.Use<object>().Type<object>().Singleton());
 
 			var o1 = container.GetService<object>();
 			var o2 = container.GetService<object>();
@@ -22,7 +22,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void should_dispose_instances_with_root_container()
 		{
-			var rootContainer = new Container(x => x.Use<Disposable>().Self().Lifetime.Singleton());
+			var rootContainer = new Container(x => x.Use<Disposable>().Self().Singleton());
 			var childContainer = rootContainer.GetChildContainer();
 
 			var o1 = rootContainer.GetService<Disposable>();

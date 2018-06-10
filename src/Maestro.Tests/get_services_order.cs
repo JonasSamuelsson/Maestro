@@ -16,7 +16,7 @@ namespace Maestro.Tests
 				x.Add<ITestType<int>>().Instance(instance);
 				x.Add(typeof(ITestType<>)).Type(typeof(TestType<>));
 				x.Add<ITestType<int>>().Type<TestTypeOfInt>();
-				x.Config.GetServicesOrder = GetServicesOrder.Ordered;
+				x.Settings.GetServicesOrder = GetServicesOrder.Ordered;
 			});
 
 			var instances = container.GetServices<ITestType<int>>().ToList();

@@ -3,13 +3,13 @@ using System;
 
 namespace Maestro.Configuration
 {
-	internal class DefaultLifetimeSelector : IDefaultLifetimeSelector
+	public class DefaultLifetimeExpression
 	{
-		private readonly Action<Func<Lifetime>> _action;
+		private readonly ContainerSettings _containerSettings;
 
-		internal DefaultLifetimeSelector(Action<Func<Lifetime>> action)
+		internal DefaultLifetimeExpression(ContainerSettings containerSettings)
 		{
-			_action = action;
+			_containerSettings = containerSettings;
 		}
 
 		public void Transient()
@@ -29,7 +29,7 @@ namespace Maestro.Configuration
 
 		private void Use(Func<Lifetime> factory)
 		{
-			_action(factory);
+			_containerSettings.LifetimeFactory = factory;
 		}
 	}
 }

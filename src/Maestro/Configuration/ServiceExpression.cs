@@ -58,7 +58,7 @@ namespace Maestro.Configuration
 				Name = name,
 				Type = ServiceType,
 				FactoryProvider = factoryProvider,
-				Lifetime = Kernel.Config.LifetimeFactory()
+				Lifetime = Kernel.Settings.LifetimeFactory()
 			};
 		}
 

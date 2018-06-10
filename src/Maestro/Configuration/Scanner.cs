@@ -6,10 +6,10 @@ using System.Reflection;
 
 namespace Maestro.Configuration
 {
-	internal class Scanner : IScanner
+	public class Scanner
 	{
 		private readonly List<IConvention> _conventions = new List<IConvention>();
-		private readonly List<IFilter> _filters = new List<IFilter>();
+		private readonly List<Func<Type, bool>> _filters = new List<Func<Type, bool>>();
 		private readonly List<Type> _types = new List<Type>();
 
 		internal Scanner() { }
@@ -19,7 +19,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="assemblies"></param>
 		/// <returns></returns>
-		public IScanner Assemblies(IEnumerable<Assembly> assemblies)
+		public Scanner Assemblies(IEnumerable<Assembly> assemblies)
 		{
 			return Types(assemblies.SelectMany(x => x.GetTypes()));
 		}
@@ -29,7 +29,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="assembly"></param>
 		/// <returns></returns>
-		public IScanner Assembly(Assembly assembly)
+		public Scanner Assembly(Assembly assembly)
 		{
 			return Assemblies(new[] { assembly });
 		}
@@ -39,7 +39,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public IScanner AssemblyContaining<T>()
+		public Scanner AssemblyContaining<T>()
 		{
 			return AssemblyContaining(typeof(T));
 		}
@@ -49,7 +49,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public IScanner AssemblyContaining(Type type)
+		public Scanner AssemblyContaining(Type type)
 		{
 			return Assembly(type.Assembly);
 		}
@@ -59,7 +59,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="o"></param>
 		/// <returns></returns>
-		public IScanner AssemblyContainingTypeOf(object o)
+		public Scanner AssemblyContainingTypeOf(object o)
 		{
 			return AssemblyContaining(o.GetType());
 		}
@@ -69,7 +69,7 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="types"></param>
 		/// <returns></returns>
-		public IScanner Types(IEnumerable<Type> types)
+		public Scanner Types(IEnumerable<Type> types)
 		{
 			_types.AddRange(types);
 			return this;
@@ -80,19 +80,9 @@ namespace Maestro.Configuration
 		/// </summary>
 		/// <param name="predicate"></param>
 		/// <returns></returns>
-		public IScanner Where(Func<Type, bool> predicate)
+		public Scanner Where(Func<Type, bool> predicate)
 		{
-			return Matching(new LambdaFilter(predicate));
-		}
-
-		/// <summary>
-		/// Filter types to those matching <paramref name="filter"/>.
-		/// </summary>
-		/// <param name="filter"></param>
-		/// <returns></returns>
-		public IScanner Matching(IFilter filter)
-		{
-			_filters.Add(filter);
+			_filters.Add(predicate);
 			return this;
 		}
 
@@ -100,40 +90,43 @@ namespace Maestro.Configuration
 		/// Uses <paramref name="convention"/> to configure the container.
 		/// </summary>
 		/// <param name="convention"></param>
-		public IScanner Using(IConvention convention)
+		public Scanner Using(IConvention convention)
 		{
 			_conventions.Add(convention);
 			return this;
 		}
 
-		public IScanner Using<TConvention>() where TConvention : IConvention, new()
+		/// <summary>
+		/// Instantiates and uses <typeparamref name="TConvention"/> to configure the container.
+		/// </summary>
+		public Scanner Using<TConvention>() where TConvention : IConvention, new()
 		{
 			return Using(new TConvention());
 		}
 
-		public IScanner RegisterConcreteClassesOf<T>(Action<IConventionalServiceExpression<T>> action = null)
+		public Scanner RegisterConcreteClassesOf<T>(Action<IConventionalServiceExpression<T>> action = null)
 		{
 			return Using(new ConcreteClassesOfConvention<T>(typeof(T), action ?? (x => x.Add())));
 		}
 
-		public IScanner RegisterConcreteClassesOf(Type type, Action<IConventionalServiceExpression<object>> action = null)
+		public Scanner RegisterConcreteClassesOf(Type type, Action<IConventionalServiceExpression<object>> action = null)
 		{
 			return Using(new ConcreteClassesOfConvention<object>(type, action ?? (x => x.Add())));
 		}
 
-		public IScanner RegisterConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceExpression<object>> action = null)
+		public Scanner RegisterConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceExpression<object>> action = null)
 		{
 			return Using(new ConcreteClassesClosingConvention(genericTypeDefinition, action ?? (x => x.Add())));
 		}
 
-		public IScanner RegisterDefaultImplementations(Action<IConventionalServiceExpression<object>> action = null)
+		public Scanner RegisterDefaultImplementations(Action<IConventionalServiceExpression<object>> action = null)
 		{
 			return Using(new DefaultImplementationsConvention(action ?? (x => x.Use())));
 		}
 
 		internal void Execute(ContainerExpression containerExpression)
 		{
-			var types = _types.Distinct().Where(t => _filters.All(f => f.IsMatch(t))).ToList();
+			var types = _types.Distinct().Where(t => _filters.All(f => f.Invoke(t))).ToList();
 			_conventions.ForEach(c => c.Process(types, containerExpression));
 		}
 	}

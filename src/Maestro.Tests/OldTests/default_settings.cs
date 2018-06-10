@@ -26,10 +26,10 @@ namespace Maestro.Tests.OldTests
 		{
 			var container = new Container(x =>
 			{
-				x.Config.DefaultLifetime.Transient();
+				x.Settings.DefaultLifetime.Transient();
 				x.Use<object>("transient").Self();
 
-				x.Config.DefaultLifetime.Singleton();
+				x.Settings.DefaultLifetime.Singleton();
 				x.Use<object>("singleton").Self();
 			});
 
@@ -48,7 +48,7 @@ namespace Maestro.Tests.OldTests
 		{
 			public IEnumerable<Type> Types { get; private set; }
 
-			public void Process(IEnumerable<Type> types, IContainerExpression containerExpression)
+			public void Process(IEnumerable<Type> types, ContainerExpression containerExpression)
 			{
 				Types = types.ToList();
 			}

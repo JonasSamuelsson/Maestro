@@ -5,11 +5,11 @@ namespace Maestro.Configuration
 {
 	public class ContainerBuilder
 	{
-		private readonly List<Action<IContainerExpression>> _actions = new List<Action<IContainerExpression>>();
+		private readonly List<Action<ContainerExpression>> _actions = new List<Action<ContainerExpression>>();
 
 		public ContainerBuilder() { }
 
-		public ContainerBuilder(Action<IContainerExpression> action)
+		public ContainerBuilder(Action<ContainerExpression> action)
 		{
 			Configure(action);
 		}
@@ -19,7 +19,7 @@ namespace Maestro.Configuration
 			Configure(builder);
 		}
 
-		public void Configure(Action<IContainerExpression> action)
+		public void Configure(Action<ContainerExpression> action)
 		{
 			_actions.Add(action);
 		}

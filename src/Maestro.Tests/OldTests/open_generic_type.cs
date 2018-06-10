@@ -39,7 +39,7 @@ namespace Maestro.Tests.OldTests
 			var container = new Container(x =>
 			{
 				x.Use<string>().Instance("success");
-				x.Use(typeof(Instance<>)).Type(typeof(Instance<>)).Lifetime.Singleton();
+				x.Use(typeof(Instance<>)).Type(typeof(Instance<>)).Singleton();
 			});
 
 			var instance1 = container.GetService<Instance<string>>();
