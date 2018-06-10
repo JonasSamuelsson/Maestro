@@ -10,9 +10,9 @@ namespace Maestro.Internals
 		private readonly IFactory _factory;
 		private readonly int _interceptorCount;
 		private readonly List<IInterceptor> _interceptors;
-		private readonly ILifetime _lifetime;
+		private readonly Lifetime _lifetime;
 
-		public Pipeline(PipelineType pipelineType, IFactory factory, List<IInterceptor> interceptors, ILifetime lifetime)
+		public Pipeline(PipelineType pipelineType, IFactory factory, List<IInterceptor> interceptors, Lifetime lifetime)
 		{
 			PipelineType = pipelineType;
 			_factory = factory;

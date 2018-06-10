@@ -6,9 +6,9 @@ namespace Maestro.Configuration
 	internal class LifetimeSelector<TParent> : ILifetimeSelector<TParent>
 	{
 		private readonly TParent _parent;
-		private readonly Action<Func<ILifetime>> _action;
+		private readonly Action<Func<Lifetime>> _action;
 
-		internal LifetimeSelector(TParent parent, Action<Func<ILifetime>> action)
+		internal LifetimeSelector(TParent parent, Action<Func<Lifetime>> action)
 		{
 			_parent = parent;
 			_action = action;
@@ -29,7 +29,7 @@ namespace Maestro.Configuration
 			return Use(new SingletonLifetime());
 		}
 
-		private TParent Use(ILifetime lifetime)
+		private TParent Use(Lifetime lifetime)
 		{
 			_action(() => lifetime);
 			return _parent;

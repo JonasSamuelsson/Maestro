@@ -5,9 +5,9 @@ namespace Maestro.Configuration
 {
 	internal class DefaultLifetimeSelector : IDefaultLifetimeSelector
 	{
-		private readonly Action<Func<ILifetime>> _action;
+		private readonly Action<Func<Lifetime>> _action;
 
-		internal DefaultLifetimeSelector(Action<Func<ILifetime>> action)
+		internal DefaultLifetimeSelector(Action<Func<Lifetime>> action)
 		{
 			_action = action;
 		}
@@ -19,15 +19,15 @@ namespace Maestro.Configuration
 
 		public void Scoped()
 		{
-			Use(new ScopedLifetime());
+			Use(() => new ScopedLifetime());
 		}
 
 		public void Singleton()
 		{
-			Use(new SingletonLifetime());
+			Use(() => new SingletonLifetime());
 		}
 
-		private void Use(Func<ILifetime> factory)
+		private void Use(Func<Lifetime> factory)
 		{
 			_action(factory);
 		}

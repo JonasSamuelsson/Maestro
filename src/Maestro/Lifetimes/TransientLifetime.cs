@@ -2,21 +2,21 @@
 
 namespace Maestro.Lifetimes
 {
-	internal class TransientLifetime : ILifetime
+	internal class TransientLifetime : Lifetime
 	{
 		static TransientLifetime()
 		{
 			Instance = new TransientLifetime();
 		}
 
-		public static ILifetime Instance { get; }
+		public static Lifetime Instance { get; }
 
-		public object Execute(Context context, Func<Context, object> factory)
+		public override object Execute(Context context, Func<Context, object> factory)
 		{
 			return factory(context);
 		}
 
-		public ILifetime MakeGeneric(Type[] genericArguments)
+		public override Lifetime MakeGeneric(Type[] genericArguments)
 		{
 			return Instance;
 		}
