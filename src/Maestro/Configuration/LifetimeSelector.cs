@@ -1,5 +1,5 @@
-﻿using System;
-using Maestro.Lifetimes;
+﻿using Maestro.Lifetimes;
+using System;
 
 namespace Maestro.Configuration
 {
@@ -21,20 +21,15 @@ namespace Maestro.Configuration
 
 		public TParent Scoped()
 		{
-			return Use<ScopedLifetime>();
+			return Use(new ScopedLifetime());
 		}
 
 		public TParent Singleton()
 		{
-			return Use<SingletonLifetime>();
+			return Use(new SingletonLifetime());
 		}
 
-		public TParent Use<TLifetime>() where TLifetime : ILifetime, new()
-		{
-			return Use(new TLifetime());
-		}
-
-		public TParent Use(ILifetime lifetime)
+		private TParent Use(ILifetime lifetime)
 		{
 			_action(() => lifetime);
 			return _parent;

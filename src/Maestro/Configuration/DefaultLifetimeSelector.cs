@@ -1,5 +1,5 @@
-﻿using System;
-using Maestro.Lifetimes;
+﻿using Maestro.Lifetimes;
+using System;
 
 namespace Maestro.Configuration
 {
@@ -19,20 +19,15 @@ namespace Maestro.Configuration
 
 		public void Scoped()
 		{
-			Use<ScopedLifetime>();
+			Use(new ScopedLifetime());
 		}
 
 		public void Singleton()
 		{
-			Use<SingletonLifetime>();
+			Use(new SingletonLifetime());
 		}
 
-		public void Use<TLifetime>() where TLifetime : ILifetime, new()
-		{
-			Use(() => new TLifetime());
-		}
-
-		public void Use(Func<ILifetime> factory)
+		private void Use(Func<ILifetime> factory)
 		{
 			_action(factory);
 		}
