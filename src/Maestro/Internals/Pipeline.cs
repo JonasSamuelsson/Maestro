@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using Maestro.FactoryProviders.Factories;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
+using System.Collections.Generic;
 
 namespace Maestro.Internals
 {
@@ -30,7 +30,7 @@ namespace Maestro.Internals
 
 		public object GetInstance(Context context)
 		{
-			var ctx = (Context)context;
+			var ctx = context;
 
 			var instance = _factory.GetInstance(ctx);
 

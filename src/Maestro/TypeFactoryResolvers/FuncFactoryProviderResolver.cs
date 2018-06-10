@@ -15,7 +15,7 @@ namespace Maestro.TypeFactoryResolvers
 			if (!context.CanGetService(serviceType, name)) return false;
 
 			var wrapperType = typeof(Wrapper<>).MakeGenericType(serviceType);
-			var ctx = (Context)context;
+			var ctx = context;
 			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.Container, ctx.Kernel);
 			var getFuncMethod = wrapperType.GetMethod("GetFunc", new Type[] { });
 			var lambda = new Func<Context, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
