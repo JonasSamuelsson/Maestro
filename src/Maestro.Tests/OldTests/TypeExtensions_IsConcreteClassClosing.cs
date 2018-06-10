@@ -1,6 +1,5 @@
 ﻿using Shouldly;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -9,8 +8,14 @@ namespace Maestro.Tests.OldTests
 {
 	public class TypeExtensions_IsConcreteClassClosing
 	{
-		[Theory, ClassData(typeof(TestData))]
-		public void should_determine_if_class_is_concrete_and_closes_genericTypeDefinition(Type type, Type typeDefinition, bool expected, Type genericType)
+		[Fact]
+		public void should_determine_if_class_is_concrete_and_closes_genericTypeDefinition()
+		{
+			new TestData().GetTestCases()
+				.ForEach(tc => Should_determine_if_class_is_concrete_and_closes_genericTypeDefinition(tc.Type, tc.GenericTypeDefinition, tc.IsValid, tc.GenericType));
+		}
+
+		private void Should_determine_if_class_is_concrete_and_closes_genericTypeDefinition(Type type, Type typeDefinition, bool expected, Type genericType)
 		{
 			var result = type.IsConcreteClassClosing(typeDefinition, out var genericTypes);
 			result.ShouldBe(expected, () => $"{GetName(type)} {(expected ? "is" : "is not")} concrete class closing {GetName(typeDefinition)}");
@@ -39,19 +44,9 @@ namespace Maestro.Tests.OldTests
 		private class Implementation2<T> : Implementation1<T> { }
 		private class ImplementationInt : Implementation2<int> { }
 
-		private class TestData : IEnumerable<object[]>
+		private class TestData
 		{
-			IEnumerator IEnumerable.GetEnumerator()
-			{
-				return GetEnumerator();
-			}
-
-			public IEnumerator<object[]> GetEnumerator()
-			{
-				return GetData().GetEnumerator();
-			}
-
-			private IEnumerable<object[]> GetData()
+			public IEnumerable<TestCase> GetTestCases()
 			{
 				var types = new[]
 				{
@@ -87,10 +82,24 @@ namespace Maestro.Tests.OldTests
 						 let validCombination = validCombinations.SingleOrDefault(x => x.t == type && x.gtd == genericTypeDefinition)
 						 let isValid = validCombination != null
 						 let genericType = isValid ? validCombination.gt : null
-						 select new object[] { type, genericTypeDefinition, isValid, genericType };
+						 select new TestCase
+						 {
+							 Type = type,
+							 GenericTypeDefinition = genericTypeDefinition,
+							 IsValid = isValid,
+							 GenericType = genericType
+						 };
 			}
 		}
 
 		private class MultiImplementation : IInterface1<int>, IInterface1<object> { }
+
+		private class TestCase
+		{
+			public Type Type { get; set; }
+			public Type GenericTypeDefinition { get; set; }
+			public bool IsValid { get; set; }
+			public Type GenericType { get; set; }
+		}
 	}
 }
