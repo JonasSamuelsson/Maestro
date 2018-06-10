@@ -18,7 +18,7 @@ namespace Maestro.Tests.Benchmarks.Custom
 
 		private static Container CreateContainer()
 		{
-			return new Container(x => x.TypeProviders.Add(new MyTypeProvider()));
+			return new Container();
 		}
 
 		private static void Test<T>()
@@ -36,14 +36,6 @@ namespace Maestro.Tests.Benchmarks.Custom
 				}
 
 				Console.WriteLine($"{stopwatch.Elapsed.TotalMilliseconds} ms");
-			}
-		}
-
-		private class MyTypeProvider : ITypeProvider
-		{
-			public Type GetInstanceTypeOrNull(Type serviceType, Context context)
-			{
-				return serviceType == typeof(object) ? typeof(EventArgs) : null;
 			}
 		}
 	}

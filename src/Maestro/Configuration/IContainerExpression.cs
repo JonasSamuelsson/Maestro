@@ -7,7 +7,6 @@ namespace Maestro.Configuration
 	{
 		IConfigExpression Config { get; }
 		IList<Func<Type, bool>> AutoResolveFilters { get; }
-		IList<ITypeProvider> TypeProviders { get; }
 
 		IServiceExpression Use(Type type);
 		IServiceExpression Use(Type type, string name);
