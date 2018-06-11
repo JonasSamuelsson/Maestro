@@ -5,9 +5,9 @@ namespace Maestro.Internals
 {
 	internal class PipelineCache
 	{
-		private readonly ConcurrentDictionary<Key, IPipeline> _dictionary = new ConcurrentDictionary<Key, IPipeline>();
+		private readonly ConcurrentDictionary<Key, Pipeline> _dictionary = new ConcurrentDictionary<Key, Pipeline>();
 
-		public void Add(Key key, IPipeline pipeline)
+		public void Add(Key key, Pipeline pipeline)
 		{
 			if (_dictionary.TryAdd(key, pipeline)) return;
 			throw new InvalidOperationException();
@@ -18,7 +18,7 @@ namespace Maestro.Internals
 			_dictionary.Clear();
 		}
 
-		public bool TryGet(Key key, out IPipeline pipeline)
+		public bool TryGet(Key key, out Pipeline pipeline)
 		{
 			return _dictionary.TryGetValue(key, out pipeline);
 		}

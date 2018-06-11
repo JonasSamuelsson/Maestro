@@ -54,7 +54,7 @@ namespace Maestro.Internals
 			return false;
 		}
 
-		private bool TryGetPipeline(Type type, string name, Context context, out IPipeline pipeline)
+		private bool TryGetPipeline(Type type, string name, Context context, out Pipeline pipeline)
 		{
 			var key = new PipelineCache.Key(type, name);
 
@@ -84,45 +84,43 @@ namespace Maestro.Internals
 			}
 		}
 
-		private bool TryGetPipelineFromServiceDesriptors(bool typeIsIEnumerableOfT, Type type, Type elementType, string name, Context context, ref IPipeline pipeline)
+		private bool TryGetPipelineFromServiceDesriptors(bool typeIsIEnumerableOfT, Type type, Type elementType, string name, Context context, ref Pipeline pipeline)
 		{
 			return typeIsIEnumerableOfT
 				? TryGetPipelineFromServiceDesriptors(type, elementType, name, context, ref pipeline)
 				: TryGetPipelineFromServiceDesriptor(type, name, context, ref pipeline);
 		}
 
-		private bool TryGetPipelineFromServiceDesriptor(Type type, string name, Context context, ref IPipeline pipeline)
+		private bool TryGetPipelineFromServiceDesriptor(Type type, string name, Context context, ref Pipeline pipeline)
 		{
 			if (TryGetServiceDescriptor(type, name, out var serviceDescriptor))
 			{
-				pipeline = CreatePipeline(PipelineType.Service, serviceDescriptor, context);
+				pipeline = CreateSingleServicePipeline(serviceDescriptor, context);
 				return true;
 			}
 
 			return false;
 		}
 
-		private bool TryGetPipelineFromServiceDesriptors(Type type, Type elementType, string name, Context context, ref IPipeline pipeline)
+		private bool TryGetPipelineFromServiceDesriptors(Type type, Type elementType, string name, Context context, ref Pipeline pipeline)
 		{
-			var enumerablePipeline = new EnumerablePipeline(elementType);
-
 			if (ServiceDescriptors.TryGetServiceDescriptor(type, name, out var serviceDescriptor))
 			{
-				enumerablePipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
-				pipeline = enumerablePipeline;
+				pipeline = CreateSingleServicePipeline(serviceDescriptor, context);
 				return true;
 			}
 
 			const string defaultName = ServiceNames.Default;
 			if (name != defaultName && ServiceDescriptors.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
 			{
-				enumerablePipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
-				pipeline = enumerablePipeline;
+				pipeline = CreateSingleServicePipeline(serviceDescriptor, context);
 				return true;
 			}
 
 			if (ServiceDescriptors.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
 			{
+				var compositePipeline = new CompositePipeline(elementType);
+
 				if (Settings.GetServicesOrder == GetServicesOrder.Ordered)
 				{
 					serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder).ToList();
@@ -131,20 +129,17 @@ namespace Maestro.Internals
 				for (var i = 0; i < serviceDescriptors.Count; i++)
 				{
 					var descriptor = serviceDescriptors[i];
-					enumerablePipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));
+					compositePipeline.Add(CreateSingleServicePipeline(descriptor, context));
 				}
-			}
 
-			if (enumerablePipeline.Any)
-			{
-				pipeline = enumerablePipeline;
+				pipeline = compositePipeline;
 				return true;
 			}
 
 			return false;
 		}
 
-		private bool TryGetPipelineFromFactoryProviders(Type type, string name, Context context, bool typeIsIEnumerableOfT, ref IPipeline pipeline)
+		private bool TryGetPipelineFromFactoryProviders(Type type, string name, Context context, bool typeIsIEnumerableOfT, ref Pipeline pipeline)
 		{
 			if (AutoResolveFilters.Count != 0)
 			{
@@ -174,17 +169,19 @@ namespace Maestro.Internals
 					Name = name,
 					FactoryProvider = factoryProvider
 				};
-				var pipelineType = typeIsIEnumerableOfT ? PipelineType.Services : PipelineType.Service;
-				pipeline = CreatePipeline(pipelineType, serviceDescriptor, context);
+				pipeline = CreateSingleServicePipeline(serviceDescriptor, context);
 				return true;
 			}
 
 			return false;
 		}
 
-		private static Pipeline CreatePipeline(PipelineType pipelineType, ServiceDescriptor serviceDescriptor, Context context)
+		private static SingleServicePipeline CreateSingleServicePipeline(ServiceDescriptor serviceDescriptor, Context context)
 		{
-			return new Pipeline(pipelineType, serviceDescriptor.FactoryProvider.GetFactory(context), serviceDescriptor.Interceptors, serviceDescriptor.Lifetime);
+			var factory = serviceDescriptor.FactoryProvider.GetFactory(context);
+			var interceptors = serviceDescriptor.Interceptors;
+			var lifetime = serviceDescriptor.Lifetime;
+			return new SingleServicePipeline(factory, interceptors, lifetime);
 		}
 
 		private bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
