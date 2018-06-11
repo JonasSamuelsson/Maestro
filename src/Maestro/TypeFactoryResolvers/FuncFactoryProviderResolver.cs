@@ -16,7 +16,7 @@ namespace Maestro.TypeFactoryResolvers
 
 			var wrapperType = typeof(Wrapper<>).MakeGenericType(serviceType);
 			var ctx = context;
-			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.Container, ctx.Kernel);
+			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.ScopedContainer, ctx.Kernel);
 			var getFuncMethod = wrapperType.GetMethod("GetFunc", new Type[] { });
 			var lambda = new Func<Context, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
 			factoryProvider = new LambdaFactoryProvider(lambda);
@@ -26,10 +26,10 @@ namespace Maestro.TypeFactoryResolvers
 		class Wrapper<T>
 		{
 			private readonly string _name;
-			private readonly IContainer _container;
+			private readonly Container _container;
 			private readonly Kernel _kernel;
 
-			public Wrapper(string name, IContainer container, Kernel kernel)
+			public Wrapper(string name, Container container, Kernel kernel)
 			{
 				_name = name;
 				_container = container;
