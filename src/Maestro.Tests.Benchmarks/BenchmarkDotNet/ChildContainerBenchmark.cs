@@ -10,7 +10,7 @@ namespace Maestro.Tests.Benchmarks.BenchmarkDotNet
 		[Benchmark]
 		public void Execute()
 		{
-			using (var container = Container.GetChildContainer())
+			using (var container = Container.GetScopedContainer())
 				container.GetService<object>();
 		}
 	}

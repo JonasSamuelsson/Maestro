@@ -2,7 +2,6 @@
 using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +19,6 @@ namespace Maestro.Internals
 
 		private readonly ServiceDescriptorLookup _serviceDescriptorLookup;
 		private readonly PipelineCache<long> _pipelineCache;
-		private readonly Kernel _parent;
 
 		internal event EventHandler ConfigurationChanged;
 
@@ -28,29 +26,10 @@ namespace Maestro.Internals
 		{
 			_serviceDescriptorLookup = new ServiceDescriptorLookup();
 			_pipelineCache = new PipelineCache<long>();
-			Root = this;
-		}
-
-		internal Kernel(Kernel parent) : this()
-		{
-			_parent = parent;
-			_parent.ConfigurationChanged += ParentConfigurationChanged;
-			AutoResolveFilters = parent.AutoResolveFilters.ToList();
-			Root = _parent.Root;
 		}
 
 		internal ContainerSettings Settings { get; } = new ContainerSettings();
 		internal List<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
-		internal Kernel Root { get; }
-
-		private void ParentConfigurationChanged(object sender, EventArgs e)
-		{
-			lock (_pipelineCache)
-			{
-				_pipelineCache.Clear();
-				ConfigurationChanged?.Invoke(this, EventArgs.Empty);
-			}
-		}
 
 		internal bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
 		{
@@ -132,38 +111,32 @@ namespace Maestro.Internals
 		{
 			var enumerablePipeline = new EnumerablePipeline(elementType);
 
-			for (var kernel = this; kernel != null; kernel = kernel._parent)
+			if (_serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out var serviceDescriptor))
 			{
-				var currentName = name;
+				enumerablePipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
+				pipeline = enumerablePipeline;
+				return true;
+			}
 
-				tryGetService:
+			const string defaultName = ServiceNames.Default;
+			if (name != defaultName && _serviceDescriptorLookup.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
+			{
+				enumerablePipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
+				pipeline = enumerablePipeline;
+				return true;
+			}
 
-				if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, currentName, out var serviceDescriptor))
+			if (_serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
+			{
+				if (Settings.GetServicesOrder == GetServicesOrder.Ordered)
 				{
-					enumerablePipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
-					pipeline = enumerablePipeline;
-					return true;
+					serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder).ToList();
 				}
 
-				var defaultName = ServiceNames.Default;
-				if (currentName != defaultName)
+				for (var i = 0; i < serviceDescriptors.Count; i++)
 				{
-					currentName = defaultName;
-					goto tryGetService;
-				}
-
-				if (kernel._serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
-				{
-					if (kernel.Settings.GetServicesOrder == GetServicesOrder.Ordered)
-					{
-						serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder).ToList();
-					}
-
-					for (var i = 0; i < serviceDescriptors.Count; i++)
-					{
-						var descriptor = serviceDescriptors[i];
-						enumerablePipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));
-					}
+					var descriptor = serviceDescriptors[i];
+					enumerablePipeline.Add(CreatePipeline(PipelineType.Service, descriptor, context));
 				}
 			}
 
@@ -229,19 +202,13 @@ namespace Maestro.Internals
 
 		private bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
 		{
-			for (var kernel = this; kernel != null; kernel = kernel._parent)
-			{
-				if (kernel._serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
-				{
-					return true;
-				}
-			}
+			if (_serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
+				return true;
 
-			var defaultName = ServiceNames.Default;
-			if (name != defaultName)
-			{
-				return TryGetServiceDescriptor(type, defaultName, out serviceDescriptor);
-			}
+			const string defaultName = ServiceNames.Default;
+			if (name != defaultName &&
+				 _serviceDescriptorLookup.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
+				return true;
 
 			serviceDescriptor = null;
 			return false;
@@ -249,19 +216,11 @@ namespace Maestro.Internals
 
 		public void Dispose()
 		{
-			if (_parent == null) return;
-			_parent.ConfigurationChanged -= ParentConfigurationChanged;
 		}
 
 		internal void Populate(Diagnostics.Configuration configuration)
 		{
 			_serviceDescriptorLookup.Populate(configuration.Services);
-
-			if (_parent != null)
-			{
-				configuration.Parent = new Diagnostics.Configuration();
-				_parent.Populate(configuration.Parent);
-			}
 		}
 	}
 }

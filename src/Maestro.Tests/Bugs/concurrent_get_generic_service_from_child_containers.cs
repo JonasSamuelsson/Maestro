@@ -10,8 +10,8 @@ namespace Maestro.Tests.Bugs
 		public void should_not_throw()
 		{
 			var container = new Container(x => x.Use(typeof(IList<>)).Type(typeof(List<>)));
-			var child1 = container.GetChildContainer();
-			var child2 = container.GetChildContainer();
+			var child1 = container.GetScopedContainer();
+			var child2 = container.GetScopedContainer();
 
 			var tasks = new[]
 			{
