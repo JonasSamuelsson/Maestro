@@ -41,7 +41,6 @@ namespace Maestro.Internals
 
 		internal ContainerSettings Settings { get; } = new ContainerSettings();
 		internal List<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
-		internal ConcurrentDictionary<object, Lazy<object>> InstanceCache { get; } = new ConcurrentDictionary<object, Lazy<object>>();
 		internal Kernel Root { get; }
 
 		private void ParentConfigurationChanged(object sender, EventArgs e)
@@ -250,12 +249,6 @@ namespace Maestro.Internals
 
 		public void Dispose()
 		{
-			InstanceCache.Values
-				.Where(x => x.IsValueCreated)
-				.Select(x => x.Value)
-				.OfType<IDisposable>()
-				.ForEach(x => x.Dispose());
-
 			if (_parent == null) return;
 			_parent.ConfigurationChanged -= ParentConfigurationChanged;
 		}

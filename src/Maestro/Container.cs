@@ -2,7 +2,9 @@
 using Maestro.Diagnostics;
 using Maestro.Internals;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro
 {
@@ -13,8 +15,10 @@ namespace Maestro
 		/// <summary>
 		/// Instantiates a new empty container.
 		/// </summary>
-		public Container() : this(new Kernel())
-		{ }
+		public Container() : this(new Kernel(), new ConcurrentDictionary<object, Lazy<object>>())
+		{
+			CurrentScope = RootScope;
+		}
 
 		/// <summary>
 		/// Instantiates a new container with configuration.
@@ -34,12 +38,16 @@ namespace Maestro
 			builder.Configure(this);
 		}
 
-		private Container(Kernel kernel)
+		private Container(Kernel kernel, ConcurrentDictionary<object, Lazy<object>> rootScope)
 		{
 			_kernel = kernel;
+			RootScope = rootScope;
+			CurrentScope = new ConcurrentDictionary<object, Lazy<object>>();
 		}
 
 		public IDiagnostics Diagnostics => new Diagnostics.Diagnostics(_kernel);
+		internal ConcurrentDictionary<object, Lazy<object>> CurrentScope { get; }
+		internal ConcurrentDictionary<object, Lazy<object>> RootScope { get; }
 
 		public void Configure(Action<ContainerExpression> action)
 		{
@@ -66,7 +74,7 @@ namespace Maestro
 
 		public IContainer GetChildContainer(Action<ContainerExpression> action)
 		{
-			var childContainer = new Container(new Kernel(_kernel));
+			var childContainer = new Container(new Kernel(_kernel), RootScope);
 			childContainer.Configure(action);
 			return childContainer;
 		}
@@ -140,6 +148,13 @@ namespace Maestro
 
 		public void Dispose()
 		{
+			// todo perf no linq
+			CurrentScope.Values
+				.Where(x => x.IsValueCreated)
+				.Select(x => x.Value)
+				.OfType<IDisposable>()
+				.ForEach(x => x.Dispose());
+
 			_kernel.Dispose();
 		}
 	}
