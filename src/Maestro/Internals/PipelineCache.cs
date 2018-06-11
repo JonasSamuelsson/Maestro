@@ -25,10 +25,18 @@ namespace Maestro.Internals
 
 		internal struct Key
 		{
+			private readonly int _hashCode;
+
 			public Key(Type type, string name)
 			{
+				_hashCode = CalculateHashCode(type, name);
 				Type = type;
 				Name = name;
+			}
+
+			private static int CalculateHashCode(Type type, string name)
+			{
+				return (type.GetHashCode() * 397) ^ name.GetHashCode();
 			}
 
 			public Type Type { get; }
@@ -47,10 +55,7 @@ namespace Maestro.Internals
 
 			public override int GetHashCode()
 			{
-				unchecked
-				{
-					return ((Type != null ? Type.GetHashCode() : 0) * 397) ^ (Name != null ? Name.GetHashCode() : 0);
-				}
+				return _hashCode;
 			}
 		}
 	}
