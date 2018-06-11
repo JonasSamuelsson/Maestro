@@ -1,6 +1,5 @@
-using System;
 using Maestro.FactoryProviders.Factories;
-using Maestro.Internals;
+using System;
 
 namespace Maestro.FactoryProviders
 {
@@ -13,9 +12,9 @@ namespace Maestro.FactoryProviders
 			_instance = instance;
 		}
 
-		public IFactory GetFactory(Context context)
+		public Factory GetFactory(Context context)
 		{
-			return new Factory(_ => _instance);
+			return new DelegatingFactory(_ => _instance);
 		}
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)

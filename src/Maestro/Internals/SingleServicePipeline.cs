@@ -7,12 +7,12 @@ namespace Maestro.Internals
 {
 	internal class SingleServicePipeline : Pipeline
 	{
-		private readonly IFactory _factory;
+		private readonly Factory _factory;
 		private readonly int _interceptorCount;
 		private readonly List<Interceptor> _interceptors;
 		private readonly Lifetime _lifetime;
 
-		internal SingleServicePipeline(IFactory factory, List<Interceptor> interceptors, Lifetime lifetime)
+		internal SingleServicePipeline(Factory factory, List<Interceptor> interceptors, Lifetime lifetime)
 		{
 			_factory = factory;
 			_interceptorCount = interceptors.Count;
