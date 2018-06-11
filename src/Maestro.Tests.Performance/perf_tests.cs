@@ -134,7 +134,7 @@ namespace Maestro.Tests.Core.Performance
 				x.Use<PropertyDependency>().Type<PropertyDependency>().SetProperty(y => y.O);
 				x.Use<object>().Type<object>();
 			});
-			Benchmark(() => container.GetService<CtorDependency>(), "property injection", 2);
+			Benchmark(() => container.GetService<PropertyDependency>(), "property injection", 2);
 		}
 
 		[Fact]

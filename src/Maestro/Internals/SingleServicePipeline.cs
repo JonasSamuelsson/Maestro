@@ -20,8 +20,6 @@ namespace Maestro.Internals
 			_lifetime = lifetime;
 		}
 
-		internal override PipelineType PipelineType => PipelineType.SingleService;
-
 		internal override object Execute(Context context)
 		{
 			return _lifetime.Execute(context, GetInstance);
@@ -29,9 +27,7 @@ namespace Maestro.Internals
 
 		public object GetInstance(Context context)
 		{
-			var ctx = context;
-
-			var instance = _factory.GetInstance(ctx);
+			var instance = _factory.GetInstance(context);
 
 			var interceptors = _interceptors;
 			for (var i = 0; i < _interceptorCount; i++)
