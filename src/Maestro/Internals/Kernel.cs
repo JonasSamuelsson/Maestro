@@ -17,34 +17,29 @@ namespace Maestro.Internals
 			new EmptyEnumerableFactoryProviderResolver()
 		};
 
-		private readonly ServiceDescriptorLookup _serviceDescriptorLookup;
-		private readonly PipelineCache<long> _pipelineCache;
-
-		internal event EventHandler ConfigurationChanged;
+		private readonly PipelineCache _pipelineCache;
 
 		internal Kernel()
 		{
-			_serviceDescriptorLookup = new ServiceDescriptorLookup();
-			_pipelineCache = new PipelineCache<long>();
+			_pipelineCache = new PipelineCache();
+			AutoResolveFilters = new List<Func<Type, bool>>();
+			Settings = new ContainerSettings();
+			ServiceDescriptors = new ServiceDescriptorLookup();
+			ServiceDescriptors.ServiceDescriptorAdded += ServiceDescriptorLookupServiceDescriptorAdded;
 		}
 
-		internal ContainerSettings Settings { get; } = new ContainerSettings();
-		internal List<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
-
-		internal bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
+		private void ServiceDescriptorLookupServiceDescriptorAdded(object sender, EventArgs e)
 		{
-			lock (_pipelineCache)
-			{
-				_pipelineCache.Clear();
-				var added = _serviceDescriptorLookup.Add(serviceDescriptor, throwIfDuplicate);
-				ConfigurationChanged?.Invoke(this, EventArgs.Empty);
-				return added;
-			}
+			_pipelineCache.Clear();
 		}
+
+		internal List<Func<Type, bool>> AutoResolveFilters { get; }
+		internal ContainerSettings Settings { get; }
+		internal ServiceDescriptorLookup ServiceDescriptors { get; }
 
 		internal bool CanGetService(Type type, string name, Context context)
 		{
-			return TryGetPipeline(type, name, context, out var pipeline);
+			return TryGetPipeline(type, name, context, out _);
 		}
 
 		internal bool TryGetService(Type type, string name, Context context, out object instance)
@@ -61,27 +56,27 @@ namespace Maestro.Internals
 
 		private bool TryGetPipeline(Type type, string name, Context context, out IPipeline pipeline)
 		{
-			var serviceKey = GetServiceKey(type, name);
+			var key = new PipelineCache.Key(type, name);
 
-			if (_pipelineCache.TryGet(serviceKey, out pipeline))
+			if (_pipelineCache.TryGet(key, out pipeline))
 				return true;
 
 			lock (_pipelineCache)
 			{
-				if (_pipelineCache.TryGet(serviceKey, out pipeline))
+				if (_pipelineCache.TryGet(key, out pipeline))
 					return true;
 
 				var typeIsIEnumerableOfT = Reflector.IsGenericEnumerable(type, out var elementType);
 
 				if (TryGetPipelineFromServiceDesriptors(typeIsIEnumerableOfT, type, elementType, name, context, ref pipeline))
 				{
-					_pipelineCache.Add(serviceKey, pipeline);
+					_pipelineCache.Add(key, pipeline);
 					return true;
 				}
 
 				if (TryGetPipelineFromFactoryProviders(type, name, context, typeIsIEnumerableOfT, ref pipeline))
 				{
-					_pipelineCache.Add(serviceKey, pipeline);
+					_pipelineCache.Add(key, pipeline);
 					return true;
 				}
 
@@ -111,7 +106,7 @@ namespace Maestro.Internals
 		{
 			var enumerablePipeline = new EnumerablePipeline(elementType);
 
-			if (_serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out var serviceDescriptor))
+			if (ServiceDescriptors.TryGetServiceDescriptor(type, name, out var serviceDescriptor))
 			{
 				enumerablePipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
 				pipeline = enumerablePipeline;
@@ -119,14 +114,14 @@ namespace Maestro.Internals
 			}
 
 			const string defaultName = ServiceNames.Default;
-			if (name != defaultName && _serviceDescriptorLookup.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
+			if (name != defaultName && ServiceDescriptors.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
 			{
 				enumerablePipeline.Add(CreatePipeline(PipelineType.Services, serviceDescriptor, context));
 				pipeline = enumerablePipeline;
 				return true;
 			}
 
-			if (_serviceDescriptorLookup.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
+			if (ServiceDescriptors.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
 			{
 				if (Settings.GetServicesOrder == GetServicesOrder.Ordered)
 				{
@@ -192,22 +187,13 @@ namespace Maestro.Internals
 			return new Pipeline(pipelineType, serviceDescriptor.FactoryProvider.GetFactory(context), serviceDescriptor.Interceptors, serviceDescriptor.Lifetime);
 		}
 
-		private static long GetServiceKey(Type type, string name)
-		{
-			long key = type.GetHashCode();
-			key = (key << 32);
-			key = key | (uint)name.GetHashCode();
-			return key;
-		}
-
 		private bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
 		{
-			if (_serviceDescriptorLookup.TryGetServiceDescriptor(type, name, out serviceDescriptor))
+			if (ServiceDescriptors.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 				return true;
 
 			const string defaultName = ServiceNames.Default;
-			if (name != defaultName &&
-				 _serviceDescriptorLookup.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
+			if (name != defaultName && ServiceDescriptors.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
 				return true;
 
 			serviceDescriptor = null;
@@ -216,11 +202,13 @@ namespace Maestro.Internals
 
 		public void Dispose()
 		{
+			// ReSharper disable once DelegateSubtraction
+			ServiceDescriptors.ServiceDescriptorAdded -= ServiceDescriptorLookupServiceDescriptorAdded;
 		}
 
 		internal void Populate(Diagnostics.Configuration configuration)
 		{
-			_serviceDescriptorLookup.Populate(configuration.Services);
+			ServiceDescriptors.Populate(configuration.Services);
 		}
 	}
 }

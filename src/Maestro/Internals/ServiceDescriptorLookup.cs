@@ -12,7 +12,14 @@ namespace Maestro.Internals
 		private int _counter = 1;
 		private readonly ThreadSafeDictionary<Type, ServiceFamily> _serviceFamilies = new ThreadSafeDictionary<Type, ServiceFamily>();
 
-		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate = true)
+		internal EventHandler<EventArgs> ServiceDescriptorAdded;
+
+		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
+		{
+			return Add(serviceDescriptor, throwIfDuplicate, true);
+		}
+
+		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate, bool triggerServiceDescriptorAddedEvent)
 		{
 			if (serviceDescriptor.SortOrder == 0)
 			{
@@ -45,6 +52,11 @@ namespace Maestro.Internals
 				}
 			}
 
+			if (triggerServiceDescriptorAddedEvent)
+			{
+				ServiceDescriptorAdded.Invoke(this, EventArgs.Empty);
+			}
+
 			return true;
 		}
 
@@ -73,7 +85,7 @@ namespace Maestro.Internals
 					if (TryGetServiceDescriptor(genericTypeDefinition, name, out serviceDescriptor))
 					{
 						serviceDescriptor = serviceDescriptor.MakeGeneric(genericArguments);
-						Add(serviceDescriptor);
+						Add(serviceDescriptor, throwIfDuplicate: true, triggerServiceDescriptorAddedEvent: false);
 						return true;
 					}
 				}
@@ -102,15 +114,13 @@ namespace Maestro.Internals
 
 			if (Reflector.IsGeneric(type, out var genericTypeDefinition, out var genericArguments))
 			{
-				// todo performance - no linq
-				IReadOnlyList<ServiceDescriptor> descriptors = new List<ServiceDescriptor>();
-				if (TryGetServiceDescriptors(genericTypeDefinition, out descriptors))
+				if (TryGetServiceDescriptors(genericTypeDefinition, out var descriptors))
 				{
 					descriptors = descriptors
 						.Where(x => result.All(y => x.CorrelationId != y.CorrelationId))
 						.Select(x => x.MakeGeneric(genericArguments))
 						.ToList();
-					foreach (var serviceDescriptor in descriptors) Add(serviceDescriptor);
+					descriptors.ForEach(sd => Add(sd, throwIfDuplicate: true, triggerServiceDescriptorAddedEvent: false));
 					result.AddRange(descriptors);
 				}
 			}

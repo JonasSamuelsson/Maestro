@@ -1,6 +1,6 @@
-using System;
 using Maestro.FactoryProviders;
 using Maestro.Internals;
+using System;
 
 namespace Maestro.Configuration
 {
@@ -22,7 +22,7 @@ namespace Maestro.Configuration
 		public void Instance(object instance)
 		{
 			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
-			Kernel.Add(plugin, ThrowIfDuplicate);
+			Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate);
 		}
 
 		public IFactoryInstanceExpression<object> Factory(Func<object> factory)
@@ -33,7 +33,7 @@ namespace Maestro.Configuration
 		public IFactoryInstanceExpression<object> Factory(Func<Context, object> factory)
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(factory));
-			return Kernel.Add(plugin, ThrowIfDuplicate)
+			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
 				? new FactoryInstanceExpression<object>(plugin)
 				: null;
 		}
@@ -41,7 +41,7 @@ namespace Maestro.Configuration
 		public ITypeInstanceExpression<object> Type(Type type)
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type, Name));
-			return Kernel.Add(plugin, ThrowIfDuplicate)
+			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
 				? new TypeInstanceExpression<object>(plugin)
 				: null;
 		}
@@ -65,7 +65,7 @@ namespace Maestro.Configuration
 		public void Instance<TInstance>(TInstance instance) where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
-			Kernel.Add(plugin, ThrowIfDuplicate);
+			Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate);
 		}
 
 		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : TService
@@ -76,7 +76,7 @@ namespace Maestro.Configuration
 		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<Context, TInstance> factory) where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(ctx => factory(ctx)));
-			return Kernel.Add(plugin, ThrowIfDuplicate)
+			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
 				? new FactoryInstanceExpression<TInstance>(plugin)
 				: null;
 		}
@@ -84,7 +84,7 @@ namespace Maestro.Configuration
 		public ITypeInstanceExpression<TInstance> Type<TInstance>() where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance), Name));
-			return Kernel.Add(plugin, ThrowIfDuplicate)
+			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
 				? new TypeInstanceExpression<TInstance>(plugin)
 				: null;
 		}
