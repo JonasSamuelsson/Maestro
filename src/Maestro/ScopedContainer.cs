@@ -3,7 +3,6 @@ using Maestro.Internals;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Maestro
 {
@@ -12,21 +11,21 @@ namespace Maestro
 		internal ScopedContainer()
 		{
 			Kernel = new Kernel();
-			RootScope = new ConcurrentDictionary<object, Lazy<object>>();
+			RootScope = new ConcurrentDictionary<object, object>();
 			CurrentScope = RootScope;
 		}
 
-		internal ScopedContainer(Kernel kernel, ConcurrentDictionary<object, Lazy<object>> rootScope)
+		internal ScopedContainer(Kernel kernel, ConcurrentDictionary<object, object> rootScope)
 		{
 			Kernel = kernel;
 			RootScope = rootScope;
-			CurrentScope = new ConcurrentDictionary<object, Lazy<object>>();
+			CurrentScope = new ConcurrentDictionary<object, object>();
 		}
 
 		public IDiagnostics Diagnostics => new Diagnostics.Diagnostics(Kernel);
 		internal Kernel Kernel { get; }
-		internal ConcurrentDictionary<object, Lazy<object>> CurrentScope { get; }
-		internal ConcurrentDictionary<object, Lazy<object>> RootScope { get; }
+		internal ConcurrentDictionary<object, object> CurrentScope { get; }
+		internal ConcurrentDictionary<object, object> RootScope { get; }
 
 		public object GetService(Type type)
 		{
@@ -90,12 +89,9 @@ namespace Maestro
 
 		public void Dispose()
 		{
-			// todo perf no linq
-			CurrentScope.Values
-				.Where(x => x.IsValueCreated)
-				.Select(x => x.Value)
-				.OfType<IDisposable>()
-				.ForEach(x => x.Dispose());
+			foreach (var kvp in CurrentScope.ToArray())
+				if (kvp.Value is IDisposable disposable)
+					disposable.Dispose();
 
 			Kernel.Dispose();
 		}
