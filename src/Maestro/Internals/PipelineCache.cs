@@ -1,14 +1,16 @@
-using Maestro.Utils;
+using System;
+using System.Collections.Concurrent;
 
 namespace Maestro.Internals
 {
-	class PipelineCache<TKey>
+	internal class PipelineCache
 	{
-		private readonly ThreadSafeDictionary<TKey, IPipeline> _dictionary = new ThreadSafeDictionary<TKey, IPipeline>();
+		private readonly ConcurrentDictionary<Key, IPipeline> _dictionary = new ConcurrentDictionary<Key, IPipeline>();
 
-		public void Add(TKey key, IPipeline pipeline)
+		public void Add(Key key, IPipeline pipeline)
 		{
-			_dictionary.AddOrUpdate(key, pipeline);
+			if (_dictionary.TryAdd(key, pipeline)) return;
+			throw new InvalidOperationException();
 		}
 
 		public void Clear()
@@ -16,9 +18,40 @@ namespace Maestro.Internals
 			_dictionary.Clear();
 		}
 
-		public bool TryGet(TKey key, out IPipeline pipeline)
+		public bool TryGet(Key key, out IPipeline pipeline)
 		{
-			return _dictionary.TryGet(key, out pipeline);
+			return _dictionary.TryGetValue(key, out pipeline);
+		}
+
+		internal struct Key
+		{
+			public Key(Type type, string name)
+			{
+				Type = type;
+				Name = name;
+			}
+
+			public Type Type { get; }
+			public string Name { get; }
+
+			public bool Equals(Key other)
+			{
+				return Type == other.Type && string.Equals(Name, other.Name);
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (ReferenceEquals(null, obj)) return false;
+				return obj is Key key && Equals(key);
+			}
+
+			public override int GetHashCode()
+			{
+				unchecked
+				{
+					return ((Type != null ? Type.GetHashCode() : 0) * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+				}
+			}
 		}
 	}
 }
