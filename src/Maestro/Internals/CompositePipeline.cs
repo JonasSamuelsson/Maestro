@@ -14,8 +14,6 @@ namespace Maestro.Internals
 			_pipelineEngine = (PipelineEngine)Activator.CreateInstance(pipelineEngineType);
 		}
 
-		internal override PipelineType PipelineType => PipelineType.MultipleServices;
-
 		public void Add(Pipeline pipeline)
 		{
 			_pipelines.Add(pipeline);
