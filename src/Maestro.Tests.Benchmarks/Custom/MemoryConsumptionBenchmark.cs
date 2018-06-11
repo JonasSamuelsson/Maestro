@@ -35,7 +35,7 @@ namespace Maestro.Tests.Benchmarks.Custom
 
 		private static void DoWork(IContainer container)
 		{
-			using (var childContainer = container.GetChildContainer())
+			using (var childContainer = container.GetScopedContainer())
 				childContainer.GetService<object>();
 		}
 

@@ -42,7 +42,7 @@ namespace Maestro.Tests.Core.Performance
 			PropertyInjection();
 			Complex();
 			MultiThreaded();
-			ChildContainer();
+			ScopedContainer();
 		}
 
 		[Fact]
@@ -166,11 +166,15 @@ namespace Maestro.Tests.Core.Performance
 		}
 
 		[Fact]
-		public void ChildContainer()
+		public void ScopedContainer()
 		{
-			var parentContainer = new Container(x => x.Use<CtorDependency>().Type<CtorDependency>());
-			var childContainer = parentContainer.GetChildContainer(x => x.Use<object>().Type<object>());
-			Benchmark(() => childContainer.GetService<CtorDependency>(), "child container", 2);
+			var container = new Container(x =>
+			{
+				x.Use<object>().Type<object>();
+				x.Use<CtorDependency>().Type<CtorDependency>();
+			});
+			var scopedContainer = container.GetScopedContainer();
+			Benchmark(() => scopedContainer.GetService<CtorDependency>(), "child container", 2);
 		}
 
 		private void Benchmark(Action action, string info, int instances, int concurrentWorkers = 1)

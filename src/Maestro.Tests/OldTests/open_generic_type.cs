@@ -49,17 +49,6 @@ namespace Maestro.Tests.OldTests
 		}
 
 		[Fact]
-		public void child_container_config_should_be_considered_over_parent_container()
-		{
-			var parent = new Container(x => x.Use<Instance<string>>().Factory(() => new Instance<string> { Value = "root" }));
-			var child = parent.GetChildContainer(x => x.Use(typeof(Instance<>)).Type(typeof(Instance<>)));
-
-			var instance = child.GetService<Instance<string>>();
-
-			instance.Value.ShouldBe(null);
-		}
-
-		[Fact]
 		public void GetServices_should_support_generic_type_definitions()
 		{
 			var container = new Container(x => x.Add<object>().Self());

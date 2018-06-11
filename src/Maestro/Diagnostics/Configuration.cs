@@ -7,67 +7,49 @@ namespace Maestro.Diagnostics
 {
 	internal class Configuration
 	{
-		public Configuration Parent { get; set; }
 		public List<Service> Services { get; set; } = new List<Service>();
 
 		public string ToString(Func<Type, bool> serviceFilter)
 		{
-			var serviceCollections = GetServiceCollections(serviceFilter).ToList();
+			var registeredServices = GetRegisteredServices(serviceFilter).ToList();
 
-			serviceCollections.ForEach(x => x.Insert(0, new[] { "Service type", "Name", "Kind", "Lifetime", "Instance type" }));
+			registeredServices.Insert(0, new[] { "Service type", "Name", "Kind", "Lifetime", "Instance type" });
 
-			var allServices = serviceCollections.SelectMany(x => x).ToList();
-			var widths = allServices
+
+			var widths = registeredServices
 				.First()
-				.Select((_, i) => allServices.Max(x => x[i].Length))
+				.Select((_, i) => registeredServices.Max(x => x[i].Length))
 				.ToList();
 
-			serviceCollections.ForEach(services => services.Insert(1, widths.Select(width => new string('=', width)).ToArray()));
+			registeredServices.Insert(1, widths.Select(width => new string('=', width)).ToArray());
 
 			var builder = new StringBuilder();
 
-			var parent = false;
-			foreach (var services in serviceCollections)
+			foreach (var service in registeredServices)
 			{
-				if (parent)
+				for (var i = 0; i < service.Length; i++)
 				{
-					builder.AppendLine();
-					builder.AppendLine(" Parent");
-					builder.AppendLine("====================");
-					builder.AppendLine();
+					builder.Append(service[i].PadRight(widths[i] + 2));
 				}
 
-				foreach (var service in services)
-				{
-					for (var i = 0; i < service.Length; i++)
-					{
-						builder.Append(service[i].PadRight(widths[i] + 2));
-					}
-
-					builder.AppendLine();
-				}
-
-				parent = true;
+				builder.AppendLine();
 			}
 
 			return builder.ToString();
 		}
 
-		private IEnumerable<List<string[]>> GetServiceCollections(Func<Type, bool> serviceFilter)
+		private IEnumerable<string[]> GetRegisteredServices(Func<Type, bool> serviceFilter)
 		{
-			for (var config = this; config != null; config = config.Parent)
-			{
-				yield return config.Services
-					.Where(service => serviceFilter(service.ServiceType))
-					.Select(service => new[]
-					{
-						service.ServiceType.ToString(),
-						GetServiceName(service),
-						service.Provider,
-						service.Lifetime,
-						service.InstanceType?.FullName ?? string.Empty
-					}).ToList();
-			}
+			return Services
+				.Where(service => serviceFilter(service.ServiceType))
+				.Select(service => new[]
+				{
+					service.ServiceType.ToString(),
+					GetServiceName(service),
+					service.Provider,
+					service.Lifetime,
+					service.InstanceType?.FullName ?? string.Empty
+				});
 		}
 
 		private static string GetServiceName(Service service)

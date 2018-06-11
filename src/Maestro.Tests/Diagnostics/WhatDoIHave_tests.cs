@@ -7,8 +7,11 @@ namespace Maestro.Tests.Diagnostics
 		[Fact]
 		public void WhatDoIHave()
 		{
-			var container = new Container(x => x.Add<object>().Type<object>())
-				.GetChildContainer(x => x.Use<string>().Instance("child"));
+			var container = new Container(x =>
+			{
+				x.Add<object>().Type<object>();
+				x.Use<string>().Instance("child");
+			});
 
 			var s = container.Diagnostics.WhatDoIHave();
 		}
