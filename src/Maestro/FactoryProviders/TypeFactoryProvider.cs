@@ -23,10 +23,10 @@ namespace Maestro.FactoryProviders
 		public ConstructorInfo Constructor { get; set; }
 		public IList<CtorArg> CtorArgs { get; private set; } = new List<CtorArg>();
 
-		public IFactory GetFactory(Context context)
+		public Factory GetFactory(Context context)
 		{
 			var activator = GetActivator(Constructor, Name, context);
-			return new Factory(activator);
+			return new DelegatingFactory(activator);
 		}
 
 		private Func<Context, object> GetActivator(ConstructorInfo constructor, string name, Context context)

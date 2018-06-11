@@ -1,19 +1,7 @@
-using System;
-
-namespace Maestro.FactoryProviders.Factories
+﻿namespace Maestro.FactoryProviders.Factories
 {
-	class Factory : IFactory
+	internal abstract class Factory
 	{
-		private readonly Func<Context, object> _activator;
-
-		public Factory(Func<Context, object> activator)
-		{
-			_activator = activator;
-		}
-
-		public object GetInstance(Context context)
-		{
-			return _activator(context);
-		}
+		internal abstract object GetInstance(Context context);
 	}
 }
