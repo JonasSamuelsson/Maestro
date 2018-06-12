@@ -43,7 +43,7 @@ namespace Maestro.FactoryProviders
 				{
 					var parameterType = parameter.ParameterType;
 
-					var customFactory = CtorArgs.SingleOrDefault(ca => ca.Name == parameter.Name || ca.Type == parameterType)?.Factory;
+					var customFactory = CtorArgs.SingleOrDefault(ca => ca.Type == parameterType)?.Factory;
 					if (customFactory != null)
 					{
 						factories.Add(ctx => customFactory(ctx, parameterType));
@@ -96,7 +96,6 @@ namespace Maestro.FactoryProviders
 
 		internal class CtorArg
 		{
-			public string Name { get; set; }
 			public Type Type { get; set; }
 			public Func<Context, Type, object> Factory { get; set; }
 		}

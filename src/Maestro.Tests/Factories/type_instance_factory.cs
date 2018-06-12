@@ -106,12 +106,6 @@ namespace Maestro.Tests.Factories
 			{
 				x.Use<string>().Instance("Object");
 
-				x.Add<OptionalDependency<object>>().Self().CtorArg("dependency", "Object");
-				x.Add<OptionalDependency<object>>().Self().CtorArg("dependency", () => "Object");
-				x.Add<OptionalDependency<object>>().Self().CtorArg("dependency", ctx => ctx.GetService<string>());
-				x.Add<OptionalDependency<object>>().Self().CtorArg("dependency", (ctx, type) => type.Name);
-				x.Add(typeof(OptionalDependency<>)).Self().CtorArg("dependency", "Object");
-
 				x.Add<OptionalDependency<object>>().Self().CtorArg(typeof(object), "Object");
 				x.Add<OptionalDependency<object>>().Self().CtorArg(typeof(object), () => "Object");
 				x.Add<OptionalDependency<object>>().Self().CtorArg(typeof(object), ctx => ctx.GetService<string>());
