@@ -61,8 +61,8 @@ namespace Maestro.Tests.Core.Performance
 		{
 			var container = new Container(x =>
 													{
-														x.Add(typeof(IList<>)).Instance(typeof(List<>));
-														x.Add(typeof(IList<>)).Instance(typeof(List<>));
+														x.Add(typeof(IList<>)).Type(typeof(List<>));
+														x.Add(typeof(IList<>)).Type(typeof(List<>));
 													});
 			Action baseline = delegate { var temp = new[] { new List<string>(), new List<string>() }; };
 			Action work = () => container.GetServices<IList<string>>();
