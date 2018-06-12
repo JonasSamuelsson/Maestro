@@ -1,5 +1,4 @@
 ﻿using Shouldly;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -91,7 +90,6 @@ namespace Maestro.Tests.Factories
 													{
 														x.Use<IEnumerable<int>>().Instance(ints);
 														x.Use<IEnumerable<string>>().Instance(strings);
-														x.Use(typeof(IGeneric<,>)).Type(typeof(Generic<,>));
 													});
 
 			var instanceWithInts = container.GetService<OptionalDependency<IEnumerable<int>>>();
@@ -99,14 +97,7 @@ namespace Maestro.Tests.Factories
 
 			instanceWithInts.Dependency.ShouldBe(ints);
 			instanceWithStrings.Dependency.ShouldBe(strings);
-
-			container.GetService<IGeneric<int, object>>();
-
-			throw new Exception(container.Diagnostics.WhatDoIHave());
 		}
-
-		interface IGeneric<T1, T2> { }
-		class Generic<T1, T2> : IGeneric<T1, T2> { }
 
 		[Fact]
 		public void should_use_custom_parameter_values()
