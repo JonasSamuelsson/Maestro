@@ -13,29 +13,6 @@ namespace Maestro.Configuration
 
 		internal override ITypeInstanceExpression<TInstance> Parent => this;
 
-		public ITypeInstanceExpression<TInstance> CtorArg(string argName, object value)
-		{
-			return CtorArg(argName, (ctx, type) => value);
-		}
-
-		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<object> factory)
-		{
-			return CtorArg(argName, (ctx, type) => factory());
-		}
-
-		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<Context, object> factory)
-		{
-			return CtorArg(argName, (ctx, type) => factory(ctx));
-		}
-
-		public ITypeInstanceExpression<TInstance> CtorArg(string argName, Func<Context, Type, object> factory)
-		{
-			var typeFactoryProvider = (TypeFactoryProvider)ServiceDescriptor.FactoryProvider;
-			var ctorArg = new TypeFactoryProvider.CtorArg { Name = argName, Factory = factory };
-			typeFactoryProvider.CtorArgs.Add(ctorArg);
-			return this;
-		}
-
 		public ITypeInstanceExpression<TInstance> CtorArg(Type argType, object value)
 		{
 			return CtorArg(argType, (ctx, type) => value);
