@@ -19,7 +19,7 @@ namespace Maestro.FactoryProviders
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)
 		{
-			throw new NotSupportedException();
+			throw new InvalidOperationException($"Can't create generic instance from instance of type '{_instance.GetType().FullName}'.");
 		}
 
 		public Type GetInstanceType()
