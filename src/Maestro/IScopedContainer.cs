@@ -1,12 +1,11 @@
-﻿using Maestro.Diagnostics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Maestro
 {
 	public interface IScopedContainer : IDisposable
 	{
-		IDiagnostics Diagnostics { get; }
+		Diagnostics.Diagnostics Diagnostics { get; }
 
 		/// <summary>
 		/// Gets the default instance of type <paramref name="type"/>.

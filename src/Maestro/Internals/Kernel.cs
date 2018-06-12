@@ -176,12 +176,13 @@ namespace Maestro.Internals
 			return false;
 		}
 
-		private static SingleServicePipeline CreateSingleServicePipeline(ServiceDescriptor serviceDescriptor, Context context)
+		private static Pipeline CreateSingleServicePipeline(ServiceDescriptor serviceDescriptor, Context context)
 		{
+			var serviceId = serviceDescriptor.Id;
 			var factory = serviceDescriptor.FactoryProvider.GetFactory(context);
 			var interceptors = serviceDescriptor.Interceptors;
 			var lifetime = serviceDescriptor.Lifetime;
-			return new SingleServicePipeline(factory, interceptors, lifetime);
+			return new SingleServicePipeline(serviceId, factory, interceptors, lifetime);
 		}
 
 		private bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
@@ -205,6 +206,7 @@ namespace Maestro.Internals
 
 		internal void Populate(Diagnostics.Configuration configuration)
 		{
+			_pipelineCache.Populate(configuration.Pipelines);
 			ServiceDescriptors.Populate(configuration.Services);
 		}
 	}

@@ -22,7 +22,7 @@ namespace Maestro
 			CurrentScope = new ConcurrentDictionary<object, object>();
 		}
 
-		public IDiagnostics Diagnostics => new Diagnostics.Diagnostics(Kernel);
+		public Diagnostics.Diagnostics Diagnostics => new Diagnostics.Diagnostics(Kernel);
 		internal Kernel Kernel { get; }
 		internal ConcurrentDictionary<object, object> CurrentScope { get; }
 		internal ConcurrentDictionary<object, object> RootScope { get; }

@@ -32,7 +32,7 @@ namespace Maestro.Configuration
 
 		public IFactoryInstanceExpression<object> Factory(Func<Context, object> factory)
 		{
-			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(factory));
+			var plugin = CreatePlugin(Name, new FuncFactoryProvider(factory));
 			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
 				? new FactoryInstanceExpression<object>(plugin)
 				: null;
@@ -75,7 +75,7 @@ namespace Maestro.Configuration
 
 		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<Context, TInstance> factory) where TInstance : TService
 		{
-			var plugin = CreatePlugin(Name, new LambdaFactoryProvider(ctx => factory(ctx)));
+			var plugin = CreatePlugin(Name, new FuncFactoryProvider(ctx => factory(ctx)));
 			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
 				? new FactoryInstanceExpression<TInstance>(plugin)
 				: null;

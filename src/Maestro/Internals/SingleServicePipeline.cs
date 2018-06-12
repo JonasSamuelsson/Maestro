@@ -1,3 +1,4 @@
+using Maestro.Diagnostics;
 using Maestro.FactoryProviders.Factories;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
@@ -7,13 +8,15 @@ namespace Maestro.Internals
 {
 	internal class SingleServicePipeline : Pipeline
 	{
+		private readonly int? _serviceId;
 		private readonly Factory _factory;
 		private readonly int _interceptorCount;
 		private readonly List<Interceptor> _interceptors;
 		private readonly Lifetime _lifetime;
 
-		internal SingleServicePipeline(Factory factory, List<Interceptor> interceptors, Lifetime lifetime)
+		internal SingleServicePipeline(int? serviceId, Factory factory, List<Interceptor> interceptors, Lifetime lifetime)
 		{
+			_serviceId = serviceId;
 			_factory = factory;
 			_interceptorCount = interceptors.Count;
 			_interceptors = interceptors;
@@ -25,7 +28,14 @@ namespace Maestro.Internals
 			return _lifetime.Execute(context, GetInstance);
 		}
 
-		public object GetInstance(Context context)
+		internal override void Populate(List<PipelineService> services)
+		{
+			var service = new PipelineService { Id = _serviceId };
+			_factory.Populate(service);
+			services.Add(service);
+		}
+
+		private object GetInstance(Context context)
 		{
 			var instance = _factory.GetInstance(context);
 

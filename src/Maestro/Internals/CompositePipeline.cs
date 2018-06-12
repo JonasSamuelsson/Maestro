@@ -1,3 +1,4 @@
+using Maestro.Diagnostics;
 using System;
 using System.Collections.Generic;
 
@@ -22,6 +23,12 @@ namespace Maestro.Internals
 		internal override object Execute(Context context)
 		{
 			return _pipelineEngine.Execute(_pipelines, context);
+		}
+
+		internal override void Populate(List<PipelineService> services)
+		{
+			services.Add(new PipelineService { Provider = "service[]" });
+			_pipelines.ForEach(x => x.Populate(services));
 		}
 
 		private abstract class PipelineEngine

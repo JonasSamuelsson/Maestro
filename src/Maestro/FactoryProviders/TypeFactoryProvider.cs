@@ -26,7 +26,7 @@ namespace Maestro.FactoryProviders
 		public Factory GetFactory(Context context)
 		{
 			var activator = GetActivator(Constructor, Name, context);
-			return new DelegatingFactory(activator);
+			return new TypeFactory(Type, activator);
 		}
 
 		private Func<Context, object> GetActivator(ConstructorInfo constructor, string name, Context context)

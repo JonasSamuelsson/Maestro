@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Maestro.Internals
 {
@@ -57,6 +58,22 @@ namespace Maestro.Internals
 			{
 				return _hashCode;
 			}
+		}
+
+		public void Populate(List<Diagnostics.Pipeline> pipelines)
+		{
+			_dictionary
+				.ToArray()
+				.ForEach(kvp =>
+				{
+					var pipeline = new Diagnostics.Pipeline
+					{
+						Type = kvp.Key.Type,
+						Name = kvp.Key.Name
+					};
+					kvp.Value.Populate(pipeline.Services);
+					pipelines.Add(pipeline);
+				});
 		}
 	}
 }
