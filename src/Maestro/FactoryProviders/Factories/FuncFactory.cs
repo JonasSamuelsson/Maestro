@@ -1,12 +1,13 @@
 using System;
+using Maestro.Diagnostics;
 
 namespace Maestro.FactoryProviders.Factories
 {
-	internal class DelegatingFactory : Factory
+	internal class FuncFactory : Factory
 	{
 		private readonly Func<Context, object> _activator;
 
-		public DelegatingFactory(Func<Context, object> activator)
+		internal FuncFactory(Func<Context, object> activator)
 		{
 			_activator = activator;
 		}
@@ -14,6 +15,11 @@ namespace Maestro.FactoryProviders.Factories
 		internal override object GetInstance(Context context)
 		{
 			return _activator(context);
+		}
+
+		internal override void Populate(PipelineService service)
+		{
+			service.Provider = "Factory";
 		}
 	}
 }

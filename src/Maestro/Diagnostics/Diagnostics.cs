@@ -1,9 +1,8 @@
-﻿using System;
-using Maestro.Internals;
+﻿using Maestro.Internals;
 
 namespace Maestro.Diagnostics
 {
-	public class Diagnostics : IDiagnostics
+	public class Diagnostics
 	{
 		private readonly Kernel _kernel;
 
@@ -12,11 +11,11 @@ namespace Maestro.Diagnostics
 			_kernel = kernel;
 		}
 
-		public string WhatDoIHave(Func<Type, bool> predicate = null)
+		public string WhatDoIHave()
 		{
 			var config = new Configuration();
 			_kernel.Populate(config);
-			return config.ToString(predicate ?? (_ => true));
+			return config.ToString();
 		}
 	}
 }

@@ -3,18 +3,18 @@ using System;
 
 namespace Maestro.FactoryProviders
 {
-	class LambdaFactoryProvider : IFactoryProvider
+	internal class FuncFactoryProvider : IFactoryProvider
 	{
 		private readonly Func<Context, object> _factory;
 
-		public LambdaFactoryProvider(Func<Context, object> factory)
+		public FuncFactoryProvider(Func<Context, object> factory)
 		{
 			_factory = factory;
 		}
 
 		public Factory GetFactory(Context context)
 		{
-			return new DelegatingFactory(_factory);
+			return new FuncFactory(_factory);
 		}
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)

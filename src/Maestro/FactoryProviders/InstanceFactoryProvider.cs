@@ -3,7 +3,7 @@ using System;
 
 namespace Maestro.FactoryProviders
 {
-	class InstanceFactoryProvider : IFactoryProvider
+	internal class InstanceFactoryProvider : IFactoryProvider
 	{
 		private readonly object _instance;
 
@@ -14,7 +14,7 @@ namespace Maestro.FactoryProviders
 
 		public Factory GetFactory(Context context)
 		{
-			return new DelegatingFactory(_ => _instance);
+			return new InstanceFactory(_instance);
 		}
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)

@@ -19,7 +19,7 @@ namespace Maestro.TypeFactoryResolvers
 			var wrapper = Activator.CreateInstance(wrapperType, name, ctx.ScopedContainer, ctx.Kernel);
 			var getFuncMethod = wrapperType.GetMethod("GetFunc", new Type[] { });
 			var lambda = new Func<Context, object>(_ => getFuncMethod.Invoke(wrapper, null)); // todo perf
-			factoryProvider = new LambdaFactoryProvider(lambda);
+			factoryProvider = new FuncFactoryProvider(lambda);
 			return true;
 		}
 

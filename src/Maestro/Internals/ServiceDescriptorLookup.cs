@@ -4,12 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 
 namespace Maestro.Internals
 {
 	internal class ServiceDescriptorLookup : IDisposable
 	{
-		private int _counter = 1;
+		private int _idCounter;
+		private int _sortOrderCounter;
+
 		private readonly ThreadSafeDictionary<Type, ServiceFamily> _serviceFamilies = new ThreadSafeDictionary<Type, ServiceFamily>();
 
 		internal EventHandler<EventArgs> ServiceDescriptorAdded;
@@ -21,9 +24,11 @@ namespace Maestro.Internals
 
 		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate, bool triggerServiceDescriptorAddedEvent)
 		{
+			serviceDescriptor.Id = Interlocked.Increment(ref _idCounter);
+
 			if (serviceDescriptor.SortOrder == 0)
 			{
-				serviceDescriptor.SortOrder = _counter++;
+				serviceDescriptor.SortOrder = Interlocked.Increment(ref _sortOrderCounter);
 			}
 
 			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, type => new ServiceFamily { Type = type });
@@ -165,6 +170,8 @@ namespace Maestro.Internals
 				{
 					services.Add(new Service
 					{
+						// ReSharper disable once PossibleInvalidOperationException
+						Id = serviceDescriptor.Id.Value,
 						InstanceType = serviceDescriptor.FactoryProvider.GetInstanceType(),
 						Lifetime = serviceDescriptor.Lifetime.ToString(),
 						Name = serviceDescriptor.Name,

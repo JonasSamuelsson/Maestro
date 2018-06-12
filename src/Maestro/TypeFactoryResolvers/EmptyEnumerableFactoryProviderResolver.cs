@@ -1,3 +1,4 @@
+using Maestro.Diagnostics;
 using Maestro.FactoryProviders;
 using Maestro.FactoryProviders.Factories;
 using Maestro.Utils;
@@ -41,6 +42,11 @@ namespace Maestro.TypeFactoryResolvers
 			internal override object GetInstance(Context context)
 			{
 				return Enumerable.Empty<T>();
+			}
+
+			internal override void Populate(PipelineService service)
+			{
+				service.Provider = "Empty enumerable";
 			}
 		}
 	}

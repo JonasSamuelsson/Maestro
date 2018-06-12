@@ -1,15 +1,15 @@
 ﻿using Maestro.FactoryProviders;
 using Maestro.Interceptors;
 using Maestro.Lifetimes;
-using Maestro.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Maestro.Internals
 {
-	class ServiceDescriptor
+	internal class ServiceDescriptor
 	{
+		public int? Id { get; set; }
 		public Guid CorrelationId { get; set; } = Guid.NewGuid();
 		public Type Type { get; set; }
 		public string Name { get; set; }
@@ -22,6 +22,7 @@ namespace Maestro.Internals
 		{
 			return new ServiceDescriptor
 			{
+				// Id intentially left out
 				CorrelationId = CorrelationId,
 				Type = Type.MakeGenericType(genericArguments),
 				FactoryProvider = FactoryProvider.MakeGeneric(genericArguments),
