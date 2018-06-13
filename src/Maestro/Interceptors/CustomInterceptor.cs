@@ -23,7 +23,7 @@ namespace Maestro.Interceptors
 
 		public override string ToString()
 		{
-			return $"custom interceptor: '{GetType().FullName}'";
+			return $"custom interceptor: '{GetType().ToFormattedString()}'";
 		}
 	}
 }

@@ -67,14 +67,14 @@ namespace Maestro.FactoryProviders
 						}
 						catch (Exception exception)
 						{
-							var error = $"Error instantiating '{Type.FullName}'.";
+							var error = $"Error instantiating '{Type.ToFormattedString()}'.";
 							throw new InvalidOperationException(ExceptionMessageBuilder.GetMessage(error, exception.Message));
 						}
 					};
 				}
 			}
 
-			var message = $"Could not find resolvable constructor for '{Type.FullName}'.";
+			var message = $"Could not find resolvable constructor for '{Type.ToFormattedString()}'.";
 			throw new InvalidOperationException(message);
 		}
 

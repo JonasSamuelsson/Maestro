@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro
 {
@@ -118,6 +119,24 @@ namespace Maestro
 			}
 
 			return false;
+		}
+
+		internal static string ToFormattedString(this Type type)
+		{
+			var result = type?.FullName ?? type?.Name;
+
+			if (string.IsNullOrEmpty(result))
+				return string.Empty;
+
+			if (type.IsGenericType)
+			{
+				var index = result.IndexOf('`');
+				result = result.Substring(0, index);
+				var typeArgs = type.GetGenericArguments().Select(ToFormattedString);
+				result += $"<{string.Join(", ", typeArgs)}>";
+			}
+
+			return result;
 		}
 	}
 }
