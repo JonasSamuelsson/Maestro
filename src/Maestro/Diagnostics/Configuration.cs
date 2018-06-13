@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -27,7 +26,7 @@ namespace Maestro.Diagnostics
 		private void AddServices(StringBuilder builder)
 		{
 			var lines = from service in Services
-							let serviceType = Format(service.ServiceType)
+							let serviceType = service.ServiceType.ToFormattedString()
 							orderby serviceType
 							select new[]
 							{
@@ -36,7 +35,7 @@ namespace Maestro.Diagnostics
 					service.Id.ToString(),
 					service.Provider,
 					service.Lifetime,
-					Format(service.InstanceType)
+					service.InstanceType.ToFormattedString()
 				};
 
 			var headers = new[] { "Service type", "Name", "Id", "Provider", "Lifetime", "Instance type" };
@@ -56,7 +55,7 @@ namespace Maestro.Diagnostics
 		private void AddPipelines(StringBuilder builder)
 		{
 			var lines = from pipeline in Pipelines
-							let serviceType = Format(pipeline.Type)
+							let serviceType = pipeline.Type.ToFormattedString()
 							orderby serviceType
 							from service in pipeline.Services
 							let isFirst = service == pipeline.Services[0]
@@ -66,7 +65,7 @@ namespace Maestro.Diagnostics
 					isFirst ? GetServiceName(pipeline.Name) : string.Empty,
 					service.Id?.ToString(),
 					service.Provider,
-					Format(service.InstanceType)
+					service.InstanceType.ToFormattedString()
 				};
 
 			var headers = new[] { "Service type", "Name", "Id", "Provider", "Instance type" };
@@ -100,24 +99,6 @@ namespace Maestro.Diagnostics
 
 			foreach (var row in table)
 				yield return string.Join(" ", row);
-		}
-
-		private static string Format(Type type)
-		{
-			var result = type?.FullName ?? type?.Name;
-
-			if (string.IsNullOrEmpty(result))
-				return string.Empty;
-
-			if (type.IsGenericType)
-			{
-				var index = result.IndexOf('`');
-				result = result.Substring(0, index);
-				var typeArgs = type.GetGenericArguments().Select(Format);
-				result += $"<{string.Join(", ", typeArgs)}>";
-			}
-
-			return result;
 		}
 	}
 }

@@ -1,6 +1,6 @@
-﻿using Maestro.Internals;
+﻿using Maestro.Configuration;
+using Maestro.Internals;
 using System;
-using Maestro.Configuration;
 
 namespace Maestro.Interceptors
 {
@@ -35,7 +35,7 @@ namespace Maestro.Interceptors
 			if (property == null)
 			{
 				if (_propertyNotFoundAction == PropertyNotFoundAction.Throw)
-					throw new InvalidOperationException($"Could not find property '{type.FullName}.{_propertyName}'.");
+					throw new InvalidOperationException($"Could not find property '{type.ToFormattedString()}.{_propertyName}'.");
 
 				_worker = (o, ctx) => { };
 				return;

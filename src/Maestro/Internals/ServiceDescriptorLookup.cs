@@ -49,8 +49,8 @@ namespace Maestro.Internals
 					if (throwIfDuplicate)
 					{
 						var msg = serviceDescriptorName == ServiceNames.Default
-							? $"Default service of type '{serviceDescriptor.Type.FullName}' has already been registered."
-							: $"Service named '{serviceDescriptorName}' of type '{serviceDescriptor.Type.FullName}' has already been registered.";
+							? $"Default service of type '{serviceDescriptor.Type.ToFormattedString()}' has already been registered."
+							: $"Service named '{serviceDescriptorName}' of type '{serviceDescriptor.Type.ToFormattedString()}' has already been registered.";
 						throw new DuplicateServiceRegistrationException(msg);
 					}
 					return false;
