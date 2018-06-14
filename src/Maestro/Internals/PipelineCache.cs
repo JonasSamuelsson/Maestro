@@ -45,7 +45,7 @@ namespace Maestro.Internals
 
 			public bool Equals(Key other)
 			{
-				return Type == other.Type && string.Equals(Name, other.Name);
+				return _hashCode == other._hashCode;
 			}
 
 			public override bool Equals(object obj)
