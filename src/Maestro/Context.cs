@@ -8,7 +8,7 @@ namespace Maestro
 {
 	public class Context : IDisposable
 	{
-		private readonly Stack<ServiceRequest> _serviceRequests = new Stack<ServiceRequest>();
+		private readonly Stack<ServiceRequest> _serviceRequestStack = new Stack<ServiceRequest>();
 		private bool _disposed;
 
 		internal Context(ScopedContainer container, Kernel kernel)
@@ -17,7 +17,6 @@ namespace Maestro
 			Kernel = kernel;
 		}
 
-		public IEnumerable<ServiceRequest> CallStack => _serviceRequests;
 		public IScopedContainer Container => ScopedContainer;
 		internal ScopedContainer ScopedContainer { get; }
 		internal Kernel Kernel { get; }
@@ -312,17 +311,17 @@ namespace Maestro
 		{
 			var request = new ServiceRequest(type, name);
 
-			if (_serviceRequests.Contains(request))
+			if (_serviceRequestStack.Contains(request))
 			{
 				throw new InvalidOperationException("Cyclic dependency.");
 			}
 
-			_serviceRequests.Push(request);
+			_serviceRequestStack.Push(request);
 		}
 
 		private void RemoveStackFrame()
 		{
-			_serviceRequests.Pop();
+			_serviceRequestStack.Pop();
 		}
 
 		private static Exception CreateActivationException(Type type, string name, Exception exception)
