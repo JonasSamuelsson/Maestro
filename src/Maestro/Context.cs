@@ -8,7 +8,7 @@ namespace Maestro
 {
 	public class Context : IDisposable
 	{
-		private readonly Stack<ServiceRequest> _serviceRequestStack = new Stack<ServiceRequest>();
+		private readonly HashSet<ServiceRequest> _serviceRequestStack = new HashSet<ServiceRequest>();
 		private bool _disposed;
 
 		internal Context(ScopedContainer container, Kernel kernel)
@@ -28,14 +28,13 @@ namespace Maestro
 
 		public bool CanGetService(Type type, string name)
 		{
-			var removeStackFrame = false;
 			name = GetValueOrDefaultName(name);
+			var serviceRequest = new ServiceRequest(type, name);
 
 			try
 			{
 				AssertNotDisposed();
-				AddStackFrame(type, name);
-				removeStackFrame = true;
+				AddStackFrame(serviceRequest);
 
 				return Kernel.CanGetService(type, name, this);
 			}
@@ -50,7 +49,7 @@ namespace Maestro
 			}
 			finally
 			{
-				if (removeStackFrame) RemoveStackFrame();
+				RemoveStackFrame(serviceRequest);
 			}
 		}
 
@@ -220,14 +219,13 @@ namespace Maestro
 		/// <returns></returns>
 		public bool TryGetService(Type type, string name, out object instance)
 		{
-			var removeStackFrame = false;
 			name = GetValueOrDefaultName(name);
+			var serviceRequest = new ServiceRequest(type, name);
 
 			try
 			{
 				AssertNotDisposed();
-				AddStackFrame(type, name);
-				removeStackFrame = true;
+				AddStackFrame(serviceRequest);
 
 				return Kernel.TryGetService(type, name, this, out instance);
 			}
@@ -242,7 +240,7 @@ namespace Maestro
 			}
 			finally
 			{
-				if (removeStackFrame) RemoveStackFrame();
+				RemoveStackFrame(serviceRequest);
 			}
 		}
 
@@ -299,14 +297,13 @@ namespace Maestro
 
 		internal bool TryGetPipeline(Type type, string name, out Pipeline pipeline)
 		{
-			var removeStackFrame = false;
 			name = GetValueOrDefaultName(name);
+			var serviceRequest = new ServiceRequest(type, name);
 
 			try
 			{
 				// don't need to check if disposed
-				AddStackFrame(type, name);
-				removeStackFrame = true;
+				AddStackFrame(serviceRequest);
 
 				return Kernel.TryGetPipeline(type, name, this, out pipeline);
 			}
@@ -321,7 +318,7 @@ namespace Maestro
 			}
 			finally
 			{
-				if (removeStackFrame) RemoveStackFrame();
+				RemoveStackFrame(serviceRequest);
 			}
 		}
 
@@ -352,21 +349,24 @@ namespace Maestro
 			if (_disposed) throw new ObjectDisposedException(objectName: null, message: "Context has been disposed.");
 		}
 
-		private void AddStackFrame(Type type, string name)
+		//private void AddStackFrame(Type type, string name)
+		//{
+		//	var serviceRequest = new ServiceRequest(type, name);
+
+		//	AddStackFrame(serviceRequest);
+		//}
+
+		private void AddStackFrame(ServiceRequest request)
 		{
-			var request = new ServiceRequest(type, name);
+			if (_serviceRequestStack.Add(request))
+				return;
 
-			if (_serviceRequestStack.Contains(request))
-			{
-				throw new InvalidOperationException("Cyclic dependency.");
-			}
-
-			_serviceRequestStack.Push(request);
+			throw new InvalidOperationException("Cyclic dependency.");
 		}
 
-		private void RemoveStackFrame()
+		private void RemoveStackFrame(ServiceRequest serviceRequest)
 		{
-			_serviceRequestStack.Pop();
+			_serviceRequestStack.Remove(serviceRequest);
 		}
 
 		private static Exception CreateActivationException(Type type, string name, Exception exception)
