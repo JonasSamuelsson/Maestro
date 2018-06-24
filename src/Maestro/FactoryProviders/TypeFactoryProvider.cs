@@ -50,9 +50,9 @@ namespace Maestro.FactoryProviders
 						continue;
 					}
 
-					if (context.CanGetService(parameterType, name))
+					if (context.TryGetPipeline(parameterType, name, out var pipeline))
 					{
-						factories.Add(ctx => ctx.GetService(parameterType, name));
+						factories.Add(ctx => ctx.GetService(parameterType, name, pipeline));
 					}
 				}
 

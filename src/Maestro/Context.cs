@@ -297,6 +297,51 @@ namespace Maestro
 			}
 		}
 
+		internal bool TryGetPipeline(Type type, string name, out Pipeline pipeline)
+		{
+			var removeStackFrame = false;
+			name = GetValueOrDefaultName(name);
+
+			try
+			{
+				// don't need to check if disposed
+				AddStackFrame(type, name);
+				removeStackFrame = true;
+
+				return Kernel.TryGetPipeline(type, name, this, out pipeline);
+			}
+			catch (ActivationException exception)
+			{
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(type, name, exception);
+			}
+			finally
+			{
+				if (removeStackFrame) RemoveStackFrame();
+			}
+		}
+
+		internal object GetService(Type type, string name, Pipeline pipeline)
+		{
+			try
+			{
+				return pipeline.Execute(this);
+			}
+			catch (ActivationException exception)
+			{
+				if (exception.Type == type && exception.Name == name) throw;
+				throw new ActivationException(type, name, exception);
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(type, name, exception);
+			}
+		}
+
 		private static string GetValueOrDefaultName(string name)
 		{
 			return name ?? ServiceNames.Default;
