@@ -82,7 +82,6 @@ namespace Maestro
 		/// Gets the default instance of type <paramref name="type"/>.
 		/// </summary>
 		/// <param name="type"></param>
-		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
 		/// <returns></returns>
 		public object GetService(Type type)
 		{
@@ -122,7 +121,6 @@ namespace Maestro
 		/// Gets the default instance of type <typeparamref name="T"/>.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
 		/// <returns></returns>
 		public T GetService<T>()
 		{
