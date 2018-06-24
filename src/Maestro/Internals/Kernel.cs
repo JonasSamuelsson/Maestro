@@ -54,7 +54,7 @@ namespace Maestro.Internals
 			return false;
 		}
 
-		private bool TryGetPipeline(Type type, string name, Context context, out Pipeline pipeline)
+		internal bool TryGetPipeline(Type type, string name, Context context, out Pipeline pipeline)
 		{
 			var key = new PipelineCache.Key(type, name);
 
