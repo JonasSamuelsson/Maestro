@@ -16,15 +16,6 @@ namespace Maestro.Configuration
 
 		public List<Func<Type, bool>> AutoResolveFilters => _kernel.AutoResolveFilters;
 
-		public SettingsExpression Settings
-		{
-			get
-			{
-				AssertNotDisposed();
-				return new SettingsExpression(_kernel.Settings);
-			}
-		}
-
 		public IServiceExpression Use(Type type)
 		{
 			if (type == null) throw new ArgumentNullException();

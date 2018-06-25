@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using Maestro.Configuration;
-using Shouldly;
+﻿using Shouldly;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests
@@ -16,7 +15,6 @@ namespace Maestro.Tests
 				x.Add<ITestType<int>>().Instance(instance);
 				x.Add(typeof(ITestType<>)).Type(typeof(TestType<>));
 				x.Add<ITestType<int>>().Type<TestTypeOfInt>();
-				x.Settings.GetServicesOrder = GetServicesOrder.Ordered;
 			});
 
 			var instances = container.GetServices<ITestType<int>>().ToList();

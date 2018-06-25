@@ -1,6 +1,6 @@
-﻿using System;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.OldTests
@@ -12,8 +12,6 @@ namespace Maestro.Tests.OldTests
 		{
 			ContainerExpression containerExpression = null;
 			new Container().Configure(x => containerExpression = x);
-
-			Should.Throw<InvalidOperationException>(() => { var @default = containerExpression.Settings; });
 
 			Should.Throw<InvalidOperationException>(() => containerExpression.Use(typeof(object)));
 			Should.Throw<InvalidOperationException>(() => containerExpression.Use(typeof(object), string.Empty));

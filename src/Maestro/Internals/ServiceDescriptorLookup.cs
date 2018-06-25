@@ -132,7 +132,7 @@ namespace Maestro.Internals
 
 			if (result.Count != 0)
 			{
-				serviceDescriptors = result;
+				serviceDescriptors = result.OrderBy(x => x.SortOrder).ToArray();
 				return true;
 			}
 
