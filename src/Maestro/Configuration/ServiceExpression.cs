@@ -1,6 +1,7 @@
 using Maestro.FactoryProviders;
 using Maestro.Internals;
 using System;
+using Maestro.Lifetimes;
 
 namespace Maestro.Configuration
 {
@@ -58,7 +59,7 @@ namespace Maestro.Configuration
 				Name = name,
 				Type = ServiceType,
 				FactoryProvider = factoryProvider,
-				Lifetime = Kernel.Settings.LifetimeFactory()
+				Lifetime = TransientLifetime.Instance
 			};
 		}
 

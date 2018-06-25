@@ -1,9 +1,7 @@
-﻿using Maestro.Configuration;
-using Maestro.TypeFactoryResolvers;
+﻿using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Maestro.Internals
 {
@@ -23,7 +21,6 @@ namespace Maestro.Internals
 		{
 			_pipelineCache = new PipelineCache();
 			AutoResolveFilters = new List<Func<Type, bool>>();
-			Settings = new ContainerSettings();
 			ServiceDescriptors = new ServiceDescriptorLookup();
 			ServiceDescriptors.ServiceDescriptorAdded += ServiceDescriptorLookupServiceDescriptorAdded;
 		}
@@ -34,7 +31,6 @@ namespace Maestro.Internals
 		}
 
 		internal List<Func<Type, bool>> AutoResolveFilters { get; }
-		internal ContainerSettings Settings { get; }
 		internal ServiceDescriptorLookup ServiceDescriptors { get; }
 
 		internal bool CanGetService(Type type, string name, Context context)
@@ -121,11 +117,7 @@ namespace Maestro.Internals
 			{
 				var compositePipeline = new CompositePipeline(elementType);
 
-				if (Settings.GetServicesOrder == GetServicesOrder.Ordered)
-				{
-					serviceDescriptors = serviceDescriptors.OrderBy(x => x.SortOrder).ToList();
-				}
-
+				// ReSharper disable once ForCanBeConvertedToForeach
 				for (var i = 0; i < serviceDescriptors.Count; i++)
 				{
 					var descriptor = serviceDescriptors[i];
