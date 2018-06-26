@@ -19,10 +19,6 @@
    </PropertyGroup>
 
    <ItemGroup>
-      <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-   </ItemGroup>
-
-   <ItemGroup>
       <None Include="..\Maestro.snk" Link="Maestro.snk" />
    </ItemGroup>
 

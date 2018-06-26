@@ -10,7 +10,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{DE4F0E5E-F742-45D9-B011-DCFA614B0AA6}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.DependencyInjection", "Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj", "{B8474763-52FB-4201-9F3F-CE1D20785C49}"
