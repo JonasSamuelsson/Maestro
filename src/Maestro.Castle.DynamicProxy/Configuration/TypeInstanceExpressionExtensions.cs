@@ -31,7 +31,7 @@ namespace Maestro.Configuration
 		/// <param name="proxyFactory"></param>
 		/// <returns></returns>
 		public static ITypeInstanceExpression<TOut> Proxy<TInstance, TOut>(this ITypeInstanceExpression<TInstance> typeInstanceExpression,
-			Func<TInstance, IContext, ProxyGenerator, TOut> proxyFactory)
+			Func<TInstance, Context, ProxyGenerator, TOut> proxyFactory)
 		{
 			return typeInstanceExpression
 				.Intercept(new ProxyInterceptor<TInstance, TOut>(proxyFactory))

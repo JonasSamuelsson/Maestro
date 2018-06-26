@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
@@ -26,7 +26,7 @@
       <PackageReference Include="Castle.Core" Version="4.1.0" />
 
       <!-- <PackageReferences> -->
-       <PackageReference Include="Maestro" Version="2.0.0" /> 
+       <PackageReference Include="Maestro" Version="3.0.0-rc1" /> 
       <!-- </PackageReferences> -->
    </ItemGroup>
 
