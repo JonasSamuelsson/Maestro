@@ -70,7 +70,7 @@ namespace Maestro.Internals
 					return true;
 				}
 
-				if (TryGetPipelineFromFactoryProviders(type, name, context, typeIsIEnumerableOfT, ref pipeline))
+				if (TryGetPipelineFromFactoryProviders(type, name, context, ref pipeline))
 				{
 					_pipelineCache.Add(key, pipeline);
 					return true;
@@ -131,12 +131,14 @@ namespace Maestro.Internals
 			return false;
 		}
 
-		private bool TryGetPipelineFromFactoryProviders(Type type, string name, Context context, bool typeIsIEnumerableOfT, ref Pipeline pipeline)
+		private bool TryGetPipelineFromFactoryProviders(Type type, string name, Context context, ref Pipeline pipeline)
 		{
 			if (AutoResolveFilters.Count != 0)
 			{
 				var match = false;
 
+				// ReSharper disable once ForCanBeConvertedToForeach
+				// ReSharper disable once LoopCanBeConvertedToQuery
 				for (var i = 0; i < AutoResolveFilters.Count; i++)
 				{
 					var filter = AutoResolveFilters[i];
@@ -148,6 +150,7 @@ namespace Maestro.Internals
 				if (!match) return false;
 			}
 
+			// ReSharper disable once ForCanBeConvertedToForeach
 			for (var i = 0; i < FactoryProviderResolvers.Count; i++)
 			{
 				var factoryProviderResolver = FactoryProviderResolvers[i];
