@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Xunit;
 
-namespace Maestro.Tests.Core.Performance
+namespace Maestro.Tests.Performance
 {
 	public class performance_tests
 	{
