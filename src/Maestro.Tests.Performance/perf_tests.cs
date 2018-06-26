@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Maestro.Tests.Core.Performance
+namespace Maestro.Tests.Performance
 {
 	public class perf_tests : IDisposable
 	{
