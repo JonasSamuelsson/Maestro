@@ -4,15 +4,16 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <AssemblyName>Maestro</AssemblyName>
       <RootNamespace>Maestro</RootNamespace>
-      <Version>2.0.3</Version>
+      <Version>3.0.0-rc1</Version>
       <Company />
-      <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
       <Description>Maestro is a dependency injection / inversion of control library.</Description>
       <Authors>Jonas Samuelsson</Authors>
       <PackageLicenseUrl>https://github.com/JonasSamuelsson/Maestro/blob/master/LICENSE</PackageLicenseUrl>
       <PackageProjectUrl>https://github.com/JonasSamuelsson/Maestro</PackageProjectUrl>
       <RepositoryUrl>https://github.com/JonasSamuelsson/Maestro</RepositoryUrl>
       <PackageTags>maestro container ioc di</PackageTags>
+      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <IncludeSymbols>True</IncludeSymbols>
    </PropertyGroup>
 
 </Project>
