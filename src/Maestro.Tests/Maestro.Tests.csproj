@@ -1,9 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
       <TargetFramework>netcoreapp2.0</TargetFramework>
-      <SignAssembly>true</SignAssembly>
-      <AssemblyOriginatorKeyFile>..\Maestro.snk</AssemblyOriginatorKeyFile>
       <ApplicationIcon />
       <OutputType>Exe</OutputType>
       <StartupObject>Maestro.Tests.Program</StartupObject>
@@ -30,10 +28,6 @@
       <!-- ProjectReferences BEGIN -->
       <ProjectReference Include="..\Maestro\Maestro.csproj" />
       <!-- ProjectReferences END -->
-   </ItemGroup>
-
-   <ItemGroup>
-      <None Include="..\Maestro.snk" Link="Maestro.snk" />
    </ItemGroup>
 
 </Project>
