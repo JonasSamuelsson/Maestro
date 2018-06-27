@@ -1,5 +1,4 @@
-﻿using Maestro.Diagnostics;
-using Maestro.Internals;
+﻿using Maestro.Internals;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -85,6 +84,11 @@ namespace Maestro
 		{
 			using (var context = new Context(this, Kernel))
 				return context.GetServices<T>();
+		}
+
+		public IScopedContainer CreateScope()
+		{
+			return new ScopedContainer(Kernel, RootScope);
 		}
 
 		public void Dispose()

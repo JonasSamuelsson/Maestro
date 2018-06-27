@@ -11,7 +11,5 @@ namespace Maestro
 		/// <param name="action"></param>
 		void Configure(Action<ContainerExpression> action);
 		void Configure(ContainerBuilder builder);
-
-		IScopedContainer GetScopedContainer();
 	}
 }

@@ -32,7 +32,7 @@ namespace Maestro
 
 		public void Configure(Action<ContainerExpression> action)
 		{
-			var containerExpression = new ContainerExpression(Kernel);
+			var containerExpression = new ContainerExpression(this);
 			try
 			{
 				action(containerExpression);
@@ -46,11 +46,6 @@ namespace Maestro
 		public void Configure(ContainerBuilder builder)
 		{
 			builder.Configure(this);
-		}
-
-		public IScopedContainer GetScopedContainer()
-		{
-			return new ScopedContainer(Kernel, RootScope);
 		}
 	}
 }
