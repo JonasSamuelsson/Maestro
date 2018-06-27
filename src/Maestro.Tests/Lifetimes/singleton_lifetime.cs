@@ -13,7 +13,7 @@ namespace Maestro.Tests.Lifetimes
 
 			var o1 = container.GetService<object>();
 			var o2 = container.GetService<object>();
-			var o3 = container.GetScopedContainer().GetService<object>();
+			var o3 = container.CreateScope().GetService<object>();
 
 			o1.ShouldBe(o2);
 			o1.ShouldBe(o3);
@@ -23,7 +23,7 @@ namespace Maestro.Tests.Lifetimes
 		public void should_dispose_instances_with_root_container()
 		{
 			var rootContainer = new Container(x => x.Use<Disposable>().Self().Singleton());
-			var scopedContainer = rootContainer.GetScopedContainer();
+			var scopedContainer = rootContainer.CreateScope();
 
 			var o1 = rootContainer.GetService<Disposable>();
 			var o2 = scopedContainer.GetService<Disposable>();

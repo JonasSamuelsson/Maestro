@@ -84,5 +84,7 @@ namespace Maestro
 		/// <param name="instance"></param>
 		/// <returns></returns>
 		bool TryGetService<T>(string name, out T instance);
+
+		IScopedContainer CreateScope();
 	}
 }

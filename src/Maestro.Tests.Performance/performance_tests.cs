@@ -22,10 +22,10 @@ namespace Maestro.Tests.Performance
 		public void child_container()
 		{
 			Warmup(Baseline);
-			Warmup(() => GetConfiguredContainer().GetScopedContainer().GetService<C3>());
+			Warmup(() => GetConfiguredContainer().CreateScope().GetService<C3>());
 
 			var container = GetConfiguredContainer();
-			Console.WriteLine(Measure(() => container.GetScopedContainer().GetService<C3>()) / Measure(Baseline));
+			Console.WriteLine(Measure(() => container.CreateScope().GetService<C3>()) / Measure(Baseline));
 		}
 
 		[Fact]

@@ -173,7 +173,7 @@ namespace Maestro.Tests.Performance
 				x.Use<object>().Type<object>();
 				x.Use<CtorDependency>().Type<CtorDependency>();
 			});
-			var scopedContainer = container.GetScopedContainer();
+			var scopedContainer = container.CreateScope();
 			Benchmark(() => scopedContainer.GetService<CtorDependency>(), "child container", 2);
 		}
 

@@ -15,7 +15,7 @@ namespace Maestro.Tests.Benchmarks.BenchmarkDotNet
 			x.Use<Types.WithProperty>().Self().SetProperty(y => y.Dependency);
 		});
 
-		private static readonly IScopedContainer ScopedContainer = Container.GetScopedContainer();
+		private static readonly IScopedContainer ScopedContainer = Container.CreateScope();
 
 		[Benchmark(Baseline = true)]
 		public void Baseline() => new Types.Transient();
@@ -35,7 +35,7 @@ namespace Maestro.Tests.Benchmarks.BenchmarkDotNet
 		[Benchmark]
 		public static void NewScopedContainer()
 		{
-			using (var container = Container.GetScopedContainer())
+			using (var container = Container.CreateScope())
 				container.GetService<Types.Transient>();
 		}
 
