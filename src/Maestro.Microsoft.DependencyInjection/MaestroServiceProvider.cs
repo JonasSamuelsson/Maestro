@@ -5,9 +5,9 @@ namespace Maestro.Microsoft.DependencyInjection
 {
 	public sealed class MaestroServiceProvider : IServiceProvider, ISupportRequiredService
 	{
-		private readonly IContainer _container;
+		private readonly IScopedContainer _container;
 
-		public MaestroServiceProvider(IContainer container)
+		public MaestroServiceProvider(IScopedContainer container)
 		{
 			_container = container ?? throw new ArgumentNullException(nameof(container));
 		}
