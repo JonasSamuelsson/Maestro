@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
@@ -20,18 +20,7 @@
 
    <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" />
-
-      <!-- <PackageReferences> -->
-      <PackageReference Include="Maestro" Version="2.0.0" />
-      <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="1.0.0" />
-      <!-- </PackageReferences> -->
-   </ItemGroup>
-
-   <ItemGroup>
-      <!-- <ProjectReferences> -->
-      <!--<ProjectReference Include="..\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj" />-->
-      <!--<ProjectReference Include="..\Maestro\Maestro.csproj" />-->
-      <!-- </ProjectReferences> -->
+      <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="2.0.0-rc3" />
    </ItemGroup>
 
 </Project>
