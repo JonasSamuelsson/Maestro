@@ -4,7 +4,7 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <AssemblyName>Maestro.Microsoft.AspNetCore</AssemblyName>
       <RootNamespace>Maestro.Microsoft.AspNetCore</RootNamespace>
-      <Version>1.0.0</Version>
+      <Version>2.0.0-rc3</Version>
       <Authors>Jonas Samuelsson</Authors>
       <Company>Jonas Samuelsson</Company>
       <Product>Maestro</Product>
@@ -13,6 +13,8 @@
       <PackageProjectUrl>https://github.com/JonasSamuelsson/Maestro</PackageProjectUrl>
       <RepositoryUrl>https://github.com/JonasSamuelsson/Maestro</RepositoryUrl>
       <PackageTags>maestro container ioc di microsoft aspnetcore</PackageTags>
+      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <IncludeSymbols>True</IncludeSymbols>
    </PropertyGroup>
 
    <ItemGroup>
