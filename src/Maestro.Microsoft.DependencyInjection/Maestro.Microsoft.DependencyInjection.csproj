@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
@@ -24,16 +24,7 @@
 
    <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
-
-      <!-- <PackageReferences> -->
-      <PackageReference Include="Maestro" Version="2.0.0" />
-      <!-- </PackageReferences> -->
-   </ItemGroup>
-
-   <ItemGroup>
-      <!-- <ProjectReferences> -->
-      <!--<ProjectReference Include="..\Maestro\Maestro.csproj" />-->
-      <!-- </ProjectReferences> -->
+      <PackageReference Include="Maestro" Version="3.0.0-rc3" />
    </ItemGroup>
 
 </Project>

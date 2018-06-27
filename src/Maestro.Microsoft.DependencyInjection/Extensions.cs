@@ -26,11 +26,9 @@ namespace Maestro.Microsoft.DependencyInjection
 			builder.Configure(x => x.Populate(descriptors));
 		}
 
-		public static void Populate(this IContainerExpression expression, IEnumerable<ServiceDescriptor> descriptors)
+		public static void Populate(this ContainerExpression expression, IEnumerable<ServiceDescriptor> descriptors)
 		{
 			var x = expression;
-
-			x.Config.GetServicesOrder = GetServicesOrder.Ordered;
 
 			x.Use<IServiceProvider>().Factory(ctx => new MaestroServiceProvider(ctx.Container));
 			x.Use<IServiceScopeFactory>().Factory(ctx => new MaestroServiceScopeFactory(ctx.Container));
@@ -45,7 +43,7 @@ namespace Maestro.Microsoft.DependencyInjection
 			}
 		}
 
-		private static void Register(this IContainerExpression containerExpression, ServiceDescriptor descriptor, Func<IContainerExpression, Type, IServiceExpression> f)
+		private static void Register(this ContainerExpression containerExpression, ServiceDescriptor descriptor, Func<ContainerExpression, Type, IServiceExpression> f)
 		{
 			var serviceExpression = f(containerExpression, descriptor.ServiceType);
 
@@ -53,7 +51,7 @@ namespace Maestro.Microsoft.DependencyInjection
 			{
 				serviceExpression
 					.Type(descriptor.ImplementationType)
-					.Lifetime.Use(descriptor.Lifetime);
+					.Lifetime(descriptor.Lifetime);
 
 				return;
 			}
@@ -62,7 +60,7 @@ namespace Maestro.Microsoft.DependencyInjection
 			{
 				serviceExpression
 					.Factory(GetFactory(descriptor))
-					.Lifetime.Use(descriptor.Lifetime);
+					.Lifetime(descriptor.Lifetime);
 
 				return;
 			}
@@ -71,7 +69,7 @@ namespace Maestro.Microsoft.DependencyInjection
 				.Instance(descriptor.ImplementationInstance);
 		}
 
-		private static void Use<T>(this ILifetimeSelector<T> expression, ServiceLifetime descriptorLifetime)
+		private static void Lifetime<TInstance, TParent>(this IInstanceExpression<TInstance, TParent> expression, ServiceLifetime descriptorLifetime)
 		{
 			switch (descriptorLifetime)
 			{
@@ -79,7 +77,7 @@ namespace Maestro.Microsoft.DependencyInjection
 					expression.Singleton();
 					break;
 				case ServiceLifetime.Scoped:
-					expression.ContainerScoped();
+					expression.Scoped();
 					break;
 				case ServiceLifetime.Transient:
 					expression.Transient();
@@ -89,7 +87,7 @@ namespace Maestro.Microsoft.DependencyInjection
 			}
 		}
 
-		private static Func<IContext, object> GetFactory(ServiceDescriptor descriptor)
+		private static Func<Context, object> GetFactory(ServiceDescriptor descriptor)
 		{
 			return context => descriptor.ImplementationFactory(context.GetService<IServiceProvider>());
 		}
