@@ -1,6 +1,5 @@
 using Maestro.FactoryProviders.Factories;
 using Maestro.Internals;
-using Maestro.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +67,7 @@ namespace Maestro.FactoryProviders
 						catch (Exception exception)
 						{
 							var error = $"Error instantiating '{Type.ToFormattedString()}'.";
-							throw new InvalidOperationException(ExceptionMessageBuilder.GetMessage(error, exception.Message));
+							throw new InvalidOperationException(error, exception);
 						}
 					};
 				}
