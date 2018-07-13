@@ -99,5 +99,10 @@ namespace Maestro
 
 			Kernel.Dispose();
 		}
+
+		object IServiceProvider.GetService(Type serviceType)
+		{
+			return TryGetService(serviceType, out var instance) ? instance : null;
+		}
 	}
 }
