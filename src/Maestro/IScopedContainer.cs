@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Maestro
 {
-	public interface IScopedContainer : IDisposable
+	public interface IScopedContainer : IDisposable, IServiceProvider
 	{
 		Diagnostics.Diagnostics Diagnostics { get; }
 
@@ -11,9 +11,8 @@ namespace Maestro
 		/// Gets the default instance of type <paramref name="type"/>.
 		/// </summary>
 		/// <param name="type"></param>
-		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
 		/// <returns></returns>
-		object GetService(Type type);
+		new object GetService(Type type);
 
 		/// <summary>
 		/// Gets an instance of type <paramref name="type"/> named <paramref name="name"/>.
@@ -27,7 +26,6 @@ namespace Maestro
 		/// Gets the default instance of type <typeparamref name="T"/>.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
-		/// <param name="name">Uses the default instance if a named instance isn't found.</param>
 		/// <returns></returns>
 		T GetService<T>();
 
