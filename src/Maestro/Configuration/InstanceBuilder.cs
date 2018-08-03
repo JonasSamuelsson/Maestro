@@ -6,9 +6,9 @@ using System.Linq.Expressions;
 
 namespace Maestro.Configuration
 {
-	internal abstract class InstanceExpression<TInstance, TParent> : IInstanceExpression<TInstance, TParent>
+	internal abstract class InstanceBuilder<TInstance, TParent> : IInstanceBuilder<TInstance, TParent>
 	{
-		protected InstanceExpression(ServiceDescriptor serviceDescriptor)
+		protected InstanceBuilder(ServiceDescriptor serviceDescriptor)
 		{
 			ServiceDescriptor = serviceDescriptor;
 		}
