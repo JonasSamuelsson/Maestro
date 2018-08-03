@@ -7,14 +7,14 @@ namespace Maestro.Conventions
 {
 	internal class DefaultImplementationsConvention : IConvention
 	{
-		private readonly Action<IConventionalServiceExpression<object>> _action;
+		private readonly Action<IConventionalServiceBuilder<object>> _action;
 
-		public DefaultImplementationsConvention(Action<IConventionalServiceExpression<object>> action)
+		public DefaultImplementationsConvention(Action<IConventionalServiceBuilder<object>> action)
 		{
 			_action = action;
 		}
 
-		public void Process(IEnumerable<Type> types, ContainerExpression containerExpression)
+		public void Process(IEnumerable<Type> types, ContainerBuilder containerBuilder)
 		{
 			types = types as IReadOnlyCollection<Type> ?? types.ToList();
 
@@ -29,7 +29,7 @@ namespace Maestro.Conventions
 				key = key.Remove(key.Length - @interface.Name.Length) + @interface.Name.Substring(1);
 				Type @class;
 				if (!classes.TryGetValue(key, out @class)) continue;
-				_action(new ConventionalServiceExpression<object>(containerExpression, @interface, @class));
+				_action(new ConventionalServiceBuilder<object>(containerBuilder, @interface, @class));
 			}
 		}
 	}

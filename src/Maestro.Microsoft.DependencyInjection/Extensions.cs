@@ -26,9 +26,9 @@ namespace Maestro.Microsoft.DependencyInjection
 			builder.Configure(x => x.Populate(descriptors));
 		}
 
-		public static void Populate(this ContainerExpression expression, IEnumerable<ServiceDescriptor> descriptors)
+		public static void Populate(this ContainerExpression builder, IEnumerable<ServiceDescriptor> descriptors)
 		{
-			var x = expression;
+			var x = builder;
 
 			x.Use<IServiceProvider>().Factory(ctx => new MaestroServiceProvider(ctx.Container));
 			x.Use<IServiceScopeFactory>().Factory(ctx => new MaestroServiceScopeFactory(ctx.Container));
@@ -43,9 +43,9 @@ namespace Maestro.Microsoft.DependencyInjection
 			}
 		}
 
-		private static void Register(this ContainerExpression containerExpression, ServiceDescriptor descriptor, Func<ContainerExpression, Type, IServiceExpression> f)
+		private static void Register(this ContainerExpression containerBuilder, ServiceDescriptor descriptor, Func<ContainerExpression, Type, IServiceExpression> f)
 		{
-			var serviceExpression = f(containerExpression, descriptor.ServiceType);
+			var serviceExpression = f(containerBuilder, descriptor.ServiceType);
 
 			if (descriptor.ImplementationType != null)
 			{
@@ -69,18 +69,18 @@ namespace Maestro.Microsoft.DependencyInjection
 				.Instance(descriptor.ImplementationInstance);
 		}
 
-		private static void Lifetime<TInstance, TParent>(this IInstanceExpression<TInstance, TParent> expression, ServiceLifetime descriptorLifetime)
+		private static void Lifetime<TInstance, TParent>(this IInstanceExpression<TInstance, TParent> builder, ServiceLifetime descriptorLifetime)
 		{
 			switch (descriptorLifetime)
 			{
 				case ServiceLifetime.Singleton:
-					expression.Singleton();
+					builder.Singleton();
 					break;
 				case ServiceLifetime.Scoped:
-					expression.Scoped();
+					builder.Scoped();
 					break;
 				case ServiceLifetime.Transient:
-					expression.Transient();
+					builder.Transient();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(nameof(descriptorLifetime), descriptorLifetime, null);
