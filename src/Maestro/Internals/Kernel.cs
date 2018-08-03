@@ -64,7 +64,7 @@ namespace Maestro.Internals
 
 				var typeIsIEnumerableOfT = Reflector.IsGenericEnumerable(type, out var elementType);
 
-				if (TryGetPipelineFromServiceDesriptors(typeIsIEnumerableOfT, type, elementType, name, context, ref pipeline))
+				if (TryGetPipelineFromServiceDescriptors(typeIsIEnumerableOfT, type, elementType, name, context, ref pipeline))
 				{
 					_pipelineCache.Add(key, pipeline);
 					return true;
@@ -80,14 +80,14 @@ namespace Maestro.Internals
 			}
 		}
 
-		private bool TryGetPipelineFromServiceDesriptors(bool typeIsIEnumerableOfT, Type type, Type elementType, string name, Context context, ref Pipeline pipeline)
+		private bool TryGetPipelineFromServiceDescriptors(bool typeIsIEnumerableOfT, Type type, Type elementType, string name, Context context, ref Pipeline pipeline)
 		{
 			return typeIsIEnumerableOfT
-				? TryGetPipelineFromServiceDesriptors(type, elementType, name, context, ref pipeline)
-				: TryGetPipelineFromServiceDesriptor(type, name, context, ref pipeline);
+				? TryGetPipelineFromServiceDescriptors(type, elementType, name, context, ref pipeline)
+				: TryGetPipelineFromServiceDescriptor(type, name, context, ref pipeline);
 		}
 
-		private bool TryGetPipelineFromServiceDesriptor(Type type, string name, Context context, ref Pipeline pipeline)
+		private bool TryGetPipelineFromServiceDescriptor(Type type, string name, Context context, ref Pipeline pipeline)
 		{
 			if (TryGetServiceDescriptor(type, name, out var serviceDescriptor))
 			{
@@ -98,7 +98,7 @@ namespace Maestro.Internals
 			return false;
 		}
 
-		private bool TryGetPipelineFromServiceDesriptors(Type type, Type elementType, string name, Context context, ref Pipeline pipeline)
+		private bool TryGetPipelineFromServiceDescriptors(Type type, Type elementType, string name, Context context, ref Pipeline pipeline)
 		{
 			if (ServiceDescriptors.TryGetServiceDescriptor(type, name, out var serviceDescriptor))
 			{
