@@ -10,19 +10,19 @@ namespace Maestro.Tests.OldTests
 		[Fact]
 		public void should_throw_if_container_expression_is_accessed_outside_of_closure()
 		{
-			ContainerExpression containerExpression = null;
-			new Container().Configure(x => containerExpression = x);
+			ContainerBuilder containerBuilder = null;
+			new Container().Configure(x => containerBuilder = x);
 
-			Should.Throw<InvalidOperationException>(() => containerExpression.Use(typeof(object)));
-			Should.Throw<InvalidOperationException>(() => containerExpression.Use(typeof(object), string.Empty));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Use(typeof(object)));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Use(typeof(object), string.Empty));
 
-			Should.Throw<InvalidOperationException>(() => containerExpression.Use<object>());
-			Should.Throw<InvalidOperationException>(() => containerExpression.Use<object>(string.Empty));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Use<object>());
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Use<object>(string.Empty));
 
-			Should.Throw<InvalidOperationException>(() => containerExpression.Use(typeof(object)));
-			Should.Throw<InvalidOperationException>(() => containerExpression.Use<object>());
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Use(typeof(object)));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Use<object>());
 
-			Should.Throw<InvalidOperationException>(() => containerExpression.Scan(delegate { }));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Scan(delegate { }));
 		}
 	}
 }

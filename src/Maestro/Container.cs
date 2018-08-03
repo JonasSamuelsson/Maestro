@@ -15,15 +15,15 @@ namespace Maestro
 		/// <summary>
 		/// Instantiates a new container with configuration.
 		/// </summary>
-		public Container(Action<ContainerExpression> action)
+		public Container(Action<ContainerBuilder> action)
 			: this()
 		{
 			Configure(action);
 		}
 
-		public void Configure(Action<ContainerExpression> action)
+		public void Configure(Action<ContainerBuilder> action)
 		{
-			var containerExpression = new ContainerExpression(this);
+			var containerExpression = new ContainerBuilder(this);
 			try
 			{
 				action(containerExpression);

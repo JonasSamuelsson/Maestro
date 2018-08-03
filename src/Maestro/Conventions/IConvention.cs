@@ -9,6 +9,6 @@ namespace Maestro.Conventions
 	/// </summary>
 	public interface IConvention
 	{
-		void Process(IEnumerable<Type> types, ContainerExpression containerExpression);
+		void Process(IEnumerable<Type> types, ContainerBuilder containerBuilder);
 	}
 }

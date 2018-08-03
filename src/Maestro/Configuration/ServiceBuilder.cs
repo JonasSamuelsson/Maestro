@@ -5,9 +5,9 @@ using Maestro.Lifetimes;
 
 namespace Maestro.Configuration
 {
-	internal class ServiceExpression<TService> : IServiceExpression, IServiceExpression<TService>
+	internal class ServiceBuilder<TService> : IServiceBuilder, IServiceBuilder<TService>
 	{
-		public ServiceExpression(Type serviceType, string name, Kernel kernel, bool throwIfDuplicate)
+		public ServiceBuilder(Type serviceType, string name, Kernel kernel, bool throwIfDuplicate)
 		{
 			ServiceType = serviceType;
 			Name = name;
@@ -26,28 +26,28 @@ namespace Maestro.Configuration
 			Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate);
 		}
 
-		public IFactoryInstanceExpression<object> Factory(Func<object> factory)
+		public IFactoryInstanceBuilder<object> Factory(Func<object> factory)
 		{
 			return Factory(_ => factory());
 		}
 
-		public IFactoryInstanceExpression<object> Factory(Func<Context, object> factory)
+		public IFactoryInstanceBuilder<object> Factory(Func<Context, object> factory)
 		{
 			var plugin = CreatePlugin(Name, new FuncFactoryProvider(factory));
 			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
-				? new FactoryInstanceExpression<object>(plugin)
+				? new FactoryInstanceBuilder<object>(plugin)
 				: null;
 		}
 
-		public ITypeInstanceExpression<object> Type(Type type)
+		public ITypeInstanceBuilder<object> Type(Type type)
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type, Name));
 			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
-				? new TypeInstanceExpression<object>(plugin)
+				? new TypeInstanceBuilder<object>(plugin)
 				: null;
 		}
 
-		public ITypeInstanceExpression<object> Self()
+		public ITypeInstanceBuilder<object> Self()
 		{
 			return Type(ServiceType);
 		}
@@ -69,28 +69,28 @@ namespace Maestro.Configuration
 			Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate);
 		}
 
-		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : TService
+		public IFactoryInstanceBuilder<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : TService
 		{
 			return Factory(_ => factory());
 		}
 
-		public IFactoryInstanceExpression<TInstance> Factory<TInstance>(Func<Context, TInstance> factory) where TInstance : TService
+		public IFactoryInstanceBuilder<TInstance> Factory<TInstance>(Func<Context, TInstance> factory) where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new FuncFactoryProvider(ctx => factory(ctx)));
 			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
-				? new FactoryInstanceExpression<TInstance>(plugin)
+				? new FactoryInstanceBuilder<TInstance>(plugin)
 				: null;
 		}
 
-		public ITypeInstanceExpression<TInstance> Type<TInstance>() where TInstance : TService
+		public ITypeInstanceBuilder<TInstance> Type<TInstance>() where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance), Name));
 			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
-				? new TypeInstanceExpression<TInstance>(plugin)
+				? new TypeInstanceBuilder<TInstance>(plugin)
 				: null;
 		}
 
-		ITypeInstanceExpression<TService> IServiceExpression<TService>.Self()
+		ITypeInstanceBuilder<TService> IServiceBuilder<TService>.Self()
 		{
 			return Type<TService>();
 		}

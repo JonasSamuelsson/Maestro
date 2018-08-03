@@ -104,30 +104,30 @@ namespace Maestro.Configuration
 			return Using(new TConvention());
 		}
 
-		public Scanner RegisterConcreteClassesOf<T>(Action<IConventionalServiceExpression<T>> action = null)
+		public Scanner RegisterConcreteClassesOf<T>(Action<IConventionalServiceBuilder<T>> action = null)
 		{
 			return Using(new ConcreteClassesOfConvention<T>(typeof(T), action ?? (x => x.Add())));
 		}
 
-		public Scanner RegisterConcreteClassesOf(Type type, Action<IConventionalServiceExpression<object>> action = null)
+		public Scanner RegisterConcreteClassesOf(Type type, Action<IConventionalServiceBuilder<object>> action = null)
 		{
 			return Using(new ConcreteClassesOfConvention<object>(type, action ?? (x => x.Add())));
 		}
 
-		public Scanner RegisterConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceExpression<object>> action = null)
+		public Scanner RegisterConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceBuilder<object>> action = null)
 		{
 			return Using(new ConcreteClassesClosingConvention(genericTypeDefinition, action ?? (x => x.Add())));
 		}
 
-		public Scanner RegisterDefaultImplementations(Action<IConventionalServiceExpression<object>> action = null)
+		public Scanner RegisterDefaultImplementations(Action<IConventionalServiceBuilder<object>> action = null)
 		{
 			return Using(new DefaultImplementationsConvention(action ?? (x => x.Use())));
 		}
 
-		internal void Execute(ContainerExpression containerExpression)
+		internal void Execute(ContainerBuilder containerBuilder)
 		{
 			var types = _types.Distinct().Where(t => _filters.All(f => f.Invoke(t))).ToList();
-			_conventions.ForEach(c => c.Process(types, containerExpression));
+			_conventions.ForEach(c => c.Process(types, containerBuilder));
 		}
 	}
 }
