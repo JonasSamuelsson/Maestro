@@ -40,7 +40,7 @@ namespace Maestro.Tests.TypeFactoryResolvers
 			var container = new Container();
 			Should.Throw<ActivationException>(() => container.GetService<int[]>());
 
-			container.Configure(x => x.Use<int>().Instance(1));
+			container.Configure(x => x.Add<int>().Instance(1));
 			Should.Throw<ActivationException>(() => container.GetService<int[]>());
 		}
 

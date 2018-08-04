@@ -41,7 +41,7 @@ namespace Maestro.Tests.Performance
 		[Fact]
 		public void property_injection()
 		{
-			var container = new Container(x => x.Use<P>().Type<P>().SetProperty("O", new object()));
+			var container = new Container(x => x.Add<P>().Type<P>().SetProperty("O", new object()));
 			Action baseline = () => new P { O = new object() };
 			Action work = () => container.GetService<P>();
 			Compare(baseline, work);
@@ -50,7 +50,7 @@ namespace Maestro.Tests.Performance
 		[Fact]
 		public void get_generics()
 		{
-			var container = new Container(x => x.Use(typeof(IList<>)).Type(typeof(List<>)));
+			var container = new Container(x => x.Add(typeof(IList<>)).Type(typeof(List<>)));
 			Action baseline = () => new List<string>();
 			Action work = () => container.GetService<IList<string>>();
 			Compare(baseline, work);
@@ -98,10 +98,10 @@ namespace Maestro.Tests.Performance
 		{
 			var container = new Container(x =>
 			{
-				x.Use<C0>().Type<C0>();
-				x.Use<C1>().Type<C1>();
-				x.Use<C2>().Type<C2>();
-				x.Use<C3>().Type<C3>();
+				x.Add<C0>().Type<C0>();
+				x.Add<C1>().Type<C1>();
+				x.Add<C2>().Type<C2>();
+				x.Add<C3>().Type<C3>();
 			});
 			return container;
 		}

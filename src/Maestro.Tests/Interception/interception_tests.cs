@@ -12,7 +12,7 @@ namespace Maestro.Tests.Interception
 			var i = new Instance();
 			var container = new Container(x =>
 			{
-				x.Use<Instance>().Factory(() => i).Intercept(new InstanceInterceptor());
+				x.Add<Instance>().Factory(() => i).Intercept(new InstanceInterceptor());
 			});
 
 			var instance = container.GetService<Instance>();
@@ -46,8 +46,8 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 			{
-				x.Use<Wrapper<int>>("1").Type<Wrapper<int>>().Intercept(instance => instance.Value = 1);
-				x.Use<Wrapper<int>>("2").Type<Wrapper<int>>().Intercept((instance, ctx) => instance.Value = 2);
+				x.Add<Wrapper<int>>().Named("1").Type<Wrapper<int>>().Intercept(instance => instance.Value = 1);
+				x.Add<Wrapper<int>>().Named("2").Type<Wrapper<int>>().Intercept((instance, ctx) => instance.Value = 2);
 			});
 
 			container.GetService<Wrapper<int>>("1").Value.ShouldBe(1);
@@ -60,8 +60,8 @@ namespace Maestro.Tests.Interception
 			var parent = new Parent();
 			var container = new Container(x =>
 			{
-				x.Use<Parent>("1").Factory(() => parent).Intercept(instance => new Child { Parent = instance });
-				x.Use<Parent>("2").Factory(() => parent).Intercept((instance, ctx) => new Child { Parent = instance });
+				x.Add<Parent>().Named("1").Factory(() => parent).Intercept(instance => new Child { Parent = instance });
+				x.Add<Parent>().Named("2").Factory(() => parent).Intercept((instance, ctx) => new Child { Parent = instance });
 			});
 
 			container.GetService<Parent>("1").ShouldBeOfType<Child>().Parent.ShouldBe(parent);
@@ -71,7 +71,7 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void interceptors_should_be_executed_in_the_same_order_as_they_are_configured()
 		{
-			var container = new Container(x => x.Use<Wrapper<string>>().Type<Wrapper<string>>()
+			var container = new Container(x => x.Add<Wrapper<string>>().Type<Wrapper<string>>()
 				.Intercept(y => y.Value += 1)
 				.Intercept(y => y.Value += 2)
 				.Intercept(y => y.Value += 3));
@@ -97,7 +97,7 @@ namespace Maestro.Tests.Interception
 		public void interceptors_should_not_be_executed_if_instance_is_cached()
 		{
 			var counter = 0;
-			var container = new Container(x => x.Use<object>().Type<object>().Intercept(_ => counter++).Singleton());
+			var container = new Container(x => x.Add<object>().Type<object>().Intercept(_ => counter++).Singleton());
 
 			container.GetService<object>();
 			counter.ShouldBe(1);

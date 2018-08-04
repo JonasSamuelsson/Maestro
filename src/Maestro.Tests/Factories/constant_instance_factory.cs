@@ -9,7 +9,7 @@ namespace Maestro.Tests.Factories
 		public void should_use_provided_instance()
 		{
 			var instance = "default instance";
-			var container = new Container(x => x.Use<object>().Instance(instance));
+			var container = new Container(x => x.Add<object>().Instance(instance));
 
 			var o = container.GetService<object>();
 

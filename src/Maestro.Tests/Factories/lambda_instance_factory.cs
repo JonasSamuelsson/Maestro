@@ -10,7 +10,7 @@ namespace Maestro.Tests.Factories
 		{
 			var o = new object();
 
-			var container = new Container(x => x.Use<object>().Factory(() => o));
+			var container = new Container(x => x.Add<object>().Factory(() => o));
 			var instance = container.GetService<object>();
 
 			instance.ShouldBe(o);
@@ -22,8 +22,8 @@ namespace Maestro.Tests.Factories
 			var o = new object();
 			var container = new Container(x =>
 			{
-				x.Use<object>().Instance(o);
-				x.Use<ClassWithDependency>().Factory(ctx => new ClassWithDependency { Dependency = ctx.GetService<object>() });
+				x.Add<object>().Instance(o);
+				x.Add<ClassWithDependency>().Factory(ctx => new ClassWithDependency { Dependency = ctx.GetService<object>() });
 			});
 
 			var instance = container.GetService<ClassWithDependency>();

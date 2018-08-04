@@ -4,6 +4,7 @@ namespace Maestro.Configuration
 {
 	public interface IServiceBuilder
 	{
+		IServiceBuilder Named(string name);
 		void Instance(object instance);
 		IFactoryInstanceBuilder<object> Factory(Func<object> factory);
 		IFactoryInstanceBuilder<object> Factory(Func<Context, object> factory);
@@ -13,6 +14,7 @@ namespace Maestro.Configuration
 
 	public interface IServiceBuilder<T>
 	{
+		IServiceBuilder<T> Named(string name);
 		void Instance<TInstance>(TInstance instance) where TInstance : T;
 		IFactoryInstanceBuilder<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : T;
 		IFactoryInstanceBuilder<TInstance> Factory<TInstance>(Func<Context, TInstance> factory) where TInstance : T;
