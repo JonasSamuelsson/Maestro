@@ -10,7 +10,7 @@ namespace Maestro.Tests.TypeFactoryResolvers
 		public void should_resolve_unregistered_func_of_resolvable_type()
 		{
 			var o = new object();
-			var container = new Container(x => x.Use<object>().Instance(o));
+			var container = new Container(x => x.Add<object>().Instance(o));
 			var func = container.GetService<Func<object>>();
 			func().ShouldBe(o);
 		}

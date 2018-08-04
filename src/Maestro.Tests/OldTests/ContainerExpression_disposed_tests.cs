@@ -13,14 +13,14 @@ namespace Maestro.Tests.OldTests
 			ContainerBuilder containerBuilder = null;
 			new Container().Configure(x => containerBuilder = x);
 
-			Should.Throw<InvalidOperationException>(() => containerBuilder.Use(typeof(object)));
-			Should.Throw<InvalidOperationException>(() => containerBuilder.Use(typeof(object), string.Empty));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Add(typeof(object)));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Add(typeof(object)).Named(string.Empty));
 
-			Should.Throw<InvalidOperationException>(() => containerBuilder.Use<object>());
-			Should.Throw<InvalidOperationException>(() => containerBuilder.Use<object>(string.Empty));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Add<object>());
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Add<object>().Named(string.Empty));
 
-			Should.Throw<InvalidOperationException>(() => containerBuilder.Use(typeof(object)));
-			Should.Throw<InvalidOperationException>(() => containerBuilder.Use<object>());
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Add(typeof(object)));
+			Should.Throw<InvalidOperationException>(() => containerBuilder.Add<object>());
 
 			Should.Throw<InvalidOperationException>(() => containerBuilder.Scan(delegate { }));
 		}

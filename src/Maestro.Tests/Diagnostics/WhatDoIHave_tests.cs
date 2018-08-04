@@ -10,7 +10,7 @@ namespace Maestro.Tests.Diagnostics
 			var container = new Container(x =>
 			{
 				x.Add<object>().Type<object>();
-				x.Use<string>().Instance("child");
+				x.Add<string>().Instance("child");
 			});
 
 			var s = container.Diagnostics.WhatDoIHave();

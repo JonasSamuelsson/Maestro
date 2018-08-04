@@ -7,8 +7,8 @@
 		{
 			//var container = new Container(x =>
 			//{
-			//	x.For(typeof(TypeWithDefaultCtor)).Use(typeof(TypeWithDefaultCtor));
-			//	x.For(typeof(TypeWithCtorDependency)).Use(typeof(TypeWithCtorDependency));
+			//	x.For(typeof(TypeWithDefaultCtor)).Add(typeof(TypeWithDefaultCtor));
+			//	x.For(typeof(TypeWithCtorDependency)).Add(typeof(TypeWithCtorDependency));
 			//});
 
 			//var o = container.Get<TypeWithCtorDependency>();

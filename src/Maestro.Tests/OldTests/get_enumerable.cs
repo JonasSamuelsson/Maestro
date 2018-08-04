@@ -16,7 +16,7 @@ namespace Maestro.Tests.OldTests
 													{
 														x.Add<object>().Instance(o1);
 														x.Add<object>().Instance(o2);
-														x.Use<IEnumerable<object>>().Instance(new[] { o3 });
+														x.Add<IEnumerable<object>>().Instance(new[] { o3 });
 													});
 
 			var objects = container.GetService<IEnumerable<object>>();
@@ -50,8 +50,8 @@ namespace Maestro.Tests.OldTests
 													{
 														x.Add<object>().Instance(o1);
 														x.Add<object>().Instance(o2);
-														x.Use<IEnumerable<object>>().Instance(new[] { o3 });
-														x.Use<Instance>().Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetService<IEnumerable<object>>());
+														x.Add<IEnumerable<object>>().Instance(new[] { o3 });
+														x.Add<Instance>().Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetService<IEnumerable<object>>());
 													});
 
 			var instance = container.GetService<Instance>();
@@ -68,7 +68,7 @@ namespace Maestro.Tests.OldTests
 													{
 														x.Add<object>().Instance(o1);
 														x.Add<object>().Instance(o2);
-														x.Use<Instance>().Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetService<IEnumerable<object>>());
+														x.Add<Instance>().Type<Instance>().SetProperty(y => y.Objects, ctx => ctx.GetService<IEnumerable<object>>());
 													});
 
 			var instance = container.GetService<Instance>();

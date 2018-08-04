@@ -16,9 +16,15 @@ namespace Maestro.Configuration
 		}
 
 		internal Type ServiceType { get; }
-		internal string Name { get; set; }
+		internal string Name { get; private set; }
 		internal Kernel Kernel { get; }
 		public ServiceRegistrationPolicy ServiceRegistrationPolicy { get; set; }
+
+		IServiceBuilder IServiceBuilder.Named(string name)
+		{
+			Name = name;
+			return this;
+		}
 
 		public void Instance(object instance)
 		{
@@ -61,6 +67,12 @@ namespace Maestro.Configuration
 				FactoryProvider = factoryProvider,
 				Lifetime = TransientLifetime.Instance
 			};
+		}
+
+		IServiceBuilder<TService> IServiceBuilder<TService>.Named(string name)
+		{
+			Name = name;
+			return this;
 		}
 
 		public void Instance<TInstance>(TInstance instance) where TInstance : TService

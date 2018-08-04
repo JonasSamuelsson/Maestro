@@ -10,7 +10,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void container_scoped_instances_should_return_same_instance_per_container()
 		{
-			var container = new Container(x => x.Use<object>().Type<object>().Scoped());
+			var container = new Container(x => x.Add<object>().Type<object>().Scoped());
 			var childContainer1 = container.CreateScope();
 			var childContainer2 = container.CreateScope();
 
@@ -31,7 +31,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void should_handle_open_generics()
 		{
-			var container = new Container(x => x.Use(typeof(List<>)).Self().Scoped());
+			var container = new Container(x => x.Add(typeof(List<>)).Self().Scoped());
 
 			var ints1 = container.GetService<List<int>>();
 			var ints2 = container.GetService<List<int>>();
@@ -45,7 +45,7 @@ namespace Maestro.Tests.Lifetimes
 		[Fact]
 		public void should_dispose_instances_with_container()
 		{
-			var rootContainer = new Container(x => x.Use<Disposable>().Self().Scoped());
+			var rootContainer = new Container(x => x.Add<Disposable>().Self().Scoped());
 			var childContainer = rootContainer.CreateScope();
 
 			var rootObject = rootContainer.GetService<Disposable>();

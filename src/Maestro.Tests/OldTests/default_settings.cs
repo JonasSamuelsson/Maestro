@@ -13,7 +13,7 @@ namespace Maestro.Tests.OldTests
 		[Fact]
 		public void default_lifetime_should_be_transient()
 		{
-			var container = new Container(x => x.Use<object>().Self());
+			var container = new Container(x => x.Add<object>().Self());
 
 			var instance1 = container.GetService<object>();
 			var instance2 = container.GetService<object>();

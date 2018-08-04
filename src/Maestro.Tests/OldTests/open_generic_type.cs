@@ -9,7 +9,7 @@ namespace Maestro.Tests.OldTests
 		[Fact]
 		public void GetService_should_support_generic_type_definitions()
 		{
-			var container = new Container(x => x.Use(typeof(Instance<>)).Type(typeof(Instance<>)));
+			var container = new Container(x => x.Add(typeof(Instance<>)).Type(typeof(Instance<>)));
 
 			var instance = container.GetService<Instance<int>>();
 
@@ -21,9 +21,9 @@ namespace Maestro.Tests.OldTests
 		{
 			var container = new Container(x =>
 			{
-				x.Use<int>().Instance(1);
-				x.Use<string>().Instance("foobar");
-				x.Use(typeof(Instance<>)).Type(typeof(Instance<>)).SetProperty("Value");
+				x.Add<int>().Instance(1);
+				x.Add<string>().Instance("foobar");
+				x.Add(typeof(Instance<>)).Type(typeof(Instance<>)).SetProperty("Value");
 			});
 
 			var instance1 = container.GetService<Instance<int>>();
@@ -38,8 +38,8 @@ namespace Maestro.Tests.OldTests
 		{
 			var container = new Container(x =>
 			{
-				x.Use<string>().Instance("success");
-				x.Use(typeof(Instance<>)).Type(typeof(Instance<>)).Singleton();
+				x.Add<string>().Instance("success");
+				x.Add(typeof(Instance<>)).Type(typeof(Instance<>)).Singleton();
 			});
 
 			var instance1 = container.GetService<Instance<string>>();

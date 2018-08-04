@@ -8,11 +8,11 @@ namespace Maestro.Tests.Benchmarks.BenchmarkDotNet
 	{
 		private static readonly IContainer Container = new Container(x =>
 		{
-			x.Use<Types.Transient>().Self();
-			x.Use<Types.Scoped>().Self().Scoped();
-			x.Use<Types.Singleton>().Self().Singleton();
-			x.Use(typeof(Types.Generic<>)).Self();
-			x.Use<Types.WithProperty>().Self().SetProperty(y => y.Dependency);
+			x.Add<Types.Transient>().Self();
+			x.Add<Types.Scoped>().Self().Scoped();
+			x.Add<Types.Singleton>().Self().Singleton();
+			x.Add(typeof(Types.Generic<>)).Self();
+			x.Add<Types.WithProperty>().Self().SetProperty(y => y.Dependency);
 		});
 
 		private static readonly IScopedContainer ScopedContainer = Container.CreateScope();

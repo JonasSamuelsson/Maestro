@@ -9,7 +9,7 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_instantiate_type_with_no_dependencies()
 		{
-			var container = new Container(x => x.Use<INoDependencies>().Type<NoDependencies>());
+			var container = new Container(x => x.Add<INoDependencies>().Type<NoDependencies>());
 			container.GetService<INoDependencies>();
 		}
 
@@ -18,8 +18,8 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.Use<INoDependencies>().Type<NoDependencies>();
-				x.Use<IOneDependency<INoDependencies>>().Type<RequiredDependency<INoDependencies>>();
+				x.Add<INoDependencies>().Type<NoDependencies>();
+				x.Add<IOneDependency<INoDependencies>>().Type<RequiredDependency<INoDependencies>>();
 			});
 
 			var instance = container.GetService<IOneDependency<INoDependencies>>();
@@ -32,8 +32,8 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.Use<INoDependencies>().Type<NoDependencies>();
-				x.Use<IOneDependency<INoDependencies>>().Type<OptionalDependency<INoDependencies>>();
+				x.Add<INoDependencies>().Type<NoDependencies>();
+				x.Add<IOneDependency<INoDependencies>>().Type<OptionalDependency<INoDependencies>>();
 			});
 
 			var instance = container.GetService<IOneDependency<INoDependencies>>();
@@ -44,11 +44,11 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_reevaluate_constructor_to_use_when_config_changes()
 		{
-			var container = new Container(x => x.Use<IOneDependency<INoDependencies>>().Type<OptionalDependency<INoDependencies>>());
+			var container = new Container(x => x.Add<IOneDependency<INoDependencies>>().Type<OptionalDependency<INoDependencies>>());
 			var instance = container.GetService<IOneDependency<INoDependencies>>();
 			instance.Dependency.ShouldBe(null);
 
-			container.Configure(x => x.Use<INoDependencies>().Type<NoDependencies>());
+			container.Configure(x => x.Add<INoDependencies>().Type<NoDependencies>());
 			instance = container.GetService<IOneDependency<INoDependencies>>();
 			instance.Dependency.ShouldNotBe(null);
 		}
@@ -56,7 +56,7 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_instantiate_open_generic_type()
 		{
-			var container = new Container(x => x.Use(typeof(INoDependencies<>)).Type(typeof(NoDependencies<>)));
+			var container = new Container(x => x.Add(typeof(INoDependencies<>)).Type(typeof(NoDependencies<>)));
 			container.GetService<INoDependencies<NoDependencies>>();
 		}
 
@@ -88,8 +88,8 @@ namespace Maestro.Tests.Factories
 			var strings = new[] { "1", "2", "3" };
 			var container = new Container(x =>
 													{
-														x.Use<IEnumerable<int>>().Instance(ints);
-														x.Use<IEnumerable<string>>().Instance(strings);
+														x.Add<IEnumerable<int>>().Instance(ints);
+														x.Add<IEnumerable<string>>().Instance(strings);
 													});
 
 			var instanceWithInts = container.GetService<OptionalDependency<IEnumerable<int>>>();
@@ -104,7 +104,7 @@ namespace Maestro.Tests.Factories
 		{
 			var container = new Container(x =>
 			{
-				x.Use<string>().Instance("Object");
+				x.Add<string>().Instance("Object");
 
 				x.Add<OptionalDependency<object>>().Self().CtorArg(typeof(object), "Object");
 				x.Add<OptionalDependency<object>>().Self().CtorArg(typeof(object), () => "Object");
@@ -156,7 +156,7 @@ namespace Maestro.Tests.Factories
 		[Fact]
 		public void should_not_try_to_invoke_static_constructor()
 		{
-			var container = new Container(x => x.Use<Unresolvable>().Self());
+			var container = new Container(x => x.Add<Unresolvable>().Self());
 
 			Should.Throw<ActivationException>(() => container.GetService<Unresolvable>());
 		}

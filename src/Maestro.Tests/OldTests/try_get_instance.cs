@@ -32,7 +32,7 @@ namespace Maestro.Tests.OldTests
 			container.TryGetService(out o).ShouldBe(true);
 			o.ShouldNotBe(null);
 
-			container.Configure(x => x.Use<IDisposable>().Type<Disposable>());
+			container.Configure(x => x.Add<IDisposable>().Type<Disposable>());
 
 			container.TryGetService(typeof(IDisposable), out o).ShouldBe(true);
 			o.ShouldNotBe(null);
@@ -42,7 +42,7 @@ namespace Maestro.Tests.OldTests
 			disposable.ShouldNotBe(null);
 
 			var namedDisposable = new Disposable();
-			container.Configure(x => x.Use<IDisposable>("xyz").Instance(namedDisposable));
+			container.Configure(x => x.Add<IDisposable>().Named("xyz").Instance(namedDisposable));
 
 			TestClassWithDisposable testClassWithDisposable;
 			container.TryGetService(out testClassWithDisposable).ShouldBe(true);
