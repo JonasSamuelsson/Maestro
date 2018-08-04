@@ -17,22 +17,22 @@ namespace Maestro.Configuration
 
 		public ITypeInstanceBuilder<T> Use()
 		{
-			return _containerBuilder.Use(_serviceType).Type(_instanceType).As<T>();
+			return _containerBuilder.Add(_serviceType).Type(_instanceType).As<T>();
 		}
 
 		public ITypeInstanceBuilder<T> Use(string name)
 		{
-			return _containerBuilder.Use(_serviceType, name).Type(_instanceType).As<T>();
+			return _containerBuilder.Add(_serviceType).Named(name).Type(_instanceType).As<T>();
 		}
 
 		public ITypeInstanceBuilder<T> TryUse()
 		{
-			return _containerBuilder.TryUse(_serviceType).Type(_instanceType).As<T>();
+			return _containerBuilder.TryAdd(_serviceType).Type(_instanceType).As<T>();
 		}
 
 		public ITypeInstanceBuilder<T> TryUse(string name)
 		{
-			return _containerBuilder.TryUse(_serviceType, name).Type(_instanceType).As<T>();
+			return (_containerBuilder.TryAdd(_serviceType)?.Named(name)).Type(_instanceType).As<T>();
 		}
 
 		public ITypeInstanceBuilder<T> Add()

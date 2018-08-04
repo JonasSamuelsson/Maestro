@@ -13,14 +13,14 @@ namespace Maestro.Tests.Interception
 		{
 			var continer = new Container(x =>
 			{
-				x.Use<string>("x").Instance("success-x");
-				x.Use<Wrapper<string>>("x").Self().SetProperty(y => y.Value);
+				x.Add<string>().Named("x").Instance("success-x");
+				x.Add<Wrapper<string>>().Named("x").Self().SetProperty(y => y.Value);
 
-				x.Use<string>("y").Instance("success-y");
-				x.Use(typeof(Wrapper<>), "y").Self().SetProperty("Value");
+				x.Add<string>().Named("y").Instance("success-y");
+				x.Add(typeof(Wrapper<>)).Named("y").Self().SetProperty("Value");
 
-				x.Use<string>().Instance("success");
-				x.Use<Wrapper<string>>().Self().SetProperty(y => y.Value);
+				x.Add<string>().Instance("success");
+				x.Add<Wrapper<string>>().Self().SetProperty(y => y.Value);
 			});
 
 			continer.GetService<Wrapper<string>>().Value.ShouldBe("success");
@@ -45,11 +45,11 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 			{
-				x.Use<string>().Instance("success");
+				x.Add<string>().Instance("success");
 				x.Add<Wrapper<string>>().Self().SetProperty("Value", () => "success");
 				x.Add<Wrapper<string>>().Self().SetProperty("Value", ctx => ctx.GetService<string>());
 				x.Add<Wrapper<string>>().Self().SetProperty("Value", (ctx, type) => ctx.GetService(type));
-				x.Use(typeof(Wrapper<>)).Self().SetProperty("Value", (ctx, type) => ctx.GetService(type));
+				x.Add(typeof(Wrapper<>)).Self().SetProperty("Value", (ctx, type) => ctx.GetService(type));
 				x.Add<Wrapper<string>>().Self().SetProperty(y => y.Value, () => "success");
 				x.Add<Wrapper<string>>().Self().SetProperty(y => y.Value, ctx => ctx.GetService<string>());
 			});
@@ -62,7 +62,7 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 			{
-				x.Use<string>().Instance("success");
+				x.Add<string>().Instance("success");
 				x.Add<Wrapper<string>>().Self().TrySetProperty("Value");
 				x.Add<Wrapper<string>>().Self().TrySetProperty(y => y.Value);
 				x.Add(typeof(Wrapper<>)).Self().TrySetProperty("Value");
@@ -91,7 +91,7 @@ namespace Maestro.Tests.Interception
 		{
 			var container = new Container(x =>
 			{
-				x.Use<Wrapper<string>>().Self().TrySetProperty("foobar", PropertyNotFoundAction.Ignore);
+				x.Add<Wrapper<string>>().Self().TrySetProperty("foobar", PropertyNotFoundAction.Ignore);
 			});
 
 			container.GetService<Wrapper<string>>();

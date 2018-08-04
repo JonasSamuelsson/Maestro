@@ -12,7 +12,7 @@ namespace Maestro.Tests.Interception
 		{
 			var list = new List<string>();
 
-			new Container(x => x.Use<object>().Self()
+			new Container(x => x.Add<object>().Self()
 				.Intercept(_ => list.Add("one"))
 				.Intercept(_ => list.Add("two"))
 				.Intercept(_ => list.Add("three")))
@@ -26,7 +26,7 @@ namespace Maestro.Tests.Interception
 		{
 			var counter = 0;
 
-			var container = new Container(x => x.Use<object>().Self()
+			var container = new Container(x => x.Add<object>().Self()
 				.Intercept(_ => counter++)
 				.Singleton());
 
@@ -41,7 +41,7 @@ namespace Maestro.Tests.Interception
 		{
 			var @object = new object();
 
-			var container = new Container(x => x.Use<object>().Factory(() => @object)
+			var container = new Container(x => x.Add<object>().Factory(() => @object)
 				.Intercept((instance, ctx) => new Wrapper(instance))
 				.As<Wrapper>()
 				.Intercept(y => y.Text = "success"));
@@ -55,7 +55,7 @@ namespace Maestro.Tests.Interception
 		[Fact]
 		public void type_instance_should_support_instance_replacement_with_wrapper_configuration()
 		{
-			var container = new Container(x => x.Use<object>().Self()
+			var container = new Container(x => x.Add<object>().Self()
 				.Intercept((instance, ctx) => new Wrapper(instance))
 				.As<Wrapper>()
 				.Intercept(y => y.Text = "success"));

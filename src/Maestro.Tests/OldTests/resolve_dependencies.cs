@@ -14,14 +14,14 @@ namespace Maestro.Tests.OldTests
 			//var namedGrandChild = new GrandChild();
 			//var container = new Container(x =>
 			//{
-			//	x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().Set(y => y.Tag, @default);
-			//	x.For<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().Set(y => y.Tag, name1);
-			//	x.For<ParentWithMultipleChildren>().Use<ParentWithMultipleChildren>().Set(y => y.Tag, @default);
-			//	x.For<ParentWithMultipleChildren>(name1).Use<ParentWithMultipleChildren>().Set(y => y.Tag, name1);
-			//	x.For<Child>().Use<Child>().Set(y => y.Tag, @default);
-			//	x.For<Child>(name2).Use<Child>().Set(y => y.Tag, name2);
-			//	x.For<GrandChild>().Use(defaultGrandChild);
-			//	x.For<GrandChild>(name1).Use(namedGrandChild);
+			//	x.For<ParentWithSingleChild>().Add<ParentWithSingleChild>().Set(y => y.Tag, @default);
+			//	x.For<ParentWithSingleChild>(name1).Add<ParentWithSingleChild>().Set(y => y.Tag, name1);
+			//	x.For<ParentWithMultipleChildren>().Add<ParentWithMultipleChildren>().Set(y => y.Tag, @default);
+			//	x.For<ParentWithMultipleChildren>(name1).Add<ParentWithMultipleChildren>().Set(y => y.Tag, name1);
+			//	x.For<Child>().Add<Child>().Set(y => y.Tag, @default);
+			//	x.For<Child>(name2).Add<Child>().Set(y => y.Tag, name2);
+			//	x.For<GrandChild>().Add(defaultGrandChild);
+			//	x.For<GrandChild>(name1).Add(namedGrandChild);
 			//});
 
 			//{
@@ -68,11 +68,11 @@ namespace Maestro.Tests.OldTests
 			//var grandChild1 = new GrandChild();
 			//var container = new Container(x =>
 			//{
-			//	x.For<ParentWithSingleChild>().Use<ParentWithSingleChild>().Set(y => y.Tag, grandChild);
-			//	x.For<ParentWithSingleChild>(name1).Use<ParentWithSingleChild>().Set(y => y.Tag, grandChild1);
-			//	x.For<ParentWithSingleChild>(name2).Use<ParentWithSingleChild>().Set(y => y.Tag, grandChild);
-			//	x.For<GrandChild>().Use(grandChild);
-			//	x.For<GrandChild>(name1).Use(grandChild1);
+			//	x.For<ParentWithSingleChild>().Add<ParentWithSingleChild>().Set(y => y.Tag, grandChild);
+			//	x.For<ParentWithSingleChild>(name1).Add<ParentWithSingleChild>().Set(y => y.Tag, grandChild1);
+			//	x.For<ParentWithSingleChild>(name2).Add<ParentWithSingleChild>().Set(y => y.Tag, grandChild);
+			//	x.For<GrandChild>().Add(grandChild);
+			//	x.For<GrandChild>(name1).Add(grandChild1);
 			//});
 
 			//container.GetAll<ParentWithSingleChild>().Should().OnlyContain(x => x.Tag == x.Child.GrandChild);

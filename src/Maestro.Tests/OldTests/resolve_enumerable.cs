@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using Shouldly;
+﻿using Shouldly;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.OldTests
@@ -45,11 +45,11 @@ namespace Maestro.Tests.OldTests
 			var name = "yada yada";
 			var container = new Container(x =>
 			{
-				x.Use<Foo>().Type<Foo>();
-				x.Use<Foo>(name).Type<Foo>();
+				x.Add<Foo>().Type<Foo>();
+				x.Add<Foo>().Named(name).Type<Foo>();
 
-				x.Use<object>().Instance(@defaultDependency);
-				x.Use<object>(name).Instance(namedDependency);
+				x.Add<object>().Instance(defaultDependency);
+				x.Add<object>().Named(name).Instance(namedDependency);
 			});
 
 			var foos = container.GetServices<Foo>().ToList();

@@ -8,7 +8,7 @@ namespace Maestro.Tests.Benchmarks.Custom
 	{
 		public static void Execute()
 		{
-			var container = new Container(x => x.Use<object>().Self());
+			var container = new Container(x => x.Add<object>().Self());
 
 			Warmup(container);
 

@@ -12,7 +12,7 @@ namespace Maestro.Tests.OldTests
 		{
 			var container = new Container(x =>
 			{
-				x.Use<Parent>().Type<Parent>();
+				x.Add<Parent>().Type<Parent>();
 				x.Add<IChild>().Type<Child1>();
 				x.Add<IChild>().Type<Child2>();
 				x.Add<IChild>().Type<Child3>();

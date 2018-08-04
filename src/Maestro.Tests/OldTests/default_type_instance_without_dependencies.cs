@@ -8,7 +8,7 @@ namespace Maestro.Tests.OldTests
 		[Fact]
 		public void instantiate_type_instance()
 		{
-			new Container(x => x.Use(typeof(object)).Type(typeof(object)))
+			new Container(x => x.Add(typeof(object)).Type(typeof(object)))
 				.GetService(typeof(object))
 				.ShouldBeOfType<object>();
 		}

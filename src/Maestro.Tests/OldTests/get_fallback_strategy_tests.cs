@@ -10,7 +10,7 @@ namespace Maestro.Tests.OldTests
 		{
 			var container = new Container(x =>
 			{
-				x.Use<object>().Instance("success");
+				x.Add<object>().Instance("success");
 			});
 
 			container.GetService<object>("test").ShouldBe("success");

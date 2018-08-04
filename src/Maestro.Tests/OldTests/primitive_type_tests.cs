@@ -12,7 +12,7 @@ namespace Maestro.Tests.OldTests
 		[Fact]
 		public void should_resolve_registered_instance()
 		{
-			var container = new Container(x => x.Use(PrimitiveType).Instance(ExpectedValue));
+			var container = new Container(x => x.Add(PrimitiveType).Instance(ExpectedValue));
 
 			var instance = container.GetService(PrimitiveType);
 

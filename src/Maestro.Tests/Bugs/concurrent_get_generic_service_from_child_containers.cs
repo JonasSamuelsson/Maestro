@@ -9,7 +9,7 @@ namespace Maestro.Tests.Bugs
 		[Fact]
 		public void should_not_throw()
 		{
-			var container = new Container(x => x.Use(typeof(IList<>)).Type(typeof(List<>)));
+			var container = new Container(x => x.Add(typeof(IList<>)).Type(typeof(List<>)));
 			var child1 = container.CreateScope();
 			var child2 = container.CreateScope();
 
