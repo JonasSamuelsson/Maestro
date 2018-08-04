@@ -32,7 +32,7 @@ namespace Maestro.Configuration
 
 		public ITypeInstanceBuilder<T> TryUse(string name)
 		{
-			return (_containerBuilder.TryAdd(_serviceType)?.Named(name)).Type(_instanceType).As<T>();
+			return _containerBuilder.TryAdd(_serviceType)?.Named(name).Type(_instanceType).As<T>();
 		}
 
 		public ITypeInstanceBuilder<T> Add()
