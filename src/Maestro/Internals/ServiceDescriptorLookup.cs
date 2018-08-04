@@ -1,3 +1,4 @@
+using Maestro.Configuration;
 using Maestro.Diagnostics;
 using Maestro.Utils;
 using System;
@@ -17,12 +18,12 @@ namespace Maestro.Internals
 
 		internal EventHandler<EventArgs> ServiceDescriptorAdded;
 
-		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate)
+		public bool Add(ServiceDescriptor serviceDescriptor, ServiceRegistrationPolicy serviceRegistrationPolicy)
 		{
-			return Add(serviceDescriptor, throwIfDuplicate, true);
+			return Add(serviceDescriptor, serviceRegistrationPolicy, true);
 		}
 
-		public bool Add(ServiceDescriptor serviceDescriptor, bool throwIfDuplicate, bool triggerServiceDescriptorAddedEvent)
+		public bool Add(ServiceDescriptor serviceDescriptor, ServiceRegistrationPolicy serviceRegistrationPolicy, bool triggerServiceDescriptorAddedEvent)
 		{
 			serviceDescriptor.Id = Interlocked.Increment(ref _idCounter);
 
@@ -34,28 +35,25 @@ namespace Maestro.Internals
 			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, type => new ServiceFamily { Type = type });
 			var serviceDescriptorName = serviceDescriptor.Name;
 
-			if (serviceDescriptorName == ServiceNames.Anonymous)
+			switch (serviceRegistrationPolicy)
 			{
-				serviceFamily.AnonymousServices.Add(serviceDescriptor);
+				case ServiceRegistrationPolicy.AddOrThrow:
+					if (!serviceFamily.Dictionary.TryAdd(ServiceNames.Default, serviceDescriptor))
+						throw new DuplicateServiceRegistrationException($"Service of type '{serviceDescriptor.Type.ToFormattedString()}' has already been registered.");
+					break;
+				case ServiceRegistrationPolicy.AddOrUpdate:
+					serviceFamily.Dictionary.AddOrUpdate(ServiceNames.Default, serviceDescriptor);
+					break;
+				case ServiceRegistrationPolicy.TryAdd:
+					if (!serviceFamily.Dictionary.TryAdd(ServiceNames.Default, serviceDescriptor))
+						return false;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(serviceRegistrationPolicy), serviceRegistrationPolicy, null);
 			}
-			else
-			{
-				try
-				{
-					serviceFamily.NamedServices.Add(serviceDescriptorName, serviceDescriptor);
-				}
-				catch
-				{
-					if (throwIfDuplicate)
-					{
-						var msg = serviceDescriptorName == ServiceNames.Default
-							? $"Default service of type '{serviceDescriptor.Type.ToFormattedString()}' has already been registered."
-							: $"Service named '{serviceDescriptorName}' of type '{serviceDescriptor.Type.ToFormattedString()}' has already been registered.";
-						throw new DuplicateServiceRegistrationException(msg);
-					}
-					return false;
-				}
-			}
+
+			serviceFamily.Dictionary.AddOrUpdate(serviceDescriptorName, serviceDescriptor);
+			serviceFamily.List.Add(serviceDescriptor);
 
 			if (triggerServiceDescriptorAddedEvent)
 			{
@@ -67,32 +65,21 @@ namespace Maestro.Internals
 
 		public bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
 		{
-			if (_serviceFamilies.TryGet(type, out var serviceFamily))
-			{
-				if (serviceFamily.NamedServices.TryGet(name, out serviceDescriptor))
-				{
-					return true;
-				}
-			}
+			ServiceFamily serviceFamily;
 
 			if (Reflector.IsGeneric(type, out var genericTypeDefinition, out var genericArguments))
 			{
-				lock (_serviceFamilies)
+				if (_serviceFamilies.TryGet(genericTypeDefinition, out serviceFamily))
 				{
-					if (_serviceFamilies.TryGet(type, out serviceFamily))
-					{
-						if (serviceFamily.NamedServices.TryGet(name, out serviceDescriptor))
-						{
-							return true;
-						}
-					}
+					BuildGenericServiceFamilyFrom(serviceFamily, genericArguments);
+				}
+			}
 
-					if (TryGetServiceDescriptor(genericTypeDefinition, name, out serviceDescriptor))
-					{
-						serviceDescriptor = serviceDescriptor.MakeGeneric(genericArguments);
-						Add(serviceDescriptor, throwIfDuplicate: true, triggerServiceDescriptorAddedEvent: false);
-						return true;
-					}
+			if (_serviceFamilies.TryGet(type, out serviceFamily))
+			{
+				if (TryGetServiceDescriptor(serviceFamily, name, out serviceDescriptor))
+				{
+					return true;
 				}
 			}
 
@@ -100,40 +87,59 @@ namespace Maestro.Internals
 			return false;
 		}
 
+		private void BuildGenericServiceFamilyFrom(ServiceFamily serviceFamily, Type[] genericArguments)
+		{
+			var type = serviceFamily.Type.MakeGenericType(genericArguments);
+			var sf = _serviceFamilies.GetOrAdd(type, () => new ServiceFamily { Type = type });
+			var keys = sf.Dictionary.Keys.ToList();
+
+			foreach (var serviceDescriptor in serviceFamily.List)
+			{
+				if (sf.List.Any(x => x.CorrelationId == serviceDescriptor.CorrelationId))
+					continue;
+
+				var sd = serviceDescriptor.MakeGeneric(genericArguments);
+
+				if (!keys.Contains(sd.Name))
+				{
+					sf.Dictionary.TryAdd(ServiceNames.Default, sd);
+					sf.Dictionary.TryAdd(sd.Name, sd);
+				}
+
+				sf.List.Add(sd);
+			}
+		}
+
+		private static bool TryGetServiceDescriptor(ServiceFamily serviceFamily, string name, out ServiceDescriptor serviceDescriptor)
+		{
+			if (serviceFamily.Dictionary.TryGet(name, out serviceDescriptor))
+			{
+				return true;
+			}
+
+			const string defaultName = ServiceNames.Default;
+			return name != defaultName && serviceFamily.Dictionary.TryGet(defaultName, out serviceDescriptor);
+		}
+
 		public bool TryGetServiceDescriptors(Type type, out IReadOnlyList<ServiceDescriptor> serviceDescriptors)
 		{
-			var result = new List<ServiceDescriptor>();
-
-			if (_serviceFamilies.TryGet(type, out var serviceFamily))
-			{
-				if (serviceFamily.NamedServices.Count != 0)
-				{
-					result.AddRange(serviceFamily.NamedServices.Values);
-				}
-
-				if (serviceFamily.AnonymousServices.Count != 0)
-				{
-					result.AddRange(serviceFamily.AnonymousServices);
-				}
-			}
+			ServiceFamily serviceFamily;
 
 			if (Reflector.IsGeneric(type, out var genericTypeDefinition, out var genericArguments))
 			{
-				if (TryGetServiceDescriptors(genericTypeDefinition, out var descriptors))
+				if (_serviceFamilies.TryGet(genericTypeDefinition, out serviceFamily))
 				{
-					descriptors = descriptors
-						.Where(x => result.All(y => x.CorrelationId != y.CorrelationId))
-						.Select(x => x.MakeGeneric(genericArguments))
-						.ToList();
-					descriptors.ForEach(sd => Add(sd, throwIfDuplicate: true, triggerServiceDescriptorAddedEvent: false));
-					result.AddRange(descriptors);
+					BuildGenericServiceFamilyFrom(serviceFamily, genericArguments);
 				}
 			}
 
-			if (result.Count != 0)
+			if (_serviceFamilies.TryGet(type, out serviceFamily))
 			{
-				serviceDescriptors = result.OrderBy(x => x.SortOrder).ToArray();
-				return true;
+				if (serviceFamily.List.Count != 0)
+				{
+					serviceDescriptors = serviceFamily.List.OrderBy(x => x.SortOrder).ToList();
+					return true;
+				}
 			}
 
 			serviceDescriptors = null;
@@ -144,8 +150,8 @@ namespace Maestro.Internals
 		{
 			_serviceFamilies.Values.ForEach(sf =>
 			{
-				sf.AnonymousServices.ForEach(DisposeServiceDescriptor);
-				sf.NamedServices.Values.ForEach(DisposeServiceDescriptor);
+				sf.List.ForEach(DisposeServiceDescriptor);
+				sf.Dictionary.Values.ForEach(DisposeServiceDescriptor);
 			});
 		}
 
@@ -161,10 +167,10 @@ namespace Maestro.Internals
 		{
 			foreach (var serviceFamily in _serviceFamilies.OrderBy(x => x.Key.FullName).Select(x => x.Value))
 			{
-				var serviceDescriptors = serviceFamily.NamedServices
+				var serviceDescriptors = serviceFamily.Dictionary
 					.Select(x => x.Value)
 					.OrderBy(x => x.Name)
-					.Concat(serviceFamily.AnonymousServices);
+					.Concat(serviceFamily.List);
 
 				foreach (var serviceDescriptor in serviceDescriptors)
 				{

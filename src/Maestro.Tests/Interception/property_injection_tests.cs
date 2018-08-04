@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using Maestro.Configuration;
+﻿using Maestro.Configuration;
 using Shouldly;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.Interception
@@ -13,17 +13,19 @@ namespace Maestro.Tests.Interception
 		{
 			var continer = new Container(x =>
 			{
-				x.Use<string>().Instance("success-1");
-				x.Use<Wrapper<string>>().Self().SetProperty(y => y.Value);
-				x.Use<string>("x").Instance("success-2");
+				x.Use<string>("x").Instance("success-x");
 				x.Use<Wrapper<string>>("x").Self().SetProperty(y => y.Value);
-				x.Use<string>("y").Instance("success-3");
+
+				x.Use<string>("y").Instance("success-y");
 				x.Use(typeof(Wrapper<>), "y").Self().SetProperty("Value");
+
+				x.Use<string>().Instance("success");
+				x.Use<Wrapper<string>>().Self().SetProperty(y => y.Value);
 			});
 
-			continer.GetService<Wrapper<string>>().Value.ShouldBe("success-1");
-			continer.GetService<Wrapper<string>>("x").Value.ShouldBe("success-2");
-			continer.GetService<Wrapper<string>>("y").Value.ShouldBe("success-3");
+			continer.GetService<Wrapper<string>>().Value.ShouldBe("success");
+			continer.GetService<Wrapper<string>>("x").Value.ShouldBe("success-x");
+			continer.GetService<Wrapper<string>>("y").Value.ShouldBe("success-y");
 		}
 
 		[Fact]
