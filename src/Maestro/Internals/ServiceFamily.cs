@@ -6,7 +6,7 @@ namespace Maestro.Internals
 	internal class ServiceFamily
 	{
 		public Type Type { get; set; }
-		public ThreadSafeDictionary<string, ServiceDescriptor> NamedServices { get; } = new ThreadSafeDictionary<string, ServiceDescriptor>();
-		public ThreadSafeList<ServiceDescriptor> AnonymousServices { get; } = new ThreadSafeList<ServiceDescriptor>();
+		public ThreadSafeDictionary<string, ServiceDescriptor> Dictionary { get; } = new ThreadSafeDictionary<string, ServiceDescriptor>();
+		public ThreadSafeList<ServiceDescriptor> List { get; } = new ThreadSafeList<ServiceDescriptor>();
 	}
 }

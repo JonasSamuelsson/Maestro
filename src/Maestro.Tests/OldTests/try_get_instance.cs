@@ -1,5 +1,5 @@
-﻿using System;
-using Shouldly;
+﻿using Shouldly;
+using System;
 using Xunit;
 
 namespace Maestro.Tests.OldTests
@@ -16,11 +16,6 @@ namespace Maestro.Tests.OldTests
 			o.ShouldBe(null);
 
 			IDisposable disposable;
-			container.TryGetService(out disposable).ShouldBe(false);
-			disposable.ShouldBe(null);
-
-			container.Configure(x => x.Use<IDisposable>("xyz").Type<Disposable>());
-
 			container.TryGetService(out disposable).ShouldBe(false);
 			disposable.ShouldBe(null);
 		}

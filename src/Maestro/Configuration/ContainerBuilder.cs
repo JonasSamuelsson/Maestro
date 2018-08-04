@@ -20,65 +20,65 @@ namespace Maestro.Configuration
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceBuilder<object>(type, ServiceNames.Default, _container.Kernel, true);
+			return new ServiceBuilder<object>(type, ServiceNames.Default, _container.Kernel, ServiceRegistrationPolicy.AddOrUpdate);
 		}
 
 		public IServiceBuilder Use(Type type, string name)
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceBuilder<object>(type, name, _container.Kernel, true);
+			return new ServiceBuilder<object>(type, name, _container.Kernel, ServiceRegistrationPolicy.AddOrUpdate);
 		}
 
 		public IServiceBuilder<TService> Use<TService>()
 		{
 			AssertNotDisposed();
-			return new ServiceBuilder<TService>(typeof(TService), ServiceNames.Default, _container.Kernel, true);
+			return new ServiceBuilder<TService>(typeof(TService), ServiceNames.Default, _container.Kernel, ServiceRegistrationPolicy.AddOrUpdate);
 		}
 
 		public IServiceBuilder<TService> Use<TService>(string name)
 		{
 			AssertNotDisposed();
-			return new ServiceBuilder<TService>(typeof(TService), name, _container.Kernel, true);
+			return new ServiceBuilder<TService>(typeof(TService), name, _container.Kernel, ServiceRegistrationPolicy.AddOrUpdate);
 		}
 
 		public IServiceBuilder TryUse(Type type)
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceBuilder<object>(type, ServiceNames.Default, _container.Kernel, false);
+			return new ServiceBuilder<object>(type, ServiceNames.Default, _container.Kernel, ServiceRegistrationPolicy.TryAdd);
 		}
 
 		public IServiceBuilder TryUse(Type type, string name)
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceBuilder<object>(type, name, _container.Kernel, false);
+			return new ServiceBuilder<object>(type, name, _container.Kernel, ServiceRegistrationPolicy.TryAdd);
 		}
 
 		public IServiceBuilder<TService> TryUse<TService>()
 		{
 			AssertNotDisposed();
-			return new ServiceBuilder<TService>(typeof(TService), ServiceNames.Default, _container.Kernel, false);
+			return new ServiceBuilder<TService>(typeof(TService), ServiceNames.Default, _container.Kernel, ServiceRegistrationPolicy.TryAdd);
 		}
 
 		public IServiceBuilder<TService> TryUse<TService>(string name)
 		{
 			AssertNotDisposed();
-			return new ServiceBuilder<TService>(typeof(TService), name, _container.Kernel, false);
+			return new ServiceBuilder<TService>(typeof(TService), name, _container.Kernel, ServiceRegistrationPolicy.TryAdd);
 		}
 
 		public IServiceBuilder Add(Type type)
 		{
 			if (type == null) throw new ArgumentNullException();
 			AssertNotDisposed();
-			return new ServiceBuilder<object>(type, ServiceNames.Anonymous, _container.Kernel, true);
+			return new ServiceBuilder<object>(type, ServiceNames.Default, _container.Kernel, ServiceRegistrationPolicy.AddOrUpdate);
 		}
 
 		public IServiceBuilder<TService> Add<TService>()
 		{
 			AssertNotDisposed();
-			return new ServiceBuilder<TService>(typeof(TService), ServiceNames.Anonymous, _container.Kernel, true);
+			return new ServiceBuilder<TService>(typeof(TService), ServiceNames.Default, _container.Kernel, ServiceRegistrationPolicy.AddOrUpdate);
 		}
 
 		public void Scan(Action<Scanner> action)

@@ -1,29 +1,29 @@
 using Maestro.FactoryProviders;
 using Maestro.Internals;
-using System;
 using Maestro.Lifetimes;
+using System;
 
 namespace Maestro.Configuration
 {
 	internal class ServiceBuilder<TService> : IServiceBuilder, IServiceBuilder<TService>
 	{
-		public ServiceBuilder(Type serviceType, string name, Kernel kernel, bool throwIfDuplicate)
+		public ServiceBuilder(Type serviceType, string name, Kernel kernel, ServiceRegistrationPolicy serviceRegistrationPolicy)
 		{
 			ServiceType = serviceType;
 			Name = name;
 			Kernel = kernel;
-			ThrowIfDuplicate = throwIfDuplicate;
+			ServiceRegistrationPolicy = serviceRegistrationPolicy;
 		}
 
 		internal Type ServiceType { get; }
 		internal string Name { get; set; }
 		internal Kernel Kernel { get; }
-		public bool ThrowIfDuplicate { get; set; }
+		public ServiceRegistrationPolicy ServiceRegistrationPolicy { get; set; }
 
 		public void Instance(object instance)
 		{
 			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
-			Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate);
+			Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy);
 		}
 
 		public IFactoryInstanceBuilder<object> Factory(Func<object> factory)
@@ -34,7 +34,7 @@ namespace Maestro.Configuration
 		public IFactoryInstanceBuilder<object> Factory(Func<Context, object> factory)
 		{
 			var plugin = CreatePlugin(Name, new FuncFactoryProvider(factory));
-			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
+			return Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy)
 				? new FactoryInstanceBuilder<object>(plugin)
 				: null;
 		}
@@ -42,7 +42,7 @@ namespace Maestro.Configuration
 		public ITypeInstanceBuilder<object> Type(Type type)
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type, Name));
-			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
+			return Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy)
 				? new TypeInstanceBuilder<object>(plugin)
 				: null;
 		}
@@ -66,7 +66,7 @@ namespace Maestro.Configuration
 		public void Instance<TInstance>(TInstance instance) where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
-			Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate);
+			Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy);
 		}
 
 		public IFactoryInstanceBuilder<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : TService
@@ -77,7 +77,7 @@ namespace Maestro.Configuration
 		public IFactoryInstanceBuilder<TInstance> Factory<TInstance>(Func<Context, TInstance> factory) where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new FuncFactoryProvider(ctx => factory(ctx)));
-			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
+			return Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy)
 				? new FactoryInstanceBuilder<TInstance>(plugin)
 				: null;
 		}
@@ -85,7 +85,7 @@ namespace Maestro.Configuration
 		public ITypeInstanceBuilder<TInstance> Type<TInstance>() where TInstance : TService
 		{
 			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance), Name));
-			return Kernel.ServiceDescriptors.Add(plugin, ThrowIfDuplicate)
+			return Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy)
 				? new TypeInstanceBuilder<TInstance>(plugin)
 				: null;
 		}
