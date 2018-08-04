@@ -8,7 +8,7 @@ namespace Maestro.Utils
 {
 	class ThreadSafeDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
 	{
-		private ConcurrentDictionary<TKey, TValue> _dictionary;
+		private readonly ConcurrentDictionary<TKey, TValue> _dictionary;
 
 		public ThreadSafeDictionary() : this(Enumerable.Empty<KeyValuePair<TKey, TValue>>()) { }
 
@@ -18,6 +18,7 @@ namespace Maestro.Utils
 		}
 
 		public int Count => _dictionary.Count;
+		public IEnumerable<TKey> Keys => _dictionary.Keys;
 		public IEnumerable<TValue> Values => _dictionary.Values;
 
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
@@ -41,6 +42,11 @@ namespace Maestro.Utils
 			return _dictionary.GetOrAdd(key, factory);
 		}
 
+		public TValue GetOrAdd(TKey key, Func<TValue> factory)
+		{
+			return GetOrAdd(key, _ => factory());
+		}
+
 		public bool TryGet(TKey key, out TValue value)
 		{
 			return _dictionary.TryGetValue(key, out value);
@@ -54,6 +60,11 @@ namespace Maestro.Utils
 		public void AddOrUpdate(TKey key, TValue value)
 		{
 			_dictionary.AddOrUpdate(key, value, (_, __) => value);
+		}
+
+		public bool TryAdd(TKey key, TValue value)
+		{
+			return _dictionary.TryAdd(key, value);
 		}
 	}
 }

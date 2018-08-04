@@ -106,13 +106,6 @@ namespace Maestro.Internals
 				return true;
 			}
 
-			const string defaultName = ServiceNames.Default;
-			if (name != defaultName && ServiceDescriptors.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
-			{
-				pipeline = CreateSingleServicePipeline(serviceDescriptor, context);
-				return true;
-			}
-
 			if (ServiceDescriptors.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
 			{
 				var compositePipeline = new CompositePipeline(elementType);
@@ -183,10 +176,6 @@ namespace Maestro.Internals
 		private bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
 		{
 			if (ServiceDescriptors.TryGetServiceDescriptor(type, name, out serviceDescriptor))
-				return true;
-
-			const string defaultName = ServiceNames.Default;
-			if (name != defaultName && ServiceDescriptors.TryGetServiceDescriptor(type, defaultName, out serviceDescriptor))
 				return true;
 
 			serviceDescriptor = null;
