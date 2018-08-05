@@ -104,24 +104,24 @@ namespace Maestro.Configuration
 			return Using(new TConvention());
 		}
 
-		public Scanner RegisterConcreteClassesOf<T>(Action<IConventionalServiceBuilder<T>> action = null)
+		public Scanner RegisterConcreteClassesOf<T>(Action<IConventionalServiceRegistrator<T>> action = null)
 		{
 			return Using(new ConcreteClassesOfConvention<T>(typeof(T), action ?? (x => x.Add())));
 		}
 
-		public Scanner RegisterConcreteClassesOf(Type type, Action<IConventionalServiceBuilder<object>> action = null)
+		public Scanner RegisterConcreteClassesOf(Type type, Action<IConventionalServiceRegistrator<object>> action = null)
 		{
 			return Using(new ConcreteClassesOfConvention<object>(type, action ?? (x => x.Add())));
 		}
 
-		public Scanner RegisterConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceBuilder<object>> action = null)
+		public Scanner RegisterConcreteClassesClosing(Type genericTypeDefinition, Action<IConventionalServiceRegistrator<object>> action = null)
 		{
 			return Using(new ConcreteClassesClosingConvention(genericTypeDefinition, action ?? (x => x.Add())));
 		}
 
-		public Scanner RegisterDefaultImplementations(Action<IConventionalServiceBuilder<object>> action = null)
+		public Scanner RegisterDefaultImplementations(Action<IConventionalServiceRegistrator<object>> action = null)
 		{
-			return Using(new DefaultImplementationsConvention(action ?? (x => x.Use())));
+			return Using(new DefaultImplementationsConvention(action ?? (x => x.Add())));
 		}
 
 		internal void Execute(ContainerBuilder containerBuilder)
