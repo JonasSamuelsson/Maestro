@@ -7,9 +7,9 @@ namespace Maestro.Conventions
 {
 	internal class DefaultImplementationsConvention : IConvention
 	{
-		private readonly Action<IConventionalServiceBuilder<object>> _action;
+		private readonly Action<IConventionalServiceRegistrator<object>> _action;
 
-		public DefaultImplementationsConvention(Action<IConventionalServiceBuilder<object>> action)
+		public DefaultImplementationsConvention(Action<IConventionalServiceRegistrator<object>> action)
 		{
 			_action = action;
 		}
@@ -27,9 +27,9 @@ namespace Maestro.Conventions
 			{
 				var key = @interface.FullName;
 				key = key.Remove(key.Length - @interface.Name.Length) + @interface.Name.Substring(1);
-				Type @class;
-				if (!classes.TryGetValue(key, out @class)) continue;
-				_action(new ConventionalServiceBuilder<object>(containerBuilder, @interface, @class));
+				if (!classes.TryGetValue(key, out var @class)) continue;
+				new ConventionalServiceBuilder<object>(containerBuilder, @interface, @class)
+					.Execute(_action);
 			}
 		}
 	}

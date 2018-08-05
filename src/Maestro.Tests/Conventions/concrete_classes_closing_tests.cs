@@ -20,7 +20,7 @@ namespace Maestro.Tests.Conventions
 		public void should_support_instance_configuration()
 		{
 			var types = new[] { typeof(Class<IDisposable>) };
-			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesClosing(typeof(IInterface<>), y => y.Use().Singleton())));
+			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesClosing(typeof(IInterface<>), y => y.AddOrThrow().Singleton())));
 
 			var instance1 = container.GetService<IInterface<IDisposable>>();
 			var instance2 = container.GetService<IInterface<IDisposable>>();
