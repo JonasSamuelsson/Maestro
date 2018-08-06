@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Maestro
 {
-	public interface IScopedContainer : IDisposable, IServiceProvider
+	public interface IScopedContainer : IDisposable
 	{
 		Diagnostics.Diagnostics Diagnostics { get; }
 
@@ -12,7 +12,7 @@ namespace Maestro
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		new object GetService(Type type);
+		object GetService(Type type);
 
 		/// <summary>
 		/// Gets an instance of type <paramref name="type"/> named <paramref name="name"/>.
@@ -84,5 +84,7 @@ namespace Maestro
 		bool TryGetService<T>(string name, out T instance);
 
 		IScopedContainer CreateScope();
+
+		IServiceProvider ToServiceProvider();
 	}
 }
