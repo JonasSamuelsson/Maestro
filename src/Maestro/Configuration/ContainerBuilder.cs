@@ -42,7 +42,7 @@ namespace Maestro.Configuration
 			return new ServiceBuilder<T>(type, ServiceNames.Default, _container.Kernel, serviceRegistrationPolicy);
 		}
 
-		public void Scan(Action<Scanner> action)
+		public void Scan(Action<IScanner> action)
 		{
 			AssertNotDisposed();
 			var scanner = new Scanner();
