@@ -1,4 +1,5 @@
-﻿using Shouldly;
+﻿using Maestro.Configuration;
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.Conventions
