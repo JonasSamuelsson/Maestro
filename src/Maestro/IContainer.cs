@@ -9,6 +9,6 @@ namespace Maestro
 		/// Adds configuration to the container.
 		/// </summary>
 		/// <param name="action"></param>
-		void Configure(Action<ContainerBuilder> action);
+		void Configure(Action<IContainerBuilder> action);
 	}
 }

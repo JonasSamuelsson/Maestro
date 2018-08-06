@@ -4,10 +4,9 @@ using System.Collections.Generic;
 
 namespace Maestro.Configuration
 {
-	public class ContainerBuilder
+	internal class ContainerBuilder : IContainerBuilder
 	{
 		private readonly Container _container;
-		private bool _disposed = false;
 
 		internal ContainerBuilder(Container container)
 		{
@@ -31,34 +30,18 @@ namespace Maestro.Configuration
 		private IServiceBuilder Add(Type type, ServiceRegistrationPolicy serviceRegistrationPolicy)
 		{
 			if (type == null) throw new ArgumentNullException();
-			AssertNotDisposed();
 			return new ServiceBuilder<object>(type, ServiceNames.Default, _container.Kernel, serviceRegistrationPolicy);
 		}
 
 		private IServiceBuilder<T> Add<T>(Type type, ServiceRegistrationPolicy serviceRegistrationPolicy)
 		{
 			if (type == null) throw new ArgumentNullException();
-			AssertNotDisposed();
 			return new ServiceBuilder<T>(type, ServiceNames.Default, _container.Kernel, serviceRegistrationPolicy);
 		}
 
 		public void Scan(Action<IScanner> action)
 		{
-			AssertNotDisposed();
-			var scanner = new Scanner();
-			action(scanner);
-			scanner.Execute(this);
-		}
-
-		private void AssertNotDisposed()
-		{
-			if (_disposed == false) return;
-			throw new InvalidOperationException($"{GetType().Name} can't be used outside of config closure.");
-		}
-
-		internal void Dispose()
-		{
-			_disposed = true;
+			new Scanner(this).Execute(action);
 		}
 	}
 }

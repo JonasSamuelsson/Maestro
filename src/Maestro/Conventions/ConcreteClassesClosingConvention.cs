@@ -15,7 +15,7 @@ namespace Maestro.Conventions
 			_action = action;
 		}
 
-		public void Process(IEnumerable<Type> types, ContainerBuilder containerBuilder)
+		public void Process(IEnumerable<Type> types, IContainerBuilder containerBuilder)
 		{
 			foreach (var type in types)
 			{
