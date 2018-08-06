@@ -7,6 +7,8 @@ namespace Maestro
 {
 	public class ScopedContainer : IScopedContainer
 	{
+		private IServiceProvider _serviceProvider;
+
 		internal ScopedContainer()
 		{
 			Kernel = new Kernel();
@@ -91,6 +93,11 @@ namespace Maestro
 			return new ScopedContainer(Kernel, RootScope);
 		}
 
+		public IServiceProvider ToServiceProvider()
+		{
+			return _serviceProvider ?? (_serviceProvider = new ContainerServiceProvider(this));
+		}
+
 		public void Dispose()
 		{
 			foreach (var kvp in CurrentScope.ToArray())
@@ -98,11 +105,6 @@ namespace Maestro
 					disposable.Dispose();
 
 			Kernel.Dispose();
-		}
-
-		object IServiceProvider.GetService(Type serviceType)
-		{
-			return TryGetService(serviceType, out var instance) ? instance : null;
 		}
 	}
 }

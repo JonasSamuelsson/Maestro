@@ -10,6 +10,7 @@ namespace Maestro
 	{
 		private readonly HashSet<ServiceRequest> _serviceRequestStack = new HashSet<ServiceRequest>();
 		private bool _disposed;
+		private IServiceProvider _serviceProvider;
 
 		internal Context(ScopedContainer container, Kernel kernel)
 		{
@@ -370,6 +371,11 @@ namespace Maestro
 		private static Exception CreateActivationException(Type type, string name, Exception exception)
 		{
 			return new ActivationException(type, name, exception);
+		}
+
+		public IServiceProvider ToServiceProvider()
+		{
+			return _serviceProvider ?? (_serviceProvider = new ContextServiceProvider(this));
 		}
 
 		public void Dispose()
