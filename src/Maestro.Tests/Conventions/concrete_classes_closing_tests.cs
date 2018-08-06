@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Maestro.Configuration;
 using Shouldly;
 using Xunit;
 

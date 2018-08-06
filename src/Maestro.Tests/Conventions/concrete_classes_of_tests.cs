@@ -1,5 +1,6 @@
-﻿using System.Linq;
+﻿using Maestro.Configuration;
 using Shouldly;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Tests.Conventions
