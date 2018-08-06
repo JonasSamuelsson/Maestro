@@ -6,13 +6,13 @@ namespace Maestro.Configuration
 {
 	internal class ConventionalServiceBuilder<T> : IConventionalServiceRegistrator<T>, IConventionalServiceBuilder<T>
 	{
-		private readonly ContainerBuilder _containerBuilder;
+		private readonly IContainerBuilder _containerBuilder;
 		private readonly Type _serviceType;
 		private readonly Type _instanceType;
 		private Func<IServiceBuilder> _serviceBuilderFactory;
 		private ITypeInstanceBuilder<T> _typeInstanceBuilder;
 
-		public ConventionalServiceBuilder(ContainerBuilder containerBuilder, Type serviceType, Type instanceType)
+		public ConventionalServiceBuilder(IContainerBuilder containerBuilder, Type serviceType, Type instanceType)
 		{
 			_containerBuilder = containerBuilder;
 			_serviceType = serviceType;
