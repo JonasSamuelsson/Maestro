@@ -7,29 +7,27 @@ namespace Maestro.Configuration
 {
 	internal class ServiceBuilder<TService> : IServiceBuilder, IServiceBuilder<TService>
 	{
-		public ServiceBuilder(Type serviceType, string name, Kernel kernel, ServiceRegistrationPolicy serviceRegistrationPolicy)
-		{
-			ServiceType = serviceType;
-			Name = name;
-			Kernel = kernel;
-			ServiceRegistrationPolicy = serviceRegistrationPolicy;
-		}
+		private readonly Type _serviceType;
+		private readonly Action<ServiceDescriptor> _addService;
+		private string _name;
 
-		internal Type ServiceType { get; }
-		internal string Name { get; private set; }
-		internal Kernel Kernel { get; }
-		public ServiceRegistrationPolicy ServiceRegistrationPolicy { get; set; }
+		public ServiceBuilder(Type serviceType, Action<ServiceDescriptor> addService)
+		{
+			_serviceType = serviceType;
+			_addService = addService;
+			_name = ServiceNames.Default;
+		}
 
 		IServiceBuilder IServiceBuilder.Named(string name)
 		{
-			Name = name;
+			_name = name;
 			return this;
 		}
 
 		public void Instance(object instance)
 		{
-			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
-			Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy);
+			var serviceDescriptor = CreateServiceDescriptor(new InstanceFactoryProvider(instance));
+			_addService(serviceDescriptor);
 		}
 
 		public IFactoryInstanceBuilder<object> Factory(Func<object> factory)
@@ -39,46 +37,33 @@ namespace Maestro.Configuration
 
 		public IFactoryInstanceBuilder<object> Factory(Func<Context, object> factory)
 		{
-			var plugin = CreatePlugin(Name, new FuncFactoryProvider(factory));
-			return Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy)
-				? new FactoryInstanceBuilder<object>(plugin)
-				: null;
+			var serviceDescriptor = CreateServiceDescriptor(new FuncFactoryProvider(factory));
+			_addService(serviceDescriptor);
+			return new FactoryInstanceBuilder<object>(serviceDescriptor);
 		}
 
 		public ITypeInstanceBuilder<object> Type(Type type)
 		{
-			var plugin = CreatePlugin(Name, new TypeFactoryProvider(type, Name));
-			return Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy)
-				? new TypeInstanceBuilder<object>(plugin)
-				: null;
+			var serviceDescriptor = CreateServiceDescriptor(new TypeFactoryProvider(type, _name));
+			_addService(serviceDescriptor);
+			return new TypeInstanceBuilder<object>(serviceDescriptor);
 		}
 
 		public ITypeInstanceBuilder<object> Self()
 		{
-			return Type(ServiceType);
-		}
-
-		private ServiceDescriptor CreatePlugin(string name, IFactoryProvider factoryProvider)
-		{
-			return new ServiceDescriptor
-			{
-				Name = name,
-				Type = ServiceType,
-				FactoryProvider = factoryProvider,
-				Lifetime = TransientLifetime.Instance
-			};
+			return Type(_serviceType);
 		}
 
 		IServiceBuilder<TService> IServiceBuilder<TService>.Named(string name)
 		{
-			Name = name;
+			_name = name;
 			return this;
 		}
 
 		public void Instance<TInstance>(TInstance instance) where TInstance : TService
 		{
-			var plugin = CreatePlugin(Name, new InstanceFactoryProvider(instance));
-			Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy);
+			var serviceDescriptor = CreateServiceDescriptor(new InstanceFactoryProvider(instance));
+			_addService(serviceDescriptor);
 		}
 
 		public IFactoryInstanceBuilder<TInstance> Factory<TInstance>(Func<TInstance> factory) where TInstance : TService
@@ -88,23 +73,32 @@ namespace Maestro.Configuration
 
 		public IFactoryInstanceBuilder<TInstance> Factory<TInstance>(Func<Context, TInstance> factory) where TInstance : TService
 		{
-			var plugin = CreatePlugin(Name, new FuncFactoryProvider(ctx => factory(ctx)));
-			return Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy)
-				? new FactoryInstanceBuilder<TInstance>(plugin)
-				: null;
+			var serviceDescriptor = CreateServiceDescriptor(new FuncFactoryProvider(ctx => factory(ctx)));
+			_addService(serviceDescriptor);
+			return new FactoryInstanceBuilder<TInstance>(serviceDescriptor);
 		}
 
 		public ITypeInstanceBuilder<TInstance> Type<TInstance>() where TInstance : TService
 		{
-			var plugin = CreatePlugin(Name, new TypeFactoryProvider(typeof(TInstance), Name));
-			return Kernel.ServiceDescriptors.Add(plugin, ServiceRegistrationPolicy)
-				? new TypeInstanceBuilder<TInstance>(plugin)
-				: null;
+			var serviceDescriptor = CreateServiceDescriptor(new TypeFactoryProvider(typeof(TInstance), _name));
+			_addService(serviceDescriptor);
+			return new TypeInstanceBuilder<TInstance>(serviceDescriptor);
 		}
 
 		ITypeInstanceBuilder<TService> IServiceBuilder<TService>.Self()
 		{
 			return Type<TService>();
+		}
+
+		private ServiceDescriptor CreateServiceDescriptor(IFactoryProvider factoryProvider)
+		{
+			return new ServiceDescriptor
+			{
+				Name = _name,
+				Type = _serviceType,
+				FactoryProvider = factoryProvider,
+				Lifetime = TransientLifetime.Instance
+			};
 		}
 	}
 }

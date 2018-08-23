@@ -21,8 +21,8 @@ namespace Maestro.Internals
 		{
 			_pipelineCache = new PipelineCache();
 			AutoResolveFilters = new List<Func<Type, bool>>();
-			ServiceDescriptors = new ServiceDescriptorLookup();
-			ServiceDescriptors.ServiceDescriptorAdded += ServiceDescriptorLookupServiceDescriptorAdded;
+			ServiceRegistry = new ServiceRegistry();
+			ServiceRegistry.ServiceDescriptorAdded += ServiceDescriptorLookupServiceDescriptorAdded;
 		}
 
 		private void ServiceDescriptorLookupServiceDescriptorAdded(object sender, EventArgs e)
@@ -31,7 +31,7 @@ namespace Maestro.Internals
 		}
 
 		internal List<Func<Type, bool>> AutoResolveFilters { get; }
-		internal ServiceDescriptorLookup ServiceDescriptors { get; }
+		internal ServiceRegistry ServiceRegistry { get; }
 
 		internal bool CanGetService(Type type, string name, Context context)
 		{
@@ -100,13 +100,13 @@ namespace Maestro.Internals
 
 		private bool TryGetPipelineFromServiceDescriptors(Type type, Type elementType, string name, Context context, ref Pipeline pipeline)
 		{
-			if (ServiceDescriptors.TryGetServiceDescriptor(type, name, out var serviceDescriptor))
+			if (ServiceRegistry.TryGetServiceDescriptor(type, name, out var serviceDescriptor))
 			{
 				pipeline = CreateSingleServicePipeline(serviceDescriptor, context);
 				return true;
 			}
 
-			if (ServiceDescriptors.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
+			if (ServiceRegistry.TryGetServiceDescriptors(elementType, out var serviceDescriptors))
 			{
 				var compositePipeline = new CompositePipeline(elementType);
 
@@ -175,7 +175,7 @@ namespace Maestro.Internals
 
 		private bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
 		{
-			if (ServiceDescriptors.TryGetServiceDescriptor(type, name, out serviceDescriptor))
+			if (ServiceRegistry.TryGetServiceDescriptor(type, name, out serviceDescriptor))
 				return true;
 
 			serviceDescriptor = null;
@@ -185,13 +185,13 @@ namespace Maestro.Internals
 		public void Dispose()
 		{
 			// ReSharper disable once DelegateSubtraction
-			ServiceDescriptors.ServiceDescriptorAdded -= ServiceDescriptorLookupServiceDescriptorAdded;
+			ServiceRegistry.ServiceDescriptorAdded -= ServiceDescriptorLookupServiceDescriptorAdded;
 		}
 
 		internal void Populate(Diagnostics.Configuration configuration)
 		{
 			_pipelineCache.Populate(configuration.Pipelines);
-			ServiceDescriptors.Populate(configuration.Services);
+			ServiceRegistry.Populate(configuration.Services);
 		}
 	}
 }

@@ -1,4 +1,3 @@
-using Maestro.Configuration;
 using Maestro.Diagnostics;
 using Maestro.Utils;
 using System;
@@ -9,7 +8,7 @@ using System.Threading;
 
 namespace Maestro.Internals
 {
-	internal class ServiceDescriptorLookup : IDisposable
+	internal class ServiceRegistry : IDisposable
 	{
 		private int _idCounter;
 		private int _sortOrderCounter;
@@ -18,12 +17,7 @@ namespace Maestro.Internals
 
 		internal EventHandler<EventArgs> ServiceDescriptorAdded;
 
-		public bool Add(ServiceDescriptor serviceDescriptor, ServiceRegistrationPolicy serviceRegistrationPolicy)
-		{
-			return Add(serviceDescriptor, serviceRegistrationPolicy, true);
-		}
-
-		public bool Add(ServiceDescriptor serviceDescriptor, ServiceRegistrationPolicy serviceRegistrationPolicy, bool triggerServiceDescriptorAddedEvent)
+		public bool Add(ServiceDescriptor serviceDescriptor)
 		{
 			serviceDescriptor.Id = Interlocked.Increment(ref _idCounter);
 
@@ -33,34 +27,19 @@ namespace Maestro.Internals
 			}
 
 			var serviceFamily = _serviceFamilies.GetOrAdd(serviceDescriptor.Type, type => new ServiceFamily { Type = type });
-			var serviceDescriptorName = serviceDescriptor.Name;
 
-			switch (serviceRegistrationPolicy)
-			{
-				case ServiceRegistrationPolicy.AddOrThrow:
-					if (!serviceFamily.Dictionary.TryAdd(ServiceNames.Default, serviceDescriptor))
-						throw new DuplicateServiceRegistrationException($"Service of type '{serviceDescriptor.Type.ToFormattedString()}' has already been registered.");
-					break;
-				case ServiceRegistrationPolicy.AddOrUpdate:
-					serviceFamily.Dictionary.AddOrUpdate(ServiceNames.Default, serviceDescriptor);
-					break;
-				case ServiceRegistrationPolicy.TryAdd:
-					if (!serviceFamily.Dictionary.TryAdd(ServiceNames.Default, serviceDescriptor))
-						return false;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException(nameof(serviceRegistrationPolicy), serviceRegistrationPolicy, null);
-			}
-
-			serviceFamily.Dictionary.AddOrUpdate(serviceDescriptorName, serviceDescriptor);
+			serviceFamily.Dictionary.AddOrUpdate(ServiceNames.Default, serviceDescriptor);
+			serviceFamily.Dictionary.AddOrUpdate(serviceDescriptor.Name, serviceDescriptor);
 			serviceFamily.List.Add(serviceDescriptor);
 
-			if (triggerServiceDescriptorAddedEvent)
-			{
-				ServiceDescriptorAdded.Invoke(this, EventArgs.Empty);
-			}
+			ServiceDescriptorAdded.Invoke(this, EventArgs.Empty);
 
 			return true;
+		}
+
+		public bool Contains(Type type)
+		{
+			return _serviceFamilies.TryGet(type, out _);
 		}
 
 		public bool TryGetServiceDescriptor(Type type, string name, out ServiceDescriptor serviceDescriptor)
