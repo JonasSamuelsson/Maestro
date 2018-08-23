@@ -7,12 +7,9 @@ namespace Maestro.Microsoft.DependencyInjection
 	{
 		public static IServiceCollection AddMaestro(this IServiceCollection services)
 		{
-			return AddMaestro(services, new ContainerBuilder());
-		}
-
-		public static IServiceCollection AddMaestro(this IServiceCollection services, ContainerBuilder builder)
-		{
-			return services.AddSingleton<IServiceProviderFactory<ContainerBuilder>>(new MaestroServiceProviderFactory(builder));
+			services.AddSingleton<IServiceProviderFactory<IContainerBuilder>>(new MaestroServiceProviderFactory());
+			services.AddSingleton<IServiceProviderFactory<ContainerBuilder>>(new MaestroServiceProviderFactory());
+			return services;
 		}
 	}
 }

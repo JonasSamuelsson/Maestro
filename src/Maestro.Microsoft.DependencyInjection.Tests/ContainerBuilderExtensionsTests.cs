@@ -1,23 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 using Xunit;
 
 namespace Maestro.Microsoft.DependencyInjection.Tests
 {
-	public class ServiceRegistrationTests
+	public class ContainerBuilderExtensionsTests
 	{
 		[Fact]
 		public void should_handle_factory_registrations()
 		{
-			var counter = 0;
-			var descriptors = new[] { new ServiceDescriptor(typeof(object), _ => ++counter, ServiceLifetime.Transient) };
+			var descriptors = new[]
+			{
+				new ServiceDescriptor(typeof(string), "success"),
+				new ServiceDescriptor(typeof(object), x => x.GetService(typeof(string)), ServiceLifetime.Transient)
+			};
 
-			var container = new Container();
-			container.Populate(descriptors);
+			var container = new Container(x => x.Populate(descriptors));
 
-			new MaestroServiceProvider(container).GetService<object>().ShouldBe(1);
+			container.GetService<object>().ShouldBe("success");
 		}
 
 		[Fact]
@@ -26,10 +26,9 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
 			var instance = new object();
 			var descriptors = new[] { new ServiceDescriptor(typeof(object), instance) };
 
-			var container = new Container();
-			container.Populate(descriptors);
+			var container = new Container(x => x.Populate(descriptors));
 
-			new MaestroServiceProvider(container).GetService<object>().ShouldBe(instance);
+			container.GetService<object>().ShouldBe(instance);
 		}
 
 		[Fact]
@@ -37,10 +36,9 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
 		{
 			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(TestType), ServiceLifetime.Transient) };
 
-			var container = new Container();
-			container.Populate(descriptors);
+			var container = new Container(x => x.Populate(descriptors));
 
-			new MaestroServiceProvider(container).GetService<object>().GetType().ShouldBe(typeof(TestType));
+			container.GetService<object>().GetType().ShouldBe(typeof(TestType));
 		}
 
 		[Fact]
@@ -48,8 +46,7 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
 		{
 			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Transient) };
 
-			var container = new Container();
-			container.Populate(descriptors);
+			var container = new Container(x => x.Populate(descriptors));
 
 			container.GetService<object>().ShouldNotBe(container.GetService<object>());
 		}
@@ -59,19 +56,15 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
 		{
 			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Scoped) };
 
-			var objects = new List<object>();
-			var container = new Container(x => x.Use<string>().Factory(ctx =>
-			{
-				objects.Add(ctx.GetService<object>());
-				objects.Add(ctx.GetService<object>());
-				return string.Empty;
-			}));
-			container.Populate(descriptors);
+			var root = new Container(x => x.Populate(descriptors));
 
-			container.GetService<string>();
+			root.GetService<object>().ShouldBe(root.GetService<object>());
 
-			objects.Count.ShouldBe(2);
-			objects.Distinct().Count().ShouldBe(1);
+			var scope = root.CreateScope();
+
+			scope.GetService<object>().ShouldBe(scope.GetService<object>());
+
+			root.GetService<object>().ShouldNotBe(scope.GetService<object>());
 		}
 
 		[Fact]
@@ -79,10 +72,15 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
 		{
 			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Singleton) };
 
-			var container = new Container();
-			container.Populate(descriptors);
+			var root = new Container(x => x.Populate(descriptors));
 
-			container.GetService<object>().ShouldBe(container.GetService<object>());
+			root.GetService<object>().ShouldBe(root.GetService<object>());
+
+			var scope = root.CreateScope();
+
+			scope.GetService<object>().ShouldBe(scope.GetService<object>());
+
+			root.GetService<object>().ShouldBe(scope.GetService<object>());
 		}
 
 		[Fact]
@@ -95,9 +93,9 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
 				new ServiceDescriptor(typeof(object), "three")
 			};
 
-			var container = new Container();
-			container.Populate(descriptors);
+			var container = new Container(x => x.Populate(descriptors));
 
+			container.GetService<object>().ShouldBe("three");
 			container.GetServices<object>().ShouldBe(new[] { "one", "two", "three" });
 		}
 
