@@ -4,7 +4,7 @@ namespace Maestro.Tests
 {
 	public class Program
 	{
-		static void Main()
+		private static void Main()
 		{
 			new WhatDoIHave_tests().WhatDoIHave();
 		}

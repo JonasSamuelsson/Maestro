@@ -1,36 +1,24 @@
-﻿using Maestro.Utils;
-using System;
+﻿using System;
 
 namespace Maestro.Lifetimes
 {
 	internal class SingletonLifetime : Lifetime
 	{
 		private readonly object _lock = new object();
-		private volatile object _instance;
 
 		public override object Execute(Context context, Func<Context, object> factory)
 		{
-			if (_instance != null)
-				return _instance;
+			var scope = context.ScopedContainer.RootScope;
 
-			lock (_lock)
+			return scope.GetOrAdd(this, _ =>
 			{
-				if (_instance != null)
-					return _instance;
-
-				var instance = factory.Invoke(context);
-
-				if (instance is IDisposable disposable)
+				lock (_lock)
 				{
-					var proxy = new Disposable(() => disposable.Dispose());
-					if (!context.ScopedContainer.RootScope.TryAdd(this, proxy))
-						throw new InvalidOperationException();
+					return scope.TryGetValue(this, out var value)
+						? value
+						: factory.Invoke(context);
 				}
-
-				_instance = instance;
-
-				return instance;
-			}
+			});
 		}
 
 		public override Lifetime MakeGeneric(Type[] genericArguments)
