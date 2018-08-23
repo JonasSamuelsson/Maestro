@@ -1,27 +1,31 @@
-using System;
 using Maestro.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Maestro.Microsoft.DependencyInjection
 {
-	public class MaestroServiceProviderFactory : IServiceProviderFactory<ContainerBuilder>
+	public class MaestroServiceProviderFactory :IServiceProviderFactory<IContainerBuilder>, IServiceProviderFactory<ContainerBuilder>
 	{
-		private readonly ContainerBuilder _builder;
-
-		public MaestroServiceProviderFactory(ContainerBuilder builder)
+		IContainerBuilder IServiceProviderFactory<IContainerBuilder>.CreateBuilder(IServiceCollection services)
 		{
-			_builder = builder ?? throw new ArgumentNullException(nameof(builder));
+			return CreateBuilder(services);
+		}
+
+		public IServiceProvider CreateServiceProvider(IContainerBuilder containerBuilder)
+		{
+			return CreateServiceProvider((ContainerBuilder)containerBuilder);
 		}
 
 		public ContainerBuilder CreateBuilder(IServiceCollection services)
 		{
-			_builder.Populate(services);
-			return _builder;
+			var builder = new ContainerBuilder();
+			builder.Populate(services);
+			return builder;
 		}
 
-		public IServiceProvider CreateServiceProvider(ContainerBuilder builder)
+		public IServiceProvider CreateServiceProvider(ContainerBuilder containerBuilder)
 		{
-			return new MaestroServiceProvider(new Container(builder));
+			return containerBuilder.BuildContainer().ToServiceProvider();
 		}
 	}
 }
