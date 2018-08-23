@@ -1,5 +1,4 @@
-﻿using Maestro.Configuration;
-using Shouldly;
+﻿using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.OldTests
@@ -14,7 +13,7 @@ namespace Maestro.Tests.OldTests
 			container.Configure(x =>
 			{
 				x.TryAdd<string>().Instance("success");
-				x.TryAdd<string>().Instance("fail");
+				x.TryAdd<string>()?.Instance("fail");
 			});
 
 			container.GetService<string>().ShouldBe("success");
@@ -40,7 +39,7 @@ namespace Maestro.Tests.OldTests
 			new Container(x =>
 			{
 				x.TryAdd<object>().Type<object>().ShouldNotBeNull();
-				x.TryAdd<object>().Type<object>().ShouldBeNull();
+				x.TryAdd<object>().ShouldBeNull();
 			});
 		}
 	}

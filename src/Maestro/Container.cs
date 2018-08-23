@@ -23,7 +23,7 @@ namespace Maestro
 
 		public void Configure(Action<IContainerBuilder> action)
 		{
-			action.Invoke(new ContainerBuilder(this));
+			action.Invoke(new InternalContainerBuilder(this));
 		}
 	}
 }

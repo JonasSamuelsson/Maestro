@@ -9,6 +9,7 @@ namespace Maestro.Lifetimes
 		public override object Execute(Context context, Func<Context, object> factory)
 		{
 			var scope = context.ScopedContainer.CurrentScope;
+
 			return scope.GetOrAdd(this, _ =>
 			{
 				lock (_lock)

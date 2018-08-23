@@ -1,15 +1,19 @@
-﻿using System;
+﻿using Maestro.Internals;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
-	public class ContainerBuilder : IContainerBuilder
+	internal class InternalContainerBuilder : IContainerBuilder
 	{
-		private readonly List<ServiceDescriptor> _serviceDescriptors = new List<ServiceDescriptor>();
+		private readonly Container _container;
 
-		public ICollection<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
+		internal InternalContainerBuilder(Container container)
+		{
+			_container = container;
+		}
+
+		public ICollection<Func<Type, bool>> AutoResolveFilters => _container.Kernel.AutoResolveFilters;
 
 		public IServiceBuilder Add(Type type) => Add<object>(type);
 
@@ -35,26 +39,18 @@ namespace Maestro.Configuration
 
 		private void Add(ServiceDescriptor serviceDescriptor)
 		{
-			_serviceDescriptors.Add(serviceDescriptor);
+			_container.Kernel.ServiceRegistry.Add(serviceDescriptor);
 		}
 
 		private ServiceBuilder<T> TryAdd<T>(Type type)
 		{
-			return _serviceDescriptors.Any(x => x.Type == type) ? null : Add<T>(type);
+			return _container.Kernel.ServiceRegistry.Contains(type) ? null : Add<T>(type);
 		}
 
 		private static DuplicateServiceRegistrationException CreateDuplicateServiceRegistrationException(Type type)
 		{
 			var message = $"Service of type '{type.ToFormattedString()}' has already been registered.";
 			return new DuplicateServiceRegistrationException(message);
-		}
-
-		public IContainer BuildContainer()
-		{
-			var container = new Container();
-			AutoResolveFilters.ForEach(f => container.Kernel.AutoResolveFilters.Add(f));
-			_serviceDescriptors.ForEach(sd => container.Kernel.ServiceRegistry.Add(sd));
-			return container;
 		}
 	}
 }
