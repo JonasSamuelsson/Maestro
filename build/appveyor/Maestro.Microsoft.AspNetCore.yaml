@@ -2,7 +2,7 @@ version: '{branch}-{build}'
 
 only_commits:
   files:
-    - appveyor\Maestro.Microsoft.AspNetCore.yaml
+    - build\appveyor\Maestro.Microsoft.AspNetCore.yaml
     - src\Maestro.Microsoft.AspNetCore\**
 
 image: Visual Studio 2017

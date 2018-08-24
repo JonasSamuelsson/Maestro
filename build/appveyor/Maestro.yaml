@@ -2,7 +2,7 @@ version: '{branch}-{build}'
 
 only_commits:
   files:
-    - appveyor\Maestro.yaml
+    - build\appveyor\Maestro.yaml
     - src\Maestro\**
     - test\Maestro.Tests\**
 
