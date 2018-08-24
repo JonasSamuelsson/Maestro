@@ -25,9 +25,7 @@
    </ItemGroup>
 
    <ItemGroup>
-      <!-- ProjectReferences BEGIN -->
-      <ProjectReference Include="..\Maestro\Maestro.csproj" />
-      <!-- ProjectReferences END -->
+     <ProjectReference Include="..\..\src\Maestro\Maestro.csproj" />
    </ItemGroup>
 
 </Project>
