@@ -1,104 +1,138 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
+using System;
+using System.Linq;
 using Xunit;
 
 namespace Maestro.Microsoft.DependencyInjection.Tests
 {
-	public class ContainerBuilderExtensionsTests
-	{
-		[Fact]
-		public void should_handle_factory_registrations()
-		{
-			var descriptors = new[]
-			{
-				new ServiceDescriptor(typeof(string), "success"),
-				new ServiceDescriptor(typeof(object), x => x.GetService(typeof(string)), ServiceLifetime.Transient)
-			};
+   public class ContainerBuilderExtensionsTests
+   {
+      [Fact]
+      public void ShouldAddReqiuredServices()
+      {
+         var container = new Container(x => x.Populate(Enumerable.Empty<ServiceDescriptor>()));
 
-			var container = new Container(x => x.Populate(descriptors));
+         container.GetService<IServiceProvider>();
+         container.GetService<IServiceScopeFactory>();
+      }
 
-			container.GetService<object>().ShouldBe("success");
-		}
+      [Fact]
+      public void ServiceProviderShouldHandleScopesProperly()
+      {
+         var services = Enumerable.Empty<ServiceDescriptor>();
+         var root = new Container(x =>
+         {
+            x.Populate(services);
+            x.Add<object>().Type<object>().Scoped();
+         });
 
-		[Fact]
-		public void should_handle_instance_registrations()
-		{
-			var instance = new object();
-			var descriptors = new[] { new ServiceDescriptor(typeof(object), instance) };
+         var scope = root.CreateScope();
 
-			var container = new Container(x => x.Populate(descriptors));
+         root.GetService<object>().ShouldNotBe(scope.GetService<object>());
 
-			container.GetService<object>().ShouldBe(instance);
-		}
+         root.GetService<object>().ShouldBe(root.GetService<IServiceProvider>().GetService<object>());
 
-		[Fact]
-		public void should_handle_type_registrations()
-		{
-			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(TestType), ServiceLifetime.Transient) };
+         scope.GetService<object>().ShouldBe(scope.GetService<IServiceProvider>().GetService<object>());
 
-			var container = new Container(x => x.Populate(descriptors));
+         var serviceProvider = scope.GetService<IServiceProvider>();
+         scope.Dispose();
+         root.GetService<object>().ShouldBe(serviceProvider.GetService<object>());
+      }
 
-			container.GetService<object>().GetType().ShouldBe(typeof(TestType));
-		}
+      [Fact]
+      public void should_handle_factory_registrations()
+      {
+         var descriptors = new[]
+         {
+            new ServiceDescriptor(typeof(string), "success"),
+            new ServiceDescriptor(typeof(object), x => x.GetService(typeof(string)), ServiceLifetime.Transient)
+         };
 
-		[Fact]
-		public void should_handle_transient_services()
-		{
-			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Transient) };
+         var container = new Container(x => x.Populate(descriptors));
 
-			var container = new Container(x => x.Populate(descriptors));
+         container.GetService<object>().ShouldBe("success");
+      }
 
-			container.GetService<object>().ShouldNotBe(container.GetService<object>());
-		}
+      [Fact]
+      public void should_handle_instance_registrations()
+      {
+         var instance = new object();
+         var descriptors = new[] { new ServiceDescriptor(typeof(object), instance) };
 
-		[Fact]
-		public void should_handle_scoped_services()
-		{
-			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Scoped) };
+         var container = new Container(x => x.Populate(descriptors));
 
-			var root = new Container(x => x.Populate(descriptors));
+         container.GetService<object>().ShouldBe(instance);
+      }
 
-			root.GetService<object>().ShouldBe(root.GetService<object>());
+      [Fact]
+      public void should_handle_type_registrations()
+      {
+         var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(TestType), ServiceLifetime.Transient) };
 
-			var scope = root.CreateScope();
+         var container = new Container(x => x.Populate(descriptors));
 
-			scope.GetService<object>().ShouldBe(scope.GetService<object>());
+         container.GetService<object>().GetType().ShouldBe(typeof(TestType));
+      }
 
-			root.GetService<object>().ShouldNotBe(scope.GetService<object>());
-		}
+      [Fact]
+      public void should_handle_transient_services()
+      {
+         var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Transient) };
 
-		[Fact]
-		public void should_handle_singleton_services()
-		{
-			var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Singleton) };
+         var container = new Container(x => x.Populate(descriptors));
 
-			var root = new Container(x => x.Populate(descriptors));
+         container.GetService<object>().ShouldNotBe(container.GetService<object>());
+      }
 
-			root.GetService<object>().ShouldBe(root.GetService<object>());
+      [Fact]
+      public void should_handle_scoped_services()
+      {
+         var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Scoped) };
 
-			var scope = root.CreateScope();
+         var root = new Container(x => x.Populate(descriptors));
 
-			scope.GetService<object>().ShouldBe(scope.GetService<object>());
+         root.GetService<object>().ShouldBe(root.GetService<object>());
 
-			root.GetService<object>().ShouldBe(scope.GetService<object>());
-		}
+         var scope = root.CreateScope();
 
-		[Fact]
-		public void should_handle_multiple_registrations_for_the_same_service_type()
-		{
-			var descriptors = new[]
-			{
-				new ServiceDescriptor(typeof(object), "one"),
-				new ServiceDescriptor(typeof(object), "two"),
-				new ServiceDescriptor(typeof(object), "three")
-			};
+         scope.GetService<object>().ShouldBe(scope.GetService<object>());
 
-			var container = new Container(x => x.Populate(descriptors));
+         root.GetService<object>().ShouldNotBe(scope.GetService<object>());
+      }
 
-			container.GetService<object>().ShouldBe("three");
-			container.GetServices<object>().ShouldBe(new[] { "one", "two", "three" });
-		}
+      [Fact]
+      public void should_handle_singleton_services()
+      {
+         var descriptors = new[] { new ServiceDescriptor(typeof(object), typeof(object), ServiceLifetime.Singleton) };
 
-		private class TestType { }
-	}
+         var root = new Container(x => x.Populate(descriptors));
+
+         root.GetService<object>().ShouldBe(root.GetService<object>());
+
+         var scope = root.CreateScope();
+
+         scope.GetService<object>().ShouldBe(scope.GetService<object>());
+
+         root.GetService<object>().ShouldBe(scope.GetService<object>());
+      }
+
+      [Fact]
+      public void should_handle_multiple_registrations_for_the_same_service_type()
+      {
+         var descriptors = new[]
+         {
+            new ServiceDescriptor(typeof(object), "one"),
+            new ServiceDescriptor(typeof(object), "two"),
+            new ServiceDescriptor(typeof(object), "three")
+         };
+
+         var container = new Container(x => x.Populate(descriptors));
+
+         container.GetService<object>().ShouldBe("three");
+         container.GetServices<object>().ShouldBe(new[] { "one", "two", "three" });
+      }
+
+      private class TestType { }
+   }
 }
