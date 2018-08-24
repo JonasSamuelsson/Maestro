@@ -9,8 +9,6 @@ namespace Maestro.Internals
 	{
 		private static readonly IReadOnlyList<IFactoryProviderResolver> FactoryProviderResolvers = new IFactoryProviderResolver[]
 		{
-			new FuncFactoryProviderResolver(),
-			new LazyFactoryProviderResolver(),
 			new ConcreteClosedClassFactoryProviderResolver(),
 			new EmptyEnumerableFactoryProviderResolver()
 		};

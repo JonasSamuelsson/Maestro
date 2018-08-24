@@ -5,7 +5,7 @@
 		[Todo]
 		public void should_get_instance_with_single_ctor_dependency()
 		{
-			//var container = new Container(x =>
+			//var container = new RootScope(x =>
 			//{
 			//	x.For(typeof(TypeWithDefaultCtor)).Add(typeof(TypeWithDefaultCtor));
 			//	x.For(typeof(TypeWithCtorDependency)).Add(typeof(TypeWithCtorDependency));

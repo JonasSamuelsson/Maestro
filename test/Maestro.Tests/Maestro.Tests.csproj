@@ -1,27 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
-      <TargetFramework>netcoreapp2.0</TargetFramework>
-      <ApplicationIcon />
-      <OutputType>Exe</OutputType>
-      <StartupObject>Maestro.Tests.Program</StartupObject>
+      <TargetFramework>netcoreapp2.1</TargetFramework>
    </PropertyGroup>
-
-   <ItemGroup>
-      <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
-   </ItemGroup>
 
    <ItemGroup>
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
       <PackageReference Include="Shouldly" Version="3.0.0" />
       <PackageReference Include="xunit" Version="2.3.1" />
       <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
-
-      <!-- PackageReferences BEGIN -->
-      <!--<PackageReference Include="Maestro" Version="2.0.0-rc2" />-->
-      <!--<PackageReference Include="Maestro.Castle.DynamicProxy" Version="1.0.0-rc2" />-->
-      <!--<PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="1.0.0-rc2" />-->
-      <!-- PackageReferences END -->
    </ItemGroup>
 
    <ItemGroup>
