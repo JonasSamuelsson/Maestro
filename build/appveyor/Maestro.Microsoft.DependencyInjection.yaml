@@ -2,7 +2,7 @@ version: '{branch}-{build}'
 
 only_commits:
   files:
-    - appveyor\Maestro.Microsoft.DependencyInjection.yaml
+    - build\appveyor\Maestro.Microsoft.DependencyInjection.yaml
     - src\Maestro.Microsoft.DependencyInjection\**
     - test\Maestro.Microsoft.DependencyInjection.Tests\**
 
