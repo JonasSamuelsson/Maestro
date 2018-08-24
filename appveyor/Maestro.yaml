@@ -1,0 +1,22 @@
+version: '{branch}-{build}'
+
+only_commits:
+ files:
+   - .\appveyor\Maestro.yaml
+   - .\src\Maestro\**
+   - .\test\Maestro.Tests\**
+
+image: Visual Studio 2017
+
+before_build:
+- cmd: dotnet restore .\src\Maestro\Maestro.csproj --force
+- cmd: dotnet restore .\test\Maestro.Tests\Maestro.Tests.csproj --force
+
+build_script:
+- cmd: dotnet build .\src\Maestro\Maestro.csproj -c release
+- cmd: dotnet build .\test\Maestro.Tests\Maestro.Tests.csproj -c release
+
+test:
+  assemblies:
+    only:
+    - '**\Maestro.Tests.dll'
