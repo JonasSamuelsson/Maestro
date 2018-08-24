@@ -1,14 +1,14 @@
 version: '{branch}-{build}'
 
 only_commits:
- files:
-   - appveyor\Maestro.Microsoft.AspNetCore.yaml
-   - src\Maestro.Microsoft.AspNetCore\**
+  files:
+    - appveyor\Maestro.Microsoft.AspNetCore.yaml
+    - src\Maestro.Microsoft.AspNetCore\**
 
 image: Visual Studio 2017
 
 before_build:
-- cmd: dotnet restore .\src\Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj --force
+  - cmd: dotnet restore .\src\Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj --force
 
 build_script:
-- cmd: dotnet build .\src\Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj -c release
+  - cmd: dotnet build .\src\Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj -c release
