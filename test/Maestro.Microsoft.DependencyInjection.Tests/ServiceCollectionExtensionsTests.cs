@@ -5,16 +5,17 @@ using Xunit;
 
 namespace Maestro.Microsoft.DependencyInjection.Tests
 {
-	public class ServiceCollectionExtensionsTests
-	{
-		[Fact]
-		public void ShouldAddServiceProviderFactory()
-		{
-			var serviceCollection = new ServiceCollection()
-				.AddMaestro();
+   public class ServiceCollectionExtensionsTests
+   {
+      [Fact]
+      public void ShouldAddServiceProviderFactory()
+      {
+         var serviceCollection = new ServiceCollection()
+            .AddMaestro();
 
-			serviceCollection.ShouldContain(x => x.ServiceType == typeof(IServiceProviderFactory<IContainerBuilder>));
-			serviceCollection.ShouldContain(x => x.ServiceType == typeof(IServiceProviderFactory<ContainerBuilder>));
-		}
-	}
+         serviceCollection.ShouldContain(x => x.ServiceType == typeof(IServiceProviderFactory<IContainerBuilder>));
+         serviceCollection.ShouldContain(x => x.ServiceType == typeof(IServiceProviderFactory<Configuration.ContainerBuilder>));
+         serviceCollection.ShouldContain(x => x.ServiceType == typeof(IServiceProviderFactory<ContainerBuilder>));
+      }
+   }
 }
