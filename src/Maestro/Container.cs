@@ -3,7 +3,7 @@ using System;
 
 namespace Maestro
 {
-	public class Container : ScopedContainer, IContainer
+	public class Container : Scope, IContainer
 	{
 		/// <summary>
 		/// Instantiates a new empty container.
