@@ -4,6 +4,7 @@ only_commits:
   files:
     - build\appveyor\Maestro.Microsoft.AspNetCore.yaml
     - src\Maestro.Microsoft.AspNetCore\**
+    - test\Maestro.Microsoft.AspNetCore.Tests\**
 
 image: Visual Studio 2017
 
@@ -12,3 +13,9 @@ before_build:
 
 build_script:
   - cmd: dotnet build .\src\Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj -c release
+
+before_test:
+  - cmd: dotnet restore .\test\Maestro.Microsoft.AspNetCore.Tests\Maestro.Microsoft.AspNetCore.Tests.csproj --force
+
+test_script:
+  - cmd: dotnet test .\test\Maestro.Microsoft.AspNetCore.Tests\Maestro.Microsoft.AspNetCore.Tests.csproj -c release

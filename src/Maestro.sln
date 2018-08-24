@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests", "..\test\Ma
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.DependencyInjection.Tests", "..\test\Maestro.Microsoft.DependencyInjection.Tests\Maestro.Microsoft.DependencyInjection.Tests.csproj", "{95070B9F-684E-4799-96EB-267962C522B8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.AspNetCore.Tests", "..\test\Maestro.Microsoft.AspNetCore.Tests\Maestro.Microsoft.AspNetCore.Tests.csproj", "{B75BB5E9-15CF-41EC-9FF4-C183B83EEB0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{95070B9F-684E-4799-96EB-267962C522B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95070B9F-684E-4799-96EB-267962C522B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95070B9F-684E-4799-96EB-267962C522B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B75BB5E9-15CF-41EC-9FF4-C183B83EEB0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B75BB5E9-15CF-41EC-9FF4-C183B83EEB0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B75BB5E9-15CF-41EC-9FF4-C183B83EEB0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B75BB5E9-15CF-41EC-9FF4-C183B83EEB0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
