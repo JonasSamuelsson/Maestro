@@ -12,7 +12,7 @@ namespace Maestro.Tests.OldTests
 			//var name2 = "name2";
 			//var defaultGrandChild = new GrandChild();
 			//var namedGrandChild = new GrandChild();
-			//var container = new Container(x =>
+			//var container = new RootScope(x =>
 			//{
 			//	x.For<ParentWithSingleChild>().Add<ParentWithSingleChild>().Set(y => y.Tag, @default);
 			//	x.For<ParentWithSingleChild>(name1).Add<ParentWithSingleChild>().Set(y => y.Tag, name1);
@@ -66,7 +66,7 @@ namespace Maestro.Tests.OldTests
 			//var name2 = "xyz";
 			//var grandChild = new GrandChild();
 			//var grandChild1 = new GrandChild();
-			//var container = new Container(x =>
+			//var container = new RootScope(x =>
 			//{
 			//	x.For<ParentWithSingleChild>().Add<ParentWithSingleChild>().Set(y => y.Tag, grandChild);
 			//	x.For<ParentWithSingleChild>(name1).Add<ParentWithSingleChild>().Set(y => y.Tag, grandChild1);

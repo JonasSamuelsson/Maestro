@@ -12,15 +12,17 @@ namespace Maestro
 		private bool _disposed;
 		private IServiceProvider _serviceProvider;
 
-		internal Context(ScopedContainer container, Kernel kernel)
+		internal Context(Kernel kernel, Scope currentScope, Scope rootScope)
 		{
-			ScopedContainer = container;
 			Kernel = kernel;
+			CurrentScope = currentScope;
+			RootScope = rootScope;
 		}
 
-		public IScopedContainer Container => ScopedContainer;
-		internal ScopedContainer ScopedContainer { get; }
 		internal Kernel Kernel { get; }
+
+		public Scope CurrentScope { get; }
+		public Scope RootScope { get; }
 
 		public bool CanGetService(Type type)
 		{
@@ -345,15 +347,8 @@ namespace Maestro
 
 		private void AssertNotDisposed()
 		{
-			if (_disposed) throw new ObjectDisposedException(objectName: null, message: "Context has been disposed.");
+			if (_disposed) throw new ObjectDisposedException(null, "Context has been disposed.");
 		}
-
-		//private void AddStackFrame(Type type, string name)
-		//{
-		//	var serviceRequest = new ServiceRequest(type, name);
-
-		//	AddStackFrame(serviceRequest);
-		//}
 
 		private void AddStackFrame(ServiceRequest request)
 		{
@@ -375,7 +370,7 @@ namespace Maestro
 
 		public IServiceProvider ToServiceProvider()
 		{
-			return _serviceProvider ?? (_serviceProvider = new ContextServiceProvider(this));
+			return _serviceProvider ?? (_serviceProvider = new ServiceProvider(TryGetService));
 		}
 
 		public void Dispose()

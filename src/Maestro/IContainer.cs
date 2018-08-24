@@ -3,7 +3,7 @@ using System;
 
 namespace Maestro
 {
-	public interface IContainer : IScopedContainer
+	public interface IContainer : IScope
 	{
 		/// <summary>
 		/// Adds configuration to the container.

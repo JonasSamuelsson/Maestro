@@ -8,13 +8,13 @@ namespace Maestro.Lifetimes
 
 		public override object Execute(Context context, Func<Context, object> factory)
 		{
-			var scope = context.ScopedContainer.RootScope;
+			var cache = context.RootScope.Cache;
 
-			return scope.GetOrAdd(this, _ =>
+			return cache.GetOrAdd(this, _ =>
 			{
 				lock (_lock)
 				{
-					return scope.TryGetValue(this, out var value)
+					return cache.TryGetValue(this, out var value)
 						? value
 						: factory.Invoke(context);
 				}
