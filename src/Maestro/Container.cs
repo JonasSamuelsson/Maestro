@@ -23,6 +23,7 @@ namespace Maestro
 
 		public void Configure(Action<IContainerBuilder> action)
 		{
+			AssertNotDisposed();
 			action.Invoke(new InternalContainerBuilder(this));
 		}
 	}
