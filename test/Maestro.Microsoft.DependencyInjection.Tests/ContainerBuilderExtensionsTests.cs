@@ -18,24 +18,23 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
       }
 
       [Fact]
-      public void ServiceProviderShouldHandleScopesProperly()
+      public void ServiceProviderShouldBeScoped()
       {
-         var services = Enumerable.Empty<ServiceDescriptor>();
-         var container = new Container(x =>
-         {
-            x.Populate(services);
-            x.Add<object>().Type<object>().Scoped();
-         });
+         var container = new Container(x => x.Populate(Enumerable.Empty<ServiceDescriptor>()));
 
-         var containerServiceProvider = container.GetService<IServiceProvider>();
-         container.GetService<object>().ShouldBe(containerServiceProvider.GetService<object>());
+         var sp1 = container.GetService<IServiceProvider>();
+         var sp2 = container.GetService<IServiceProvider>();
+
+         sp1.ShouldBe(sp2);
 
          var scope = container.CreateScope();
 
-         var scopeServiceProvider = scope.GetService<IServiceProvider>();
-         scope.GetService<object>().ShouldBe(scopeServiceProvider.GetService<object>());
+         var sp3 = scope.GetService<IServiceProvider>();
+         var sp4 = scope.GetService<IServiceProvider>();
 
-         container.GetService<object>().ShouldNotBe(scope.GetService<object>());
+         sp3.ShouldBe(sp4);
+
+         sp1.ShouldNotBe(sp3);
       }
 
       [Fact]
