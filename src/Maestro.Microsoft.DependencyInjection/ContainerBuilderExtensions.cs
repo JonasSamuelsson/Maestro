@@ -9,7 +9,7 @@ namespace Maestro.Microsoft.DependencyInjection
 	{
 		public static void Populate(this IContainerBuilder builder, IEnumerable<ServiceDescriptor> descriptors)
 		{
-			builder.Add<IServiceProvider>().Factory(ctx => ctx.Container.ToServiceProvider());
+			builder.Add<IServiceProvider>().Factory(ctx => ctx.Scope.ToServiceProvider());
 			builder.Add<IServiceScopeFactory>().Factory(ctx => new MaestroServiceScopeFactory(ctx.Container));
 
 			foreach (var descriptor in descriptors)
