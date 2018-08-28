@@ -10,5 +10,7 @@ namespace Maestro
 		/// </summary>
 		/// <param name="action"></param>
 		void Configure(Action<IContainerBuilder> action);
+
+		IScope CreateScope();
 	}
 }

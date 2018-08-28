@@ -6,28 +6,18 @@ using System.Linq;
 
 namespace Maestro
 {
-	public class Scope : IScope
+	public abstract class Scope : IScope
 	{
 		private IServiceProvider _serviceProvider;
 		protected bool Disposed { get; private set; }
 
-		internal Scope()
+		internal Scope(Kernel kernel)
 		{
-			Cache = new ConcurrentDictionary<object, object>();
-			Kernel = new Kernel();
-			RootScope = this;
-		}
-
-		internal Scope(Kernel kernel, Scope rootScope)
-		{
-			Cache = new ConcurrentDictionary<object, object>();
 			Kernel = kernel;
-			RootScope = rootScope;
 		}
 
-		internal ConcurrentDictionary<object, object> Cache { get; }
+		internal ConcurrentDictionary<object, object> Cache { get; } = new ConcurrentDictionary<object, object>();
 		internal Kernel Kernel { get; }
-		internal Scope RootScope { get; }
 
 		public Diagnostics.Diagnostics Diagnostics => new Diagnostics.Diagnostics(Kernel);
 
@@ -101,17 +91,6 @@ namespace Maestro
 				return context.GetServices<T>();
 		}
 
-		public Scope CreateScope()
-		{
-			AssertNotDisposed();
-			return new Scope(Kernel, RootScope);
-		}
-
-		IScope IScope.CreateScope()
-		{
-			return CreateScope();
-		}
-
 		public IServiceProvider ToServiceProvider()
 		{
 			AssertNotDisposed();
@@ -120,27 +99,18 @@ namespace Maestro
 
 		public virtual void Dispose()
 		{
-			if (Disposed)
-				return;
-
 			Disposed = true;
 
 			foreach (var disposable in Cache.Values.OfType<IDisposable>())
 				disposable.Dispose();
-
-			if (this == RootScope)
-				Kernel.Dispose();
 		}
 
-		private Context CreateContext()
-		{
-			return new Context(Kernel, this, RootScope);
-		}
+		protected abstract Context CreateContext();
 
 		protected void AssertNotDisposed()
 		{
 			if (!Disposed) return;
-			throw new ObjectDisposedException($"{GetType().Name} is disposed.");
+			throw new ObjectDisposedException($"This {GetType().Name} has been disposed.");
 		}
 	}
 }
