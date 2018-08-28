@@ -19,7 +19,7 @@
 
    <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" />
-      <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="2.0.0-beta-1808241107" />
+      <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="2.0.0-beta-1808280752" />
    </ItemGroup>
 
 </Project>
