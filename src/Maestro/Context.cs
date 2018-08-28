@@ -12,17 +12,17 @@ namespace Maestro
 		private bool _disposed;
 		private IServiceProvider _serviceProvider;
 
-		internal Context(Kernel kernel, Scope currentScope, Scope rootScope)
+		internal Context(Kernel kernel, Container container, Scope scope)
 		{
 			Kernel = kernel;
-			CurrentScope = currentScope;
-			RootScope = rootScope;
+			Container = container;
+			Scope = scope;
 		}
 
 		internal Kernel Kernel { get; }
 
-		public Scope CurrentScope { get; }
-		public Scope RootScope { get; }
+		public Container Container { get; }
+		public Scope Scope { get; }
 
 		public bool CanGetService(Type type)
 		{
@@ -103,8 +103,7 @@ namespace Maestro
 
 			try
 			{
-				object instance;
-				if (TryGetService(type, name, out instance))
+				if (TryGetService(type, name, out var instance))
 					return instance;
 
 				throw new ActivationException(type, name, "Service not registered.");
@@ -179,8 +178,7 @@ namespace Maestro
 
 			try
 			{
-				object @object;
-				if (TryGetService(type, name, out @object))
+				if (TryGetService(type, name, out var @object))
 				{
 					instance = (T)@object;
 					return true;
@@ -253,7 +251,7 @@ namespace Maestro
 		public IEnumerable<object> GetServices(Type type)
 		{
 			var enumerableType = EnumerableTypeBuilder.Get(type);
-			var name = ServiceNames.Default;
+			const string name = ServiceNames.Default;
 
 			try
 			{
@@ -279,7 +277,7 @@ namespace Maestro
 		public IEnumerable<T> GetServices<T>()
 		{
 			var type = typeof(IEnumerable<T>);
-			var name = ServiceNames.Default;
+			const string name = ServiceNames.Default;
 
 			try
 			{
@@ -370,6 +368,7 @@ namespace Maestro
 
 		public IServiceProvider ToServiceProvider()
 		{
+			AssertNotDisposed();
 			return _serviceProvider ?? (_serviceProvider = new ServiceProvider(TryGetService));
 		}
 

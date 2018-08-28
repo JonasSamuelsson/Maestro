@@ -1,4 +1,5 @@
 ﻿using Maestro.Configuration;
+using Maestro.Internals;
 using System;
 
 namespace Maestro
@@ -9,6 +10,7 @@ namespace Maestro
 		/// Instantiates a new empty container.
 		/// </summary>
 		public Container()
+			: base(new Kernel())
 		{
 		}
 
@@ -25,6 +27,17 @@ namespace Maestro
 		{
 			AssertNotDisposed();
 			action.Invoke(new InternalContainerBuilder(this));
+		}
+
+		public IScope CreateScope()
+		{
+			AssertNotDisposed();
+			return new ChildScope(Kernel, this);
+		}
+
+		protected override Context CreateContext()
+		{
+			return new Context(Kernel, this, this);
 		}
 	}
 }

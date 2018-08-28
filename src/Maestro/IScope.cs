@@ -83,8 +83,6 @@ namespace Maestro
 		/// <returns></returns>
 		bool TryGetService<T>(string name, out T instance);
 
-		IScope CreateScope();
-
 		IServiceProvider ToServiceProvider();
 	}
 }

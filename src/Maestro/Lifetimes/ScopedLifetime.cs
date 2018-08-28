@@ -8,7 +8,7 @@ namespace Maestro.Lifetimes
 
 		public override object Execute(Context context, Func<Context, object> factory)
 		{
-			var cache = context.CurrentScope.Cache;
+			var cache = context.Scope.Cache;
 
 			return cache.GetOrAdd(this, _ =>
 			{
