@@ -5,15 +5,15 @@ namespace Maestro.Microsoft.DependencyInjection
 {
 	internal class MaestroServiceScope : IServiceScope
 	{
-		private readonly IScopedContainer _container;
+		private readonly IScope _scope;
 
-		public MaestroServiceScope(IScopedContainer container)
+		public MaestroServiceScope(IScope scope)
 		{
-			_container = container;
+			_scope = scope;
 		}
 
-		public IServiceProvider ServiceProvider => _container.ToServiceProvider();
+		public IServiceProvider ServiceProvider => _scope.ToServiceProvider();
 
-		public void Dispose() => _container.Dispose();
+		public void Dispose() => _scope.Dispose();
 	}
 }
