@@ -19,7 +19,7 @@
 
    <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
-      <PackageReference Include="Maestro" Version="3.0.0-beta-1808231130" />
+      <PackageReference Include="Maestro" Version="3.0.0-beta-1808280618" />
    </ItemGroup>
 
 </Project>
