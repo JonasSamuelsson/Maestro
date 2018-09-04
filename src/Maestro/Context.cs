@@ -372,7 +372,7 @@ namespace Maestro
 			return _serviceProvider ?? (_serviceProvider = new ServiceProvider(TryGetService));
 		}
 
-		public void Dispose()
+		void IDisposable.Dispose()
 		{
 			_disposed = true;
 		}

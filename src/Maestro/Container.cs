@@ -39,5 +39,11 @@ namespace Maestro
 		{
 			return new Context(Kernel, this, this);
 		}
+
+		public override void Dispose()
+		{
+			Kernel.Dispose();
+			base.Dispose();
+		}
 	}
 }
