@@ -9,7 +9,7 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
    public class ContainerBuilderExtensionsTests
    {
       [Fact]
-      public void ShouldAddReqiuredServices()
+      public void ShouldAddRequiredServices()
       {
          var container = new Container(x => x.Populate(Enumerable.Empty<ServiceDescriptor>()));
 
