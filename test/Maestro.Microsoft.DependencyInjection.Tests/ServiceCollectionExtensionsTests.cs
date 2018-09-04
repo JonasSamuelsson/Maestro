@@ -14,7 +14,6 @@ namespace Maestro.Microsoft.DependencyInjection.Tests
             .AddMaestro();
 
          serviceCollection.ShouldContain(x => x.ServiceType == typeof(IServiceProviderFactory<IContainerBuilder>));
-         serviceCollection.ShouldContain(x => x.ServiceType == typeof(IServiceProviderFactory<Configuration.ContainerBuilder>));
          serviceCollection.ShouldContain(x => x.ServiceType == typeof(IServiceProviderFactory<ContainerBuilder>));
       }
    }
