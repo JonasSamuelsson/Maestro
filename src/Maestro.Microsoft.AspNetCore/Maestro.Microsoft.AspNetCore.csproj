@@ -4,7 +4,7 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <AssemblyName>Maestro.Microsoft.AspNetCore</AssemblyName>
       <RootNamespace>Maestro.Microsoft.AspNetCore</RootNamespace>
-      <Version>2.0.0-beta</Version>
+      <Version>2.0.0</Version>
       <Authors>Jonas Samuelsson</Authors>
       <Company>Jonas Samuelsson</Company>
       <Product>Maestro</Product>
@@ -19,7 +19,7 @@
 
    <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" />
-      <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="2.0.0-beta-1808280752" />
+      <PackageReference Include="Maestro.Microsoft.DependencyInjection" Version="2.0.0" />
    </ItemGroup>
 
 </Project>
