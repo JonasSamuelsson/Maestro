@@ -1,0 +1,21 @@
+version: '{branch}-{build}'
+
+only_commits:
+  files:
+    - build\appveyor\Maestro.Castle.DynamicProxy.yaml
+    - src\Maestro.Castle.DynamicProxy\**
+    - test\Maestro.Castle.DynamicProxy.Tests\**
+
+image: Visual Studio 2017
+
+before_build:
+  - cmd: dotnet restore .\src\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj --force
+
+build_script:
+  - cmd: dotnet build .\src\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj -c release
+
+before_test:
+  - cmd: dotnet restore .\test\Maestro.Castle.DynamicProxy.Tests\Maestro.Castle.DynamicProxy.Tests.csproj --force
+
+test_script:
+  - cmd: dotnet test .\test\Maestro.Castle.DynamicProxy.Tests\Maestro.Castle.DynamicProxy.Tests.csproj -c release
