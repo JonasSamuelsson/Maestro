@@ -15,9 +15,9 @@ namespace Maestro.Castle.DynamicProxy.Tests
 
 			var container = new Container(x =>
 			{
-				x.Use<IInterface>("x").Factory(() => new Implementation())
+				x.Add<IInterface>().Named("x").Factory(() => new Implementation())
 					.Proxy((y, generator) => generator.CreateInterfaceProxyWithTarget<IInterface>(y, interceptor));
-				x.Use<IInterface>("y").Factory(() => new Implementation())
+				x.Add<IInterface>().Named("y").Factory(() => new Implementation())
 					.Proxy((y, ctx, generator) => generator.CreateInterfaceProxyWithTarget<IInterface>(y, interceptor));
 			});
 
@@ -36,9 +36,9 @@ namespace Maestro.Castle.DynamicProxy.Tests
 
 			var container = new Container(x =>
 			{
-				x.Use<IInterface>("x").Type<Implementation>()
+				x.Add<IInterface>().Named("x").Type<Implementation>()
 					.Proxy((y, generator) => generator.CreateInterfaceProxyWithTarget<IInterface>(y, interceptor));
-				x.Use<IInterface>("y").Type<Implementation>()
+				x.Add<IInterface>().Named("y").Type<Implementation>()
 					.Proxy((y, ctx, generator) => generator.CreateInterfaceProxyWithTarget<IInterface>(y, interceptor));
 			});
 
