@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Maestro.Tests.Benchmarks.Custom
+namespace Maestro.Benchmarks.Custom
 {
 	public static class GetServiceBenchmark
 	{

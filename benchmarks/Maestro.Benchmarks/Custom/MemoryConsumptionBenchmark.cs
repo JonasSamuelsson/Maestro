@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace Maestro.Tests.Benchmarks.Custom
+namespace Maestro.Benchmarks.Custom
 {
 	public class MemoryConsumptionBenchmark
 	{

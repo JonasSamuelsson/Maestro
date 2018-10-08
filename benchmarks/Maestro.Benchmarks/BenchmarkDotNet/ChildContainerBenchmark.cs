@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 
-namespace Maestro.Tests.Benchmarks.BenchmarkDotNet
+namespace Maestro.Benchmarks.BenchmarkDotNet
 {
 	[MemoryDiagnoser]
 	public class ChildContainerBenchmark
