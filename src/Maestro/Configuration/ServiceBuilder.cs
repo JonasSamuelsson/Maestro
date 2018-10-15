@@ -27,6 +27,7 @@ namespace Maestro.Configuration
 		public void Instance(object instance)
 		{
 			var serviceDescriptor = CreateServiceDescriptor(new InstanceFactoryProvider(instance));
+			serviceDescriptor.Lifetime = new SingletonLifetime();
 			_addService(serviceDescriptor);
 		}
 
@@ -63,6 +64,7 @@ namespace Maestro.Configuration
 		public void Instance<TInstance>(TInstance instance) where TInstance : TService
 		{
 			var serviceDescriptor = CreateServiceDescriptor(new InstanceFactoryProvider(instance));
+			serviceDescriptor.Lifetime = new SingletonLifetime();
 			_addService(serviceDescriptor);
 		}
 
