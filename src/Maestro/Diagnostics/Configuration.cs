@@ -31,7 +31,7 @@ namespace Maestro.Diagnostics
 							select new[]
 							{
 					serviceType,
-					GetServiceName(service.Name),
+					service.Name,
 					service.Id.ToString(),
 					service.Provider,
 					service.Lifetime,
@@ -41,15 +41,6 @@ namespace Maestro.Diagnostics
 			var headers = new[] { "Service type", "Name", "Id", "Provider", "Lifetime", "Instance type" };
 			foreach (var row in GetOutput("Services", headers, lines))
 				builder.AppendLine(row);
-		}
-
-		private static string GetServiceName(string name)
-		{
-			return name == null
-				? "{{anonymous}}"
-				: name == string.Empty
-					? "{{default}}"
-					: name;
 		}
 
 		private void AddPipelines(StringBuilder builder)
@@ -62,7 +53,7 @@ namespace Maestro.Diagnostics
 							select new[]
 							{
 					isFirst ? serviceType : string.Empty,
-					isFirst ? GetServiceName(pipeline.Name) : string.Empty,
+					isFirst ? pipeline.Name : string.Empty,
 					service.Id?.ToString(),
 					service.Provider,
 					service.InstanceType.ToFormattedString()

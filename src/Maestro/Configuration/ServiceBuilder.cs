@@ -20,7 +20,7 @@ namespace Maestro.Configuration
 
 		IServiceBuilder IServiceBuilder.Named(string name)
 		{
-			_name = name;
+			_name = name ?? throw new ArgumentNullException(nameof(name));
 			return this;
 		}
 
@@ -57,7 +57,7 @@ namespace Maestro.Configuration
 
 		IServiceBuilder<TService> IServiceBuilder<TService>.Named(string name)
 		{
-			_name = name;
+			_name = name ?? throw new ArgumentNullException(nameof(name));
 			return this;
 		}
 

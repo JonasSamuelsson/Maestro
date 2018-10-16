@@ -146,12 +146,7 @@ namespace Maestro.Internals
 		{
 			foreach (var serviceFamily in _serviceFamilies.OrderBy(x => x.Key.FullName).Select(x => x.Value))
 			{
-				var serviceDescriptors = serviceFamily.Dictionary
-					.Select(x => x.Value)
-					.OrderBy(x => x.Name)
-					.Concat(serviceFamily.List);
-
-				foreach (var serviceDescriptor in serviceDescriptors)
+				foreach (var serviceDescriptor in serviceFamily.List)
 				{
 					services.Add(new Service
 					{
