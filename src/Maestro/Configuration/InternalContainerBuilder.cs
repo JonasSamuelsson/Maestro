@@ -14,6 +14,7 @@ namespace Maestro.Configuration
 		}
 
 		public ICollection<Func<Type, bool>> AutoResolveFilters => _container.Kernel.AutoResolveFilters;
+		public ICollection<IInstanceTypeProvider> InstanceTypeProviders => _container.Kernel.InstanceTypeProviders;
 
 		public IServiceBuilder Add(Type type) => Add<object>(type);
 

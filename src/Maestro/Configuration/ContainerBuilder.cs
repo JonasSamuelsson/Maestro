@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Maestro.Internals;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Maestro.Internals;
 
 namespace Maestro.Configuration
 {
@@ -10,6 +10,7 @@ namespace Maestro.Configuration
 		private readonly List<ServiceDescriptor> _serviceDescriptors = new List<ServiceDescriptor>();
 
 		public ICollection<Func<Type, bool>> AutoResolveFilters { get; } = new List<Func<Type, bool>>();
+		public ICollection<IInstanceTypeProvider> InstanceTypeProviders { get; } = new List<IInstanceTypeProvider>();
 
 		public IServiceBuilder Add(Type type) => Add<object>(type);
 
@@ -52,8 +53,9 @@ namespace Maestro.Configuration
 		public IContainer BuildContainer()
 		{
 			var container = new Container();
-			AutoResolveFilters.ForEach(f => container.Kernel.AutoResolveFilters.Add(f));
-			_serviceDescriptors.ForEach(sd => container.Kernel.ServiceRegistry.Add(sd));
+			AutoResolveFilters.ForEach(x => container.Kernel.AutoResolveFilters.Add(x));
+			InstanceTypeProviders.ForEach(x => container.Kernel.InstanceTypeProviders.Add(x));
+			_serviceDescriptors.ForEach(x => container.Kernel.ServiceRegistry.Add(x));
 			return container;
 		}
 	}

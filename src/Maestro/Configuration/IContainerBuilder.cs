@@ -6,6 +6,8 @@ namespace Maestro.Configuration
 	public interface IContainerBuilder
 	{
 		ICollection<Func<Type, bool>> AutoResolveFilters { get; }
+		ICollection<IInstanceTypeProvider> InstanceTypeProviders { get; }
+
 		IServiceBuilder Add(Type type);
 		IServiceBuilder<TService> Add<TService>();
 		IServiceBuilder AddOrThrow(Type type);

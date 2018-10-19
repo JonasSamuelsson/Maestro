@@ -1,4 +1,5 @@
-﻿using Maestro.TypeFactoryResolvers;
+﻿using Maestro.FactoryProviders;
+using Maestro.TypeFactoryResolvers;
 using Maestro.Utils;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace Maestro.Internals
 		{
 			_pipelineCache = new PipelineCache();
 			AutoResolveFilters = new List<Func<Type, bool>>();
+			InstanceTypeProviders = new List<IInstanceTypeProvider>();
 			ServiceRegistry = new ServiceRegistry();
 			ServiceRegistry.ServiceDescriptorAdded += ServiceDescriptorLookupServiceDescriptorAdded;
 		}
@@ -29,6 +31,7 @@ namespace Maestro.Internals
 		}
 
 		internal List<Func<Type, bool>> AutoResolveFilters { get; }
+		internal List<IInstanceTypeProvider> InstanceTypeProviders { get; }
 		internal ServiceRegistry ServiceRegistry { get; }
 
 		internal bool CanGetService(Type type, string name, Context context)
@@ -63,6 +66,12 @@ namespace Maestro.Internals
 				var typeIsIEnumerableOfT = Reflector.IsGenericEnumerable(type, out var elementType);
 
 				if (TryGetPipelineFromServiceDescriptors(typeIsIEnumerableOfT, type, elementType, name, context, ref pipeline))
+				{
+					_pipelineCache.Add(key, pipeline);
+					return true;
+				}
+
+				if (TryGetPipelineFromTypeProviders(type, name, context, ref pipeline))
 				{
 					_pipelineCache.Add(key, pipeline);
 					return true;
@@ -116,6 +125,29 @@ namespace Maestro.Internals
 				}
 
 				pipeline = compositePipeline;
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool TryGetPipelineFromTypeProviders(Type type, string name, Context context, ref Pipeline pipeline)
+		{
+			// ReSharper disable once ForCanBeConvertedToForeach
+			for (var i = 0; i < InstanceTypeProviders.Count; i++)
+			{
+				var typeProvider = InstanceTypeProviders[i];
+
+				if (!typeProvider.TryGetInstanceType(type, context, out var instanceType))
+					continue;
+
+				var serviceDescriptor = new ServiceDescriptor
+				{
+					Type = type,
+					Name = name,
+					FactoryProvider = new TypeFactoryProvider(instanceType, name)
+				};
+				pipeline = CreateSingleServicePipeline(serviceDescriptor, context);
 				return true;
 			}
 
