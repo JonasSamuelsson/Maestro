@@ -4,7 +4,7 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <AssemblyName>Maestro.Microsoft.DependencyInjection</AssemblyName>
       <RootNamespace>Maestro.Microsoft.DependencyInjection</RootNamespace>
-      <Version>2.1.0</Version>
+      <Version>2.1.1</Version>
       <Authors>Jonas Samuelsson</Authors>
       <Company>Jonas Samuelsson</Company>
       <Product>Maestro</Product>
