@@ -3,30 +3,30 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro", "Maestro\Maestro.csproj", "{E07CB006-2C92-4CC5-B6FB-053A4BE849EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro", "src\Maestro\Maestro.csproj", "{E07CB006-2C92-4CC5-B6FB-053A4BE849EB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Castle.DynamicProxy", "Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj", "{F74C9100-D385-4573-B973-0B534E1FB976}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Castle.DynamicProxy", "src\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj", "{F74C9100-D385-4573-B973-0B534E1FB976}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{DE4F0E5E-F742-45D9-B011-DCFA614B0AA6}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.DependencyInjection", "Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj", "{B8474763-52FB-4201-9F3F-CE1D20785C49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.DependencyInjection", "src\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj", "{B8474763-52FB-4201-9F3F-CE1D20785C49}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.AspNetCore", "Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj", "{AAD9343C-F282-46BC-8FEB-971FD5C6BD56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.AspNetCore", "src\Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj", "{AAD9343C-F282-46BC-8FEB-971FD5C6BD56}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests", "..\test\Maestro.Tests\Maestro.Tests.csproj", "{5A1B894E-A478-4C7B-AE6C-408B87C56156}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests", "test\Maestro.Tests\Maestro.Tests.csproj", "{5A1B894E-A478-4C7B-AE6C-408B87C56156}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.DependencyInjection.Tests", "..\test\Maestro.Microsoft.DependencyInjection.Tests\Maestro.Microsoft.DependencyInjection.Tests.csproj", "{95070B9F-684E-4799-96EB-267962C522B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.DependencyInjection.Tests", "test\Maestro.Microsoft.DependencyInjection.Tests\Maestro.Microsoft.DependencyInjection.Tests.csproj", "{95070B9F-684E-4799-96EB-267962C522B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.AspNetCore.Tests", "..\test\Maestro.Microsoft.AspNetCore.Tests\Maestro.Microsoft.AspNetCore.Tests.csproj", "{B75BB5E9-15CF-41EC-9FF4-C183B83EEB0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.AspNetCore.Tests", "test\Maestro.Microsoft.AspNetCore.Tests\Maestro.Microsoft.AspNetCore.Tests.csproj", "{B75BB5E9-15CF-41EC-9FF4-C183B83EEB0C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Castle.DynamicProxy.Tests", "..\test\Maestro.Castle.DynamicProxy.Tests\Maestro.Castle.DynamicProxy.Tests.csproj", "{E87C0032-BCBC-4D26-BD1E-77DE433C2A67}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Castle.DynamicProxy.Tests", "test\Maestro.Castle.DynamicProxy.Tests\Maestro.Castle.DynamicProxy.Tests.csproj", "{E87C0032-BCBC-4D26-BD1E-77DE433C2A67}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests.Performance", "..\test\Maestro.Tests.Performance\Maestro.Tests.Performance.csproj", "{4009E041-6B4B-4E2C-B0F4-6E4F4F4AFF7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests.Performance", "test\Maestro.Tests.Performance\Maestro.Tests.Performance.csproj", "{4009E041-6B4B-4E2C-B0F4-6E4F4F4AFF7E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Benchmarks", "..\benchmarks\Maestro.Benchmarks\Maestro.Benchmarks.csproj", "{0E1B8E70-6DCE-4B9F-9461-71BF21C77E17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Benchmarks", "benchmarks\Maestro.Benchmarks\Maestro.Benchmarks.csproj", "{0E1B8E70-6DCE-4B9F-9461-71BF21C77E17}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
