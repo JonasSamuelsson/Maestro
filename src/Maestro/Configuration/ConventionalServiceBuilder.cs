@@ -7,44 +7,63 @@ namespace Maestro.Configuration
 	internal class ConventionalServiceBuilder<T> : IConventionalServiceRegistrator<T>, IConventionalServiceBuilder<T>
 	{
 		private readonly IContainerBuilder _containerBuilder;
-		private readonly Type _serviceType;
-		private readonly Type _instanceType;
+		private readonly Type _baseType;
+		private readonly Type _type;
 		private Func<IServiceBuilder> _serviceBuilderFactory;
 		private ITypeInstanceBuilder<T> _typeInstanceBuilder;
 
-		public ConventionalServiceBuilder(IContainerBuilder containerBuilder, Type serviceType, Type instanceType)
+		public ConventionalServiceBuilder(IContainerBuilder containerBuilder, Type baseType, Type type)
 		{
 			_containerBuilder = containerBuilder;
-			_serviceType = serviceType;
-			_instanceType = instanceType;
+			_baseType = baseType;
+			_type = type;
 
-			_serviceBuilderFactory = () => _containerBuilder.Add(serviceType);
+			_serviceBuilderFactory = () => _containerBuilder.Add(baseType);
 		}
 
 		public IConventionalServiceBuilder<T> Add()
 		{
+			return Add(ServiceType.BaseType);
+		}
+
+		public IConventionalServiceBuilder<T> Add(ServiceType serviceType)
+		{
+			var type = serviceType == ServiceType.BaseType ? _baseType : _type;
+			_serviceBuilderFactory = () => _containerBuilder.Add(type);
 			return this;
 		}
 
 		public IConventionalServiceBuilder<T> AddOrThrow()
 		{
-			_serviceBuilderFactory = () => _containerBuilder.AddOrThrow(_serviceType);
+			return AddOrThrow(ServiceType.BaseType);
+		}
+
+		public IConventionalServiceBuilder<T> AddOrThrow(ServiceType serviceType)
+		{
+			var type = serviceType == ServiceType.BaseType ? _baseType : _type;
+			_serviceBuilderFactory = () => _containerBuilder.AddOrThrow(type);
 			return this;
 		}
 
 		public IConventionalServiceBuilder<T> TryAdd()
 		{
-			_serviceBuilderFactory = () => _containerBuilder.TryAdd(_serviceType);
+			return TryAdd(ServiceType.BaseType);
+		}
+
+		public IConventionalServiceBuilder<T> TryAdd(ServiceType serviceType)
+		{
+			var type = serviceType == ServiceType.BaseType ? _baseType : _type;
+			_serviceBuilderFactory = () => _containerBuilder.TryAdd(type);
 			return this;
 		}
 
 		public ITypeInstanceBuilder<T> Named(string name)
 		{
-			_typeInstanceBuilder = _serviceBuilderFactory.Invoke().Named(name).Type(_instanceType).As<T>();
+			_typeInstanceBuilder = _serviceBuilderFactory.Invoke().Named(name).Type(_type).As<T>();
 			return this;
 		}
 
-		private ITypeInstanceBuilder<T> Builder() => _typeInstanceBuilder ?? (_typeInstanceBuilder = _serviceBuilderFactory.Invoke().Type(_instanceType).As<T>());
+		private ITypeInstanceBuilder<T> Builder() => _typeInstanceBuilder ?? (_typeInstanceBuilder = _serviceBuilderFactory.Invoke().Type(_type).As<T>());
 
 		public ITypeInstanceBuilder<T> Transient() => Builder().Transient();
 

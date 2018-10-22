@@ -35,10 +35,10 @@ namespace Maestro.Tests.Conventions
 			var types = new[] { typeof(Class) };
 			var container = new Container(x => x.Scan(_ => _.Types(types).RegisterConcreteClassesOf(typeof(IInterface), y => y.Add().Singleton())));
 
-			var instances1 = container.GetServices<Class>().ToList();
-			var instances2 = container.GetServices<Class>().ToList();
+			var instance1 = container.GetService<IInterface>();
+			var instance2 = container.GetService<IInterface>();
 
-			instances1.ForEach(x => instances2.ShouldContain(x));
+			instance1.ShouldBe(instance2);
 		}
 
 		private interface IInterface { }
