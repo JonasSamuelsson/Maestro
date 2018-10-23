@@ -28,7 +28,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Tests.Performance",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Benchmarks", "benchmarks\Maestro.Benchmarks\Maestro.Benchmarks.csproj", "{0E1B8E70-6DCE-4B9F-9461-71BF21C77E17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Microsoft.Hosting", "src\Maestro.Microsoft.Hosting\Maestro.Microsoft.Hosting.csproj", "{98C9C16A-BC5C-4877-826F-327C24DD7619}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Maestro.Microsoft.Hosting", "src\Maestro.Microsoft.Hosting\Maestro.Microsoft.Hosting.csproj", "{98C9C16A-BC5C-4877-826F-327C24DD7619}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maestro.Microsoft.Hosting.Tests", "test\Maestro.Microsoft.Hosting.Tests\Maestro.Microsoft.Hosting.Tests.csproj", "{7AC3EF98-7C47-4966-B1CE-F6053AF8E841}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,10 @@ Global
 		{98C9C16A-BC5C-4877-826F-327C24DD7619}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98C9C16A-BC5C-4877-826F-327C24DD7619}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98C9C16A-BC5C-4877-826F-327C24DD7619}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AC3EF98-7C47-4966-B1CE-F6053AF8E841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AC3EF98-7C47-4966-B1CE-F6053AF8E841}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AC3EF98-7C47-4966-B1CE-F6053AF8E841}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AC3EF98-7C47-4966-B1CE-F6053AF8E841}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
