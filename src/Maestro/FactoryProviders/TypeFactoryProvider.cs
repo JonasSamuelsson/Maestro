@@ -52,6 +52,13 @@ namespace Maestro.FactoryProviders
 					if (context.TryGetPipeline(parameterType, name, out var pipeline))
 					{
 						factories.Add(ctx => ctx.GetService(parameterType, name, pipeline));
+						continue;
+					}
+
+					if (parameter.IsOptional)
+					{
+						var defaultValue = parameter.DefaultValue;
+						factories.Add(_ => defaultValue);
 					}
 				}
 
