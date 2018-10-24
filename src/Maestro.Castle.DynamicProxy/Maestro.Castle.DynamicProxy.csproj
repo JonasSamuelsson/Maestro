@@ -13,8 +13,7 @@
       <PackageProjectUrl>https://github.com/JonasSamuelsson/Maestro</PackageProjectUrl>
       <RepositoryUrl>https://github.com/JonasSamuelsson/Maestro</RepositoryUrl>
       <PackageTags>maestro container ioc di microsoft castle dynamic proxy interception aop</PackageTags>
-      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-      <IncludeSymbols>True</IncludeSymbols>
+      <LangVersion>latest</LangVersion>
    </PropertyGroup>
 
    <ItemGroup>
