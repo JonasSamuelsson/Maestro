@@ -151,7 +151,7 @@ namespace Maestro.Internals
 					services.Add(new Service
 					{
 						// ReSharper disable once PossibleInvalidOperationException
-						Id = serviceDescriptor.Id.Value,
+						Id = serviceDescriptor.Id,
 						InstanceType = serviceDescriptor.FactoryProvider.GetInstanceType(),
 						Lifetime = serviceDescriptor.Lifetime.ToString(),
 						Name = serviceDescriptor.Name,
