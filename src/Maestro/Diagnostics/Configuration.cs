@@ -32,7 +32,7 @@ namespace Maestro.Diagnostics
 							{
 					serviceType,
 					service.Name,
-					service.Id.ToString(),
+					service.Id?.ToString() ?? string.Empty,
 					service.Provider,
 					service.Lifetime,
 					service.InstanceType.ToFormattedString()
@@ -54,7 +54,7 @@ namespace Maestro.Diagnostics
 							{
 					isFirst ? serviceType : string.Empty,
 					isFirst ? pipeline.Name : string.Empty,
-					service.Id?.ToString(),
+					service.Id?.ToString() ?? string.Empty,
 					service.Provider,
 					service.InstanceType.ToFormattedString()
 				};
