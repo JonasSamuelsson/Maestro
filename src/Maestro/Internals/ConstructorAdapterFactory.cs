@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Maestro
+namespace Maestro.Internals
 {
-	internal class ConstructorInvokation
+	internal class ConstructorAdapterFactory
 	{
 		private static readonly ConcurrentDictionary<ConstructorInfo, Func<List<Func<Context, object>>, Context, object>> Cache = new ConcurrentDictionary<ConstructorInfo, Func<List<Func<Context, object>>, Context, object>>();
 

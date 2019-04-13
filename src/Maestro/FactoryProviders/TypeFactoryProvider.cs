@@ -36,7 +36,7 @@ namespace Maestro.FactoryProviders
 
 			foreach (var x in ctors)
 			{
-				var factories = new List<Func<Context, object>>();
+				var parameterFactories = new List<Func<Context, object>>();
 
 				foreach (var parameter in x.parameters)
 				{
@@ -45,31 +45,31 @@ namespace Maestro.FactoryProviders
 					var customFactory = CtorArgs.SingleOrDefault(ca => ca.Type == parameterType)?.Factory;
 					if (customFactory != null)
 					{
-						factories.Add(ctx => customFactory(ctx, parameterType));
+						parameterFactories.Add(ctx => customFactory(ctx, parameterType));
 						continue;
 					}
 
 					if (context.TryGetPipeline(parameterType, name, out var pipeline))
 					{
-						factories.Add(ctx => ctx.GetService(parameterType, name, pipeline));
+						parameterFactories.Add(ctx => ctx.GetService(parameterType, name, pipeline));
 						continue;
 					}
 
 					if (parameter.IsOptional)
 					{
 						var defaultValue = parameter.DefaultValue;
-						factories.Add(_ => defaultValue);
+						parameterFactories.Add(_ => defaultValue);
 					}
 				}
 
-				if (factories.Count == x.parameters.Length)
+				if (parameterFactories.Count == x.parameters.Length)
 				{
-					var innerActivator = ConstructorInvokation.Create(x.ctor, factories);
+					var constructorAdapter = ConstructorAdapterFactory.Create(x.ctor, parameterFactories);
 					return ctx =>
 					{
 						try
 						{
-							return innerActivator(factories, ctx);
+							return constructorAdapter.Invoke(parameterFactories, ctx);
 						}
 						catch (Exception exception)
 						{
