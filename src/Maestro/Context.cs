@@ -1,4 +1,5 @@
 ﻿using Maestro.Internals;
+using Maestro.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,8 +9,8 @@ namespace Maestro
 {
 	public class Context : IDisposable
 	{
-		private readonly HashSet<ServiceRequest> _serviceRequestStack = new HashSet<ServiceRequest>();
 		private bool _disposed;
+		private readonly Trace _trace = new Trace();
 		private IServiceProvider _serviceProvider;
 
 		internal Context(Kernel kernel, Container container, Scope scope)
@@ -32,12 +33,12 @@ namespace Maestro
 		public bool CanGetService(Type type, string name)
 		{
 			name = GetValueOrDefaultName(name);
-			var serviceRequest = new ServiceRequest(type, name);
+			var hashcode = HashCode.Compute(type, name);
 
 			try
 			{
 				AssertNotDisposed();
-				AddStackFrame(serviceRequest);
+				_trace.AddFrame(hashcode);
 
 				return Kernel.CanGetService(type, name, this);
 			}
@@ -52,7 +53,7 @@ namespace Maestro
 			}
 			finally
 			{
-				RemoveStackFrame(serviceRequest);
+				_trace.RemoveFrame(hashcode);
 			}
 		}
 
@@ -219,12 +220,12 @@ namespace Maestro
 		public bool TryGetService(Type type, string name, out object instance)
 		{
 			name = GetValueOrDefaultName(name);
-			var serviceRequest = new ServiceRequest(type, name);
+			var hashcode = HashCode.Compute(type, name);
 
 			try
 			{
 				AssertNotDisposed();
-				AddStackFrame(serviceRequest);
+				_trace.AddFrame(hashcode);
 
 				return Kernel.TryGetService(type, name, this, out instance);
 			}
@@ -239,7 +240,7 @@ namespace Maestro
 			}
 			finally
 			{
-				RemoveStackFrame(serviceRequest);
+				_trace.RemoveFrame(hashcode);
 			}
 		}
 
@@ -297,12 +298,12 @@ namespace Maestro
 		internal bool TryGetPipeline(Type type, string name, out Pipeline pipeline)
 		{
 			name = GetValueOrDefaultName(name);
-			var serviceRequest = new ServiceRequest(type, name);
+			var hashcode = HashCode.Compute(type, name);
 
 			try
 			{
 				// don't need to check if disposed
-				AddStackFrame(serviceRequest);
+				_trace.AddFrame(hashcode);
 
 				return Kernel.TryGetPipeline(type, name, this, out pipeline);
 			}
@@ -317,7 +318,7 @@ namespace Maestro
 			}
 			finally
 			{
-				RemoveStackFrame(serviceRequest);
+				_trace.RemoveFrame(hashcode);
 			}
 		}
 
@@ -348,19 +349,6 @@ namespace Maestro
 			if (_disposed) throw new ObjectDisposedException(null, "Context has been disposed.");
 		}
 
-		private void AddStackFrame(ServiceRequest request)
-		{
-			if (_serviceRequestStack.Add(request))
-				return;
-
-			throw new InvalidOperationException("Cyclic dependency.");
-		}
-
-		private void RemoveStackFrame(ServiceRequest serviceRequest)
-		{
-			_serviceRequestStack.Remove(serviceRequest);
-		}
-
 		private static Exception CreateActivationException(Type type, string name, Exception exception)
 		{
 			return new ActivationException(type, name, exception);
@@ -375,6 +363,24 @@ namespace Maestro
 		void IDisposable.Dispose()
 		{
 			_disposed = true;
+		}
+
+		private class Trace
+		{
+			private readonly HashSet<int> _set = new HashSet<int>();
+
+			internal void AddFrame(int hashcode)
+			{
+				if (_set.Add(hashcode))
+					return;
+
+				throw new InvalidOperationException("Cyclic dependency.");
+			}
+
+			internal void RemoveFrame(int hashcode)
+			{
+				_set.Remove(hashcode);
+			}
 		}
 	}
 }
