@@ -1,6 +1,7 @@
 using Maestro.Utils;
 using System.Linq.Expressions;
 using System.Reflection;
+using FastExpressionCompiler;
 
 namespace Maestro.Interceptors
 {
@@ -19,7 +20,7 @@ namespace Maestro.Interceptors
 			var typedTarget = Expression.Convert(target, property.DeclaringType);
 			var typedValue = Expression.Convert(value, property.PropertyType);
 			var assignment = Expression.Assign(Expression.Property(typedTarget, property), typedValue);
-			action = Expression.Lambda<Action>(assignment, target, value).Compile();
+			action = Expression.Lambda<Action>(assignment, target, value).CompileFast();
 			Cache.AddOrUpdate(property, action);
 			return action;
 		}

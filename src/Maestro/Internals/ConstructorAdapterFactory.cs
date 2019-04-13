@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using FastExpressionCompiler;
 
 namespace Maestro.Internals
 {
@@ -38,7 +39,7 @@ namespace Maestro.Internals
 
 			var newExpression = Expression.New(constructor, typedValueExpressions);
 
-			return Cache[constructor] = Expression.Lambda<Func<List<Func<Context, object>>, Context, object>>(newExpression, factoriesExpression, contextExpression).Compile();
+			return Cache[constructor] = Expression.Lambda<Func<List<Func<Context, object>>, Context, object>>(newExpression, factoriesExpression, contextExpression).CompileFast();
 		}
 	}
 }
