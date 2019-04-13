@@ -2,7 +2,7 @@
 
 namespace Maestro.Benchmarks
 {
-	[IterationTime(250)]
+	//[IterationTime(400)]
 	//[ClrJob, CoreJob]
 	[MemoryDiagnoser, HtmlExporter, PlainExporter]
 	public class BenchmarkDotNet
@@ -34,42 +34,42 @@ namespace Maestro.Benchmarks
 		public void Transient() => Container.GetService<Types.Transient>();
 
 		[Benchmark]
-		public static void Scoped() => Container.GetService<Types.Scoped>();
+		public void Scoped() => Container.GetService<Types.Scoped>();
 
 		[Benchmark]
-		public static void Singleton() => Container.GetService<Types.Singleton>();
+		public void Singleton() => Container.GetService<Types.Singleton>();
 
 		[Benchmark]
-		public static void TransientFromNewScope()
+		public void TransientFromNewScope()
 		{
 			using (var container = Container.CreateScope())
 				container.GetService<Types.Transient>();
 		}
 
 		[Benchmark]
-		public static void TransientFromReusedScope() => Scope.GetService<Types.Transient>();
+		public void TransientFromReusedScope() => Scope.GetService<Types.Transient>();
 
 		[Benchmark]
-		public static void ScopedFromNewScope()
+		public void ScopedFromNewScope()
 		{
 			using (var container = Container.CreateScope())
 				container.GetService<Types.Scoped>();
 		}
 
 		[Benchmark]
-		public static void ScopedFromReusedScope() => Scope.GetService<Types.Scoped>();
+		public void ScopedFromReusedScope() => Scope.GetService<Types.Scoped>();
 
 		[Benchmark]
-		public static void Generic() => Container.GetService<Types.Generic<object>>();
+		public void Generic() => Container.GetService<Types.Generic<object>>();
 
 		[Benchmark]
-		public static void Enumerable_5() => Container.GetServices<Types.Enumerable>();
+		public void Enumerable_5() => Container.GetServices<Types.Enumerable>();
 
 		[Benchmark]
-		public static void PropertyInjection_2() => Container.GetService<Types.PropertyInjection>();
+		public void PropertyInjection_2() => Container.GetService<Types.PropertyInjection>();
 
 		[Benchmark]
-		public static void Complex_8() => Container.GetService<Types.Complex3>();
+		public void Complex_8() => Container.GetService<Types.Complex3>();
 
 		class Types
 		{
