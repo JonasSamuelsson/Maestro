@@ -100,7 +100,7 @@ namespace Maestro.Internals
 			return name != defaultName && serviceFamily.Dictionary.TryGet(defaultName, out serviceDescriptor);
 		}
 
-		public bool TryGetServiceDescriptors(Type type, out IReadOnlyList<ServiceDescriptor> serviceDescriptors)
+		public bool TryGetServiceDescriptors(Type type, out ServiceDescriptor[] serviceDescriptors)
 		{
 			ServiceFamily serviceFamily;
 
@@ -116,7 +116,7 @@ namespace Maestro.Internals
 			{
 				if (serviceFamily.List.Count != 0)
 				{
-					serviceDescriptors = serviceFamily.List.OrderBy(x => x.SortOrder).ToList();
+					serviceDescriptors = serviceFamily.List.OrderBy(x => x.SortOrder).ToArray();
 					return true;
 				}
 			}

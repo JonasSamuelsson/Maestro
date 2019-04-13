@@ -8,7 +8,7 @@ namespace Maestro.Internals
 {
 	internal class Kernel : IDisposable
 	{
-		private static readonly IReadOnlyList<IFactoryProviderResolver> FactoryProviderResolvers = new IFactoryProviderResolver[]
+		private static readonly IFactoryProviderResolver[] FactoryProviderResolvers =
 		{
 			new ConcreteClosedClassFactoryProviderResolver(),
 			new EmptyEnumerableFactoryProviderResolver()
@@ -118,7 +118,7 @@ namespace Maestro.Internals
 				var compositePipeline = new CompositePipeline(elementType);
 
 				// ReSharper disable once ForCanBeConvertedToForeach
-				for (var i = 0; i < serviceDescriptors.Count; i++)
+				for (var i = 0; i < serviceDescriptors.Length; i++)
 				{
 					var descriptor = serviceDescriptors[i];
 					compositePipeline.Add(CreateSingleServicePipeline(descriptor, context));
@@ -174,7 +174,7 @@ namespace Maestro.Internals
 			}
 
 			// ReSharper disable once ForCanBeConvertedToForeach
-			for (var i = 0; i < FactoryProviderResolvers.Count; i++)
+			for (var i = 0; i < FactoryProviderResolvers.Length; i++)
 			{
 				var factoryProviderResolver = FactoryProviderResolvers[i];
 
