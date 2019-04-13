@@ -6,15 +6,14 @@ using System.Reflection;
 
 namespace Maestro
 {
-	class ConstructorInvokation
+	internal class ConstructorInvokation
 	{
-		private static readonly ConcurrentDictionary<ConstructorInfo, Func<IReadOnlyList<Func<Context, object>>, Context, object>> Cache = new ConcurrentDictionary<ConstructorInfo, Func<IReadOnlyList<Func<Context, object>>, Context, object>>();
+		private static readonly ConcurrentDictionary<ConstructorInfo, Func<List<Func<Context, object>>, Context, object>> Cache = new ConcurrentDictionary<ConstructorInfo, Func<List<Func<Context, object>>, Context, object>>();
 
-		public static Func<IReadOnlyList<Func<Context, object>>, Context, object> Create(ConstructorInfo constructor, IReadOnlyList<Func<Context, object>> factories)
+		public static Func<List<Func<Context, object>>, Context, object> Create(ConstructorInfo constructor, List<Func<Context, object>> factories)
 		{
-
-			Func<IReadOnlyList<Func<Context, object>>, Context, object> activator;
-			if (Cache.TryGetValue(constructor, out activator)) return activator;
+			if (Cache.TryGetValue(constructor, out var activator))
+				return activator;
 
 			var parameters = constructor.GetParameters();
 
@@ -23,10 +22,11 @@ namespace Maestro
 				throw new InvalidOperationException();
 			}
 
-			var factoriesExpression = Expression.Parameter(typeof(IReadOnlyList<Func<Context, object>>), "factories");
+			var factoriesExpression = Expression.Parameter(typeof(List<Func<Context, object>>), "factories");
 			var contextExpression = Expression.Parameter(typeof(Context), "context");
-			var typedValueExpressions = new List<Expression>();
-			var property = typeof(IReadOnlyList<Func<Context, object>>).GetProperty("Item");
+			var typedValueExpressions = new List<Expression>(factories.Count);
+			var property = typeof(List<Func<Context, object>>).GetProperty("Item");
+
 			for (var index = 0; index < factories.Count; index++)
 			{
 				var indexExpression = Expression.Constant(index, typeof(int));
@@ -35,8 +35,10 @@ namespace Maestro
 				var typedValueExpression = Expression.Convert(valueExpression, parameters[index].ParameterType);
 				typedValueExpressions.Add(typedValueExpression);
 			}
+
 			var newExpression = Expression.New(constructor, typedValueExpressions);
-			return Cache[constructor] = Expression.Lambda<Func<IReadOnlyList<Func<Context, object>>, Context, object>>(newExpression, factoriesExpression, contextExpression).Compile();
+
+			return Cache[constructor] = Expression.Lambda<Func<List<Func<Context, object>>, Context, object>>(newExpression, factoriesExpression, contextExpression).Compile();
 		}
 	}
 }
