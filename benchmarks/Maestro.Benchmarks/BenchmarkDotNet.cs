@@ -2,8 +2,9 @@
 
 namespace Maestro.Benchmarks
 {
-	//[IterationTime(250)]
-	[ClrJob, CoreJob, MemoryDiagnoser, HtmlExporter, PlainExporter]
+	[IterationTime(250)]
+	//[ClrJob, CoreJob]
+	[MemoryDiagnoser, HtmlExporter, PlainExporter]
 	public class BenchmarkDotNet
 	{
 		private static readonly IContainer Container = new Container(x =>
