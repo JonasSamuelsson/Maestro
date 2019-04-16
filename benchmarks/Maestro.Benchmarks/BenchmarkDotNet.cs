@@ -14,10 +14,17 @@ namespace Maestro.Benchmarks
 			x.Add<Types.Singleton>().Self().Singleton();
 			x.Add(typeof(Types.Generic<>)).Self();
 			x.Add<Types.PropertyInjection>().Self().SetProperty(y => y.Transient);
-			x.Add<Types.Complex0>().Self();
-			x.Add<Types.Complex1>().Self();
-			x.Add<Types.Complex2>().Self();
-			x.Add<Types.Complex3>().Self();
+			x.Add<Types.Complex10>().Self();
+			x.Add<Types.Complex21>().Self();
+			x.Add<Types.Complex31>().Self();
+			x.Add<Types.Complex41>().Self();
+			x.Add<Types.Complex42>().Self();
+			x.Add<Types.Complex51>().Self();
+			x.Add<Types.Complex61>().Self();
+			x.Add<Types.Complex71>().Self();
+			x.Add<Types.Complex81>().Self();
+			x.Add<Types.Complex83>().Self();
+			x.Add<Types.Complex87>().Self();
 			x.Add<Types.Enumerable>().Type<Types.Enumerable1>();
 			x.Add<Types.Enumerable>().Type<Types.Enumerable2>();
 			x.Add<Types.Enumerable>().Type<Types.Enumerable3>();
@@ -69,7 +76,13 @@ namespace Maestro.Benchmarks
 		public void PropertyInjection_2() => Container.GetService<Types.PropertyInjection>();
 
 		[Benchmark]
-		public void Complex_8() => Container.GetService<Types.Complex3>();
+		public void Complex_8() => Container.GetService<Types.Complex83>();
+
+		[Benchmark]
+		public void ComplexDeep_8() => Container.GetService<Types.Complex81>();
+
+		[Benchmark]
+		public void ComplexWide_8() => Container.GetService<Types.Complex87>();
 
 		class Types
 		{
@@ -86,10 +99,17 @@ namespace Maestro.Benchmarks
 				internal Transient Transient { get; set; }
 			}
 
-			internal class Complex0 { }
-			internal class Complex1 { internal Complex1(Complex0 c0) { } }
-			internal class Complex2 { internal Complex2(Complex1 c1, Complex0 c0) { } }
-			internal class Complex3 { internal Complex3(Complex2 c2, Complex1 c1, Complex0 c0) { } }
+			internal class Complex10 { }
+			internal class Complex21 { internal Complex21(Complex10 c10) { } }
+			internal class Complex31 { internal Complex31(Complex21 c21) { } }
+			internal class Complex41 { internal Complex41(Complex31 c31) { } }
+			internal class Complex42 { internal Complex42(Complex21 c21, Complex10 c10) { } }
+			internal class Complex51 { internal Complex51(Complex41 c41) { } }
+			internal class Complex61 { internal Complex61(Complex51 c51) { } }
+			internal class Complex71 { internal Complex71(Complex61 c61) { } }
+			internal class Complex81 { internal Complex81(Complex71 c71) { } }
+			internal class Complex83 { internal Complex83(Complex42 c42, Complex21 c21, Complex10 c10) { } }
+			internal class Complex87 { internal Complex87(Complex10 c10_1, Complex10 c10_2, Complex10 c10_3, Complex10 c10_4, Complex10 c10_5, Complex10 c10_6, Complex10 c10_7) { } }
 
 			internal abstract class Enumerable { }
 			internal class Enumerable1 : Enumerable { }
