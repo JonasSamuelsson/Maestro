@@ -52,7 +52,7 @@ namespace Maestro.Tests.OldTests
 														x.Add<B>().Factory(ctx => new B { A = ctx.GetService<A>() });
 													});
 
-			Should.Throw<ActivationException>(() => container.GetService<A>()).Message.ShouldContain("cyclic dependency");
+			Should.Throw<ActivationException>(() => container.GetService<A>()).Message.ShouldContain("exceeded max dependency depth");
 
 			// todo
 			//exception.Message.ShouldBe("Can't get default instance of type 'Maestro.Tests.cyclic_dependencies+A'.");

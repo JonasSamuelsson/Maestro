@@ -10,7 +10,7 @@ namespace Maestro
 	public class Context : IDisposable
 	{
 		private bool _disposed;
-		private readonly Trace _trace = new Trace();
+		private readonly DependencyDepthChecker _dependencyDepthChecker = new DependencyDepthChecker(64);
 		private IServiceProvider _serviceProvider;
 
 		internal Context(Kernel kernel, Container container, Scope scope)
@@ -38,7 +38,7 @@ namespace Maestro
 			try
 			{
 				AssertNotDisposed();
-				_trace.AddFrame(hashcode);
+				_dependencyDepthChecker.Push();
 
 				return Kernel.CanGetService(type, name, this);
 			}
@@ -53,7 +53,7 @@ namespace Maestro
 			}
 			finally
 			{
-				_trace.RemoveFrame(hashcode);
+				_dependencyDepthChecker.Pop();
 			}
 		}
 
@@ -225,7 +225,7 @@ namespace Maestro
 			try
 			{
 				AssertNotDisposed();
-				_trace.AddFrame(hashcode);
+				_dependencyDepthChecker.Push();
 
 				return Kernel.TryGetService(type, name, this, out instance);
 			}
@@ -240,7 +240,7 @@ namespace Maestro
 			}
 			finally
 			{
-				_trace.RemoveFrame(hashcode);
+				_dependencyDepthChecker.Pop();
 			}
 		}
 
@@ -303,7 +303,7 @@ namespace Maestro
 			try
 			{
 				// don't need to check if disposed
-				_trace.AddFrame(hashcode);
+				_dependencyDepthChecker.Push();
 
 				return Kernel.TryGetPipeline(type, name, this, out pipeline);
 			}
@@ -318,7 +318,7 @@ namespace Maestro
 			}
 			finally
 			{
-				_trace.RemoveFrame(hashcode);
+				_dependencyDepthChecker.Pop();
 			}
 		}
 
@@ -326,6 +326,9 @@ namespace Maestro
 		{
 			try
 			{
+				// don't need to check if disposed
+				_dependencyDepthChecker.Push();
+
 				return pipeline.Execute(this);
 			}
 			catch (ActivationException exception)
@@ -336,6 +339,10 @@ namespace Maestro
 			catch (Exception exception)
 			{
 				throw CreateActivationException(type, name, exception);
+			}
+			finally
+			{
+				_dependencyDepthChecker.Pop();
 			}
 		}
 
@@ -363,24 +370,6 @@ namespace Maestro
 		void IDisposable.Dispose()
 		{
 			_disposed = true;
-		}
-
-		private class Trace
-		{
-			private readonly HashSet<int> _set = new HashSet<int>();
-
-			internal void AddFrame(int hashcode)
-			{
-				if (_set.Add(hashcode))
-					return;
-
-				throw new InvalidOperationException("Cyclic dependency.");
-			}
-
-			internal void RemoveFrame(int hashcode)
-			{
-				_set.Remove(hashcode);
-			}
 		}
 	}
 }
