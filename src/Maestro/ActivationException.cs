@@ -1,31 +1,25 @@
-﻿using Maestro.Utils;
+﻿using Maestro.Internals;
 using System;
+using System.Text;
 
 namespace Maestro
 {
 	public class ActivationException : Exception
 	{
-		public ActivationException(Type type, string name, string reason) : base(CreateMessage(type, name, reason))
+		private readonly StringBuilder _messageBuilder = new StringBuilder();
+
+		public ActivationException(Exception innerException, Type type, string name)
+			: base(innerException.Message, innerException)
 		{
-			Type = type;
-			Name = name;
+			_messageBuilder.AppendLine(innerException.Message);
+			AddToMessageTrace(type, name);
 		}
 
-		public ActivationException(Type type, string name, Exception innerException)
-			: base(CreateMessage(type, name, innerException.Message), innerException)
-		{
-			Type = type;
-			Name = name;
-		}
+		public override string Message => _messageBuilder.ToString().Trim();
 
-		internal Type Type;
-		internal string Name;
-
-		private static string CreateMessage(Type type, string name, string reason)
+		internal void AddToMessageTrace(Type type, string name)
 		{
-			var n = string.IsNullOrEmpty(name) ? "default" : $"'{name}'";
-			var error = $"Could not get {n} service of type '{type.ToFormattedString()}'.";
-			return ExceptionMessageBuilder.GetMessage(error, reason);
+			_messageBuilder.AppendLine($" -> type: {type.FullName} name: '{name ?? ServiceNames.Default}'");
 		}
 	}
 }

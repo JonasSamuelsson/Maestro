@@ -51,7 +51,7 @@ namespace Maestro.FactoryProviders
 
 					if (context.TryGetPipeline(parameterType, name, out var pipeline))
 					{
-						parameterFactories.Add(ctx => ctx.GetService(parameterType, name, pipeline));
+						parameterFactories.Add(ctx => ctx.ExecutePipeline(pipeline, parameterType, name));
 						continue;
 					}
 

@@ -1,5 +1,4 @@
 ﻿using Maestro.Internals;
-using Maestro.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,7 +32,6 @@ namespace Maestro
 		public bool CanGetService(Type type, string name)
 		{
 			name = GetValueOrDefaultName(name);
-			var hashcode = HashCode.Compute(type, name);
 
 			try
 			{
@@ -44,12 +42,12 @@ namespace Maestro
 			}
 			catch (ActivationException exception)
 			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(type, name, exception);
+				throw CreateActivationException(exception, type, name);
 			}
 			finally
 			{
@@ -59,27 +57,12 @@ namespace Maestro
 
 		public bool CanGetService<T>()
 		{
-			return CanGetService<T>(ServiceNames.Default);
+			return CanGetService(typeof(T), ServiceNames.Default);
 		}
 
 		public bool CanGetService<T>(string name)
 		{
-			var type = typeof(T);
-			name = GetValueOrDefaultName(name);
-
-			try
-			{
-				return CanGetService(type, name);
-			}
-			catch (ActivationException exception)
-			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
-			}
-			catch (Exception exception)
-			{
-				throw CreateActivationException(type, name, exception);
-			}
+			return CanGetService(typeof(T), name);
 		}
 
 		/// <summary>
@@ -100,23 +83,18 @@ namespace Maestro
 		/// <returns></returns>
 		public object GetService(Type type, string name)
 		{
-			name = GetValueOrDefaultName(name);
-
 			try
 			{
-				if (TryGetService(type, name, out var instance))
-					return instance;
-
-				throw new ActivationException(type, name, "Service not registered.");
+				return GetServiceInternal(type, name);
 			}
 			catch (ActivationException exception)
 			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(type, name, exception);
+				throw CreateActivationException(exception, type, name);
 			}
 		}
 
@@ -139,21 +117,30 @@ namespace Maestro
 		public T GetService<T>(string name)
 		{
 			var type = typeof(T);
-			name = GetValueOrDefaultName(name);
 
 			try
 			{
-				return (T)GetService(type, name);
+				return (T)GetServiceInternal(type, name);
 			}
 			catch (ActivationException exception)
 			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(type, name, exception);
+				throw CreateActivationException(exception, type, name);
 			}
+		}
+
+		private object GetServiceInternal(Type type, string name)
+		{
+			name = GetValueOrDefaultName(name);
+
+			if (TryGetServiceInternal(type, name, out var instance))
+				return instance;
+
+			throw new InvalidOperationException("Service not registered.");
 		}
 
 		/// <summary>
@@ -175,11 +162,10 @@ namespace Maestro
 		public bool TryGetService<T>(string name, out T instance)
 		{
 			var type = typeof(T);
-			name = GetValueOrDefaultName(name);
 
 			try
 			{
-				if (TryGetService(type, name, out var @object))
+				if (TryGetServiceInternal(type, name, out var @object))
 				{
 					instance = (T)@object;
 					return true;
@@ -190,12 +176,12 @@ namespace Maestro
 			}
 			catch (ActivationException exception)
 			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(type, name, exception);
+				throw CreateActivationException(exception, type, name);
 			}
 		}
 
@@ -219,8 +205,28 @@ namespace Maestro
 		/// <returns></returns>
 		public bool TryGetService(Type type, string name, out object instance)
 		{
+			try
+			{
+				return TryGetServiceInternal(type, name, out instance);
+			}
+			catch (ActivationException exception)
+			{
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
+			}
+			catch (Exception exception)
+			{
+				throw CreateActivationException(exception, type, name);
+			}
+			finally
+			{
+				_dependencyDepthChecker.Pop();
+			}
+		}
+
+		private bool TryGetServiceInternal(Type type, string name, out object instance)
+		{
 			name = GetValueOrDefaultName(name);
-			var hashcode = HashCode.Compute(type, name);
 
 			try
 			{
@@ -228,15 +234,6 @@ namespace Maestro
 				_dependencyDepthChecker.Push();
 
 				return Kernel.TryGetService(type, name, this, out instance);
-			}
-			catch (ActivationException exception)
-			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
-			}
-			catch (Exception exception)
-			{
-				throw CreateActivationException(type, name, exception);
 			}
 			finally
 			{
@@ -256,17 +253,17 @@ namespace Maestro
 
 			try
 			{
-				var services = GetService(enumerableType, name);
+				var services = GetServiceInternal(enumerableType, name);
 				return services as IEnumerable<object> ?? ((IEnumerable)services).Cast<object>();
 			}
 			catch (ActivationException exception)
 			{
-				if (exception.Type == enumerableType && exception.Name == name) throw;
-				throw new ActivationException(enumerableType, name, exception);
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(enumerableType, name, exception);
+				throw CreateActivationException(exception, type, name);
 			}
 		}
 
@@ -282,23 +279,23 @@ namespace Maestro
 
 			try
 			{
-				return GetService<IEnumerable<T>>(name);
+				var services = GetServiceInternal(typeof(IEnumerable<T>), name);
+				return services as IEnumerable<T> ?? ((IEnumerable)services).Cast<T>();
 			}
 			catch (ActivationException exception)
 			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(type, name, exception);
+				throw CreateActivationException(exception, type, name);
 			}
 		}
 
 		internal bool TryGetPipeline(Type type, string name, out Pipeline pipeline)
 		{
 			name = GetValueOrDefaultName(name);
-			var hashcode = HashCode.Compute(type, name);
 
 			try
 			{
@@ -309,12 +306,12 @@ namespace Maestro
 			}
 			catch (ActivationException exception)
 			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(type, name, exception);
+				throw CreateActivationException(exception, type, name);
 			}
 			finally
 			{
@@ -322,7 +319,7 @@ namespace Maestro
 			}
 		}
 
-		internal object GetService(Type type, string name, Pipeline pipeline)
+		internal object ExecutePipeline(Pipeline pipeline, Type type, string name)
 		{
 			try
 			{
@@ -333,12 +330,12 @@ namespace Maestro
 			}
 			catch (ActivationException exception)
 			{
-				if (exception.Type == type && exception.Name == name) throw;
-				throw new ActivationException(type, name, exception);
+				PopulateActivationExceptionMessage(exception, type, name);
+				throw;
 			}
 			catch (Exception exception)
 			{
-				throw CreateActivationException(type, name, exception);
+				throw CreateActivationException(exception, type, name);
 			}
 			finally
 			{
@@ -356,9 +353,14 @@ namespace Maestro
 			if (_disposed) throw new ObjectDisposedException(null, "Context has been disposed.");
 		}
 
-		private static Exception CreateActivationException(Type type, string name, Exception exception)
+		private static Exception CreateActivationException(Exception exception, Type type, string name)
 		{
-			return new ActivationException(type, name, exception);
+			return new ActivationException(exception, type, name);
+		}
+
+		private static void PopulateActivationExceptionMessage(ActivationException exception, Type type, string name)
+		{
+			exception.AddToMessageTrace(type, name);
 		}
 
 		public IServiceProvider ToServiceProvider()
