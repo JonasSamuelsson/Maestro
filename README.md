@@ -1,6 +1,6 @@
 # Maestro
 
-| | NuGet | ado |
+| | NuGet | Builds |
 |-|-|-|
 | Maestro                               | [![m-nuget-version] ![m-nuget-downloads]][m-nuget]                      | [![m-ado-status]][m-ado]               |
 | Maestro.Castle.DynamicProxy           | [![m.c.dp-nuget-version] ![m.c.dp-nuget-downloads]][m.c.dp-nuget]       | [![m.c.dp-ado-status]][m.c.dp-ado]     |
