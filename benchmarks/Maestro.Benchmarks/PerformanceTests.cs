@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Maestro.Tests.Performance
+namespace Maestro.Benchmarks
 {
-	public class perf_tests : IDisposable
+	public class PerformanceTests : IDisposable
 	{
 		private const int Iterations = 50 * 1000;
 		private readonly Dictionary<string, object> _dictionary;
 		private readonly ITestOutputHelper _output;
 
-		public perf_tests(ITestOutputHelper output = null)
+		public PerformanceTests(ITestOutputHelper output = null)
 		{
 			_output = output;
 
