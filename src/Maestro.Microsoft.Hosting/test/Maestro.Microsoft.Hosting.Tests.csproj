@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Maestro.Microsoft.Hosting\Maestro.Microsoft.Hosting.csproj" />
+    <ProjectReference Include="..\src\Maestro.Microsoft.Hosting.csproj" />
   </ItemGroup>
 
 </Project>
