@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - src/Maestro/*
+    exclude:
+    - src/Maestro/docs/*
+
+pool:
+  vmImage: "windows-2019"
+
+variables:
+  artifacts: $(Build.ArtifactStagingDirectory)
+  buildCounter: $(Build.BuildId)
+
+steps:
+- task: NuGetToolInstaller@0
+  displayName: update nuget.exe
+  inputs:
+    versionSpec: '4.9.4'
+
+- powershell: ./src/Maestro.Microsoft.DependencyInjection/build/build.ps1 -artifacts $(artifacts) -buildCounter $(buildCounter)
+  displayName: Invoke build.ps1
+
+- task: PublishTestResults@2
+  displayName: 'Publish test results'
+  inputs:
+    testResultsFormat: VSTest
+    testResultsFiles: '**/*.trx'
+    failTaskOnFailedTests: true
+
+- task: PublishPipelineArtifact@0
+  displayName: publish artifacts
+  inputs:
+    targetPath: $(artifacts)
