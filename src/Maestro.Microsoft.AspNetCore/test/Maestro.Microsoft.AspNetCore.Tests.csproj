@@ -17,7 +17,7 @@
    </ItemGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\..\src\Maestro.Microsoft.AspNetCore\Maestro.Microsoft.AspNetCore.csproj" />
+      <ProjectReference Include="..\src\Maestro.Microsoft.AspNetCore.csproj" />
    </ItemGroup>
 
 </Project>
