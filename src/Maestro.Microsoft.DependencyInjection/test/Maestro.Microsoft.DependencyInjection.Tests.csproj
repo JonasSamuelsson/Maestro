@@ -17,7 +17,7 @@
    </ItemGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\..\src\Maestro.Microsoft.DependencyInjection\Maestro.Microsoft.DependencyInjection.csproj" />
+      <ProjectReference Include="..\src\Maestro.Microsoft.DependencyInjection.csproj" />
    </ItemGroup>
 
 </Project>
