@@ -1,13 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
-      <TargetFrameworks>net472;netcoreapp2.1</TargetFrameworks>
-      <OutputType>Exe</OutputType>
-      <StartupObject>Maestro.Benchmarks.Program</StartupObject>
+      <TargetFramework>netcoreapp2.1</TargetFramework>
    </PropertyGroup>
 
    <ItemGroup>
-      <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
       <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
       <PackageReference Include="Shouldly" Version="3.0.1" />
       <PackageReference Include="xunit" Version="2.4.0" />
@@ -15,11 +12,10 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       </PackageReference>
-      <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
    </ItemGroup>
 
    <ItemGroup>
-      <ProjectReference Include="..\..\src\Maestro\Maestro.csproj" />
+     <ProjectReference Include="..\src\Maestro.csproj" />
    </ItemGroup>
 
 </Project>
