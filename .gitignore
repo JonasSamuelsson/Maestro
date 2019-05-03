@@ -114,3 +114,5 @@ UpgradeLog*.XML
 
 # BenchmarkDotNet
 **/BenchmarkDotNet.Artifacts/**
+
+.artifacts/
