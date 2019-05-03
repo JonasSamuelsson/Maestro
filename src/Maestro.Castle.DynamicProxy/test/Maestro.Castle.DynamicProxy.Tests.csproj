@@ -17,7 +17,7 @@
    </ItemGroup>
 
    <ItemGroup>
-     <ProjectReference Include="..\..\src\Maestro.Castle.DynamicProxy\Maestro.Castle.DynamicProxy.csproj" />
+     <ProjectReference Include="..\src\Maestro.Castle.DynamicProxy.csproj" />
    </ItemGroup>
 
 </Project>
