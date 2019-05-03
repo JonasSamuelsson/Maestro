@@ -17,7 +17,6 @@ function BuildTestPack {
         [switch] $ci
     )
 
-    $configuration = "release"
     $root = [System.IO.Path]::GetFullPath("$PSScriptRoot/../src/$project")
     $srcProject = [System.IO.Path]::GetFullPath("$root/src/$project.csproj")
     $testProject = [System.IO.Path]::GetFullPath("$root/test/$project.Tests.csproj")
@@ -39,9 +38,7 @@ function BuildTestPack {
         $ci = $true
     }
 
-    exec dotnet restore $srcProject
-    
-    exec dotnet build --no-restore -c $configuration $srcProject
+    exec dotnet build -c "release" $srcProject
     
     [string[]] $testArgs = @()
     
@@ -49,9 +46,9 @@ function BuildTestPack {
         $testArgs += "--logger", "trx"
     }
     
-    exec dotnet test -c $configuration $testProject $testArgs
+    exec dotnet test -c "release" $testProject $testArgs
     
-    exec dotnet pack --no-restore --no-build -c $configuration -o $artifacts --include-symbols "-p:SymbolPackageFormat=snupkg" $srcProject
+    exec dotnet pack --no-restore --no-build -c "release" -o $artifacts --include-symbols "-p:SymbolPackageFormat=snupkg" $srcProject
 }
 
 function GetVsProjectVersion([string] $path) {
