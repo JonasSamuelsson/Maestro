@@ -21,13 +21,13 @@
 [m.c.dp-nuget-version]: https://img.shields.io/nuget/v/Maestro.Microsoft.AspNetCore.svg
 
 [m.ms.anc-ado]: https://dev.azure.com/jonassamuelsson/Maestro/_build/latest?definitionId=11
-[m.ms.anc-ado-status]: https://dev.azure.com/jonassamuelsson/Maestro/_apis/build/status/MaestroMicrosoft.AspNetCore
+[m.ms.anc-ado-status]: https://dev.azure.com/jonassamuelsson/Maestro/_apis/build/status/Maestro.Microsoft.AspNetCore
 [m.ms.anc-nuget]: https://www.nuget.org/packages/Maestro.Microsoft.AspNetCore/
 [m.ms.anc-nuget-downloads]: https://img.shields.io/nuget/dt/Maestro.Microsoft.AspNetCore.svg
 [m.ms.anc-nuget-version]: https://img.shields.io/nuget/v/Maestro.Microsoft.AspNetCore.svg
 
 [m.ms.di-ado]: https://dev.azure.com/jonassamuelsson/Maestro/_build/latest?definitionId=12
-[m.ms.di-ado-status]: https://dev.azure.com/jonassamuelsson/Maestro/_apis/build/status/MaestroMicrosoft.DependencyInjection
+[m.ms.di-ado-status]: https://dev.azure.com/jonassamuelsson/Maestro/_apis/build/status/Maestro.Microsoft.DependencyInjection
 [m.ms.di-nuget]: https://www.nuget.org/packages/Maestro.Microsoft.DependencyInjection/
 [m.ms.di-nuget-downloads]: https://img.shields.io/nuget/dt/Maestro.Microsoft.DependencyInjection.svg
 [m.ms.di-nuget-version]: https://img.shields.io/nuget/v/Maestro.Microsoft.DependencyInjection.svg
