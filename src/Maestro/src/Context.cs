@@ -9,7 +9,7 @@ namespace Maestro
 	public class Context : IDisposable
 	{
 		private bool _disposed;
-		private readonly DependencyDepthChecker _dependencyDepthChecker = new DependencyDepthChecker(64);
+		private readonly DependencyDepthChecker _dependencyDepthChecker = new DependencyDepthChecker(100);
 		private IServiceProvider _serviceProvider;
 
 		internal Context(Kernel kernel, Container container, Scope scope)
