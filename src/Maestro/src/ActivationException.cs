@@ -19,7 +19,13 @@ namespace Maestro
 
 		internal void AddToMessageTrace(Type type, string name)
 		{
-			_messageBuilder.AppendLine($" -> type: {type.FullName} name: '{name ?? ServiceNames.Default}'");
+			name = name ?? ServiceNames.Default;
+
+			var message = name == ServiceNames.Default
+				? $" -> type: {type.FullName}"
+				: $" -> type: {type.FullName} name: '{name}'";
+
+			_messageBuilder.AppendLine(message);
 		}
 	}
 }

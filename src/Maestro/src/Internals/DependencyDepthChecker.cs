@@ -17,7 +17,7 @@ namespace Maestro.Internals
 			if (_current++ < _max)
 				return;
 
-			throw new InvalidOperationException($"Exceeded max dependency depth {_max}.");
+			throw new InvalidOperationException($"Exceeded max dependency depth of {_max}.");
 		}
 
 		internal void Pop()
