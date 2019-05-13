@@ -13,7 +13,14 @@ namespace Maestro.Lifetimes
 
 		public override object Execute(Context context, Func<Context, object> factory)
 		{
-			return factory(context);
+			var instance = factory(context);
+
+			if (instance is IDisposable disposable)
+			{
+				context.Scope.TransientDisposableTracker.Add(disposable);
+			}
+
+			return instance;
 		}
 
 		public override Lifetime MakeGeneric(Type[] genericArguments)

@@ -8,7 +8,7 @@ namespace Maestro
 		private readonly Container _container;
 
 		public ChildScope(Kernel kernel, Container container)
-			: base(kernel)
+			: base(kernel, new StrongRefTransientDisposableTracker())
 		{
 			_kernel = kernel;
 			_container = container;

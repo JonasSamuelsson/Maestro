@@ -10,7 +10,7 @@ namespace Maestro
 		/// Instantiates a new empty container.
 		/// </summary>
 		public Container()
-			: base(new Kernel())
+			: base(new Kernel(), new WeakRefTransientDisposableTracker())
 		{
 		}
 

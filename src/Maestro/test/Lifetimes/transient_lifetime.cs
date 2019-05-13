@@ -1,4 +1,6 @@
 ﻿using Shouldly;
+using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Maestro.Tests.Lifetimes
@@ -29,6 +31,41 @@ namespace Maestro.Tests.Lifetimes
 
 			public object Object1 { get; private set; }
 			public object Object2 { get; private set; }
+		}
+
+		[Fact]
+		public void DisposableObjectsShouldBeDisposedAlongWithTheCorrespondingScope()
+		{
+			var strings = new List<string>();
+
+			var container = new Container(x => x.Add<Disposable>().Self());
+
+			var scope = container.CreateScope();
+
+			var d1 = container.GetService<Disposable>();
+			var d2 = scope.GetService<Disposable>();
+
+			d1.Disposed.ShouldBeFalse();
+			d2.Disposed.ShouldBeFalse();
+
+			scope.Dispose();
+
+			d1.Disposed.ShouldBeFalse();
+			d2.Disposed.ShouldBeTrue();
+
+			container.Dispose();
+
+			d1.Disposed.ShouldBeTrue();
+		}
+
+		private class Disposable : IDisposable
+		{
+			public bool Disposed { get; set; }
+
+			public void Dispose()
+			{
+				Disposed = true;
+			}
 		}
 	}
 }

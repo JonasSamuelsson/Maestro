@@ -11,13 +11,15 @@ namespace Maestro
 		private IServiceProvider _serviceProvider;
 		protected bool Disposed { get; private set; }
 
-		internal Scope(Kernel kernel)
+		internal Scope(Kernel kernel, TransientDisposableTracker transientDisposableTracker)
 		{
 			Kernel = kernel;
+			TransientDisposableTracker = transientDisposableTracker;
 		}
 
 		internal ConcurrentDictionary<object, object> Cache { get; } = new ConcurrentDictionary<object, object>();
 		internal Kernel Kernel { get; }
+		internal TransientDisposableTracker TransientDisposableTracker { get; }
 
 		public Diagnostics.Diagnostics Diagnostics => new Diagnostics.Diagnostics(Kernel);
 
@@ -103,6 +105,8 @@ namespace Maestro
 
 			foreach (var disposable in Cache.Values.OfType<IDisposable>())
 				disposable.Dispose();
+
+			TransientDisposableTracker.Dispose();
 		}
 
 		protected abstract Context CreateContext();
