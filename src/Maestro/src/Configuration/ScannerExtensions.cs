@@ -85,5 +85,10 @@ namespace Maestro.Configuration
 		{
 			return scanner.Using(new DefaultImplementationsConvention(action ?? (x => x.Add())));
 		}
+
+		public static IScanner UsingRegistrationPolicies(this IScanner scanner)
+		{
+			return scanner.Using<RegistrationPolicyConvention>();
+		}
 	}
 }
