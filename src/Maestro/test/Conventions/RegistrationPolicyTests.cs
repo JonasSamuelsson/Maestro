@@ -38,4 +38,30 @@ namespace Maestro.Tests.Conventions
 			}
 		}
 	}
+
+	public class ConfigurationPolicyTests
+	{
+		[Fact]
+		public void ShouldConfigureServicesUsingPolicy()
+		{
+			var container = new Container(x => x.Scan(s =>
+			{
+				var types = GetType().GetNestedTypes(BindingFlags.NonPublic);
+				s.Types(types).UsingRegistrationPolicies();
+			}));
+		}
+
+		private class Service
+		{
+			public string String1 { get; set; }
+			public string String2 { get; set; }
+		}
+
+		private class ServiceA : Service { }
+
+		[ServiceConfigurationPolicy(typeof(CustomPolicy))]
+		private class ServiceB : Service { }
+
+		private class CustomPolicy { }
+	}
 }
