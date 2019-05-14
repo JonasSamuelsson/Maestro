@@ -88,7 +88,7 @@ namespace Maestro.Configuration
 
 		public static IScanner UsingRegistrationPolicies(this IScanner scanner)
 		{
-			return scanner.Using<RegistrationPolicyConvention>();
+			return scanner.Using<ServiceRegistrationPolicyConvention>();
 		}
 	}
 }
