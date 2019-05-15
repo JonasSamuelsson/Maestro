@@ -119,6 +119,7 @@ namespace Maestro.Configuration
 
 		public void Execute(Action<IConventionalServiceRegistrator<T>> action)
 		{
+			// todo : execute configuration policy if it exists, else action
 			action(this);
 			Builder();
 		}
