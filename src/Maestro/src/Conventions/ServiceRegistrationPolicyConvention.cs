@@ -13,7 +13,7 @@ namespace Maestro.Conventions
 			types.ForEach(type => type
 				.GetCustomAttributes<ServiceRegistrationPolicyAttribute>(true)
 				.Select(x => (IServiceRegistrationPolicy)Activator.CreateInstance(x.PolicyType))
-				.ForEach(x => x.Register(type, builder))
+				.ForEach(x => x.Execute(type, builder))
 			);
 		}
 	}

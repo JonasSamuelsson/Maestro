@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Maestro.Tests.Conventions
 {
-	public class RegistrationPolicyTests
+	public class ServiceRegistrationPolicyTests
 	{
 		[Fact]
 		public void ShouldRegisterServiceUsingPolicy()
@@ -27,12 +27,12 @@ namespace Maestro.Tests.Conventions
 
 		private interface IFoo { }
 
-		[ServiceRegistrationPolicy(typeof(CustomPolicy))]
+		[ServiceRegistrationPolicy(typeof(TestPolicy))]
 		private class Foo : IFoo { }
 
-		private class CustomPolicy : IServiceRegistrationPolicy
+		private class TestPolicy : IServiceRegistrationPolicy
 		{
-			public void Register(Type type, IContainerBuilder builder)
+			public void Execute(Type type, IContainerBuilder builder)
 			{
 				builder.Add(type.GetInterfaces().Single()).Type(type).Singleton();
 			}

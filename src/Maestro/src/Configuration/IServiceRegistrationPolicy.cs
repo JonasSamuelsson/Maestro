@@ -4,6 +4,6 @@ namespace Maestro.Configuration
 {
 	public interface IServiceRegistrationPolicy
 	{
-		void Register(Type type, IContainerBuilder builder);
+		void Execute(Type type, IContainerBuilder builder);
 	}
 }
