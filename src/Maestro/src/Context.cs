@@ -360,7 +360,7 @@ namespace Maestro
 
 		private static void PopulateActivationExceptionMessage(ActivationException exception, Type type, string name)
 		{
-			exception.AddToMessageTrace(type, name);
+			exception.AddTraceFrame(type, name);
 		}
 
 		public IServiceProvider ToServiceProvider()

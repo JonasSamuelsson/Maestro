@@ -1,9 +1,9 @@
-using Maestro.FactoryProviders.Factories;
-using Maestro.Internals;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Maestro.FactoryProviders.Factories;
+using Maestro.Internals;
 
 namespace Maestro.FactoryProviders
 {
@@ -24,64 +24,97 @@ namespace Maestro.FactoryProviders
 
 		public Factory GetFactory(Context context)
 		{
-			var activator = GetActivator(Constructor, Name, context);
+			var activator = GetActivator(context);
 			return new TypeFactory(Type, activator);
 		}
 
-		private Func<Context, object> GetActivator(ConstructorInfo constructor, string name, Context context)
+		private Func<Context, object> GetActivator(Context context)
 		{
-			var ctors = from ctor in constructor != null ? new[] { constructor } : ConstructorProvider.GetConstructors(Type)
-							let parameters = ctor.GetParameters()
-							select new { ctor, parameters };
+			var constructors = Constructor != null ? new[] { Constructor } : ConstructorProvider.GetConstructors(Type);
 
-			foreach (var x in ctors)
+			foreach (var constructor in constructors)
 			{
+				var parameters = constructor.GetParameters();
 				var parameterFactories = new List<Func<Context, object>>();
 
-				foreach (var parameter in x.parameters)
+				try
 				{
-					var parameterType = parameter.ParameterType;
-
-					var customFactory = CtorArgs.SingleOrDefault(ca => ca.Type == parameterType)?.Factory;
-					if (customFactory != null)
+					foreach (var parameter in parameters)
 					{
-						parameterFactories.Add(ctx => customFactory(ctx, parameterType));
-						continue;
+						if (!TryGetParameterFactory(parameter, context, out var factory))
+							break;
+
+						parameterFactories.Add(factory);
 					}
 
-					if (context.TryGetPipeline(parameterType, name, out var pipeline))
+					if (parameterFactories.Count == parameters.Length)
 					{
-						parameterFactories.Add(ctx => ctx.ExecutePipeline(pipeline, parameterType, name));
-						continue;
-					}
-
-					if (parameter.IsOptional)
-					{
-						var defaultValue = parameter.DefaultValue;
-						parameterFactories.Add(_ => defaultValue);
+						return CreateActivator(constructor, parameterFactories);
 					}
 				}
-
-				if (parameterFactories.Count == x.parameters.Length)
+				catch (ActivationException exception)
 				{
-					var constructorAdapter = ConstructorAdapterFactory.Create(x.ctor, parameterFactories);
-					return ctx =>
-					{
-						try
-						{
-							return constructorAdapter.Invoke(parameterFactories, ctx);
-						}
-						catch (Exception exception)
-						{
-							var error = $"Error instantiating '{Type.ToFormattedString()}'.";
-							throw new InvalidOperationException(error, exception);
-						}
-					};
+					GetTraceFrameInfos(constructor).ForEach(exception.AddTraceFrameInfo);
+					throw;
 				}
 			}
 
 			var message = $"Could not find resolvable constructor for '{Type.ToFormattedString()}'.";
 			throw new InvalidOperationException(message);
+		}
+
+		private bool TryGetParameterFactory(ParameterInfo parameter, Context context, out Func<Context, object> factory)
+		{
+			factory = null;
+
+			var parameterType = parameter.ParameterType;
+
+			var customFactory = CtorArgs.SingleOrDefault(ca => ca.Type == parameterType)?.Factory;
+			if (customFactory != null)
+			{
+				factory = ctx => customFactory(ctx, parameterType);
+				return true;
+			}
+
+			if (context.TryGetPipeline(parameterType, Name, out var pipeline))
+			{
+				factory = ctx => ctx.ExecutePipeline(pipeline, parameterType, Name);
+				return true;
+			}
+
+			if (parameter.IsOptional)
+			{
+				var defaultValue = parameter.DefaultValue;
+				factory = _ => defaultValue;
+				return true;
+			}
+
+			return false;
+		}
+
+		private static IEnumerable<string> GetTraceFrameInfos(ConstructorInfo constructor)
+		{
+			yield return $"implementation type: {constructor.DeclaringType.ToFormattedString()}";
+
+			var parameterTypes = constructor.GetParameters().Select(x => x.ParameterType.ToFormattedString());
+			yield return $"constructor parameters: {string.Join(", ", parameterTypes)}";
+		}
+
+		private Func<Context, object> CreateActivator(ConstructorInfo constructor, List<Func<Context, object>> parameterFactories)
+		{
+			var constructorAdapter = ConstructorAdapterFactory.Create(constructor, parameterFactories);
+			return ctx =>
+			{
+				try
+				{
+					return constructorAdapter.Invoke(parameterFactories, ctx);
+				}
+				catch (Exception exception)
+				{
+					var error = $"Error instantiating '{Type.ToFormattedString()}'.";
+					throw new InvalidOperationException(error, exception);
+				}
+			};
 		}
 
 		public IFactoryProvider MakeGeneric(Type[] genericArguments)

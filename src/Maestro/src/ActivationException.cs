@@ -1,31 +1,46 @@
-﻿using Maestro.Internals;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
+using Maestro.Internals;
 
 namespace Maestro
 {
 	public class ActivationException : Exception
 	{
-		private readonly StringBuilder _messageBuilder = new StringBuilder();
+		private readonly StringBuilder _builder = new StringBuilder();
+		private readonly List<string> _infos = new List<string>();
 
 		public ActivationException(Exception innerException, Type type, string name)
 			: base(innerException.Message, innerException)
 		{
-			_messageBuilder.AppendLine(innerException.Message);
-			AddToMessageTrace(type, name);
+			_builder.AppendLine(innerException.Message);
+			AddTraceFrame(type, name);
 		}
 
-		public override string Message => _messageBuilder.ToString().Trim();
+		public override string Message => _builder.ToString().Trim();
 
-		internal void AddToMessageTrace(Type type, string name)
+		internal void AddTraceFrame(Type type, string name)
 		{
 			name = name ?? ServiceNames.Default;
 
-			var message = name == ServiceNames.Default
-				? $" -> type: {type.FullName}"
-				: $" -> type: {type.FullName} name: '{name}'";
+			_builder.AppendLine($" -> service type: {type.ToFormattedString()}");
 
-			_messageBuilder.AppendLine(message);
+			if (name != ServiceNames.Default)
+			{
+				_builder.AppendLine($"   service name: {name}");
+			}
+
+			foreach (var info in _infos)
+			{
+				_builder.AppendLine($"    {info}");
+			}
+
+			_infos.Clear();
+		}
+
+		internal void AddTraceFrameInfo(string info)
+		{
+			_infos.Add(info);
 		}
 	}
 }
