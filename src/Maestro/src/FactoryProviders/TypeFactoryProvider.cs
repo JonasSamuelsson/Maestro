@@ -30,7 +30,8 @@ namespace Maestro.FactoryProviders
 
 		private Func<Context, object> GetActivator(Context context)
 		{
-			var constructors = Constructor != null ? new[] { Constructor } : ConstructorProvider.GetConstructors(Type);
+			var constructors = (Constructor != null ? new[] { Constructor } : ConstructorProvider.GetConstructors(Type))
+				.ToList();
 
 			foreach (var constructor in constructors)
 			{
@@ -59,8 +60,9 @@ namespace Maestro.FactoryProviders
 				}
 			}
 
-			var message = $"Could not find resolvable constructor for '{Type.ToFormattedString()}'.";
-			throw new InvalidOperationException(message);
+			var message = $"Can't find resolvable constructor for '{Type.ToFormattedString()}'.";
+			var traceFrameInfos = GetTraceFrameInfos(constructors);
+			throw new InstantiationException(message, traceFrameInfos);
 		}
 
 		private bool TryGetParameterFactory(ParameterInfo parameter, Context context, out Func<Context, object> factory)
@@ -98,6 +100,20 @@ namespace Maestro.FactoryProviders
 
 			var parameterTypes = constructor.GetParameters().Select(x => x.ParameterType.ToFormattedString());
 			yield return $"constructor parameters: {string.Join(", ", parameterTypes)}";
+		}
+
+		private static IEnumerable<string> GetTraceFrameInfos(IEnumerable<ConstructorInfo> constructors)
+		{
+			constructors = constructors.ToList();
+
+			yield return $"implementation type: {constructors.First().DeclaringType.ToFormattedString()}";
+
+			var counter = 1;
+			foreach (var constructor in constructors)
+			{
+				var parameterTypes = constructor.GetParameters().Select(x => x.ParameterType.ToFormattedString());
+				yield return $"candidate {counter++} parameters: {string.Join(", ", parameterTypes)}";
+			}
 		}
 
 		private Func<Context, object> CreateActivator(ConstructorInfo constructor, List<Func<Context, object>> parameterFactories)

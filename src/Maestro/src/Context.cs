@@ -1,8 +1,8 @@
-﻿using Maestro.Internals;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Maestro.Internals;
 
 namespace Maestro
 {
@@ -355,7 +355,8 @@ namespace Maestro
 
 		private static Exception CreateActivationException(Exception exception, Type type, string name)
 		{
-			return new ActivationException(exception, type, name);
+			var traceFrameInfos = (exception as InstantiationException)?.TraceFrameInfos ?? Enumerable.Empty<string>();
+			return new ActivationException(exception, type, name, traceFrameInfos);
 		}
 
 		private static void PopulateActivationExceptionMessage(ActivationException exception, Type type, string name)

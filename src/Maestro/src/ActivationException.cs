@@ -10,10 +10,11 @@ namespace Maestro
 		private readonly StringBuilder _builder = new StringBuilder();
 		private readonly List<string> _infos = new List<string>();
 
-		public ActivationException(Exception innerException, Type type, string name)
+		public ActivationException(Exception innerException, Type type, string name, IEnumerable<string> traceFrameInfos)
 			: base(innerException.Message, innerException)
 		{
 			_builder.AppendLine(innerException.Message);
+			_infos.AddRange(traceFrameInfos);
 			AddTraceFrame(type, name);
 		}
 
