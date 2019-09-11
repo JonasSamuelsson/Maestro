@@ -4,9 +4,8 @@ trigger:
     - master
   paths:
     include:
-    - src/Maestro/*
-    exclude:
-    - src/Maestro/docs/*
+    - src/Maestro.Microsoft.DependencyInjection/src/*
+    - src/Maestro.Microsoft.DependencyInjection/test/*
 
 pool:
   vmImage: "windows-2019"

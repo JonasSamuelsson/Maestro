@@ -4,9 +4,8 @@ trigger:
     - master
   paths:
     include:
-    - src/Maestro/*
-    exclude:
-    - src/Maestro/docs/*
+    - src/Maestro.Microsoft.Hosting/src/*
+    - src/Maestro.Microsoft.Hosting/test/*
 
 pool:
   vmImage: "windows-2019"

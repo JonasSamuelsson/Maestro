@@ -4,9 +4,8 @@ trigger:
     - master
   paths:
     include:
-    - src/Maestro/*
-    exclude:
-    - src/Maestro/docs/*
+    - src/Maestro.Castle.DynamicProxy/src/*
+    - src/Maestro.Castle.DynamicProxy/test/*
 
 pool:
   vmImage: "windows-2019"
