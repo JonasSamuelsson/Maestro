@@ -1,5 +1,8 @@
 # Maestro
 
+This project is no longer being maintained.  
+Recommended alternatives are [Microsoft.Extensions.DependencyInjection](https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/), [Lamar](https://www.nuget.org/packages/Lamar/), or [any other di-library available](https://danielpalme.github.io/IocPerformance).
+
 | | NuGet | Builds |
 |-|-|-|
 | Maestro                               | [![m-nuget-version] ![m-nuget-downloads]][m-nuget]                      | [![m-ado-status]][m-ado]               |
