@@ -1,4 +1,5 @@
-﻿using Shouldly;
+﻿#if !NETFRAMEWORK
+using Shouldly;
 using Xunit;
 
 namespace Maestro.Tests.OldTests
@@ -64,3 +65,4 @@ namespace Maestro.Tests.OldTests
 		class B { public A A { get; set; } }
 	}
 }
+#endif

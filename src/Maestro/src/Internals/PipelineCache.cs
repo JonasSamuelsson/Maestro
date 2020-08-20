@@ -26,18 +26,16 @@ namespace Maestro.Internals
 
 		internal struct Key
 		{
+			private static readonly ConcurrentDictionary<Type, object> DefaultServices = new ConcurrentDictionary<Type, object>();
+			private static readonly ConcurrentDictionary<string, ConcurrentDictionary<Type, object>> NamedServices = new ConcurrentDictionary<string, ConcurrentDictionary<Type, object>>();
+
 			private readonly int _hashCode;
 
 			public Key(Type type, string name)
 			{
-				_hashCode = CalculateHashCode(type, name);
-				Type = type;
+				_hashCode = CalculateHashCode(name, type);
 				Name = name;
-			}
-
-			private static int CalculateHashCode(Type type, string name)
-			{
-				return (type.GetHashCode() * 397) ^ name.GetHashCode();
+				Type = type;
 			}
 
 			public Type Type { get; }
@@ -57,6 +55,34 @@ namespace Maestro.Internals
 			public override int GetHashCode()
 			{
 				return _hashCode;
+			}
+
+			private static int CalculateHashCode(string name, Type type)
+			{
+				if (name == ServiceNames.Default)
+				{
+					return GetOrCalculateHashCode(type, DefaultServices);
+				}
+
+				if (!NamedServices.TryGetValue(name, out var innerDictionary))
+				{
+					lock (NamedServices)
+					{
+						innerDictionary = NamedServices.GetOrAdd(name, _ => new ConcurrentDictionary<Type, object>());
+					}
+				}
+
+				return GetOrCalculateHashCode(type, innerDictionary);
+			}
+
+			private static int GetOrCalculateHashCode(Type type, ConcurrentDictionary<Type, object> dictionary)
+			{
+				if (!dictionary.TryGetValue(type, out var o))
+				{
+					o = dictionary[type] = new object();
+				}
+
+				return o.GetHashCode();
 			}
 		}
 
