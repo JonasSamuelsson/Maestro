@@ -1,23 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Maestro.Internals
 {
-	internal class StrongRefTransientDisposableTracker : TransientDisposableTracker
+	internal class StrongRefTransientDisposableTracker : TransientDisposableTracker<IDisposable>
 	{
-		private readonly List<IDisposable> _disposables = new List<IDisposable>();
-
-		public override void Add(IDisposable disposable)
+		protected override IDisposable CreateItem(IDisposable disposable)
 		{
-			_disposables.Add(disposable);
+			return disposable;
 		}
 
-		public override void Dispose()
+		protected override void DisposeItem(IDisposable item)
 		{
-			foreach (var disposable in _disposables)
-			{
-				disposable.Dispose();
-			}
+			item?.Dispose();
 		}
 	}
 }
