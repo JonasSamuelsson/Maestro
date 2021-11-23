@@ -1,17 +1,30 @@
 ﻿using System;
+using System.Collections.Concurrent;
 
 namespace Maestro.Internals
 {
-	internal class StrongRefTransientDisposableTracker : TransientDisposableTracker<IDisposable>
+	internal class StrongRefTransientDisposableTracker : TransientDisposableTracker
 	{
-		protected override IDisposable CreateItem(IDisposable disposable)
+		private readonly ConcurrentBag<IDisposable> _disposables = new ConcurrentBag<IDisposable>();
+
+		public override void Add(IDisposable disposable)
 		{
-			return disposable;
+			_disposables.Add(disposable);
 		}
 
-		protected override void DisposeItem(IDisposable item)
+		public override void Dispose()
 		{
-			item?.Dispose();
+			foreach (var disposable in _disposables)
+			{
+				try
+				{
+					disposable?.Dispose();
+				}
+				catch
+				{
+					// ignored
+				}
+			}
 		}
 	}
 }

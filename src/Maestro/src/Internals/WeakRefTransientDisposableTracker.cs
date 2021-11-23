@@ -1,20 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Maestro.Internals
 {
-	internal class WeakRefTransientDisposableTracker : TransientDisposableTracker<WeakReference<IDisposable>>
+	internal class WeakRefTransientDisposableTracker : TransientDisposableTracker
 	{
-		protected override WeakReference<IDisposable> CreateItem(IDisposable disposable)
+		private int _counter = 0;
+		private readonly List<WeakReference<IDisposable>> _weakReferences = new List<WeakReference<IDisposable>>();
+
+		public override void Add(IDisposable disposable)
 		{
-			return new WeakReference<IDisposable>(disposable);
+			lock (_weakReferences)
+			{
+				if (_counter++ > 1000)
+				{
+					_weakReferences
+						.Where(x => !x.TryGetTarget(out _))
+						.ToList()
+						.ForEach(x => _weakReferences.Remove(x));
+
+					_counter = 0;
+				}
+
+				_weakReferences.Add(new WeakReference<IDisposable>(disposable));
+			}
 		}
 
-		protected override void DisposeItem(WeakReference<IDisposable> item)
+		public override void Dispose()
 		{
-			if (!item.TryGetTarget(out var disposable))
-				return;
+			foreach (var weakReference in _weakReferences)
+			{
+				if (!weakReference.TryGetTarget(out var disposable))
+					continue;
 
-			disposable.Dispose();
+				try
+				{
+					disposable?.Dispose();
+				}
+				catch
+				{
+					// ignored
+				}
+			}
 		}
 	}
 }
